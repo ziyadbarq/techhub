@@ -129,13 +129,13 @@ enum PromptPurpose {
 // ============================================
 
 model FeatureFlag {
-  id          String   @id @default(cuid())
-  name        String   @unique // CONTRACTS, LICENSES, CMDB, etc.
+  id          String              @id @default(cuid())
+  name        String              @unique // CONTRACTS, LICENSES, CMDB, etc.
   displayName String // "Contract Management"
-  description String   @db.Text
+  description String              @db.Text
   category    FeatureFlagCategory
-  isEnabled   Boolean  @default(false) // Default: DISABLED (admin must enable)
-  isSystem    Boolean  @default(false) // System flags (e.g., MAINTENANCE_MODE)
+  isEnabled   Boolean             @default(false) // Default: DISABLED (admin must enable)
+  isSystem    Boolean             @default(false) // System flags (e.g., MAINTENANCE_MODE)
 
   // Dependencies (array of feature names)
   dependsOn String[] @default([])

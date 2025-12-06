@@ -3,7 +3,7 @@
  * Represents a recurring preventive maintenance schedule for an asset
  */
 
-import { createId } from "@paralleldrive/cuid2";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { ScheduleType } from "../value-objects/schedule-type";
 import { calculateNextDueDate } from "../value-objects/schedule-type";
 import type { MaintenancePriority } from "../value-objects/maintenance-priority";
@@ -47,7 +47,10 @@ export class MaintenanceSchedule {
   /**
    * Create a new MaintenanceSchedule
    */
-  static create(props: CreateMaintenanceScheduleProps): MaintenanceSchedule {
+  static create(
+    props: CreateMaintenanceScheduleProps,
+    idGenerator: IIdGenerator,
+  ): MaintenanceSchedule {
     // Validation
     const title = props.title.trim();
     if (title.length < 3 || title.length > 200) {
@@ -78,7 +81,7 @@ export class MaintenanceSchedule {
       calculateNextDueDate(startDate, props.scheduleType, intervalValue);
 
     return new MaintenanceSchedule({
-      id: createId(),
+      id: idGenerator.generateId(),
       assetId: props.assetId,
       title,
       description: props.description?.trim() || null,

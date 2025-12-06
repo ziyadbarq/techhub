@@ -5,7 +5,7 @@
  * with validation rules for file types and size limits.
  */
 
-import { v4 as uuid } from "uuid";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateAttachmentTypeProps {
   name: string;
@@ -110,7 +110,10 @@ export class AttachmentType {
   }
 
   // Factory method
-  public static create(props: CreateAttachmentTypeProps): AttachmentType {
+  public static create(
+    props: CreateAttachmentTypeProps,
+    idGenerator: IIdGenerator,
+  ): AttachmentType {
     // Validations
     AttachmentType.validateName(props.name);
     AttachmentType.validateCode(props.code);
@@ -123,7 +126,7 @@ export class AttachmentType {
 
     const now = new Date();
     return new AttachmentType({
-      id: uuid(),
+      id: idGenerator.generateId(),
       name: props.name.trim(),
       code: props.code.trim().toUpperCase(),
       description: props.description?.trim() || null,

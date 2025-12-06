@@ -26,17 +26,17 @@ enum BackupStage {
 }
 
 model DatabaseBackup {
-  id          String        @id @default(cuid())
-  filename    String        @unique
+  id          String       @id @default(cuid())
+  filename    String       @unique
   filePath    String
-  fileSize    BigInt        @default(0)
+  fileSize    BigInt       @default(0)
   status      BackupStatus
   stage       BackupStage?
-  percentage  Int           @default(0)
+  percentage  Int          @default(0)
   currentStep String?
 
   createdById String
-  createdBy   User          @relation("BackupCreator", fields: [createdById], references: [id])
+  createdBy   User    @relation("BackupCreator", fields: [createdById], references: [id])
   notes       String?
 
   databaseName    String
@@ -48,19 +48,19 @@ model DatabaseBackup {
   completedAt     DateTime?
   durationSeconds Int?
 
-  errorMessage String?
-  errorCode    String?
-  errorDetails String?
-  checksum     String?
-  dbSchemaVersion   String?
-  codeSchemaVersion String?
-  schemaDrift       Boolean? @default(false)
+  errorMessage       String?
+  errorCode          String?
+  errorDetails       String?
+  checksum           String?
+  dbSchemaVersion    String?
+  codeSchemaVersion  String?
+  schemaDrift        Boolean? @default(false)
   verificationStatus String?
   verificationError  String?
 
   deletedAt   DateTime?
   deletedById String?
-  deletedBy   User?         @relation("BackupDeletedByUser", fields: [deletedById], references: [id])
+  deletedBy   User?     @relation("BackupDeletedByUser", fields: [deletedById], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -15,6 +15,7 @@ import type { ICodeGeneratorService } from "@/core/services/code-generator.servi
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 @injectable()
 export class CreateAssetUseCase {
@@ -29,6 +30,9 @@ export class CreateAssetUseCase {
     private readonly assetMovementService: IAssetMovementService,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(props: CreateAssetProps): Promise<Asset> {

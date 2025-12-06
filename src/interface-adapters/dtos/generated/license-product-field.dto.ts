@@ -6,8 +6,8 @@ import { z } from "zod";
 
 // Create LicenseProductField DTO
 export const CreateLicenseProductFieldSchema = z.object({
-  licenseProductId: z.string().uuid("Invalid license product ID"),
-  fieldDefinitionId: z.string().uuid("Invalid field definition ID"),
+  licenseProductId: z.string().min(24).max(25),
+  fieldDefinitionId: z.string().min(24).max(25),
   isRequired: z.boolean().optional().default(false),
   isVisible: z.boolean().optional().default(true),
   uiOrder: z

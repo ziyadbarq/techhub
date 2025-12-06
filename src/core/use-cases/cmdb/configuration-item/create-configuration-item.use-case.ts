@@ -1,6 +1,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IConfigurationItemRepository } from "../../../repositories/configuration-item.repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import {
   ConfigurationItem,
   type CreateConfigurationItemProps,
@@ -13,6 +14,9 @@ export class CreateConfigurationItemUseCase {
   constructor(
     @inject(DI_TOKENS.IConfigurationItemRepository)
     private readonly ciRepository: IConfigurationItemRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(
@@ -28,7 +32,7 @@ export class CreateConfigurationItemUseCase {
       }
     }
 
-    const ci = ConfigurationItem.create(request);
+    const ci = ConfigurationItem.create(request, this.idGenerator);
     return await this.ciRepository.create(ci);
   }
 }

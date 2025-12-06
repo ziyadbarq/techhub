@@ -6,6 +6,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IWarrantyRepository } from "@/core/repositories/warranty.repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import {
   Warranty,
   type CreateWarrantyProps,
@@ -16,6 +17,9 @@ export class CreateWarrantyUseCase {
   constructor(
     @inject(DI_TOKENS.IWarrantyRepository)
     private readonly warrantyRepository: IWarrantyRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(props: CreateWarrantyProps): Promise<Warranty> {

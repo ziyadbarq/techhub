@@ -5,6 +5,8 @@
  * Supports multi-level approval workflows.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export type ApprovalStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export interface DisposalApprovalProps {
@@ -28,7 +30,10 @@ export class DisposalApproval {
     this.validate();
   }
 
-  static create(props: CreateDisposalApprovalProps): DisposalApproval {
+  static create(
+    props: CreateDisposalApprovalProps,
+    idGenerator: IIdGenerator,
+  ): DisposalApproval {
     if (!props.disposalId?.trim()) {
       throw new Error("Disposal ID is required");
     }
@@ -37,7 +42,7 @@ export class DisposalApproval {
     }
 
     return new DisposalApproval({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       disposalId: props.disposalId,
       approverId: props.approverId,
       status: "PENDING",

@@ -62,7 +62,7 @@ export const GraphUsersResponseSchema = z.object({
  * Schema for manager response from Graph API
  */
 export const GraphManagerResponseSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().uuid(), // Azure AD Object ID (GUID)
   displayName: z.string().optional(),
 });
 

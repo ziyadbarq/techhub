@@ -45,7 +45,7 @@ export type CreatePermissionDTO = z.infer<typeof CreatePermissionSchema>;
  * Schema for updating an existing permission
  */
 export const UpdatePermissionSchema = z.object({
-  id: z.uuid({ error: "Invalid permission ID" }),
+  id: z.string().min(24).max(25),
   displayName: z
     .string()
     .min(1, "Display name is required")
@@ -64,7 +64,7 @@ export type UpdatePermissionDTO = z.infer<typeof UpdatePermissionSchema>;
  * Schema for permission ID validation
  */
 export const PermissionIdSchema = z.object({
-  id: z.uuid({ error: "Invalid permission ID" }),
+  id: z.string().min(24).max(25),
 });
 
 export type PermissionIdDTO = z.infer<typeof PermissionIdSchema>;

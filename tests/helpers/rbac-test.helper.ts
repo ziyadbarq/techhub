@@ -12,36 +12,54 @@ import { Role } from "@/core/domain/entities/role.entity";
 import { Permission } from "@/core/domain/entities/permission.entity";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
+/**
+ * Simple ID generator for testing
+ */
+const createTestIdGenerator = (): IIdGenerator => ({
+  generateId: () =>
+    `test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+});
 
 /**
  * Test data factory for roles
  */
 export class RoleTestFactory {
   static createEditor(): Role {
-    return Role.create({
-      name: "editor",
-      displayName: "Editor",
-      description: "Can edit content",
-      isSystem: false,
-    });
+    return Role.create(
+      {
+        name: "editor",
+        displayName: "Editor",
+        description: "Can edit content",
+        isSystem: false,
+      },
+      createTestIdGenerator(),
+    );
   }
 
   static createViewer(): Role {
-    return Role.create({
-      name: "viewer",
-      displayName: "Viewer",
-      description: "Can view content",
-      isSystem: false,
-    });
+    return Role.create(
+      {
+        name: "viewer",
+        displayName: "Viewer",
+        description: "Can view content",
+        isSystem: false,
+      },
+      createTestIdGenerator(),
+    );
   }
 
   static createAdmin(): Role {
-    return Role.create({
-      name: "admin",
-      displayName: "Administrator",
-      description: "Full system access",
-      isSystem: true,
-    });
+    return Role.create(
+      {
+        name: "admin",
+        displayName: "Administrator",
+        description: "Full system access",
+        isSystem: true,
+      },
+      createTestIdGenerator(),
+    );
   }
 
   static createCustom(overrides: {
@@ -50,7 +68,7 @@ export class RoleTestFactory {
     description?: string;
     isSystem?: boolean;
   }): Role {
-    return Role.create(overrides);
+    return Role.create(overrides, createTestIdGenerator());
   }
 }
 
@@ -59,39 +77,51 @@ export class RoleTestFactory {
  */
 export class PermissionTestFactory {
   static createTasksRead(): Permission {
-    return Permission.create({
-      resource: "tasks",
-      action: "read",
-      displayName: "Read Tasks",
-      description: "Can view tasks",
-    });
+    return Permission.create(
+      {
+        resource: "tasks",
+        action: "read",
+        displayName: "Read Tasks",
+        description: "Can view tasks",
+      },
+      createTestIdGenerator(),
+    );
   }
 
   static createTasksCreate(): Permission {
-    return Permission.create({
-      resource: "tasks",
-      action: "create",
-      displayName: "Create Tasks",
-      description: "Can create new tasks",
-    });
+    return Permission.create(
+      {
+        resource: "tasks",
+        action: "create",
+        displayName: "Create Tasks",
+        description: "Can create new tasks",
+      },
+      createTestIdGenerator(),
+    );
   }
 
   static createTasksUpdate(): Permission {
-    return Permission.create({
-      resource: "tasks",
-      action: "update",
-      displayName: "Update Tasks",
-      description: "Can update existing tasks",
-    });
+    return Permission.create(
+      {
+        resource: "tasks",
+        action: "update",
+        displayName: "Update Tasks",
+        description: "Can update existing tasks",
+      },
+      createTestIdGenerator(),
+    );
   }
 
   static createTasksDelete(): Permission {
-    return Permission.create({
-      resource: "tasks",
-      action: "delete",
-      displayName: "Delete Tasks",
-      description: "Can delete tasks",
-    });
+    return Permission.create(
+      {
+        resource: "tasks",
+        action: "delete",
+        displayName: "Delete Tasks",
+        description: "Can delete tasks",
+      },
+      createTestIdGenerator(),
+    );
   }
 
   static createCustom(overrides: {
@@ -101,7 +131,7 @@ export class PermissionTestFactory {
     description?: string;
     isSystem?: boolean;
   }): Permission {
-    return Permission.create(overrides);
+    return Permission.create(overrides, createTestIdGenerator());
   }
 }
 
@@ -117,21 +147,27 @@ export class UserRoleTestFactory {
       createdBy?: string;
     },
   ): UserRole {
-    return UserRole.create({
-      userId,
-      roleId,
-      expiresAt: options?.expiresAt,
-      createdBy: options?.createdBy,
-    });
+    return UserRole.create(
+      {
+        userId,
+        roleId,
+        expiresAt: options?.expiresAt,
+        createdBy: options?.createdBy,
+      },
+      createTestIdGenerator(),
+    );
   }
 
   static createExpired(userId: string, roleId: string): UserRole {
     const expiredDate = new Date(Date.now() - 24 * 60 * 60 * 1000); // 1 day ago
-    return UserRole.create({
-      userId,
-      roleId,
-      expiresAt: expiredDate,
-    });
+    return UserRole.create(
+      {
+        userId,
+        roleId,
+        expiresAt: expiredDate,
+      },
+      createTestIdGenerator(),
+    );
   }
 
   static createWithExpiry(
@@ -140,11 +176,14 @@ export class UserRoleTestFactory {
     daysFromNow: number,
   ): UserRole {
     const expiresAt = new Date(Date.now() + daysFromNow * 24 * 60 * 60 * 1000);
-    return UserRole.create({
-      userId,
-      roleId,
-      expiresAt,
-    });
+    return UserRole.create(
+      {
+        userId,
+        roleId,
+        expiresAt,
+      },
+      createTestIdGenerator(),
+    );
   }
 }
 

@@ -1,10 +1,10 @@
 import type { IEmailService } from "@/core/services/email.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { PrismaClient } from "@/generated/prisma/client";
 import { decryptTokens, encryptTokens } from "@/lib/auth/encryption";
-import { createId } from "@paralleldrive/cuid2";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { createAuthMiddleware } from "better-auth/api";
@@ -43,6 +43,18 @@ function getLogger(): ILoggerService {
     _logger = getContainer().get<ILoggerService>(DI_TOKENS.ILoggerService);
   }
   return _logger;
+}
+
+/**
+ * Get ID generator from DI container
+ * Lazy initialization to avoid circular dependencies
+ */
+let _idGenerator: IIdGenerator | null = null;
+function getIdGenerator(): IIdGenerator {
+  if (!_idGenerator) {
+    _idGenerator = getContainer().get<IIdGenerator>(DI_TOKENS.IIdGenerator);
+  }
+  return _idGenerator;
 }
 
 const authDebugLog = (
@@ -273,7 +285,7 @@ const ensurePersonLinkedToUser = async (
 
       const createdPerson = await tx.person.create({
         data: {
-          id: createId(),
+          id: getIdGenerator().generateId(),
           userId: user.id,
           firstName,
           lastName,
@@ -296,7 +308,7 @@ const ensurePersonLinkedToUser = async (
       if (!existingViewerRole) {
         await tx.userRole.create({
           data: {
-            id: createId(),
+            id: getIdGenerator().generateId(),
             userId: user.id,
             roleId: viewerRole.id,
             createdAt: new Date(),
@@ -705,7 +717,7 @@ export const auth = betterAuth({
     database: {
       generateId: () => {
         // Use cuid2 for better collision resistance and sortability
-        return createId();
+        return getIdGenerator().generateId();
       },
     },
   },

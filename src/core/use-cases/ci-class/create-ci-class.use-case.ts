@@ -11,6 +11,7 @@ import {
   type EnvironmentType,
 } from "@/core/domain/entities/ci-class.entity";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateCIClassRequest {
   name: string;
@@ -30,6 +31,9 @@ export class CreateCIClassUseCase {
     private readonly ciClassRepository: ICIClassRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateCIClassRequest): Promise<CIClass> {

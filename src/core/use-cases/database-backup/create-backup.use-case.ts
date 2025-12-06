@@ -13,6 +13,7 @@ import { MAINTENANCE_JOBS, QUEUE_NAMES } from "@/core/domain/jobs/job-names";
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
 import type { DatabaseBackupJobData } from "@/core/domain/jobs/job-data.types";
 import type { IDatabaseBackupService } from "@/core/services/database-backup.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateDatabaseBackupInput {
   userId: string;
@@ -30,6 +31,9 @@ export class CreateDatabaseBackupUseCase {
     private readonly backupService: IDatabaseBackupService,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(input: CreateDatabaseBackupInput): Promise<DatabaseBackup> {

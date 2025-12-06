@@ -7,11 +7,12 @@
  * - Repository integration
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { GetPermissionUseCase } from "../get-permission.use-case";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { Permission } from "@/core/domain/entities/permission.entity";
 import { Permission as PermissionEntity } from "@/core/domain/entities/permission.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Mock Permission Repository
@@ -33,11 +34,18 @@ class MockPermissionRepository implements Partial<IPermissionRepository> {
   }
 }
 
+// Mock ID generator for tests
+let idCounter = 0;
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => `test-cuid-${idCounter++}`),
+};
+
 describe("GetPermissionUseCase", () => {
   let useCase: GetPermissionUseCase;
   let mockRepository: MockPermissionRepository;
 
   beforeEach(() => {
+    idCounter = 0;
     mockRepository = new MockPermissionRepository();
     useCase = new GetPermissionUseCase(
       mockRepository as unknown as IPermissionRepository,
@@ -47,12 +55,15 @@ describe("GetPermissionUseCase", () => {
   describe("execute - successful retrieval", () => {
     it("should retrieve an existing permission", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-        description: "Allows creating tasks",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+          description: "Allows creating tasks",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       // Act
@@ -68,12 +79,15 @@ describe("GetPermissionUseCase", () => {
 
     it("should retrieve a system permission", async () => {
       // Arrange
-      const systemPermission = PermissionEntity.create({
-        resource: "admin",
-        action: "access",
-        displayName: "Admin Access",
-        isSystem: true,
-      });
+      const systemPermission = PermissionEntity.create(
+        {
+          resource: "admin",
+          action: "access",
+          displayName: "Admin Access",
+          isSystem: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(systemPermission);
 
       // Act
@@ -86,12 +100,15 @@ describe("GetPermissionUseCase", () => {
 
     it("should retrieve an inactive permission", async () => {
       // Arrange
-      const inactivePermission = PermissionEntity.create({
-        resource: "task",
-        action: "archive",
-        displayName: "Archive Task",
-        isActive: false,
-      });
+      const inactivePermission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "archive",
+          displayName: "Archive Task",
+          isActive: false,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(inactivePermission);
 
       // Act
@@ -104,14 +121,17 @@ describe("GetPermissionUseCase", () => {
 
     it("should retrieve permission with all properties intact", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "update",
-        displayName: "Update Task",
-        description: "Allows updating tasks",
-        isSystem: false,
-        isActive: true,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "update",
+          displayName: "Update Task",
+          description: "Allows updating tasks",
+          isSystem: false,
+          isActive: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       // Act
@@ -170,11 +190,14 @@ describe("GetPermissionUseCase", () => {
   describe("execute - repository integration", () => {
     it("should call repository findById method", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "read",
-        displayName: "Read Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "read",
+          displayName: "Read Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       let findByIdWasCalled = false;
@@ -196,11 +219,14 @@ describe("GetPermissionUseCase", () => {
 
     it("should pass through repository response unchanged", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "delete",
-        displayName: "Delete Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "delete",
+          displayName: "Delete Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       // Act
@@ -248,21 +274,30 @@ describe("GetPermissionUseCase", () => {
 
     it("should retrieve multiple different permissions correctly", async () => {
       // Arrange
-      const permission1 = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
-      const permission2 = PermissionEntity.create({
-        resource: "task",
-        action: "read",
-        displayName: "Read Task",
-      });
-      const permission3 = PermissionEntity.create({
-        resource: "task",
-        action: "update",
-        displayName: "Update Task",
-      });
+      const permission1 = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
+      const permission2 = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "read",
+          displayName: "Read Task",
+        },
+        mockIdGenerator,
+      );
+      const permission3 = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "update",
+          displayName: "Update Task",
+        },
+        mockIdGenerator,
+      );
 
       mockRepository.addPermission(permission1);
       mockRepository.addPermission(permission2);
@@ -284,11 +319,14 @@ describe("GetPermissionUseCase", () => {
 
     it("should handle concurrent retrieval requests", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       // Act - Execute multiple requests concurrently
@@ -309,11 +347,14 @@ describe("GetPermissionUseCase", () => {
 
     it("should handle retrieval after permission was added", async () => {
       // Arrange - Start with no permissions
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
 
       // Act - Try to retrieve (should be null)
       const resultBefore = await useCase.execute(permission.id);

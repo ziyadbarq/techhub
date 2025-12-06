@@ -14,6 +14,7 @@ import type { IUserRoleRepository } from "@/core/repositories/user-role-reposito
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
 import type { ILoggerService } from "@/core/services";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Role } from "@/core/domain/entities/role.entity";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 
@@ -93,6 +94,11 @@ class MockLogger implements Partial<ILoggerService> {
   error = vi.fn();
 }
 
+// Mock ID generator for tests
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => "test-cuid-clx7abc123"),
+};
+
 describe("AssignFirstAdminUseCase", () => {
   let useCase: AssignFirstAdminUseCase;
   let mockRoleRepository: MockRoleRepository;
@@ -111,6 +117,7 @@ describe("AssignFirstAdminUseCase", () => {
       mockRoleRepository as unknown as IRoleRepository,
       mockAuditLogRepository as unknown as IAuditLogRepository,
       mockLogger as unknown as ILoggerService,
+      mockIdGenerator,
     );
   });
 
@@ -170,11 +177,14 @@ describe("AssignFirstAdminUseCase", () => {
     // Arrange
     const adminRole = createAdminRole();
     mockRoleRepository.setRole(adminRole);
-    const existingAdmin = UserRole.create({
-      userId: "admin-user",
-      roleId: adminRole.id,
-      createdBy: "system",
-    });
+    const existingAdmin = UserRole.create(
+      {
+        userId: "admin-user",
+        roleId: adminRole.id,
+        createdBy: "system",
+      },
+      mockIdGenerator,
+    );
     mockUserRoleRepository.addAssignment(existingAdmin);
 
     // Act
@@ -192,11 +202,14 @@ describe("AssignFirstAdminUseCase", () => {
     // Arrange
     const adminRole = createAdminRole();
     mockRoleRepository.setRole(adminRole);
-    const existingAssignment = UserRole.create({
-      userId: "user-1",
-      roleId: adminRole.id,
-      createdBy: "system",
-    });
+    const existingAssignment = UserRole.create(
+      {
+        userId: "user-1",
+        roleId: adminRole.id,
+        createdBy: "system",
+      },
+      mockIdGenerator,
+    );
     mockUserRoleRepository.addAssignment(existingAssignment);
 
     // Force repository to simulate scenario where no other admins exist yet

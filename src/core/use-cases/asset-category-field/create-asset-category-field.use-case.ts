@@ -8,6 +8,7 @@ import type { IAssetCategoryFieldRepository } from "@/core/repositories/asset-ca
 import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import { AssetCategoryField } from "@/core/domain/entities/asset-category-field.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateAssetCategoryFieldRequest {
   assetCategoryId: string;
@@ -28,6 +29,9 @@ export class CreateAssetCategoryFieldUseCase {
     private categoryRepository: IAssetCategoryRepository,
     @inject(DI_TOKENS.IFieldDefinitionRepository)
     private fieldDefinitionRepository: IFieldDefinitionRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(

@@ -1,9 +1,11 @@
-import { randomUUID } from "node:crypto";
-
 /**
  * Database Backup Entity
  *
  * Represents a PostgreSQL database backup along with progress and metadata.
+ *
+ * NOTE: This entity uses DB-generated IDs (@default(cuid()) in Prisma).
+ * The create() static method is not used in production - the repository
+ * creates Prisma records directly and the DB auto-generates the ID.
  */
 
 export enum BackupStatus {
@@ -59,12 +61,14 @@ export class DatabaseBackup {
   static create(
     initial: Omit<
       DatabaseBackupProps,
-      "id" | "createdAt" | "updatedAt" | "startedAt" | "percentage" | "status"
-    >,
+      "createdAt" | "updatedAt" | "startedAt" | "percentage" | "status"
+    > & {
+      id?: string; // Optional for tests; in production, Prisma auto-generates
+    },
   ): DatabaseBackup {
     return new DatabaseBackup({
       ...initial,
-      id: randomUUID(),
+      id: initial.id || "", // Placeholder; should be set by Prisma or test
       createdAt: new Date(),
       updatedAt: new Date(),
       startedAt: new Date(),

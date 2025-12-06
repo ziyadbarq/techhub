@@ -7,6 +7,7 @@ import { DI_TOKENS } from "@/di/types";
 import { AssetModel } from "@/core/domain/entities/asset-model.entity";
 import type { IAssetModelRepository } from "@/core/repositories/asset-model.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateAssetModelProps {
   assetCategoryId: string;
@@ -25,6 +26,9 @@ export class CreateAssetModelUseCase {
     private readonly assetModelRepository: IAssetModelRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(props: CreateAssetModelProps): Promise<AssetModel> {

@@ -5,6 +5,8 @@
  * Manages return status, condition tracking, and damage/loss reporting.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export type KitCheckoutItemStatus =
   | "CHECKED_OUT"
   | "RETURNED"
@@ -39,7 +41,10 @@ export class AssetKitCheckoutItem {
     this.validate();
   }
 
-  static create(props: CreateAssetKitCheckoutItemProps): AssetKitCheckoutItem {
+  static create(
+    props: CreateAssetKitCheckoutItemProps,
+    idGenerator: IIdGenerator,
+  ): AssetKitCheckoutItem {
     if (!props.kitCheckoutId?.trim()) {
       throw new Error("Kit checkout ID is required");
     }
@@ -53,7 +58,7 @@ export class AssetKitCheckoutItem {
     const now = new Date();
 
     return new AssetKitCheckoutItem({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       kitCheckoutId: props.kitCheckoutId,
       assetId: props.assetId,
       kitItemId: props.kitItemId,

@@ -5,7 +5,7 @@
  * for compliance and governance purposes (SAMA, GDPR, PCI-DSS).
  */
 
-import { v4 as uuid } from "uuid";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { ValidationError } from "../errors/validation.error";
 
 export interface CreateDataDomainProps {
@@ -87,14 +87,17 @@ export class DataDomain {
   }
 
   // Factory method
-  public static create(props: CreateDataDomainProps): DataDomain {
+  public static create(
+    props: CreateDataDomainProps,
+    idGenerator: IIdGenerator,
+  ): DataDomain {
     // Validations
     DataDomain.validateName(props.name);
     DataDomain.validateCode(props.code);
 
     const now = new Date();
     return new DataDomain({
-      id: uuid(),
+      id: idGenerator.generateId(),
       name: props.name.trim(),
       code: props.code.trim().toUpperCase(),
       description: props.description?.trim() || null,

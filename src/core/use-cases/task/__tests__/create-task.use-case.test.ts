@@ -22,7 +22,7 @@ class MockTaskRepository implements Partial<ITaskRepository> {
   private idCounter = 1;
 
   async create(task: Task): Promise<Task> {
-    // Assign ID if not set (simulate repository behavior)
+    // Assign ID if not set (simulate Prisma's @default(cuid()) behavior)
     if (!task.id) {
       (task as { id: string }).id = `task-${this.idCounter++}`;
     }

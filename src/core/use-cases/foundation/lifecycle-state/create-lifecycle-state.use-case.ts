@@ -10,6 +10,7 @@ import { LifecycleState } from "@/core/domain/entities/lifecycle-state.entity";
 import type { ILifecycleStateRepository } from "@/core/repositories/lifecycle-state.repository.interface";
 import type { StateType } from "@/core/domain/value-objects/foundation-enums";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateLifecycleStateProps {
   lifecycleModelId: string;
@@ -30,6 +31,9 @@ export class CreateLifecycleStateUseCase {
     private readonly lifecycleStateRepository: ILifecycleStateRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

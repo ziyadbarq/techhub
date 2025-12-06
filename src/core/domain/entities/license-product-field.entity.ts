@@ -4,7 +4,7 @@
  * Represents a custom field configuration for a license product.
  */
 
-import { v4 as uuid } from "uuid";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateLicenseProductFieldProps {
   licenseProductId: string;
@@ -95,6 +95,7 @@ export class LicenseProductField {
   // Factory method
   public static create(
     props: CreateLicenseProductFieldProps,
+    idGenerator: IIdGenerator,
   ): LicenseProductField {
     // Validations
     LicenseProductField.validateLicenseProductId(props.licenseProductId);
@@ -103,7 +104,7 @@ export class LicenseProductField {
 
     const now = new Date();
     return new LicenseProductField({
-      id: uuid(),
+      id: idGenerator.generateId(),
       licenseProductId: props.licenseProductId,
       fieldDefinitionId: props.fieldDefinitionId,
       isRequired: props.isRequired ?? false,

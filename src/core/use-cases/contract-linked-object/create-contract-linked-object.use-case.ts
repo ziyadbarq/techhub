@@ -8,6 +8,7 @@ import type { IContractLinkedObjectRepository } from "@/core/repositories/contra
 import type { IContractRepository } from "@/core/repositories/contract.repository.interface";
 import { ContractLinkedObject } from "@/core/domain/entities/contract-linked-object.entity";
 import type { TargetObjectType } from "@/core/domain/entities/contract-linked-object.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateContractLinkedObjectRequest {
   contractId: string;
@@ -23,6 +24,9 @@ export class CreateContractLinkedObjectUseCase {
     private linkedObjectRepository: IContractLinkedObjectRepository,
     @inject(DI_TOKENS.IContractRepository)
     private contractRepository: IContractRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(
@@ -48,12 +52,15 @@ export class CreateContractLinkedObjectUseCase {
     // The application layer should validate before calling this use case
 
     // Create linked object
-    const linkedObject = ContractLinkedObject.create({
-      contractId: request.contractId,
-      targetType: request.targetType,
-      targetId: request.targetId,
-      note: request.note,
-    });
+    const linkedObject = ContractLinkedObject.create(
+      {
+        contractId: request.contractId,
+        targetType: request.targetType,
+        targetId: request.targetId,
+        note: request.note,
+      },
+      this.idGenerator,
+    );
 
     return await this.linkedObjectRepository.create(linkedObject);
   }

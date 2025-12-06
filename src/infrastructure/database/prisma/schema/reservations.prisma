@@ -11,7 +11,7 @@
 // AssetReservation model
 // Reserve assets for future use with conflict detection
 model AssetReservation {
-  id                   String    @id @default(uuid())
+  id                   String                     @id @default(cuid())
   assetId              String
   reservedForPersonId  String?
   reservedForOrgUnitId String?
@@ -19,19 +19,19 @@ model AssetReservation {
   startDate            DateTime
   endDate              DateTime
   status               AssetReservationStatusEnum @default(PENDING)
-  purpose              String?   @db.Text
-  note                 String?   @db.Text
+  purpose              String?                    @db.Text
+  note                 String?                    @db.Text
   confirmationDate     DateTime?
   confirmedById        String?
-  cancellationReason   String?   @db.Text
+  cancellationReason   String?                    @db.Text
   cancelledAt          DateTime?
   cancelledById        String?
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
 
   // Soft delete fields
-  deletedAt            DateTime?
-  deletedById          String?
+  deletedAt   DateTime?
+  deletedById String?
 
   // Relations
   asset                   Asset                      @relation(fields: [assetId], references: [id], onDelete: Restrict)

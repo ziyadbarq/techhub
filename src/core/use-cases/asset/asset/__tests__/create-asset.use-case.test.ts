@@ -8,10 +8,11 @@
  * - Edge cases (normalization)
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { CreateAssetUseCase } from "../create-asset.use-case";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
@@ -116,6 +117,11 @@ class MockLoggerService implements Partial<ILoggerService> {
   }
 }
 
+// Mock ID generator for tests
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => "test-cuid-clx7abc123"),
+};
+
 describe("CreateAssetUseCase", () => {
   let useCase: CreateAssetUseCase;
   let mockRepository: MockAssetRepository;
@@ -136,6 +142,7 @@ describe("CreateAssetUseCase", () => {
       mockSarConversionService as unknown as ISarConversionService,
       mockAssetMovementService as unknown as IAssetMovementService,
       mockLoggerService as unknown as ILoggerService,
+      mockIdGenerator,
     );
   });
 

@@ -113,7 +113,7 @@ describe("Permission Controller", () => {
   // Sample permission data
   const createMockPermission = (overrides?: Partial<Permission>): Permission =>
     ({
-      id: "550e8400-e29b-41d4-a716-446655440000", // Valid UUID
+      id: "cltest123456789012345678", // Valid CUID2 (24-25 chars)
       name: "tasks:view",
       resource: "tasks",
       action: "view",
@@ -147,7 +147,7 @@ describe("Permission Controller", () => {
       // Assert
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.id).toBe("550e8400-e29b-41d4-a716-446655440000");
+        expect(result.data.id).toBe("cltest123456789012345678");
         expect(result.data.resource).toBe("tasks");
         expect(result.data.action).toBe("view");
       }
@@ -410,7 +410,7 @@ describe("Permission Controller", () => {
       mockUpdatePermissionUseCase.execute.mockResolvedValue(mockPermission);
 
       const data = {
-        id: "550e8400-e29b-41d4-a716-446655440000",
+        id: "cltest123456789012345678",
         displayName: "Updated Name",
         description: "Updated description",
         isActive: true,
@@ -432,7 +432,7 @@ describe("Permission Controller", () => {
       mockUpdatePermissionUseCase.execute.mockResolvedValue(mockPermission);
 
       const data = {
-        id: "550e8400-e29b-41d4-a716-446655440000",
+        id: "cltest123456789012345678",
         displayName: "Updated Name",
         description: "Updated description",
         isActive: false,
@@ -471,7 +471,7 @@ describe("Permission Controller", () => {
       );
 
       const data = {
-        id: "550e8400-e29b-41d4-a716-446655440000",
+        id: "cltest123456789012345678",
         displayName: "Updated Name",
       };
 
@@ -492,9 +492,7 @@ describe("Permission Controller", () => {
       mockDeletePermissionUseCase.execute.mockResolvedValue(undefined);
 
       // Act
-      const result = await deletePermissionAction(
-        "550e8400-e29b-41d4-a716-446655440000",
-      );
+      const result = await deletePermissionAction("cltest123456789012345678");
 
       // Assert
       expect(result.success).toBe(true);
@@ -508,11 +506,11 @@ describe("Permission Controller", () => {
       mockDeletePermissionUseCase.execute.mockResolvedValue(undefined);
 
       // Act
-      await deletePermissionAction("550e8400-e29b-41d4-a716-446655440000");
+      await deletePermissionAction("cltest123456789012345678");
 
       // Assert
       expect(mockDeletePermissionUseCase.execute).toHaveBeenCalledWith({
-        id: "550e8400-e29b-41d4-a716-446655440000",
+        id: "cltest123456789012345678",
       });
     });
 
@@ -531,9 +529,7 @@ describe("Permission Controller", () => {
       );
 
       // Act
-      const result = await deletePermissionAction(
-        "550e8400-e29b-41d4-a716-446655440000",
-      );
+      const result = await deletePermissionAction("cltest123456789012345678");
 
       // Assert
       expect(result.success).toBe(false);

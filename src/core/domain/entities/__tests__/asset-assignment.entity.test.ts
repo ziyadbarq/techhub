@@ -17,7 +17,6 @@ import type {
   CreateAssetAssignmentProps,
   AssigneeType,
 } from "../asset-assignment.entity";
-
 describe("AssetAssignment Entity", () => {
   // Valid test data
   const validCreateProps: CreateAssetAssignmentProps = {

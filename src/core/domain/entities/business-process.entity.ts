@@ -5,6 +5,8 @@
  * "Identity Management"). Used for service-to-business alignment mapping.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export interface BusinessProcessProps {
   id: string;
   code: string;
@@ -29,14 +31,17 @@ export class BusinessProcess {
     this.validate();
   }
 
-  static create(props: CreateBusinessProcessProps): BusinessProcess {
+  static create(
+    props: CreateBusinessProcessProps,
+    idGenerator: IIdGenerator,
+  ): BusinessProcess {
     BusinessProcess.validateCode(props.code);
     BusinessProcess.validateName(props.name);
 
     const now = new Date();
 
     return new BusinessProcess({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       code: props.code.trim().toUpperCase(),
       name: props.name.trim(),
       description: props.description?.trim() || null,

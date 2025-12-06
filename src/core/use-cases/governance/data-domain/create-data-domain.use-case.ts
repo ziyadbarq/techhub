@@ -8,6 +8,7 @@ import type { IDataDomainRepository } from "@/core/repositories/data-domain.repo
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import { DataDomain } from "@/core/domain/entities/data-domain.entity";
 import { ValidationError } from "@/core/domain/errors/validation.error";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateDataDomainRequest {
   name: string;
@@ -23,6 +24,9 @@ export class CreateDataDomainUseCase {
     private dataDomainRepository: IDataDomainRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateDataDomainRequest): Promise<DataDomain> {
@@ -55,12 +59,15 @@ export class CreateDataDomainUseCase {
     }
 
     // Create data domain entity
-    const dataDomain = DataDomain.create({
-      name: trimmedName ?? request.name,
-      code,
-      description: request.description,
-      isActive: request.isActive,
-    });
+    const dataDomain = DataDomain.create(
+      {
+        name: trimmedName ?? request.name,
+        code,
+        description: request.description,
+        isActive: request.isActive,
+      },
+      this.idGenerator,
+    );
 
     return await this.dataDomainRepository.create(dataDomain);
   }

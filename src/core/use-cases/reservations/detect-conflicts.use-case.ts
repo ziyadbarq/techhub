@@ -2,6 +2,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
 import type { IAssetReservationConflictRepository } from "@/core/repositories/asset-reservation-conflict.repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { AssetReservationConflict } from "@/core/domain/entities/asset-reservation-conflict.entity";
 
 export interface DetectConflictsRequest {
@@ -20,6 +21,8 @@ export class DetectConflictsUseCase {
     private readonly reservationRepository: IAssetReservationRepository,
     @inject(DI_TOKENS.IAssetReservationConflictRepository)
     private readonly conflictRepository: IAssetReservationConflictRepository,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(
@@ -51,10 +54,13 @@ export class DetectConflictsUseCase {
         );
 
         if (!conflictExists) {
-          const conflict = AssetReservationConflict.create({
-            reservationId: reservation.id,
-            conflictingReservationId: existingReservation.id,
-          });
+          const conflict = AssetReservationConflict.create(
+            {
+              reservationId: reservation.id,
+              conflictingReservationId: existingReservation.id,
+            },
+            this.idGenerator,
+          );
           const created = await this.conflictRepository.create(conflict);
           conflictIds.push(created.id);
         }

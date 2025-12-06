@@ -18,6 +18,7 @@ import { Role } from "@/core/domain/entities/role.entity";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import { RoleNotFoundError } from "@/core/domain/errors/rbac-errors";
 import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Mock Repositories
@@ -76,6 +77,12 @@ class MockAuditLogRepository implements Partial<IAuditLogRepository> {
   });
 }
 
+// Mock ID generator for tests
+let idCounter = 0;
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => `test-cuid-${idCounter++}`),
+};
+
 describe("RevokeRoleFromUserUseCase", () => {
   let useCase: RevokeRoleFromUserUseCase;
   let mockUserRoleRepository: MockUserRoleRepository;
@@ -85,6 +92,7 @@ describe("RevokeRoleFromUserUseCase", () => {
 
   beforeEach(() => {
     // Create fresh instances
+    idCounter = 0;
     mockUserRoleRepository = new MockUserRoleRepository();
     mockRoleRepository = new MockRoleRepository();
     mockAuditLogRepository = new MockAuditLogRepository();
@@ -106,17 +114,23 @@ describe("RevokeRoleFromUserUseCase", () => {
   describe("execute - successful revocation", () => {
     it("should successfully revoke a role from a user", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: role.id,
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
       mockUserRoleRepository.setUserRole(userRole);
 
       // Act
@@ -136,17 +150,23 @@ describe("RevokeRoleFromUserUseCase", () => {
 
     it("should create audit log entry on revocation", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: role.id,
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
       mockUserRoleRepository.setUserRole(userRole);
 
       // Act
@@ -172,17 +192,23 @@ describe("RevokeRoleFromUserUseCase", () => {
 
     it("should invalidate user permission cache", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: role.id,
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
       mockUserRoleRepository.setUserRole(userRole);
 
       // Act
@@ -233,10 +259,13 @@ describe("RevokeRoleFromUserUseCase", () => {
   describe("execute - idempotent behavior", () => {
     it("should succeed silently if user does not have the role", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
       // Act & Assert - Should not throw
@@ -251,10 +280,13 @@ describe("RevokeRoleFromUserUseCase", () => {
 
     it("should not create audit log if assignment does not exist", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
       mockAuditLogRepository.create.mockClear();
@@ -272,17 +304,23 @@ describe("RevokeRoleFromUserUseCase", () => {
 
     it("should be safe to call multiple times", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: role.id,
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
       mockUserRoleRepository.setUserRole(userRole);
 
       // Act - First revocation
@@ -306,19 +344,25 @@ describe("RevokeRoleFromUserUseCase", () => {
   describe("audit logging details", () => {
     it("should log role name and assignment details", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
       const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: role.id,
-        expiresAt,
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role.id,
+          expiresAt,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
       mockUserRoleRepository.setUserRole(userRole);
 
       // Act
@@ -345,17 +389,23 @@ describe("RevokeRoleFromUserUseCase", () => {
 
     it("should log if assignment was active", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: role.id,
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
       mockUserRoleRepository.setUserRole(userRole);
 
       // Act
@@ -379,18 +429,24 @@ describe("RevokeRoleFromUserUseCase", () => {
 
     it("should log expired assignment details", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
       const expiredDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      const activeUserRole = UserRole.create({
-        userId: "user-1",
-        roleId: role.id,
-        createdBy: "admin-1",
-      });
+      const activeUserRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
       const expiredUserRole = UserRole.fromPersistence({
         ...activeUserRole.toObject(),
         expiresAt: expiredDate,
@@ -420,17 +476,23 @@ describe("RevokeRoleFromUserUseCase", () => {
   describe("edge cases", () => {
     it("should handle revocation without revokedBy", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: role.id,
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
       mockUserRoleRepository.setUserRole(userRole);
 
       // Act & Assert
@@ -450,22 +512,31 @@ describe("RevokeRoleFromUserUseCase", () => {
 
     it("should handle multiple users with same role independently", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const userRole1 = UserRole.create({
-        userId: "user-1",
-        roleId: role.id,
-        createdBy: "admin-1",
-      });
-      const userRole2 = UserRole.create({
-        userId: "user-2",
-        roleId: role.id,
-        createdBy: "admin-1",
-      });
+      const userRole1 = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
+      const userRole2 = UserRole.create(
+        {
+          userId: "user-2",
+          roleId: role.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
       mockUserRoleRepository.setUserRole(userRole1);
       mockUserRoleRepository.setUserRole(userRole2);
 
@@ -492,27 +563,39 @@ describe("RevokeRoleFromUserUseCase", () => {
 
     it("should handle user with multiple roles", async () => {
       // Arrange
-      const role1 = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
-      const role2 = Role.create({
-        name: "viewer",
-        displayName: "Viewer",
-      });
+      const role1 = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
+      const role2 = Role.create(
+        {
+          name: "viewer",
+          displayName: "Viewer",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role1);
       mockRoleRepository.setRole(role2);
 
-      const userRole1 = UserRole.create({
-        userId: "user-1",
-        roleId: role1.id,
-        createdBy: "admin-1",
-      });
-      const userRole2 = UserRole.create({
-        userId: "user-1",
-        roleId: role2.id,
-        createdBy: "admin-1",
-      });
+      const userRole1 = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role1.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
+      const userRole2 = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: role2.id,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
       mockUserRoleRepository.setUserRole(userRole1);
       mockUserRoleRepository.setUserRole(userRole2);
 

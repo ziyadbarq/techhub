@@ -158,7 +158,10 @@ export default [
                 "@/lib/**",
                 "@/config/**",
                 "@/core/use-cases/**",
+                // Allow service interfaces (core layer contracts)
                 "@/core/services/**",
+                "!@/core/services/*.interface",
+                "!@/core/services/**/*.interface",
               ],
               message:
                 "Domain layer must stay pure; do not depend on outer layers or lib helpers.",
@@ -268,6 +271,9 @@ export default [
                 "@/core/use-cases/**",
                 "@/core/repositories/**",
                 "@/core/services/**",
+                // Allow service interfaces for type annotations (DI container resolution)
+                "!@/core/services/*.interface",
+                "!@/core/services/**/*.interface",
                 "@/core/domain/entities/**",
                 "@/core/domain/events/**",
                 "@/infrastructure/**",

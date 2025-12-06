@@ -7,6 +7,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IContractTypeRepository } from "@/core/repositories/contract-type.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import { ContractType } from "@/core/domain/entities/contract-type.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateContractTypeRequest {
   name: string;
@@ -22,6 +23,9 @@ export class CreateContractTypeUseCase {
     private contractTypeRepository: IContractTypeRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateContractTypeRequest): Promise<ContractType> {

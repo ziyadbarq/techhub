@@ -29,6 +29,7 @@ import type {
 import { PrismaUserRoleRepository } from "../prisma-user-role.repository";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Mock PrismaClient
@@ -48,6 +49,11 @@ function createMockPrismaClient(): PrismaClient {
     },
   } as unknown as PrismaClient;
 }
+
+// Mock ID generator for tests
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => "test-cuid-clx7abc123"),
+};
 
 describe("PrismaUserRoleRepository", () => {
   let repository: PrismaUserRoleRepository;
@@ -603,11 +609,14 @@ describe("PrismaUserRoleRepository", () => {
   describe("create", () => {
     it("should create a new user role assignment", async () => {
       // Arrange
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: "role-1",
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: "role-1",
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
 
       const mockUserRole: PrismaUserRole = {
         id: userRole.id,
@@ -642,12 +651,15 @@ describe("PrismaUserRoleRepository", () => {
     it("should create user role with expiration", async () => {
       // Arrange
       const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: "role-1",
-        expiresAt,
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: "role-1",
+          expiresAt,
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
 
       const mockUserRole: PrismaUserRole = {
         id: userRole.id,
@@ -669,11 +681,14 @@ describe("PrismaUserRoleRepository", () => {
 
     it("should handle duplicate assignment errors", async () => {
       // Arrange
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: "role-1",
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: "role-1",
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
 
       const error = new Error("Unique constraint violation");
       vi.mocked(mockPrisma.userRole.create).mockRejectedValue(error);
@@ -1003,11 +1018,14 @@ describe("PrismaUserRoleRepository", () => {
 
     it("should propagate errors from create", async () => {
       // Arrange
-      const userRole = UserRole.create({
-        userId: "user-1",
-        roleId: "role-1",
-        createdBy: "admin-1",
-      });
+      const userRole = UserRole.create(
+        {
+          userId: "user-1",
+          roleId: "role-1",
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
 
       const error = new Error("Foreign key constraint");
       vi.mocked(mockPrisma.userRole.create).mockRejectedValue(error);

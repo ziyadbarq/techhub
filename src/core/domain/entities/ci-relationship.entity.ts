@@ -5,6 +5,8 @@
  * Supports both unidirectional and bidirectional relationships with temporal validity.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export interface CIRelationshipProps {
   id: string;
   fromCiId: string;
@@ -41,7 +43,10 @@ export class CIRelationship {
   /**
    * Factory method to create a new CI relationship
    */
-  static create(props: CreateCIRelationshipProps): CIRelationship {
+  static create(
+    props: CreateCIRelationshipProps,
+    idGenerator: IIdGenerator,
+  ): CIRelationship {
     // Validation
     if (!props.fromCiId?.trim()) {
       throw new Error("From CI ID is required");
@@ -65,7 +70,7 @@ export class CIRelationship {
     }
 
     return new CIRelationship({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       fromCiId: props.fromCiId,
       toCiId: props.toCiId,
       relationshipTypeId: props.relationshipTypeId,

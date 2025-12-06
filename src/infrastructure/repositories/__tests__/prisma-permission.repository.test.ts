@@ -20,6 +20,7 @@ import type { PrismaClient } from "@/generated/prisma/server";
 import type { Permission as PrismaPermission } from "@/generated/prisma";
 import { PrismaPermissionRepository } from "../prisma-permission.repository";
 import { Permission } from "@/core/domain/entities/permission.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Mock PrismaClient
@@ -39,6 +40,11 @@ function createMockPrismaClient(): PrismaClient {
     },
   } as unknown as PrismaClient;
 }
+
+// Mock ID generator for tests
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => "test-cuid-clx7abc123"),
+};
 
 describe("PrismaPermissionRepository", () => {
   let repository: PrismaPermissionRepository;
@@ -429,12 +435,15 @@ describe("PrismaPermissionRepository", () => {
   describe("create", () => {
     it("should create a new permission", async () => {
       // Arrange
-      const permission = Permission.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-        description: "Allow creating tasks",
-      });
+      const permission = Permission.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+          description: "Allow creating tasks",
+        },
+        mockIdGenerator,
+      );
 
       const mockPermission: PrismaPermission = {
         id: permission.id,
@@ -476,12 +485,15 @@ describe("PrismaPermissionRepository", () => {
 
     it("should create permission with system flag", async () => {
       // Arrange
-      const permission = Permission.create({
-        resource: "rbac",
-        action: "manage",
-        displayName: "Manage RBAC",
-        isSystem: true,
-      });
+      const permission = Permission.create(
+        {
+          resource: "rbac",
+          action: "manage",
+          displayName: "Manage RBAC",
+          isSystem: true,
+        },
+        mockIdGenerator,
+      );
 
       const mockPermission: PrismaPermission = {
         id: permission.id,
@@ -507,11 +519,14 @@ describe("PrismaPermissionRepository", () => {
 
     it("should handle duplicate permission errors", async () => {
       // Arrange
-      const permission = Permission.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = Permission.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
 
       const error = new Error("Unique constraint violation");
       vi.mocked(mockPrisma.permission.create).mockRejectedValue(error);
@@ -526,11 +541,14 @@ describe("PrismaPermissionRepository", () => {
   describe("update", () => {
     it("should update an existing permission", async () => {
       // Arrange
-      const original = Permission.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const original = Permission.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
 
       const updated = original.update({
         displayName: "Create New Task",
@@ -572,11 +590,14 @@ describe("PrismaPermissionRepository", () => {
 
     it("should deactivate a permission", async () => {
       // Arrange
-      const original = Permission.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const original = Permission.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
 
       const deactivated = original.deactivate();
 
@@ -604,11 +625,14 @@ describe("PrismaPermissionRepository", () => {
 
     it("should handle update errors", async () => {
       // Arrange
-      const permission = Permission.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = Permission.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
 
       const error = new Error("Record not found");
       vi.mocked(mockPrisma.permission.update).mockRejectedValue(error);

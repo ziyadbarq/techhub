@@ -9,6 +9,7 @@ import type { IAssetKitItemRepository } from "@/core/repositories/asset-kit-item
 import type { IAssetKitCheckoutItemRepository } from "@/core/repositories/asset-kit-checkout-item.repository.interface";
 import type { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.entity";
 import { AssetKitCheckoutItem } from "@/core/domain/entities/asset-kit-checkout-item.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateKitCheckoutRequest {
   kitId: string;
@@ -29,6 +30,9 @@ export class CreateKitCheckoutUseCase {
     private readonly kitItemRepository: IAssetKitItemRepository,
     @inject(DI_TOKENS.IAssetKitCheckoutItemRepository)
     private readonly checkoutItemRepository: IAssetKitCheckoutItemRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateKitCheckoutRequest): Promise<AssetKitCheckout> {
@@ -50,25 +54,34 @@ export class CreateKitCheckoutUseCase {
     }
 
     // Create checkout
-    const checkout = AssetKitCheckout.create({
-      kitId: request.kitId,
-      assignedToPersonId: request.assignedToPersonId,
-      assignedToOrgUnitId: request.assignedToOrgUnitId,
-      checkoutDate: request.checkoutDate,
-      expectedReturnDate: request.expectedReturnDate,
-      purpose: request.purpose,
-    });
+    const checkout = AssetKitCheckout.create(
+      {
+        kitId: request.kitId,
+        assignedToPersonId: request.assignedToPersonId,
+        assignedToOrgUnitId: request.assignedToOrgUnitId,
+        checkoutDate: request.checkoutDate,
+        expectedReturnDate: request.expectedReturnDate,
+        purpose: request.purpose,
+      },
+      this.idGenerator,
+    );
 
-    const createdCheckout = await this.kitCheckoutRepository.create(checkout);
+    const createdCheckout = await this.kitCheckoutRepository.create(
+      checkout,
+      this.idGenerator,
+    );
 
     // Create checkout items for each asset
     for (const assetId of request.assetIds) {
-      const checkoutItem = AssetKitCheckoutItem.create({
-        checkoutId: createdCheckout.id,
-        assetId,
-        checkoutDate: request.checkoutDate,
-      });
-      await this.checkoutItemRepository.create(checkoutItem);
+      const checkoutItem = AssetKitCheckoutItem.create(
+        {
+          checkoutId: createdCheckout.id,
+          assetId,
+          checkoutDate: request.checkoutDate,
+        },
+        this.idGenerator,
+      );
+      await this.checkoutItemRepository.create(checkoutItem, this.idGenerator);
     }
 
     return createdCheckout;

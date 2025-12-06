@@ -5,6 +5,8 @@
  * Used for MDM integration, compliance tracking, and cross-referencing with ITAM Assets.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export type IntuneDeviceOwnershipType = "CORPORATE" | "PERSONAL" | "UNKNOWN";
 
 export type IntuneComplianceState =
@@ -142,7 +144,10 @@ export class IntuneDevice {
   /**
    * Factory method to create a new Intune Device
    */
-  static create(props: CreateIntuneDeviceProps): IntuneDevice {
+  static create(
+    props: CreateIntuneDeviceProps,
+    idGenerator: IIdGenerator,
+  ): IntuneDevice {
     // Validation
     this.validateIntuneDeviceId(props.intuneDeviceId);
     this.validateDeviceName(props.deviceName);
@@ -150,7 +155,7 @@ export class IntuneDevice {
     const now = new Date();
 
     return new IntuneDevice({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       intuneDeviceId: props.intuneDeviceId.trim(),
       azureAdDeviceId: props.azureAdDeviceId?.trim() || null,
       deviceName: props.deviceName.trim(),

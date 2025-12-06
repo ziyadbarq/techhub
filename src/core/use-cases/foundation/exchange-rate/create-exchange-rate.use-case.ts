@@ -8,6 +8,7 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import { ExchangeRate } from "@/core/domain/entities/exchange-rate.entity";
 import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateExchangeRateProps {
   currency: string;
@@ -20,6 +21,9 @@ export class CreateExchangeRateUseCase {
   constructor(
     @inject(DI_TOKENS.IExchangeRateRepository)
     private readonly exchangeRateRepository: IExchangeRateRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

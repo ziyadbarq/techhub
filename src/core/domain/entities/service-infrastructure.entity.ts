@@ -5,6 +5,7 @@
  * provider details, network configuration, backup settings).
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { ServiceLocation } from "@/generated/prisma";
 
 export interface ServiceInfrastructureProps {
@@ -47,6 +48,7 @@ export class ServiceInfrastructure {
 
   static create(
     props: CreateServiceInfrastructureProps,
+    idGenerator: IIdGenerator,
   ): ServiceInfrastructure {
     ServiceInfrastructure.validateServiceId(props.serviceId);
     ServiceInfrastructure.validateLocation(props.location);
@@ -74,7 +76,7 @@ export class ServiceInfrastructure {
     const now = new Date();
 
     return new ServiceInfrastructure({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       serviceId: props.serviceId,
       location: props.location,
       cloudProvider: props.cloudProvider?.trim() || null,

@@ -6,8 +6,8 @@ import { z } from "zod";
 
 // Create Contract DTO
 export const CreateContractSchema = z.object({
-  contractTypeId: z.string().uuid("Invalid contract type ID"),
-  vendorId: z.string().uuid("Invalid vendor ID"),
+  contractTypeId: z.string().min(24).max(25),
+  vendorId: z.string().min(24).max(25),
   name: z
     .string()
     .trim()
@@ -51,8 +51,8 @@ export const CreateContractSchema = z.object({
 
 // Update Contract DTO
 export const UpdateContractSchema = z.object({
-  contractTypeId: z.string().uuid("Invalid contract type ID").optional(),
-  vendorId: z.string().uuid("Invalid vendor ID").optional(),
+  contractTypeId: z.string().min(24).max(25).optional(),
+  vendorId: z.string().min(24).max(25).optional(),
   name: z
     .string()
     .trim()

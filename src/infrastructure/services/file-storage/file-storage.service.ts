@@ -11,11 +11,11 @@
  * - Safe path resolution
  */
 
-import { injectable } from "inversify";
+import { injectable, inject } from "inversify";
 import { promises as fs } from "fs";
 import path from "path";
-import { createId } from "@paralleldrive/cuid2";
-import type { IFileStorageService } from "@/core/services";
+import type { IFileStorageService, IIdGenerator } from "@/core/services";
+import { DI_TOKENS } from "@/di/types";
 
 type FileEncoding = "utf-8" | "binary";
 
@@ -36,7 +36,10 @@ export class FileStorageService implements IFileStorageService {
    */
   private readonly projectRoot: string;
 
-  constructor() {
+  constructor(
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
+  ) {
     // Use process.cwd() as project root
     this.projectRoot = process.cwd();
   }
@@ -66,7 +69,7 @@ export class FileStorageService implements IFileStorageService {
       throw new Error(`File name must have an extension: ${fileName}`);
     }
 
-    const uniqueName = `${createId()}${ext}`;
+    const uniqueName = `${this.idGenerator.generateId()}${ext}`;
     const dirPath = path.join(this.uploadsDir, year, month);
     const storagePath = path.join(dirPath, uniqueName);
 

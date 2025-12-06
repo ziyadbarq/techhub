@@ -9,6 +9,7 @@ import type { IVendorRepository } from "@/core/repositories/vendor.repository.in
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import type { LicenseMetricType } from "@/core/domain/entities/license-product.entity";
 import { LicenseProduct } from "@/core/domain/entities/license-product.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateLicenseProductRequest {
   name: string;
@@ -28,6 +29,9 @@ export class CreateLicenseProductUseCase {
     private vendorRepository: IVendorRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateLicenseProductRequest): Promise<LicenseProduct> {
@@ -58,14 +62,17 @@ export class CreateLicenseProductUseCase {
     }
 
     // Create license product entity
-    const licenseProduct = LicenseProduct.create({
-      name: request.name,
-      code,
-      vendorId: request.vendorId,
-      metricType: request.metricType,
-      description: request.description,
-      lifecycleModelId: request.lifecycleModelId,
-    });
+    const licenseProduct = LicenseProduct.create(
+      {
+        name: request.name,
+        code,
+        vendorId: request.vendorId,
+        metricType: request.metricType,
+        description: request.description,
+        lifecycleModelId: request.lifecycleModelId,
+      },
+      this.idGenerator,
+    );
 
     return await this.licenseProductRepository.create(licenseProduct);
   }

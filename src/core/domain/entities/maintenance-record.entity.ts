@@ -3,7 +3,7 @@
  * Represents an actual maintenance task performed or scheduled on an asset
  */
 
-import { createId } from "@paralleldrive/cuid2";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { MaintenanceStatus } from "../value-objects/maintenance-status";
 import {
   canTransitionTo,
@@ -51,7 +51,10 @@ export class MaintenanceRecord {
   /**
    * Create a new MaintenanceRecord
    */
-  static create(props: CreateMaintenanceRecordProps): MaintenanceRecord {
+  static create(
+    props: CreateMaintenanceRecordProps,
+    idGenerator: IIdGenerator,
+  ): MaintenanceRecord {
     // Validation
     const title = props.title.trim();
     if (title.length < 3 || title.length > 200) {
@@ -84,7 +87,7 @@ export class MaintenanceRecord {
     const now = new Date();
 
     return new MaintenanceRecord({
-      id: createId(),
+      id: idGenerator.generateId(),
       assetId: props.assetId,
       maintenanceScheduleId: props.maintenanceScheduleId ?? null,
       title,

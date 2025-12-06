@@ -3,7 +3,7 @@
  * Represents user-specific preferences for display and notifications
  */
 
-import { createId } from "@paralleldrive/cuid2";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface NotificationPreferences {
   emailNotifications: boolean;
@@ -61,13 +61,16 @@ export class UserPreferences {
   }
 
   // Factory method for creating new user preferences
-  static create(params: {
-    userId: string;
-    timezone?: string;
-    dateFormat?: string;
-    currencyDisplay?: string;
-    notifications?: Partial<NotificationPreferences>;
-  }): UserPreferences {
+  static create(
+    params: {
+      userId: string;
+      timezone?: string;
+      dateFormat?: string;
+      currencyDisplay?: string;
+      notifications?: Partial<NotificationPreferences>;
+    },
+    idGenerator: IIdGenerator,
+  ): UserPreferences {
     const now = new Date();
     const defaultNotifications: NotificationPreferences = {
       emailNotifications: true,
@@ -80,7 +83,7 @@ export class UserPreferences {
     };
 
     return new UserPreferences({
-      id: createId(),
+      id: idGenerator.generateId(),
       userId: params.userId,
       timezone: params.timezone ?? "Asia/Riyadh",
       dateFormat: params.dateFormat ?? "dd/MM/yyyy",

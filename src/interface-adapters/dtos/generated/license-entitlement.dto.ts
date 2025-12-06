@@ -7,8 +7,8 @@ import { z } from "zod";
 // Create Schema
 export const CreateLicenseEntitlementSchema = z
   .object({
-    licenseProductId: z.string().uuid("Invalid license product ID"),
-    contractId: z.string().uuid("Invalid contract ID").optional().nullable(),
+    licenseProductId: z.string().min(24).max(25),
+    contractId: z.string().min(24).max(25).optional().nullable(),
     purchasedQuantity: z
       .number()
       .int("Purchased quantity must be an integer")
@@ -55,7 +55,7 @@ export type CreateLicenseEntitlementDTO = z.infer<
 // Update Schema
 export const UpdateLicenseEntitlementSchema = z
   .object({
-    id: z.string().uuid("Invalid entitlement ID"),
+    id: z.string().min(24).max(25),
     purchasedQuantity: z
       .number()
       .int("Purchased quantity must be an integer")

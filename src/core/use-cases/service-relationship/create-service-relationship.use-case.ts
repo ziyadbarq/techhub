@@ -2,6 +2,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRelationshipRepository } from "../../repositories/service-relationship.repository.interface";
 import type { IServiceRepository } from "../../repositories/service.repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import {
   ServiceRelationship,
   type CreateServiceRelationshipProps,
@@ -16,6 +17,9 @@ export class CreateServiceRelationshipUseCase {
     private readonly serviceRelationshipRepository: IServiceRelationshipRepository,
     @inject(DI_TOKENS.IServiceRepository)
     private readonly serviceRepository: IServiceRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(
@@ -51,7 +55,7 @@ export class CreateServiceRelationshipUseCase {
       );
     }
 
-    const relationship = ServiceRelationship.create(request);
+    const relationship = ServiceRelationship.create(request, this.idGenerator);
     return await this.serviceRelationshipRepository.create(relationship);
   }
 }

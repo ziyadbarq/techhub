@@ -18,6 +18,7 @@ import { AssetModel } from "@/core/domain/entities/asset-model.entity";
 import { Asset } from "@/core/domain/entities/asset.entity";
 import type { IntuneDevice } from "@/core/domain/entities/intune-device.entity";
 import { VendorType } from "@/core/domain/value-objects/foundation-enums";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateAssetFromIntuneDeviceInput {
   /** ID of the Intune device to create an asset from */
@@ -59,6 +60,8 @@ export class CreateAssetFromIntuneDeviceUseCase {
     private readonly assetRepository: IAssetRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {
     this.logger = logger.child({
       useCase: "CreateAssetFromIntuneDeviceUseCase",

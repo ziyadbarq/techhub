@@ -14,6 +14,7 @@ import {
   type CreateServiceSlaMetricProps,
 } from "@/core/domain/entities/service-sla-metric.entity";
 import type { SlaMetricType, SlaComplianceStatus } from "@/generated/prisma";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface RecordSlaMetricRequest {
   serviceId: string;
@@ -37,6 +38,9 @@ export class RecordSlaMetricUseCase {
     private readonly slaMetricRepository: IServiceSlaMetricRepository,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: RecordSlaMetricRequest): Promise<ServiceSlaMetric> {
@@ -71,7 +75,7 @@ export class RecordSlaMetricUseCase {
       notes: request.notes,
     };
 
-    const metric = ServiceSlaMetric.create(createProps);
+    const metric = ServiceSlaMetric.create(createProps, this.idGenerator);
 
     // Persist the metric
     const savedMetric = await this.slaMetricRepository.create(metric);

@@ -9,6 +9,7 @@ import { DI_TOKENS } from "@/di/types";
 import { AssetCategory } from "@/core/domain/entities/asset-category.entity";
 import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateAssetCategoryProps {
   code?: string;
@@ -24,6 +25,9 @@ export class CreateAssetCategoryUseCase {
     private readonly assetCategoryRepository: IAssetCategoryRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

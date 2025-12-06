@@ -4,6 +4,7 @@ import type { IAssetReservationRepository } from "@/core/repositories/asset-rese
 import type { IAssetReservationConflictRepository } from "@/core/repositories/asset-reservation-conflict.repository.interface";
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { AssetReservation } from "@/core/domain/entities/asset-reservation.entity";
 import { LogExecution } from "@/lib/decorators";
 
@@ -29,6 +30,8 @@ export class CreateReservationUseCase {
     private readonly assignmentRepository: IAssetAssignmentRepository,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   @LogExecution("reservation.create")
@@ -89,16 +92,19 @@ export class CreateReservationUseCase {
     }
 
     // Create the reservation (only if no conflicts)
-    const reservation = AssetReservation.create({
-      assetId: request.assetId,
-      reservedForPersonId: request.reservedForPersonId,
-      reservedForOrgUnitId: request.reservedForOrgUnitId,
-      reservedById: request.reservedById,
-      startDate: request.startDate,
-      endDate: request.endDate,
-      purpose: request.purpose,
-      note: request.notes,
-    });
+    const reservation = AssetReservation.create(
+      {
+        assetId: request.assetId,
+        reservedForPersonId: request.reservedForPersonId,
+        reservedForOrgUnitId: request.reservedForOrgUnitId,
+        reservedById: request.reservedById,
+        startDate: request.startDate,
+        endDate: request.endDate,
+        purpose: request.purpose,
+        note: request.notes,
+      },
+      this.idGenerator,
+    );
 
     const createdReservation =
       await this.reservationRepository.create(reservation);

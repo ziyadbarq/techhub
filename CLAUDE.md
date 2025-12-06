@@ -145,6 +145,12 @@ See **[docs/README.md](docs/README.md)** for full documentation index (Architect
 - Resolve dependencies: `getContainer().get(DI_TOKENS.ServiceName)`, never use `new`
 - See [DI_MODULARIZATION.md](docs/architecture/DI_MODULARIZATION.md)
 
+**ID Generation**:
+- CUID2-based centralized service via DI: `IIdGenerator` interface, `CuidIdGeneratorService` implementation
+- Entities: `Entity.create(props, idGenerator)` for code-generated IDs
+- DTOs: Validate internal IDs with `z.string().min(24).max(25)` (CUID2), external system IDs with `z.string().uuid()` (Azure AD)
+- See [ID_GENERATION.md](docs/architecture/ID_GENERATION.md)
+
 ### Feature-Specific Patterns
 
 For specialized features, see dedicated guides:
@@ -165,12 +171,13 @@ For specialized features, see dedicated guides:
 
 ## Development Workflow
 
-1. **Understand the slice** - Trace Presentation → Controllers → Use Cases → Repositories
-2. **Use DI container** - Resolve via `getContainer()`/`resolve()`, never `new`
-3. **Check permissions** - Use `requirePermission()` in server actions
-4. **Validate early** - DTOs (Zod) at boundaries, entities for business rules
-5. **Use structured logging** - Inject `ILoggerService`, never `console.log`
-6. **Before committing** - Run `npm run validate` (type-check + lint + test)
+1. **Study existing patterns** - Review similar completed features to learn established patterns before implementing
+2. **Understand the slice** - Trace Presentation → Controllers → Use Cases → Repositories
+3. **Use DI container** - Resolve via `getContainer()`/`resolve()`, never `new`
+4. **Check permissions** - Use `requirePermission()` in server actions
+5. **Validate early** - DTOs (Zod) at boundaries, entities for business rules
+6. **Use structured logging** - Inject `ILoggerService`, never `console.log`
+7. **Before committing** - Run `npm run validate` (type-check + lint + test)
 
 ## Adding New Features - Quick Checklist
 

@@ -8,6 +8,7 @@ import { inject, injectable } from "inversify";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import { DI_TOKENS } from "@/di/types";
 import { Permission } from "@/core/domain/entities/permission.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreatePermissionParams {
   resource: string;
@@ -23,6 +24,9 @@ export class CreatePermissionUseCase {
   constructor(
     @inject(DI_TOKENS.IPermissionRepository)
     private readonly permissionRepository: IPermissionRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(params: CreatePermissionParams): Promise<Permission> {
@@ -35,14 +39,17 @@ export class CreatePermissionUseCase {
     }
 
     // Create permission entity
-    const permission = Permission.create({
-      resource: params.resource,
-      action: params.action,
-      displayName: params.displayName,
-      description: params.description,
-      isSystem: params.isSystem ?? false,
-      isActive: params.isActive ?? true,
-    });
+    const permission = Permission.create(
+      {
+        resource: params.resource,
+        action: params.action,
+        displayName: params.displayName,
+        description: params.description,
+        isSystem: params.isSystem ?? false,
+        isActive: params.isActive ?? true,
+      },
+      this.idGenerator,
+    );
 
     // Persist to database
     return this.permissionRepository.create(permission);

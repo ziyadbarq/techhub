@@ -6,7 +6,11 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { AssignPermissionsToRoleUseCase } from "../assign-permissions-to-role.use-case";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
-import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
+import type {
+  IAuditLogRepository,
+  CreateAuditLogParams,
+  AuditLogEntry,
+} from "@/core/repositories/audit-log-repository.interface";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 import { Role } from "@/core/domain/entities/role.entity";
 import { Permission } from "@/core/domain/entities/permission.entity";
@@ -16,6 +20,7 @@ import {
   SystemRoleModificationError,
 } from "@/core/domain/errors/rbac-errors";
 import type { IRbacPolicyService } from "@/core/services/rbac-policy.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 class MockRoleRepository implements Partial<IRoleRepository> {
@@ -104,12 +109,27 @@ class MockPermissionRepository implements Partial<IPermissionRepository> {
 }
 
 class MockAuditLogRepository implements Partial<IAuditLogRepository> {
-  create = vi.fn().mockResolvedValue({
-    id: "audit-1",
-    action: "role:assign-permissions",
-    createdAt: new Date(),
-  });
+  create = vi.fn(
+    async (params: CreateAuditLogParams): Promise<AuditLogEntry> => ({
+      id: "audit-1",
+      userId: params.userId,
+      action: params.action,
+      entityType: params.entityType,
+      entityId: params.entityId,
+      changes: params.changes,
+      metadata: params.metadata,
+      ipAddress: params.ipAddress,
+      userAgent: params.userAgent,
+      createdAt: new Date(),
+    }),
+  );
 }
+
+// Mock ID generator for tests
+let idCounter = 0;
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => `test-cuid-${idCounter++}`),
+};
 
 describe("AssignPermissionsToRoleUseCase", () => {
   let useCase: AssignPermissionsToRoleUseCase;
@@ -120,6 +140,7 @@ describe("AssignPermissionsToRoleUseCase", () => {
   let mockPermissionCacheService: IPermissionCacheService;
 
   beforeEach(() => {
+    idCounter = 0;
     mockRoleRepository = new MockRoleRepository();
     mockPermissionRepository = new MockPermissionRepository();
     mockAuditLogRepository = new MockAuditLogRepository();
@@ -152,22 +173,31 @@ describe("AssignPermissionsToRoleUseCase", () => {
   describe("execute - successful assignment", () => {
     it("should assign permissions to a role", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const perm1 = Permission.create({
-        resource: "tasks",
-        action: "read",
-        displayName: "Read Tasks",
-      });
-      const perm2 = Permission.create({
-        resource: "tasks",
-        action: "create",
-        displayName: "Create Tasks",
-      });
+      const perm1 = Permission.create(
+        {
+          resource: "tasks",
+          action: "read",
+          displayName: "Read Tasks",
+        },
+        mockIdGenerator,
+      );
+      const perm2 = Permission.create(
+        {
+          resource: "tasks",
+          action: "create",
+          displayName: "Create Tasks",
+        },
+        mockIdGenerator,
+      );
       mockPermissionRepository.setPermission(perm1);
       mockPermissionRepository.setPermission(perm2);
 
@@ -185,27 +215,39 @@ describe("AssignPermissionsToRoleUseCase", () => {
 
     it("should replace permissions (remove deselected ones)", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const perm1 = Permission.create({
-        resource: "tasks",
-        action: "read",
-        displayName: "Read Tasks",
-      });
-      const perm2 = Permission.create({
-        resource: "tasks",
-        action: "create",
-        displayName: "Create Tasks",
-      });
-      const perm3 = Permission.create({
-        resource: "tasks",
-        action: "delete",
-        displayName: "Delete Tasks",
-      });
+      const perm1 = Permission.create(
+        {
+          resource: "tasks",
+          action: "read",
+          displayName: "Read Tasks",
+        },
+        mockIdGenerator,
+      );
+      const perm2 = Permission.create(
+        {
+          resource: "tasks",
+          action: "create",
+          displayName: "Create Tasks",
+        },
+        mockIdGenerator,
+      );
+      const perm3 = Permission.create(
+        {
+          resource: "tasks",
+          action: "delete",
+          displayName: "Delete Tasks",
+        },
+        mockIdGenerator,
+      );
       [perm1, perm2, perm3].forEach((p) =>
         mockPermissionRepository.setPermission(p),
       );
@@ -227,17 +269,23 @@ describe("AssignPermissionsToRoleUseCase", () => {
 
     it("should create audit log entry", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const perm1 = Permission.create({
-        resource: "tasks",
-        action: "read",
-        displayName: "Read Tasks",
-      });
+      const perm1 = Permission.create(
+        {
+          resource: "tasks",
+          action: "read",
+          displayName: "Read Tasks",
+        },
+        mockIdGenerator,
+      );
       mockPermissionRepository.setPermission(perm1);
 
       // Act
@@ -264,17 +312,23 @@ describe("AssignPermissionsToRoleUseCase", () => {
 
     it("should invalidate entire permission cache", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const perm1 = Permission.create({
-        resource: "tasks",
-        action: "read",
-        displayName: "Read Tasks",
-      });
+      const perm1 = Permission.create(
+        {
+          resource: "tasks",
+          action: "read",
+          displayName: "Read Tasks",
+        },
+        mockIdGenerator,
+      );
       mockPermissionRepository.setPermission(perm1);
 
       // Act
@@ -292,11 +346,14 @@ describe("AssignPermissionsToRoleUseCase", () => {
   describe("execute - validation", () => {
     it("should throw RoleNotFoundError if role does not exist", async () => {
       // Arrange
-      const perm1 = Permission.create({
-        resource: "tasks",
-        action: "read",
-        displayName: "Read Tasks",
-      });
+      const perm1 = Permission.create(
+        {
+          resource: "tasks",
+          action: "read",
+          displayName: "Read Tasks",
+        },
+        mockIdGenerator,
+      );
       mockPermissionRepository.setPermission(perm1);
 
       // Act & Assert
@@ -311,18 +368,24 @@ describe("AssignPermissionsToRoleUseCase", () => {
 
     it("should throw SystemRoleModificationError for system roles", async () => {
       // Arrange
-      const role = Role.create({
-        name: "admin",
-        displayName: "Admin",
-        isSystem: true,
-      });
+      const role = Role.create(
+        {
+          name: "admin",
+          displayName: "Admin",
+          isSystem: true,
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const perm1 = Permission.create({
-        resource: "tasks",
-        action: "read",
-        displayName: "Read Tasks",
-      });
+      const perm1 = Permission.create(
+        {
+          resource: "tasks",
+          action: "read",
+          displayName: "Read Tasks",
+        },
+        mockIdGenerator,
+      );
       mockPermissionRepository.setPermission(perm1);
 
       // Act & Assert
@@ -337,17 +400,23 @@ describe("AssignPermissionsToRoleUseCase", () => {
 
     it("should throw PermissionNotFoundError if any permission does not exist", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const perm1 = Permission.create({
-        resource: "tasks",
-        action: "read",
-        displayName: "Read Tasks",
-      });
+      const perm1 = Permission.create(
+        {
+          resource: "tasks",
+          action: "read",
+          displayName: "Read Tasks",
+        },
+        mockIdGenerator,
+      );
       mockPermissionRepository.setPermission(perm1);
 
       // Act & Assert - One valid, one invalid
@@ -362,10 +431,13 @@ describe("AssignPermissionsToRoleUseCase", () => {
 
     it("should validate all permissions exist before assignment", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
       // Act & Assert - All invalid
@@ -382,10 +454,13 @@ describe("AssignPermissionsToRoleUseCase", () => {
   describe("edge cases", () => {
     it("should handle empty permission list", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
       // Act
@@ -401,17 +476,23 @@ describe("AssignPermissionsToRoleUseCase", () => {
 
     it("should handle assignment without assignedBy", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
-      const perm1 = Permission.create({
-        resource: "tasks",
-        action: "read",
-        displayName: "Read Tasks",
-      });
+      const perm1 = Permission.create(
+        {
+          resource: "tasks",
+          action: "read",
+          displayName: "Read Tasks",
+        },
+        mockIdGenerator,
+      );
       mockPermissionRepository.setPermission(perm1);
 
       // Act
@@ -430,18 +511,24 @@ describe("AssignPermissionsToRoleUseCase", () => {
 
     it("should handle large number of permissions", async () => {
       // Arrange
-      const role = Role.create({
-        name: "super-role",
-        displayName: "Super Role",
-      });
+      const role = Role.create(
+        {
+          name: "super-role",
+          displayName: "Super Role",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(role);
 
       const permissions = Array.from({ length: 50 }, (_, i) =>
-        Permission.create({
-          resource: "resource",
-          action: `action-${i}`,
-          displayName: `Action ${i}`,
-        }),
+        Permission.create(
+          {
+            resource: "resource",
+            action: `action-${i}`,
+            displayName: `Action ${i}`,
+          },
+          mockIdGenerator,
+        ),
       );
       permissions.forEach((p) => mockPermissionRepository.setPermission(p));
 

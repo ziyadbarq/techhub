@@ -11,6 +11,7 @@ import {
   type CreateFieldTemplateProps,
 } from "@/core/domain/entities/field-template.entity";
 import type { IFieldTemplateRepository } from "@/core/repositories/field-template.repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateFieldTemplateInput {
   name: string;
@@ -30,6 +31,9 @@ export class CreateFieldTemplateUseCase {
   constructor(
     @inject(DI_TOKENS.IFieldTemplateRepository)
     private readonly fieldTemplateRepository: IFieldTemplateRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

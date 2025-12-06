@@ -5,6 +5,7 @@
  * response time, resolution time, uptime, error rate, and throughput.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { SlaMetricType, SlaComplianceStatus } from "@/generated/prisma";
 
 export interface ServiceSlaMetricProps {
@@ -41,11 +42,14 @@ export class ServiceSlaMetric {
     this.validate();
   }
 
-  static create(props: CreateServiceSlaMetricProps): ServiceSlaMetric {
+  static create(
+    props: CreateServiceSlaMetricProps,
+    idGenerator: IIdGenerator,
+  ): ServiceSlaMetric {
     const now = new Date();
 
     return new ServiceSlaMetric({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       serviceId: props.serviceId,
       metricType: props.metricType,
       periodStart: props.periodStart,

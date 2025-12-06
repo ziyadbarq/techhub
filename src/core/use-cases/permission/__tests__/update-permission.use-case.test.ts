@@ -9,11 +9,12 @@
  * - Repository integration
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { UpdatePermissionUseCase } from "../update-permission.use-case";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { Permission } from "@/core/domain/entities/permission.entity";
 import { Permission as PermissionEntity } from "@/core/domain/entities/permission.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Mock Permission Repository
@@ -23,6 +24,11 @@ class MockPermissionRepository implements Partial<IPermissionRepository> {
 
   async findById(id: string): Promise<Permission | null> {
     return this.permissions.get(id) || null;
+  }
+
+  async create(permission: Permission): Promise<Permission> {
+    this.permissions.set(permission.id, permission);
+    return permission;
   }
 
   async update(permission: Permission): Promise<Permission> {
@@ -40,11 +46,18 @@ class MockPermissionRepository implements Partial<IPermissionRepository> {
   }
 }
 
+// Mock ID generator for tests
+let idCounter = 0;
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => `test-cuid-${idCounter++}`),
+};
+
 describe("UpdatePermissionUseCase", () => {
   let useCase: UpdatePermissionUseCase;
   let mockRepository: MockPermissionRepository;
 
   beforeEach(() => {
+    idCounter = 0;
     mockRepository = new MockPermissionRepository();
     useCase = new UpdatePermissionUseCase(
       mockRepository as unknown as IPermissionRepository,
@@ -54,13 +67,16 @@ describe("UpdatePermissionUseCase", () => {
   describe("execute - successful updates", () => {
     it("should update all modifiable fields", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-        description: "Old description",
-        isActive: true,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+          description: "Old description",
+          isActive: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -85,13 +101,16 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should update only display name", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "read",
-        displayName: "Read Task",
-        description: "Original description",
-        isActive: true,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "read",
+          displayName: "Read Task",
+          description: "Original description",
+          isActive: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -110,13 +129,16 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should update only description", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "update",
-        displayName: "Update Task",
-        description: "Old description",
-        isActive: true,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "update",
+          displayName: "Update Task",
+          description: "Old description",
+          isActive: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -135,13 +157,16 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should update only isActive status", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "delete",
-        displayName: "Delete Task",
-        description: "Description",
-        isActive: true,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "delete",
+          displayName: "Delete Task",
+          description: "Description",
+          isActive: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -160,12 +185,15 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should activate an inactive permission", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "archive",
-        displayName: "Archive Task",
-        isActive: false,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "archive",
+          displayName: "Archive Task",
+          isActive: false,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -182,13 +210,16 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should update system permission (display name and description only)", async () => {
       // Arrange
-      const systemPermission = PermissionEntity.create({
-        resource: "admin",
-        action: "access",
-        displayName: "Admin Access",
-        description: "Old description",
-        isSystem: true,
-      });
+      const systemPermission = PermissionEntity.create(
+        {
+          resource: "admin",
+          action: "access",
+          displayName: "Admin Access",
+          description: "Old description",
+          isSystem: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(systemPermission);
 
       const params = {
@@ -208,11 +239,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should persist updated permission to repository", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -230,11 +264,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should update updatedAt timestamp", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const originalUpdatedAt = permission.updatedAt;
@@ -289,11 +326,14 @@ describe("UpdatePermissionUseCase", () => {
   describe("execute - validation", () => {
     it("should throw error when updating display name to empty string", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -309,11 +349,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should throw error when updating display name to whitespace-only", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -329,11 +372,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should trim whitespace from display name", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -350,11 +396,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should trim whitespace from description", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -373,13 +422,16 @@ describe("UpdatePermissionUseCase", () => {
   describe("execute - partial updates", () => {
     it("should not change fields when not provided in params", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-        description: "Original description",
-        isActive: true,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+          description: "Original description",
+          isActive: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -398,13 +450,16 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should handle undefined values by not updating those fields", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-        description: "Original description",
-        isActive: true,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+          description: "Original description",
+          isActive: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -427,11 +482,14 @@ describe("UpdatePermissionUseCase", () => {
   describe("execute - immutable fields", () => {
     it("should not change permission ID", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const originalId = permission.id;
@@ -450,11 +508,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should not change permission name (resource:action)", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const originalName = permission.name;
@@ -474,11 +535,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should not change resource", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -495,11 +559,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should not change action", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -516,12 +583,15 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should not change isSystem flag", async () => {
       // Arrange
-      const systemPermission = PermissionEntity.create({
-        resource: "admin",
-        action: "access",
-        displayName: "Admin Access",
-        isSystem: true,
-      });
+      const systemPermission = PermissionEntity.create(
+        {
+          resource: "admin",
+          action: "access",
+          displayName: "Admin Access",
+          isSystem: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(systemPermission);
 
       const params = {
@@ -538,11 +608,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should not change createdAt timestamp", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const originalCreatedAt = permission.createdAt;
@@ -563,11 +636,14 @@ describe("UpdatePermissionUseCase", () => {
   describe("edge cases", () => {
     it("should handle long display name", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -584,11 +660,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should handle long description", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -605,11 +684,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should handle special characters in display name", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {
@@ -626,11 +708,14 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should handle multiple sequential updates", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       // Act - Multiple updates
@@ -659,12 +744,15 @@ describe("UpdatePermissionUseCase", () => {
 
     it("should handle clearing description", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-        description: "Original description",
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+          description: "Original description",
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       const params = {

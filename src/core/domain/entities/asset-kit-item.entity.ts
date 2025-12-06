@@ -5,6 +5,8 @@
  * Defines required asset categories/models with quantities.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export interface AssetKitItemProps {
   id: string;
   assetKitId: string;
@@ -30,7 +32,10 @@ export class AssetKitItem {
     this.validate();
   }
 
-  static create(props: CreateAssetKitItemProps): AssetKitItem {
+  static create(
+    props: CreateAssetKitItemProps,
+    idGenerator: IIdGenerator,
+  ): AssetKitItem {
     if (!props.assetKitId?.trim()) {
       throw new Error("Asset kit ID is required");
     }
@@ -42,7 +47,7 @@ export class AssetKitItem {
     AssetKitItem.validateQuantity(quantity);
 
     return new AssetKitItem({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       assetKitId: props.assetKitId,
       assetCategoryId: props.assetCategoryId,
       assetModelId: props.assetModelId ?? null,

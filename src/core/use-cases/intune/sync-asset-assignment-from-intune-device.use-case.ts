@@ -20,6 +20,7 @@ import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import { AssetAssignment } from "@/core/domain/entities/asset-assignment.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type {
   SyncAssetAssignmentFromIntuneDeviceInput,
   SyncAssetAssignmentFromIntuneDeviceOutput,
@@ -34,6 +35,9 @@ export class SyncAssetAssignmentFromIntuneDeviceUseCase {
     private readonly assignmentRepo: IAssetAssignmentRepository,
     @inject(DI_TOKENS.IPersonRepository)
     private readonly personRepo: IPersonRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   @LogExecution()

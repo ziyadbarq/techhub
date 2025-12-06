@@ -7,6 +7,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IRoleRepository } from "../../repositories/role-repository.interface";
 import type { IAuditLogRepository } from "../../repositories/audit-log-repository.interface";
 import type { ILoggerService } from "@/core/services";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Role } from "../../domain/entities/role.entity";
 import { DuplicateRoleError } from "../../domain/errors/rbac-errors";
 import { LogExecution } from "@/lib/decorators";
@@ -30,6 +31,8 @@ export class CreateRoleUseCase {
     private readonly auditLogRepository: IAuditLogRepository,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   @LogExecution("rbac.role.create")
@@ -41,13 +44,16 @@ export class CreateRoleUseCase {
     }
 
     // Create role entity
-    const role = Role.create({
-      name: request.name,
-      displayName: request.displayName,
-      description: request.description,
-      isSystem: request.isSystem,
-      createdBy: request.createdBy,
-    });
+    const role = Role.create(
+      {
+        name: request.name,
+        displayName: request.displayName,
+        description: request.description,
+        isSystem: request.isSystem,
+        createdBy: request.createdBy,
+      },
+      this.idGenerator,
+    );
 
     // Persist role
     const createdRole = await this.roleRepository.create(role);

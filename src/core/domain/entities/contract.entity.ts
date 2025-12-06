@@ -4,7 +4,7 @@
  * Represents a legal contract or agreement with a vendor for services, licenses, or support.
  */
 
-import { v4 as uuid } from "uuid";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateContractProps {
   contractTypeId: string;
@@ -181,7 +181,10 @@ export class Contract {
   }
 
   // Factory method
-  public static create(props: CreateContractProps): Contract {
+  public static create(
+    props: CreateContractProps,
+    idGenerator: IIdGenerator,
+  ): Contract {
     // Validations
     Contract.validateContractTypeId(props.contractTypeId);
     Contract.validateVendorId(props.vendorId);
@@ -199,7 +202,7 @@ export class Contract {
 
     const now = new Date();
     return new Contract({
-      id: uuid(),
+      id: idGenerator.generateId(),
       contractTypeId: props.contractTypeId,
       vendorId: props.vendorId,
       name: props.name.trim(),

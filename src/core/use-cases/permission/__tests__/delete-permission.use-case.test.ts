@@ -8,11 +8,12 @@
  * - Repository integration
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { DeletePermissionUseCase } from "../delete-permission.use-case";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { Permission } from "@/core/domain/entities/permission.entity";
 import { Permission as PermissionEntity } from "@/core/domain/entities/permission.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Mock Permission Repository
@@ -42,11 +43,18 @@ class MockPermissionRepository implements Partial<IPermissionRepository> {
   }
 }
 
+// Mock ID generator for tests
+let idCounter = 0;
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => `test-cuid-${idCounter++}`),
+};
+
 describe("DeletePermissionUseCase", () => {
   let useCase: DeletePermissionUseCase;
   let mockRepository: MockPermissionRepository;
 
   beforeEach(() => {
+    idCounter = 0;
     mockRepository = new MockPermissionRepository();
     useCase = new DeletePermissionUseCase(
       mockRepository as unknown as IPermissionRepository,
@@ -56,12 +64,15 @@ describe("DeletePermissionUseCase", () => {
   describe("execute - successful deletion", () => {
     it("should delete a regular permission", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-        isSystem: false,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+          isSystem: false,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       // Act
@@ -73,12 +84,15 @@ describe("DeletePermissionUseCase", () => {
 
     it("should not throw error when deleting non-system permission", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "delete",
-        displayName: "Delete Task",
-        isSystem: false,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "delete",
+          displayName: "Delete Task",
+          isSystem: false,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       // Act & Assert
@@ -87,13 +101,16 @@ describe("DeletePermissionUseCase", () => {
 
     it("should delete inactive permission", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "archive",
-        displayName: "Archive Task",
-        isSystem: false,
-        isActive: false,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "archive",
+          displayName: "Archive Task",
+          isSystem: false,
+          isActive: false,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       // Act
@@ -107,12 +124,15 @@ describe("DeletePermissionUseCase", () => {
   describe("execute - system permission protection", () => {
     it("should throw error when deleting system permission", async () => {
       // Arrange
-      const systemPermission = PermissionEntity.create({
-        resource: "admin",
-        action: "access",
-        displayName: "Admin Access",
-        isSystem: true,
-      });
+      const systemPermission = PermissionEntity.create(
+        {
+          resource: "admin",
+          action: "access",
+          displayName: "Admin Access",
+          isSystem: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(systemPermission);
 
       // Act & Assert
@@ -123,12 +143,15 @@ describe("DeletePermissionUseCase", () => {
 
     it("should not delete system permission from repository on error", async () => {
       // Arrange
-      const systemPermission = PermissionEntity.create({
-        resource: "admin",
-        action: "access",
-        displayName: "Admin Access",
-        isSystem: true,
-      });
+      const systemPermission = PermissionEntity.create(
+        {
+          resource: "admin",
+          action: "access",
+          displayName: "Admin Access",
+          isSystem: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(systemPermission);
 
       // Act
@@ -144,13 +167,16 @@ describe("DeletePermissionUseCase", () => {
 
     it("should throw error for inactive system permission", async () => {
       // Arrange
-      const systemPermission = PermissionEntity.create({
-        resource: "admin",
-        action: "access",
-        displayName: "Admin Access",
-        isSystem: true,
-        isActive: false,
-      });
+      const systemPermission = PermissionEntity.create(
+        {
+          resource: "admin",
+          action: "access",
+          displayName: "Admin Access",
+          isSystem: true,
+          isActive: false,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(systemPermission);
 
       // Act & Assert
@@ -195,12 +221,15 @@ describe("DeletePermissionUseCase", () => {
   describe("execute - repository integration", () => {
     it("should call repository delete method", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "update",
-        displayName: "Update Task",
-        isSystem: false,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "update",
+          displayName: "Update Task",
+          isSystem: false,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       let deleteWasCalled = false;
@@ -219,12 +248,15 @@ describe("DeletePermissionUseCase", () => {
 
     it("should only delete after validation passes", async () => {
       // Arrange
-      const systemPermission = PermissionEntity.create({
-        resource: "admin",
-        action: "access",
-        displayName: "Admin Access",
-        isSystem: true,
-      });
+      const systemPermission = PermissionEntity.create(
+        {
+          resource: "admin",
+          action: "access",
+          displayName: "Admin Access",
+          isSystem: true,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(systemPermission);
 
       let deleteWasCalled = false;
@@ -269,24 +301,33 @@ describe("DeletePermissionUseCase", () => {
 
     it("should handle multiple deletions in sequence", async () => {
       // Arrange
-      const permission1 = PermissionEntity.create({
-        resource: "task",
-        action: "create",
-        displayName: "Create Task",
-        isSystem: false,
-      });
-      const permission2 = PermissionEntity.create({
-        resource: "task",
-        action: "read",
-        displayName: "Read Task",
-        isSystem: false,
-      });
-      const permission3 = PermissionEntity.create({
-        resource: "task",
-        action: "update",
-        displayName: "Update Task",
-        isSystem: false,
-      });
+      const permission1 = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "create",
+          displayName: "Create Task",
+          isSystem: false,
+        },
+        mockIdGenerator,
+      );
+      const permission2 = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "read",
+          displayName: "Read Task",
+          isSystem: false,
+        },
+        mockIdGenerator,
+      );
+      const permission3 = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "update",
+          displayName: "Update Task",
+          isSystem: false,
+        },
+        mockIdGenerator,
+      );
 
       mockRepository.addPermission(permission1);
       mockRepository.addPermission(permission2);
@@ -305,12 +346,15 @@ describe("DeletePermissionUseCase", () => {
 
     it("should fail when trying to delete same permission twice", async () => {
       // Arrange
-      const permission = PermissionEntity.create({
-        resource: "task",
-        action: "delete",
-        displayName: "Delete Task",
-        isSystem: false,
-      });
+      const permission = PermissionEntity.create(
+        {
+          resource: "task",
+          action: "delete",
+          displayName: "Delete Task",
+          isSystem: false,
+        },
+        mockIdGenerator,
+      );
       mockRepository.addPermission(permission);
 
       // Act

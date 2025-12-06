@@ -3,6 +3,8 @@
  * Represents the assignment of a role to a user
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export interface UserRoleProps {
   id: string;
   userId: string;
@@ -39,15 +41,18 @@ export class UserRole {
   }
 
   // Factory method for creating a new user role assignment
-  static create(params: {
-    userId: string;
-    roleId: string;
-    expiresAt?: Date;
-    createdBy?: string;
-  }): UserRole {
+  static create(
+    params: {
+      userId: string;
+      roleId: string;
+      expiresAt?: Date;
+      createdBy?: string;
+    },
+    idGenerator: IIdGenerator,
+  ): UserRole {
     return new UserRole(
       {
-        id: crypto.randomUUID(),
+        id: idGenerator.generateId(),
         userId: params.userId,
         roleId: params.roleId,
         expiresAt: params.expiresAt,

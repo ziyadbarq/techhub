@@ -32,6 +32,10 @@ export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
 
   // Fetch currency conversion on mount if currency is not SAR
   React.useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
     async function fetchConversion() {
       // Only convert if we have a purchase cost and currency that's not SAR
       if (!asset.purchaseCost || !asset.currency || asset.currency === "SAR") {

@@ -10,6 +10,7 @@ import type {
   KitType,
 } from "@/core/domain/entities/asset-kit.entity";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateAssetKitRequest {
   name: string;
@@ -26,6 +27,9 @@ export class CreateAssetKitUseCase {
     private readonly assetKitRepository: IAssetKitRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateAssetKitRequest): Promise<AssetKit> {
@@ -40,14 +44,17 @@ export class CreateAssetKitUseCase {
       throw new Error(`Asset kit with code ${code} already exists`);
     }
 
-    const kit = AssetKit.create({
-      name: request.name,
-      code,
-      description: request.description,
-      kitType: request.kitType,
-      isActive: request.isActive ?? true,
-    });
+    const kit = AssetKit.create(
+      {
+        name: request.name,
+        code,
+        description: request.description,
+        kitType: request.kitType,
+        isActive: request.isActive ?? true,
+      },
+      this.idGenerator,
+    );
 
-    return this.assetKitRepository.create(kit);
+    return this.assetKitRepository.create(kit, this.idGenerator);
   }
 }

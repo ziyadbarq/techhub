@@ -3,7 +3,7 @@
  * Represents a feature flag in the system with dependency tracking
  */
 
-import { createId } from "@paralleldrive/cuid2";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export type FeatureFlagCategory = "SYSTEM" | "LAYER_1" | "LAYER_2" | "LAYER_3";
 
@@ -69,20 +69,23 @@ export class FeatureFlag {
   }
 
   // Factory method for creating a new feature flag
-  static create(params: {
-    name: string;
-    displayName: string;
-    description: string;
-    category: FeatureFlagCategory;
-    isEnabled?: boolean;
-    isSystem?: boolean;
-    dependsOn?: string[];
-  }): FeatureFlag {
+  static create(
+    params: {
+      name: string;
+      displayName: string;
+      description: string;
+      category: FeatureFlagCategory;
+      isEnabled?: boolean;
+      isSystem?: boolean;
+      dependsOn?: string[];
+    },
+    idGenerator: IIdGenerator,
+  ): FeatureFlag {
     const now = new Date();
     const name = params.name.toUpperCase().trim();
 
     return new FeatureFlag({
-      id: createId(),
+      id: idGenerator.generateId(),
       name,
       displayName: params.displayName.trim(),
       description: params.description.trim(),

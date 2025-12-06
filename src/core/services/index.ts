@@ -13,6 +13,9 @@ export type { IAIDebugTraceService } from "./ai-debug-trace.service.interface";
 // File Storage Service
 export type { IFileStorageService } from "./file-storage.service.interface";
 
+// ID Generator Service
+export type { IIdGenerator } from "./id-generator.service.interface";
+
 // Logger Service
 export type {
   ILoggerService,

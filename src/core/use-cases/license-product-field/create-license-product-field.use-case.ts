@@ -8,6 +8,7 @@ import type { ILicenseProductFieldRepository } from "@/core/repositories/license
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import { LicenseProductField } from "@/core/domain/entities/license-product-field.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 const TOKENS = DI_TOKENS as Record<string, symbol>;
 
@@ -29,6 +30,9 @@ export class CreateLicenseProductFieldUseCase {
     private licenseProductRepository: ILicenseProductRepository,
     @inject(TOKENS.IFieldDefinitionRepository)
     private fieldDefinitionRepository: IFieldDefinitionRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(
@@ -62,14 +66,17 @@ export class CreateLicenseProductFieldUseCase {
     }
 
     // Create field
-    const field = LicenseProductField.create({
-      licenseProductId: request.licenseProductId,
-      fieldDefinitionId: request.fieldDefinitionId,
-      isRequired: request.isRequired,
-      isVisible: request.isVisible,
-      uiOrder: request.uiOrder,
-      defaultValue: request.defaultValue,
-    });
+    const field = LicenseProductField.create(
+      {
+        licenseProductId: request.licenseProductId,
+        fieldDefinitionId: request.fieldDefinitionId,
+        isRequired: request.isRequired,
+        isVisible: request.isVisible,
+        uiOrder: request.uiOrder,
+        defaultValue: request.defaultValue,
+      },
+      this.idGenerator,
+    );
 
     return await this.fieldRepository.create(field);
   }

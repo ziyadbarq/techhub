@@ -6,8 +6,8 @@ import { z } from "zod";
 
 // Attach Schema (create attachment)
 export const AttachAddonToEntitlementSchema = z.object({
-  licenseEntitlementId: z.string().uuid("Invalid entitlement ID"),
-  licenseAddonId: z.string().uuid("Invalid addon ID"),
+  licenseEntitlementId: z.string().min(24).max(25),
+  licenseAddonId: z.string().min(24).max(25),
   cost: z.number().nonnegative("Cost cannot be negative").optional().nullable(),
   currency: z
     .string()
@@ -27,7 +27,7 @@ export type AttachAddonToEntitlementDTO = z.infer<
 
 // Update Schema
 export const UpdateEntitlementAddonSchema = z.object({
-  id: z.string().uuid("Invalid entitlement addon ID"),
+  id: z.string().min(24).max(25),
   cost: z.number().nonnegative("Cost cannot be negative").optional().nullable(),
   currency: z
     .string()

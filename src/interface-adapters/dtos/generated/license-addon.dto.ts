@@ -6,7 +6,7 @@ import { z } from "zod";
 
 // Create Schema
 export const CreateLicenseAddonSchema = z.object({
-  licenseProductId: z.string().uuid("Invalid license product ID"),
+  licenseProductId: z.string().min(24).max(25),
   name: z
     .string()
     .min(1, "Name is required")
@@ -31,7 +31,7 @@ export type CreateLicenseAddonDTO = z.infer<typeof CreateLicenseAddonSchema>;
 
 // Update Schema
 export const UpdateLicenseAddonSchema = z.object({
-  id: z.string().uuid("Invalid addon ID"),
+  id: z.string().min(24).max(25),
   name: z
     .string()
     .min(1, "Name is required")

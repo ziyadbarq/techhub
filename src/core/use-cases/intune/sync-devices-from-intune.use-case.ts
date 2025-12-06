@@ -34,6 +34,7 @@ import type {
   IntuneFetchDevicesOptions,
 } from "@/core/services/intune-device-mapper.service.interface";
 import { LogExecution } from "@/lib/decorators";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Result of a sync operation
@@ -114,6 +115,8 @@ export class SyncDevicesFromIntuneUseCase {
     private readonly graphService: IMicrosoftGraphService,
     @inject(DI_TOKENS.IIntuneDeviceMapperService)
     private readonly intuneDeviceMapper: IIntuneDeviceMapperService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {
     this.logger = logger.child({ useCase: "SyncDevicesFromIntuneUseCase" });
   }
@@ -264,30 +267,33 @@ export class SyncDevicesFromIntuneUseCase {
           } else {
             // Create new device
             if (!opts.dryRun) {
-              const newDevice = IntuneDevice.create({
-                intuneDeviceId: syncInput.intuneDeviceId,
-                azureAdDeviceId: syncInput.azureAdDeviceId,
-                deviceName: syncInput.deviceName,
-                serialNumber: syncInput.serialNumber,
-                manufacturer: syncInput.manufacturer,
-                model: syncInput.model,
-                operatingSystem: syncInput.operatingSystem,
-                osVersion: syncInput.osVersion,
-                imei: syncInput.imei,
-                wiFiMacAddress: syncInput.wiFiMacAddress,
-                ethernetMacAddress: syncInput.ethernetMacAddress,
-                intuneUserId: syncInput.intuneUserId,
-                userPrincipalName: syncInput.userPrincipalName,
-                userDisplayName: syncInput.userDisplayName,
-                ownershipType: syncInput.ownershipType,
-                complianceState: syncInput.complianceState,
-                managementState: syncInput.managementState,
-                isEncrypted: syncInput.isEncrypted,
-                isSupervised: syncInput.isSupervised,
-                isJailBroken: syncInput.isJailBroken,
-                enrolledDateTime: syncInput.enrolledDateTime,
-                lastSyncDateTime: syncInput.lastSyncDateTime,
-              });
+              const newDevice = IntuneDevice.create(
+                {
+                  intuneDeviceId: syncInput.intuneDeviceId,
+                  azureAdDeviceId: syncInput.azureAdDeviceId,
+                  deviceName: syncInput.deviceName,
+                  serialNumber: syncInput.serialNumber,
+                  manufacturer: syncInput.manufacturer,
+                  model: syncInput.model,
+                  operatingSystem: syncInput.operatingSystem,
+                  osVersion: syncInput.osVersion,
+                  imei: syncInput.imei,
+                  wiFiMacAddress: syncInput.wiFiMacAddress,
+                  ethernetMacAddress: syncInput.ethernetMacAddress,
+                  intuneUserId: syncInput.intuneUserId,
+                  userPrincipalName: syncInput.userPrincipalName,
+                  userDisplayName: syncInput.userDisplayName,
+                  ownershipType: syncInput.ownershipType,
+                  complianceState: syncInput.complianceState,
+                  managementState: syncInput.managementState,
+                  isEncrypted: syncInput.isEncrypted,
+                  isSupervised: syncInput.isSupervised,
+                  isJailBroken: syncInput.isJailBroken,
+                  enrolledDateTime: syncInput.enrolledDateTime,
+                  lastSyncDateTime: syncInput.lastSyncDateTime,
+                },
+                this.idGenerator,
+              );
 
               const createdDevice =
                 await this.deviceRepository.create(newDevice);
@@ -455,11 +461,14 @@ export class SyncDevicesFromIntuneUseCase {
     if (dryRun) return;
 
     try {
-      const history = IntuneComplianceHistory.create({
-        intuneDeviceId: deviceId,
-        previousState,
-        newState,
-      });
+      const history = IntuneComplianceHistory.create(
+        {
+          intuneDeviceId: deviceId,
+          previousState,
+          newState,
+        },
+        this.idGenerator,
+      );
       await this.complianceHistoryRepository.create(history);
       this.logger.debug("Recorded compliance change", {
         deviceId,

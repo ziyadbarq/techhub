@@ -5,7 +5,7 @@
  * (Configuration Item, Asset, or License Entitlement).
  */
 
-import { v4 as uuid } from "uuid";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export enum TargetObjectType {
   CONFIGURATION_ITEM = "CONFIGURATION_ITEM",
@@ -78,6 +78,7 @@ export class ContractLinkedObject {
   // Factory method
   public static create(
     props: CreateContractLinkedObjectProps,
+    idGenerator: IIdGenerator,
   ): ContractLinkedObject {
     // Validations
     ContractLinkedObject.validateContractId(props.contractId);
@@ -85,7 +86,7 @@ export class ContractLinkedObject {
     ContractLinkedObject.validateTargetId(props.targetId);
 
     return new ContractLinkedObject({
-      id: uuid(),
+      id: idGenerator.generateId(),
       contractId: props.contractId,
       targetType: props.targetType,
       targetId: props.targetId,

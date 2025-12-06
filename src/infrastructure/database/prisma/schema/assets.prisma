@@ -10,13 +10,13 @@
 
 // AssetCategory model
 model AssetCategory {
-  id               String    @id @default(cuid())
-  name             String    @unique
-  code             String    @unique
-  description      String?   @db.Text
+  id               String   @id @default(cuid())
+  name             String   @unique
+  code             String   @unique
+  description      String?  @db.Text
   lifecycleModelId String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   // Soft delete fields
   deletedAt   DateTime?
@@ -64,27 +64,27 @@ model AssetCategoryField {
 
 // AssetModel model
 model AssetModel {
-  id                    String    @id @default(cuid())
+  id                    String   @id @default(cuid())
   assetCategoryId       String
   vendorId              String
   name                  String
-  code                  String    @unique
-  description           String?   @db.Text
+  code                  String   @unique
+  description           String?  @db.Text
   defaultWarrantyMonths Int?
   defaultAttributes     Json? // default specs: RAM, CPU, screen size, etc.
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   // Soft delete fields
   deletedAt   DateTime?
   deletedById String?
 
   // Relations
-  assetCategory AssetCategory @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
-  vendor        Vendor        @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  assetCategory AssetCategory  @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
+  vendor        Vendor         @relation(fields: [vendorId], references: [id], onDelete: Restrict)
   assets        Asset[]
   kitItems      AssetKitItem[]
-  deletedBy     Person?       @relation("AssetModelDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedBy     Person?        @relation("AssetModelDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([code])
@@ -118,27 +118,27 @@ model StockLocation {
 
 // StockMovement model
 model StockMovement {
-  id                  String                     @id @default(cuid())
+  id                  String                @id @default(cuid())
   movementType        StockMovementTypeEnum
   stockLocationFromId String?
   stockLocationToId   String?
   assetId             String?
-  quantity            Int                        @default(1)
-  reason              String?                    @db.Text
+  quantity            Int                   @default(1)
+  reason              String?               @db.Text
   performedById       String
-  occurredAt          DateTime                   @default(now())
-  createdAt           DateTime                   @default(now())
+  occurredAt          DateTime              @default(now())
+  createdAt           DateTime              @default(now())
 
   // Void/Cancel support (replaces delete)
-  status              StockMovementStatusEnum    @default(ACTIVE)
-  voidedAt            DateTime?
-  voidedById          String?
-  voidReason          String?                    @db.Text
+  status     StockMovementStatusEnum @default(ACTIVE)
+  voidedAt   DateTime?
+  voidedById String?
+  voidReason String?                 @db.Text
 
   // Source tracking for automatic movements
-  source              StockMovementSourceEnum    @default(MANUAL)
-  sourceReferenceType String?                    // "AssetAssignment", "AssetDisposal", "ImportBatch"
-  sourceReferenceId   String?                    // ID of the triggering entity
+  source              StockMovementSourceEnum @default(MANUAL)
+  sourceReferenceType String? // "AssetAssignment", "AssetDisposal", "ImportBatch"
+  sourceReferenceId   String? // ID of the triggering entity
 
   // Relations
   stockLocationFrom StockLocation? @relation("StockMovementFrom", fields: [stockLocationFromId], references: [id], onDelete: SetNull)
@@ -195,12 +195,12 @@ model Asset {
   updatedById String?
 
   // Relations
-  assetCategory        AssetCategory         @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
-  assetModel           AssetModel?           @relation(fields: [assetModelId], references: [id], onDelete: SetNull)
-  vendor               Vendor?               @relation(fields: [vendorId], references: [id], onDelete: SetNull)
-  contract             Contract?             @relation(fields: [contractId], references: [id], onDelete: SetNull)
-  lifecycleState       LifecycleState?       @relation(fields: [lifecycleStateId], references: [id], onDelete: SetNull)
-  currentStockLocation StockLocation?        @relation(fields: [currentStockLocationId], references: [id], onDelete: SetNull)
+  assetCategory        AssetCategory          @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
+  assetModel           AssetModel?            @relation(fields: [assetModelId], references: [id], onDelete: SetNull)
+  vendor               Vendor?                @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  contract             Contract?              @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  lifecycleState       LifecycleState?        @relation(fields: [lifecycleStateId], references: [id], onDelete: SetNull)
+  currentStockLocation StockLocation?         @relation(fields: [currentStockLocationId], references: [id], onDelete: SetNull)
   warranties           Warranty[]
   configurationItems   ConfigurationItem[]
   stockMovements       StockMovement[]
@@ -236,28 +236,28 @@ model Asset {
 
 // AssetAssignment model
 model AssetAssignment {
-  id                    String                 @id @default(cuid())
+  id                    String           @id @default(cuid())
   assetId               String
   assigneeType          AssigneeTypeEnum
   assigneeId            String // points to Person/OrgUnit/Location/CI depending on type
-  startDate             DateTime               @default(now())
+  startDate             DateTime         @default(now())
   endDate               DateTime?
-  isPrimary             Boolean                @default(false)
+  isPrimary             Boolean          @default(false)
   conditionOnAssignment String? // Condition when asset was assigned
   conditionOnReturn     String? // Condition when asset was returned
-  note                  String?                @db.Text
+  note                  String?          @db.Text
 
   // Source tracking (for Intune integration)
-  source                AssignmentSourceEnum   @default(MANUAL)
-  sourceReferenceType   String? // e.g., "IntuneDevice"
-  sourceReferenceId     String? // e.g., IntuneDevice.id
+  source              AssignmentSourceEnum @default(MANUAL)
+  sourceReferenceType String? // e.g., "IntuneDevice"
+  sourceReferenceId   String? // e.g., IntuneDevice.id
 
   // Conflict tracking
-  hasConflict           Boolean                @default(false)
-  conflictNote          String?                @db.Text
+  hasConflict  Boolean @default(false)
+  conflictNote String? @db.Text
 
-  createdAt             DateTime               @default(now())
-  updatedAt             DateTime               @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   asset Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
@@ -322,11 +322,11 @@ enum AssigneeTypeEnum {
 }
 
 enum AssignmentSourceEnum {
-  MANUAL        // Created manually by user in ITAM
-  INTUNE_SYNC   // Auto-created during daily Intune sync
+  MANUAL // Created manually by user in ITAM
+  INTUNE_SYNC // Auto-created during daily Intune sync
   INTUNE_MANUAL // Created via manual Intune device linking
-  IMPORT        // Created during data import
-  SYSTEM        // System-generated
+  IMPORT // Created during data import
+  SYSTEM // System-generated
 }
 
 enum StockMovementTypeEnum {

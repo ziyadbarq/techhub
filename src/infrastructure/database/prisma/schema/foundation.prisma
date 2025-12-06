@@ -67,7 +67,7 @@ model Person {
   orgUnitId       String
   managerId       String?
   title           String?
-  office          String?            // Office location from MS Graph (e.g., "Riyadh HQ", "India Office")
+  office          String? // Office location from MS Graph (e.g., "Riyadh HQ", "India Office")
   locationId      String?
   department      String?
   hireDate        DateTime?
@@ -100,54 +100,54 @@ model Person {
   verificationItems            VerificationItem[]
   auditLogsChanged             AuditLogEntry[]        @relation("AuditLogChangedBy")
   attachments                  Attachment[]
-  dataOwnerships                DataOwnership[]        @relation("DataOwnershipPerson")
-  assignedMaintenanceSchedules  MaintenanceSchedule[]
-  performedMaintenanceRecords   MaintenanceRecord[]
-  initiatedDisposals            AssetDisposal[]        @relation("DisposalInitiatedBy")
-  approvedDisposals             AssetDisposal[]        @relation("DisposalApprovedBy")
-  disposalApprovals             DisposalApproval[]     @relation("DisposalApprover")
-  uploadedDisposalDocuments     DisposalDocument[]     @relation("DisposalDocumentUploader")
-  kitCheckouts                  AssetKitCheckout[]     @relation("KitCheckoutBy")
-  reservationsFor               AssetReservation[]     @relation("ReservationForPerson")
-  reservationsCreated           AssetReservation[]     @relation("ReservationBy")
-  reservationsConfirmed         AssetReservation[]     @relation("ReservationConfirmedBy")
-  reservationsCancelled         AssetReservation[]     @relation("ReservationCancelledBy")
-  serviceOwnerships             ServiceOwnership[]
-  intuneDevices                 IntuneDevice[]         @relation("IntuneDevicePerson")
-  deletedFieldDefinitions       FieldDefinition[]      @relation("FieldDefinitionDeletedBy")
-  archivedFieldDefinitions      FieldDefinition[]      @relation("FieldDefinitionArchivedBy")
-  createdFieldTemplates         FieldTemplate[]        @relation("FieldTemplateCreatedBy")
+  dataOwnerships               DataOwnership[]        @relation("DataOwnershipPerson")
+  assignedMaintenanceSchedules MaintenanceSchedule[]
+  performedMaintenanceRecords  MaintenanceRecord[]
+  initiatedDisposals           AssetDisposal[]        @relation("DisposalInitiatedBy")
+  approvedDisposals            AssetDisposal[]        @relation("DisposalApprovedBy")
+  disposalApprovals            DisposalApproval[]     @relation("DisposalApprover")
+  uploadedDisposalDocuments    DisposalDocument[]     @relation("DisposalDocumentUploader")
+  kitCheckouts                 AssetKitCheckout[]     @relation("KitCheckoutBy")
+  reservationsFor              AssetReservation[]     @relation("ReservationForPerson")
+  reservationsCreated          AssetReservation[]     @relation("ReservationBy")
+  reservationsConfirmed        AssetReservation[]     @relation("ReservationConfirmedBy")
+  reservationsCancelled        AssetReservation[]     @relation("ReservationCancelledBy")
+  serviceOwnerships            ServiceOwnership[]
+  intuneDevices                IntuneDevice[]         @relation("IntuneDevicePerson")
+  deletedFieldDefinitions      FieldDefinition[]      @relation("FieldDefinitionDeletedBy")
+  archivedFieldDefinitions     FieldDefinition[]      @relation("FieldDefinitionArchivedBy")
+  createdFieldTemplates        FieldTemplate[]        @relation("FieldTemplateCreatedBy")
   // Self-referential soft delete and audit relations
-  deletedBy                     Person?                @relation("PersonDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
-  deletedPersons                Person[]               @relation("PersonDeletedBy")
-  createdBy                     Person?                @relation("PersonCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
-  createdPersons                Person[]               @relation("PersonCreatedBy")
-  updatedBy                     Person?                @relation("PersonUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
-  updatedPersons                Person[]               @relation("PersonUpdatedBy")
+  deletedBy                    Person?                @relation("PersonDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedPersons               Person[]               @relation("PersonDeletedBy")
+  createdBy                    Person?                @relation("PersonCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdPersons               Person[]               @relation("PersonCreatedBy")
+  updatedBy                    Person?                @relation("PersonUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  updatedPersons               Person[]               @relation("PersonUpdatedBy")
   // Soft delete relations (reverse for other entities)
-  deletedOrgUnits               OrganizationUnit[]     @relation("OrgUnitDeletedBy")
-  deletedLocations              Location[]             @relation("LocationDeletedBy")
-  deletedVendors                Vendor[]               @relation("VendorDeletedBy")
-  deletedLifecycleModels        LifecycleModel[]       @relation("LifecycleModelDeletedBy")
-  deletedLifecycleStates        LifecycleState[]       @relation("LifecycleStateDeletedBy")
-  deletedAssetCategories        AssetCategory[]        @relation("AssetCategoryDeletedBy")
-  deletedAssetModels            AssetModel[]           @relation("AssetModelDeletedBy")
-  deletedAssets                 Asset[]                @relation("AssetDeletedBy")
-  createdAssets                 Asset[]                @relation("AssetCreatedBy")
-  updatedAssets                 Asset[]                @relation("AssetUpdatedBy")
-  deletedWarranties             Warranty[]             @relation("WarrantyDeletedBy")
-  deletedMaintenanceSchedules   MaintenanceSchedule[]  @relation("MaintenanceScheduleDeletedBy")
-  deletedContractTypes          ContractType[]         @relation("ContractTypeDeletedBy")
-  deletedContracts              Contract[]             @relation("ContractDeletedBy")
-  deletedCIClasses              CIClass[]              @relation("CIClassDeletedBy")
-  deletedConfigurationItems     ConfigurationItem[]    @relation("ConfigurationItemDeletedBy")
-  createdConfigurationItems     ConfigurationItem[]    @relation("ConfigurationItemCreatedBy")
-  updatedConfigurationItems     ConfigurationItem[]    @relation("ConfigurationItemUpdatedBy")
-  deletedServices               Service[]              @relation("ServiceDeletedBy")
-  deletedLicenseProducts        LicenseProduct[]       @relation("LicenseProductDeletedBy")
-  deletedLicenseEntitlements    LicenseEntitlement[]   @relation("LicenseEntitlementDeletedBy")
-  deletedAssetKits              AssetKit[]             @relation("AssetKitDeletedBy")
-  deletedAssetReservations      AssetReservation[]     @relation("AssetReservationDeletedBy")
+  deletedOrgUnits              OrganizationUnit[]     @relation("OrgUnitDeletedBy")
+  deletedLocations             Location[]             @relation("LocationDeletedBy")
+  deletedVendors               Vendor[]               @relation("VendorDeletedBy")
+  deletedLifecycleModels       LifecycleModel[]       @relation("LifecycleModelDeletedBy")
+  deletedLifecycleStates       LifecycleState[]       @relation("LifecycleStateDeletedBy")
+  deletedAssetCategories       AssetCategory[]        @relation("AssetCategoryDeletedBy")
+  deletedAssetModels           AssetModel[]           @relation("AssetModelDeletedBy")
+  deletedAssets                Asset[]                @relation("AssetDeletedBy")
+  createdAssets                Asset[]                @relation("AssetCreatedBy")
+  updatedAssets                Asset[]                @relation("AssetUpdatedBy")
+  deletedWarranties            Warranty[]             @relation("WarrantyDeletedBy")
+  deletedMaintenanceSchedules  MaintenanceSchedule[]  @relation("MaintenanceScheduleDeletedBy")
+  deletedContractTypes         ContractType[]         @relation("ContractTypeDeletedBy")
+  deletedContracts             Contract[]             @relation("ContractDeletedBy")
+  deletedCIClasses             CIClass[]              @relation("CIClassDeletedBy")
+  deletedConfigurationItems    ConfigurationItem[]    @relation("ConfigurationItemDeletedBy")
+  createdConfigurationItems    ConfigurationItem[]    @relation("ConfigurationItemCreatedBy")
+  updatedConfigurationItems    ConfigurationItem[]    @relation("ConfigurationItemUpdatedBy")
+  deletedServices              Service[]              @relation("ServiceDeletedBy")
+  deletedLicenseProducts       LicenseProduct[]       @relation("LicenseProductDeletedBy")
+  deletedLicenseEntitlements   LicenseEntitlement[]   @relation("LicenseEntitlementDeletedBy")
+  deletedAssetKits             AssetKit[]             @relation("AssetKitDeletedBy")
+  deletedAssetReservations     AssetReservation[]     @relation("AssetReservationDeletedBy")
 
   // Indexes
   @@index([azureAdId])
@@ -310,11 +310,11 @@ model ExchangeRate {
 // LifecycleModel model
 // Reusable state machine definitions (for CIs, Assets, Licenses)
 model LifecycleModel {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  description String?   @db.Text
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Soft delete fields
   deletedAt   DateTime?
@@ -408,37 +408,37 @@ model LifecycleTransition {
 // FieldDefinition model
 // Meta-model for dynamic attributes
 model FieldDefinition {
-  id              String            @id @default(cuid())
-  name            String            @unique // internal name, e.g. cpu_cores
-  label           String // display label
-  dataType        FieldDataTypeEnum
-  description     String?           @db.Text
-  entityType      String
-  isGlobal        Boolean           @default(false) // true if reusable across many domains
-  isRequired      Boolean           @default(false)
-  isUnique        Boolean           @default(false)
+  id               String            @id @default(cuid())
+  name             String            @unique // internal name, e.g. cpu_cores
+  label            String // display label
+  dataType         FieldDataTypeEnum
+  description      String?           @db.Text
+  entityType       String
+  isGlobal         Boolean           @default(false) // true if reusable across many domains
+  isRequired       Boolean           @default(false)
+  isUnique         Boolean           @default(false)
   validationRules  Json? // min/max, regex, etc.
   defaultValue     Json?
   enumOptions      Json? // for ENUM data_type
   conditionalLogic Json? // visibility, required, disabled conditions based on other fields
   uiGroup          String? // group/tab in UI
-  uiOrder         Int               @default(0)
-  displayOrder    Int               @default(0)
-  isSearchable    Boolean           @default(false)
-  isFilterable    Boolean           @default(false)
-  isActive        Boolean           @default(true)
-  metadata        Json?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  uiOrder          Int               @default(0)
+  displayOrder     Int               @default(0)
+  isSearchable     Boolean           @default(false)
+  isFilterable     Boolean           @default(false)
+  isActive         Boolean           @default(true)
+  metadata         Json?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
   // Soft delete fields
-  deletedAt       DateTime?
-  deletedById     String?
+  deletedAt   DateTime?
+  deletedById String?
 
   // Archive fields (for unused but preserved fields)
-  archivedAt      DateTime?
-  archivedById    String?
-  archiveReason   String?           @db.Text
+  archivedAt    DateTime?
+  archivedById  String?
+  archiveReason String?   @db.Text
 
   // Relations
   ciClassFields        CIClassField[]
@@ -462,23 +462,23 @@ model FieldDefinition {
 // FieldTemplate model
 // Pre-built templates for common field configurations
 model FieldTemplate {
-  id          String              @id @default(cuid())
-  name        String              @unique // Display name: "Laptop Standard Fields"
-  code        String              @unique // Internal code: "LAPTOP_STANDARD"
-  description String?             @db.Text
+  id          String   @id @default(cuid())
+  name        String   @unique // Display name: "Laptop Standard Fields"
+  code        String   @unique // Internal code: "LAPTOP_STANDARD"
+  description String?  @db.Text
   entityType  String // "Asset", "ConfigurationItem", etc.
   category    String? // Asset type category: "LAPTOP", "SERVER", "NETWORK_DEVICE"
   standard    String? // "ITIL", "NIST", "ISO27001", "CUSTOM"
-  isBuiltIn   Boolean             @default(false) // System-provided vs user-created
-  isActive    Boolean             @default(true)
+  isBuiltIn   Boolean  @default(false) // System-provided vs user-created
+  isActive    Boolean  @default(true)
   metadata    Json?
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   createdById String?
 
   // Relations
   items     FieldTemplateItem[]
-  createdBy Person?               @relation("FieldTemplateCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdBy Person?             @relation("FieldTemplateCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([entityType])

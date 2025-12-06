@@ -36,13 +36,13 @@ export const CreateCIClassSchema = z.object({
       "Code must contain only letters, numbers, hyphens, and underscores",
     )
     .optional(),
-  parentClassId: z.string().uuid().optional().nullable(),
+  parentClassId: z.string().min(24).max(25).optional().nullable(),
   description: z
     .string()
     .max(5000, "Description must be 5000 characters or less")
     .optional()
     .nullable(),
-  lifecycleModelId: z.string().uuid().optional().nullable(),
+  lifecycleModelId: z.string().min(24).max(25).optional().nullable(),
   defaultCriticality: CriticalityLevelSchema.optional().nullable(),
   defaultEnvironment: EnvironmentTypeSchema.optional().nullable(),
   isDiscoverable: z.boolean().optional().default(false),
@@ -64,13 +64,13 @@ export const UpdateCIClassSchema = z.object({
       "Code must contain only letters, numbers, hyphens, and underscores",
     )
     .optional(),
-  parentClassId: z.string().uuid().optional().nullable(),
+  parentClassId: z.string().min(24).max(25).optional().nullable(),
   description: z
     .string()
     .max(5000, "Description must be 5000 characters or less")
     .optional()
     .nullable(),
-  lifecycleModelId: z.string().uuid().optional().nullable(),
+  lifecycleModelId: z.string().min(24).max(25).optional().nullable(),
   defaultCriticality: CriticalityLevelSchema.optional().nullable(),
   defaultEnvironment: EnvironmentTypeSchema.optional().nullable(),
   isDiscoverable: z.boolean().optional(),

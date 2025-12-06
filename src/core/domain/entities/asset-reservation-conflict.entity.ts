@@ -5,6 +5,8 @@
  * Used for conflict detection and resolution workflow.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export interface AssetReservationConflictProps {
   id: string;
   reservationId: string;
@@ -26,6 +28,7 @@ export class AssetReservationConflict {
 
   static create(
     props: CreateAssetReservationConflictProps,
+    idGenerator: IIdGenerator,
   ): AssetReservationConflict {
     if (!props.reservationId?.trim()) {
       throw new Error("Reservation ID is required");
@@ -39,7 +42,7 @@ export class AssetReservationConflict {
     }
 
     return new AssetReservationConflict({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       reservationId: props.reservationId,
       conflictingReservationId: props.conflictingReservationId,
       detectedAt: new Date(),

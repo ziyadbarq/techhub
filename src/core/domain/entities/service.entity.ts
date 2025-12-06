@@ -5,6 +5,7 @@
  * databases, APIs, etc.) with ownership, classification, and lifecycle management.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type {
   ServiceType,
   ServiceStatus,
@@ -112,7 +113,7 @@ export class Service {
     this.validate();
   }
 
-  static create(props: CreateServiceProps): Service {
+  static create(props: CreateServiceProps, idGenerator: IIdGenerator): Service {
     Service.validateName(props.name);
     Service.validateServiceType(props.serviceType);
 
@@ -137,7 +138,7 @@ export class Service {
     const now = new Date();
 
     return new Service({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       name: props.name.trim(),
       serviceType: props.serviceType,
       description: props.description?.trim() || null,

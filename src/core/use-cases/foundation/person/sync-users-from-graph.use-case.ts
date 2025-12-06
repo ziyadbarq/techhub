@@ -29,6 +29,7 @@ import type {
 } from "@/core/services/graph-user-mapper.service.interface";
 import type { GraphUser } from "@/core/services/graph-user-mapper.service.interface";
 import { LogExecution } from "@/lib/decorators";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Options for the sync operation
@@ -123,6 +124,8 @@ export class SyncUsersFromGraphUseCase {
     private readonly graphService: IMicrosoftGraphService,
     @inject(DI_TOKENS.IGraphUserMapperService)
     private readonly graphUserMapper: IGraphUserMapperService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {
     this.logger = logger.child({ useCase: "SyncUsersFromGraphUseCase" });
   }

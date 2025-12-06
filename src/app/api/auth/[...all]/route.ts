@@ -1,10 +1,14 @@
 import { auth } from "@/interface-adapters/auth/better-auth";
-import { createId } from "@paralleldrive/cuid2";
 import { logger } from "@/lib/logger";
+import { getContainer } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 const handleAuthRequest = async (request: Request) => {
   const log = logger.scope("AuthRoute");
-  const requestId = createId();
+  const container = getContainer();
+  const idGenerator = container.get<IIdGenerator>(DI_TOKENS.IIdGenerator);
+  const requestId = idGenerator.generateId();
   const url = new URL(request.url);
   const clientIp =
     request.headers.get("x-forwarded-for") ??

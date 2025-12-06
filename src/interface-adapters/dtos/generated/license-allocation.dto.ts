@@ -7,9 +7,9 @@ import { AllocationTargetType } from "@/core/domain/entities/license-allocation.
 
 // Create Schema
 export const CreateLicenseAllocationSchema = z.object({
-  licenseEntitlementId: z.string().uuid("Invalid license entitlement ID"),
+  licenseEntitlementId: z.string().min(24).max(25),
   targetType: z.nativeEnum(AllocationTargetType),
-  targetId: z.string().uuid("Invalid target ID"),
+  targetId: z.string().min(24).max(25),
   allocatedQuantity: z
     .number()
     .int("Allocated quantity must be an integer")
@@ -27,7 +27,7 @@ export type CreateLicenseAllocationDTO = z.infer<
 
 // Update Schema
 export const UpdateLicenseAllocationSchema = z.object({
-  id: z.string().uuid("Invalid allocation ID"),
+  id: z.string().min(24).max(25),
   allocatedQuantity: z
     .number()
     .int("Allocated quantity must be an integer")
@@ -46,7 +46,7 @@ export type UpdateLicenseAllocationDTO = z.infer<
 
 // Deallocate Schema
 export const DeallocateLicenseAllocationSchema = z.object({
-  id: z.string().uuid("Invalid allocation ID"),
+  id: z.string().min(24).max(25),
   deallocatedAt: z.coerce
     .date({ message: "Invalid deallocation date" })
     .optional(),

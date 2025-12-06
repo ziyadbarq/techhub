@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IPermissionRepository } from "../../repositories/permission-repository.interface";
 import type { IAuditLogRepository } from "../../repositories/audit-log-repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Permission } from "../../domain/entities/permission.entity";
 import { DuplicatePermissionError } from "../../domain/errors/rbac-errors";
 import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
@@ -31,6 +32,8 @@ export class CreatePermissionUseCase {
     private readonly auditLogRepository: IAuditLogRepository,
     @inject(DI_TOKENS.IPermissionCacheService)
     private readonly permissionCacheService: IPermissionCacheService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreatePermissionRequest): Promise<Permission> {
@@ -46,14 +49,17 @@ export class CreatePermissionUseCase {
     }
 
     // Create permission entity
-    const permission = Permission.create({
-      resource: request.resource,
-      action: request.action,
-      displayName: request.displayName,
-      description: request.description,
-      isSystem: request.isSystem,
-      isActive: request.isActive,
-    });
+    const permission = Permission.create(
+      {
+        resource: request.resource,
+        action: request.action,
+        displayName: request.displayName,
+        description: request.description,
+        isSystem: request.isSystem,
+        isActive: request.isActive,
+      },
+      this.idGenerator,
+    );
 
     // Persist permission
     const createdPermission =

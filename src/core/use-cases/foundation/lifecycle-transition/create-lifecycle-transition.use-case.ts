@@ -11,6 +11,7 @@ import {
   type ApprovalPolicy,
 } from "@/core/domain/entities/lifecycle-transition.entity";
 import type { ILifecycleTransitionRepository } from "@/core/repositories/lifecycle-transition.repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateLifecycleTransitionProps {
   lifecycleModelId: string;
@@ -31,6 +32,9 @@ export class CreateLifecycleTransitionUseCase {
   constructor(
     @inject(DI_TOKENS.ILifecycleTransitionRepository)
     private readonly lifecycleTransitionRepository: ILifecycleTransitionRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

@@ -11,14 +11,14 @@
 // BusinessProcess model
 // Maps services to business processes for alignment
 model BusinessProcess {
-  id          String    @id @default(cuid())
-  code        String    @unique // "DIGITAL_PAYMENTS", "IDENTITY_MGMT"
+  id          String   @id @default(cuid())
+  code        String   @unique // "DIGITAL_PAYMENTS", "IDENTITY_MGMT"
   name        String // "Digital Payments", "Identity Management"
-  description String?   @db.Text
+  description String?  @db.Text
   category    String? // "Core Banking", "Channels", "Infrastructure"
   metadata    Json?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relations
   services Service[]
@@ -32,103 +32,103 @@ model BusinessProcess {
 // Service model
 // Central IT service catalog (applications, infrastructure, databases, APIs, etc.)
 model Service {
-  id                      String                   @id @default(cuid())
+  id                      String              @id @default(cuid())
   // Core Identity
-  name                    String                   @unique // "Core Wallet Service", "Active Directory"
+  name                    String              @unique // "Core Wallet Service", "Active Directory"
   serviceType             ServiceType
-  description             String?                  @db.Text
-  businessPurpose         String?                  @db.Text // Business value/need
+  description             String?             @db.Text
+  businessPurpose         String?             @db.Text // Business value/need
   // Technical Details
   gitlabRepoUrl           String?
   url                     String? // Primary service URL (web interface, API endpoint, etc.)
   supportContact          String? // General support contact (email or phone)
   supportHours            String? // e.g., "24/7", "Mon-Fri 9AM-5PM SAT", "Business Hours"
   // Classification (NDMO Framework)
-  dataConfidentiality     DataConfidentiality      @default(INTERNAL)
-  businessImpactLevel     BusinessImpactLevel      @default(MEDIUM)
-  criticality             CriticalityLevel         @default(MEDIUM)
-  isEssentialService      Boolean                  @default(false) // Core Banking/Payments flag
+  dataConfidentiality     DataConfidentiality @default(INTERNAL)
+  businessImpactLevel     BusinessImpactLevel @default(MEDIUM)
+  criticality             CriticalityLevel    @default(MEDIUM)
+  isEssentialService      Boolean             @default(false) // Core Banking/Payments flag
   // Lifecycle
   deploymentDate          DateTime?
-  currentStatus           ServiceStatus            @default(PRODUCTION)
+  currentStatus           ServiceStatus       @default(PRODUCTION)
   lastPatchDate           DateTime?
   plannedDecommissionDate DateTime?
   // Vendor/Supplier
   vendorId                String?
-  vendor                  Vendor?                  @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  vendor                  Vendor?             @relation(fields: [vendorId], references: [id], onDelete: SetNull)
   slaDetails              Json? // SLA terms, support details
   // Business Alignment
   businessProcessId       String?
-  businessProcess         BusinessProcess?         @relation(fields: [businessProcessId], references: [id], onDelete: SetNull)
+  businessProcess         BusinessProcess?    @relation(fields: [businessProcessId], references: [id], onDelete: SetNull)
   // Governance
-  isInCentralRegister     Boolean                  @default(true)
-  complianceNotes         String?                  @db.Text
+  isInCentralRegister     Boolean             @default(true)
+  complianceNotes         String?             @db.Text
   // Metadata
   metadata                Json?
   // Audit
-  createdAt               DateTime                 @default(now())
-  updatedAt               DateTime                 @updatedAt
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
   createdBy               String?
   updatedBy               String?
 
   // ============ SLA FIELDS (Structured) ============
   // Response time SLAs (in milliseconds)
-  slaResponseTimeP50         Int? // P50 response time target (ms)
-  slaResponseTimeP95         Int? // P95 response time target (ms)
-  slaResponseTimeP99         Int? // P99 response time target (ms)
+  slaResponseTimeP50        Int? // P50 response time target (ms)
+  slaResponseTimeP95        Int? // P95 response time target (ms)
+  slaResponseTimeP99        Int? // P99 response time target (ms)
   // Resolution time SLAs (in minutes)
-  slaResolutionTimeCritical  Int? // Critical incident resolution (minutes)
-  slaResolutionTimeHigh      Int? // High priority resolution (minutes)
-  slaResolutionTimeMedium    Int? // Medium priority resolution (minutes)
+  slaResolutionTimeCritical Int? // Critical incident resolution (minutes)
+  slaResolutionTimeHigh     Int? // High priority resolution (minutes)
+  slaResolutionTimeMedium   Int? // Medium priority resolution (minutes)
   // Uptime SLA (percentage, stored as decimal: 99.9 = 99.9%)
-  slaUptimePercentage        Decimal?                @db.Decimal(5, 3) // e.g., 99.900
+  slaUptimePercentage       Decimal?            @db.Decimal(5, 3) // e.g., 99.900
   // Error rate threshold (percentage)
-  slaErrorRateThreshold      Decimal?                @db.Decimal(5, 3) // e.g., 1.000 for 1%
+  slaErrorRateThreshold     Decimal?            @db.Decimal(5, 3) // e.g., 1.000 for 1%
   // SLA compliance tracking
-  slaComplianceStatus        SlaComplianceStatus     @default(NOT_APPLICABLE)
-  lastSlaReviewDate          DateTime?
-  slaViolationCount          Int                     @default(0)
+  slaComplianceStatus       SlaComplianceStatus @default(NOT_APPLICABLE)
+  lastSlaReviewDate         DateTime?
+  slaViolationCount         Int                 @default(0)
   // Support tiers (from old slaDetails JSON)
-  slaSupportTier             String? // "24/7", "Business Hours", "Best Effort"
-  slaContactEmail            String?
-  slaEscalationPath          String?                 @db.Text
+  slaSupportTier            String? // "24/7", "Business Hours", "Best Effort"
+  slaContactEmail           String?
+  slaEscalationPath         String?             @db.Text
   // ============ HEALTH MONITORING FIELDS ============
-  healthStatus               ServiceHealthStatus     @default(UNKNOWN)
-  lastHealthCheck            DateTime?
-  nextScheduledHealthCheck   DateTime?
+  healthStatus              ServiceHealthStatus @default(UNKNOWN)
+  lastHealthCheck           DateTime?
+  nextScheduledHealthCheck  DateTime?
   // Uptime tracking (calculated fields)
-  uptimePercentage24h        Decimal?                @db.Decimal(5, 3) // Last 24 hours
-  uptimePercentage7d         Decimal?                @db.Decimal(5, 3) // Last 7 days
-  uptimePercentage30d        Decimal?                @db.Decimal(5, 3) // Last 30 days
+  uptimePercentage24h       Decimal?            @db.Decimal(5, 3) // Last 24 hours
+  uptimePercentage7d        Decimal?            @db.Decimal(5, 3) // Last 7 days
+  uptimePercentage30d       Decimal?            @db.Decimal(5, 3) // Last 30 days
   // Monitoring configuration
-  healthCheckUrl             String? // HTTP endpoint for health checks
-  healthCheckInterval        Int? // Check interval in minutes
-  healthCheckTimeout         Int? // Timeout in seconds
-  healthCheckEnabled         Boolean                 @default(false)
+  healthCheckUrl            String? // HTTP endpoint for health checks
+  healthCheckInterval       Int? // Check interval in minutes
+  healthCheckTimeout        Int? // Timeout in seconds
+  healthCheckEnabled        Boolean             @default(false)
   // Performance metrics (recent)
-  currentResponseTimeP50     Int? // Current P50 (ms)
-  currentResponseTimeP95     Int? // Current P95 (ms)
-  currentErrorRate           Decimal?                @db.Decimal(5, 3) // Current error rate %
+  currentResponseTimeP50    Int? // Current P50 (ms)
+  currentResponseTimeP95    Int? // Current P95 (ms)
+  currentErrorRate          Decimal?            @db.Decimal(5, 3) // Current error rate %
   // Incident tracking
-  lastIncidentDate           DateTime?
-  lastDowntimeDate           DateTime?
-  lastDowntimeDuration       Int? // Minutes
-  mttrMinutes                Int? // Mean Time To Recover
-  mtbfHours                  Int? // Mean Time Between Failures
+  lastIncidentDate          DateTime?
+  lastDowntimeDate          DateTime?
+  lastDowntimeDuration      Int? // Minutes
+  mttrMinutes               Int? // Mean Time To Recover
+  mtbfHours                 Int? // Mean Time Between Failures
 
   // Soft delete fields
   deletedAt   DateTime?
   deletedById String?
 
   // Relations
-  owners                  ServiceOwnership[]
-  infrastructure          ServiceInfrastructure[]
-  assets                  ServiceAsset[]
-  outgoingRelationships   ServiceRelationship[]    @relation("ServiceRelationshipFrom")
-  incomingRelationships   ServiceRelationship[]    @relation("ServiceRelationshipTo")
-  healthHistory           ServiceHealthHistory[]
-  slaMetrics              ServiceSlaMetric[]
-  deletedBy               Person?                  @relation("ServiceDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  owners                ServiceOwnership[]
+  infrastructure        ServiceInfrastructure[]
+  assets                ServiceAsset[]
+  outgoingRelationships ServiceRelationship[]   @relation("ServiceRelationshipFrom")
+  incomingRelationships ServiceRelationship[]   @relation("ServiceRelationshipTo")
+  healthHistory         ServiceHealthHistory[]
+  slaMetrics            ServiceSlaMetric[]
+  deletedBy             Person?                 @relation("ServiceDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([serviceType])
@@ -246,7 +246,6 @@ model ServiceRelationship {
 
   // Unique constraint: prevent duplicate relationships of same type
   @@unique([fromServiceId, toServiceId, relationshipType])
-
   // Indexes
   @@index([fromServiceId])
   @@index([toServiceId])

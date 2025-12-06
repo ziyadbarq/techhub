@@ -8,12 +8,13 @@
  * - Duplicate code prevention
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { CreateDataDomainUseCase } from "../create-data-domain.use-case";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
 import type { DataDomain } from "@/core/domain/entities/data-domain.entity";
 import { ValidationError } from "@/core/domain/errors/validation.error";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Mock DataDomain Repository
@@ -78,6 +79,11 @@ class MockCodeGeneratorService implements ICodeGeneratorService {
   }
 }
 
+// Mock ID generator for tests
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => "test-cuid-clx7abc123"),
+};
+
 describe("CreateDataDomainUseCase", () => {
   let useCase: CreateDataDomainUseCase;
   let mockRepository: MockDataDomainRepository;
@@ -89,6 +95,7 @@ describe("CreateDataDomainUseCase", () => {
     useCase = new CreateDataDomainUseCase(
       mockRepository as unknown as IDataDomainRepository,
       mockCodeGenerator,
+      mockIdGenerator,
     );
     mockRepository.clear();
   });

@@ -7,8 +7,14 @@ import { CreateRoleUseCase } from "../create-role.use-case";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
 import type { ILoggerService } from "@/core/services";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Role } from "@/core/domain/entities/role.entity";
 import { DuplicateRoleError } from "@/core/domain/errors/rbac-errors";
+
+// Mock ID generator for tests
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => "test-cuid-clx7abc123"),
+};
 
 class MockRoleRepository implements Partial<IRoleRepository> {
   private roles = new Map<string, Role>();
@@ -64,6 +70,7 @@ describe("CreateRoleUseCase", () => {
       mockRoleRepository as unknown as IRoleRepository,
       mockAuditLogRepository as unknown as IAuditLogRepository,
       mockLogger as unknown as ILoggerService,
+      mockIdGenerator,
     );
   });
 
@@ -136,10 +143,13 @@ describe("CreateRoleUseCase", () => {
   describe("execute - duplicate prevention", () => {
     it("should throw DuplicateRoleError if role name exists", async () => {
       // Arrange
-      const existingRole = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const existingRole = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(existingRole);
 
       // Act & Assert
@@ -154,10 +164,13 @@ describe("CreateRoleUseCase", () => {
 
     it("should include role name in DuplicateRoleError", async () => {
       // Arrange
-      const existingRole = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const existingRole = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
       mockRoleRepository.setRole(existingRole);
 
       // Act & Assert

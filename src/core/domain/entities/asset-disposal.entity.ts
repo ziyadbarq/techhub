@@ -5,6 +5,8 @@
  * sanitization checklist, and certificate generation.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export type DisposalType =
   | "DONATION"
   | "SALE"
@@ -66,7 +68,10 @@ export class AssetDisposal {
     this.validate();
   }
 
-  static create(props: CreateAssetDisposalProps): AssetDisposal {
+  static create(
+    props: CreateAssetDisposalProps,
+    idGenerator: IIdGenerator,
+  ): AssetDisposal {
     if (!props.assetId?.trim()) {
       throw new Error("Asset ID is required");
     }
@@ -77,7 +82,7 @@ export class AssetDisposal {
     const now = new Date();
 
     return new AssetDisposal({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       assetId: props.assetId,
       disposalType: props.disposalType,
       reason: props.reason?.trim() || null,

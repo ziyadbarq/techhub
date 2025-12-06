@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import { Service } from "@/core/domain/entities/service.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type {
   ServiceType,
   ServiceStatus,
@@ -61,6 +62,9 @@ export class CreateServiceUseCase {
   constructor(
     @inject(DI_TOKENS.IServiceRepository)
     private readonly serviceRepository: IServiceRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateServiceRequest): Promise<Service> {
@@ -70,48 +74,51 @@ export class CreateServiceUseCase {
       throw new Error(`Service with name "${request.name}" already exists`);
     }
 
-    const service = Service.create({
-      name: request.name,
-      serviceType: request.serviceType,
-      description: request.description,
-      businessPurpose: request.businessPurpose,
-      gitlabRepoUrl: request.gitlabRepoUrl,
-      dataConfidentiality: request.dataConfidentiality,
-      businessImpactLevel: request.businessImpactLevel,
-      criticality: request.criticality,
-      isEssentialService: request.isEssentialService,
-      deploymentDate: request.deploymentDate,
-      currentStatus: request.currentStatus,
-      lastPatchDate: request.lastPatchDate,
-      plannedDecommissionDate: request.plannedDecommissionDate,
-      vendorId: request.vendorId,
-      slaDetails: request.slaDetails,
-      businessProcessId: request.businessProcessId,
-      isInCentralRegister: request.isInCentralRegister,
-      complianceNotes: request.complianceNotes,
-      metadata: request.metadata,
-      createdBy: request.createdBy,
+    const service = Service.create(
+      {
+        name: request.name,
+        serviceType: request.serviceType,
+        description: request.description,
+        businessPurpose: request.businessPurpose,
+        gitlabRepoUrl: request.gitlabRepoUrl,
+        dataConfidentiality: request.dataConfidentiality,
+        businessImpactLevel: request.businessImpactLevel,
+        criticality: request.criticality,
+        isEssentialService: request.isEssentialService,
+        deploymentDate: request.deploymentDate,
+        currentStatus: request.currentStatus,
+        lastPatchDate: request.lastPatchDate,
+        plannedDecommissionDate: request.plannedDecommissionDate,
+        vendorId: request.vendorId,
+        slaDetails: request.slaDetails,
+        businessProcessId: request.businessProcessId,
+        isInCentralRegister: request.isInCentralRegister,
+        complianceNotes: request.complianceNotes,
+        metadata: request.metadata,
+        createdBy: request.createdBy,
 
-      // SLA Fields
-      slaResponseTimeP50: request.slaResponseTimeP50,
-      slaResponseTimeP95: request.slaResponseTimeP95,
-      slaResponseTimeP99: request.slaResponseTimeP99,
-      slaResolutionTimeCritical: request.slaResolutionTimeCritical,
-      slaResolutionTimeHigh: request.slaResolutionTimeHigh,
-      slaResolutionTimeMedium: request.slaResolutionTimeMedium,
-      slaUptimePercentage: request.slaUptimePercentage,
-      slaErrorRateThreshold: request.slaErrorRateThreshold,
-      slaSupportTier: request.slaSupportTier,
-      slaContactEmail: request.slaContactEmail,
-      slaEscalationPath: request.slaEscalationPath,
+        // SLA Fields
+        slaResponseTimeP50: request.slaResponseTimeP50,
+        slaResponseTimeP95: request.slaResponseTimeP95,
+        slaResponseTimeP99: request.slaResponseTimeP99,
+        slaResolutionTimeCritical: request.slaResolutionTimeCritical,
+        slaResolutionTimeHigh: request.slaResolutionTimeHigh,
+        slaResolutionTimeMedium: request.slaResolutionTimeMedium,
+        slaUptimePercentage: request.slaUptimePercentage,
+        slaErrorRateThreshold: request.slaErrorRateThreshold,
+        slaSupportTier: request.slaSupportTier,
+        slaContactEmail: request.slaContactEmail,
+        slaEscalationPath: request.slaEscalationPath,
 
-      // Health Monitoring Fields
-      healthCheckUrl: request.healthCheckUrl,
-      healthCheckInterval: request.healthCheckInterval,
-      healthCheckTimeout: request.healthCheckTimeout,
-      healthCheckEnabled: request.healthCheckEnabled,
-    });
+        // Health Monitoring Fields
+        healthCheckUrl: request.healthCheckUrl,
+        healthCheckInterval: request.healthCheckInterval,
+        healthCheckTimeout: request.healthCheckTimeout,
+        healthCheckEnabled: request.healthCheckEnabled,
+      },
+      this.idGenerator,
+    );
 
-    return this.serviceRepository.create(service);
+    return this.serviceRepository.create(service, this.idGenerator);
   }
 }

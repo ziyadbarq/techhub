@@ -9,6 +9,7 @@ import type { IContractTypeRepository } from "@/core/repositories/contract-type.
 import type { IVendorRepository } from "@/core/repositories/vendor.repository.interface";
 import { Contract } from "@/core/domain/entities/contract.entity";
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateContractRequest {
   contractTypeId: string;
@@ -36,6 +37,9 @@ export class CreateContractUseCase {
     private vendorRepository: IVendorRepository,
     @inject(DI_TOKENS.ISarConversionService)
     private sarConversionService: ISarConversionService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateContractRequest): Promise<Contract> {
@@ -71,21 +75,24 @@ export class CreateContractUseCase {
     );
 
     // Create contract entity
-    const contract = Contract.create({
-      contractTypeId: request.contractTypeId,
-      vendorId: request.vendorId,
-      name: request.name,
-      contractNumber: request.contractNumber,
-      startDate: request.startDate,
-      endDate: request.endDate,
-      autoRenew: request.autoRenew,
-      renewalTerms: request.renewalTerms,
-      slaDefinition: request.slaDefinition,
-      totalValue: request.totalValue,
-      totalValueSar,
-      currency: request.currency,
-      note: request.note,
-    });
+    const contract = Contract.create(
+      {
+        contractTypeId: request.contractTypeId,
+        vendorId: request.vendorId,
+        name: request.name,
+        contractNumber: request.contractNumber,
+        startDate: request.startDate,
+        endDate: request.endDate,
+        autoRenew: request.autoRenew,
+        renewalTerms: request.renewalTerms,
+        slaDefinition: request.slaDefinition,
+        totalValue: request.totalValue,
+        totalValueSar,
+        currency: request.currency,
+        note: request.note,
+      },
+      this.idGenerator,
+    );
 
     return await this.contractRepository.create(contract);
   }

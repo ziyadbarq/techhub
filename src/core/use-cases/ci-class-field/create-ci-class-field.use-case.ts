@@ -8,6 +8,7 @@ import type { ICIClassFieldRepository } from "@/core/repositories/ci-class-field
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import { CIClassField } from "@/core/domain/entities/ci-class-field.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateCIClassFieldRequest {
   ciClassId: string;
@@ -29,6 +30,9 @@ export class CreateCIClassFieldUseCase {
     private ciClassRepository: ICIClassRepository,
     @inject(DI_TOKENS.IFieldDefinitionRepository)
     private fieldDefinitionRepository: IFieldDefinitionRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateCIClassFieldRequest): Promise<CIClassField> {

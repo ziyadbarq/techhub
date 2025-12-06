@@ -5,7 +5,7 @@
  * tracking the verification status of assets or configuration items.
  */
 
-import { v4 as uuid } from "uuid";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { TargetObjectTypeEnum } from "@/generated/prisma";
 
 export enum VerificationStatusEnum {
@@ -156,6 +156,7 @@ export class VerificationItem {
   // Factory method
   public static create(
     props: CreateVerificationItemProps,
+    idGenerator: IIdGenerator,
   ): VerificationItem {
     // Validations
     VerificationItem.validateCampaignId(props.verificationCampaignId);
@@ -163,7 +164,7 @@ export class VerificationItem {
 
     const now = new Date();
     return new VerificationItem({
-      id: uuid(),
+      id: idGenerator.generateId(),
       verificationCampaignId: props.verificationCampaignId,
       targetType: props.targetType,
       targetId: props.targetId,

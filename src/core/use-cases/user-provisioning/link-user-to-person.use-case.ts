@@ -15,6 +15,7 @@ import type { IRoleRepository } from "@/core/repositories/role-repository.interf
 import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface LinkUserToPersonRequest {
   userId: string;
@@ -43,6 +44,9 @@ export class LinkUserToPersonUseCase {
     private userRoleRepository: IUserRoleRepository,
     @inject(DI_TOKENS.ILoggerService)
     private logger: ILoggerService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(
@@ -107,11 +111,14 @@ export class LinkUserToPersonUseCase {
     if (existingRoles.length === 0) {
       const viewerRole = await this.roleRepository.findByName("viewer");
       if (viewerRole) {
-        const userRole = UserRole.create({
-          userId: user.id,
-          roleId: viewerRole.id,
-          createdBy: request.linkedBy,
-        });
+        const userRole = UserRole.create(
+          {
+            userId: user.id,
+            roleId: viewerRole.id,
+            createdBy: request.linkedBy,
+          },
+          this.idGenerator,
+        );
         await this.userRoleRepository.create(userRole);
 
         this.logger.info("Viewer role assigned to user", {

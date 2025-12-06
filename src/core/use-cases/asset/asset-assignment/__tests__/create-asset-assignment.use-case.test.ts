@@ -9,8 +9,9 @@
  * - Edge cases (date defaults)
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { CreateAssetAssignmentUseCase } from "../create-asset-assignment.use-case";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
 import type {
   AssetAssignment,
@@ -83,6 +84,11 @@ class MockAssetAssignmentRepository
   }
 }
 
+// Mock ID generator for tests
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => "test-cuid-clx7abc123"),
+};
+
 describe("CreateAssetAssignmentUseCase", () => {
   let useCase: CreateAssetAssignmentUseCase;
   let mockRepository: MockAssetAssignmentRepository;
@@ -91,6 +97,7 @@ describe("CreateAssetAssignmentUseCase", () => {
     mockRepository = new MockAssetAssignmentRepository();
     useCase = new CreateAssetAssignmentUseCase(
       mockRepository as unknown as IAssetAssignmentRepository,
+      mockIdGenerator,
     );
   });
 

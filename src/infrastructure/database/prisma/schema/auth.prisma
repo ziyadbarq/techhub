@@ -35,7 +35,7 @@ model User {
   person          Person? // Optional link to organizational person
   preferences     UserPreferences? // User preferences (timezone, notifications, etc.)
   twoFactor       TwoFactor?
-  auditLogsAsUser AuditLogEntry[] @relation("AuditLogChangedByUser")
+  auditLogsAsUser AuditLogEntry[]  @relation("AuditLogChangedByUser")
   backupsCreated  DatabaseBackup[] @relation("BackupCreator")
   backupsDeleted  DatabaseBackup[] @relation("BackupDeletedByUser")
 

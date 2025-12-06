@@ -4,6 +4,8 @@
  * Tracks documents attached to disposal workflows (certificates, receipts, photos, etc.).
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export type DisposalDocumentType =
   | "CERTIFICATE"
   | "RECEIPT"
@@ -38,7 +40,10 @@ export class DisposalDocument {
     this.validate();
   }
 
-  static create(props: CreateDisposalDocumentProps): DisposalDocument {
+  static create(
+    props: CreateDisposalDocumentProps,
+    idGenerator: IIdGenerator,
+  ): DisposalDocument {
     if (!props.disposalId?.trim()) {
       throw new Error("Disposal ID is required");
     }
@@ -53,7 +58,7 @@ export class DisposalDocument {
     }
 
     return new DisposalDocument({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       disposalId: props.disposalId,
       documentType: props.documentType,
       fileName: props.fileName.trim(),

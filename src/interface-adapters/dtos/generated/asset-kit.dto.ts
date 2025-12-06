@@ -33,24 +33,24 @@ export const UpdateAssetKitDTO = z.object({
 });
 
 export const AddKitItemDTO = z.object({
-  kitId: z.string().uuid(),
-  assetCategoryId: z.string().uuid(),
-  assetModelId: z.string().uuid().optional().nullable(),
+  kitId: z.string().min(24).max(25),
+  assetCategoryId: z.string().min(24).max(25),
+  assetModelId: z.string().min(24).max(25).optional().nullable(),
   quantity: z.number().int().positive("Quantity must be positive"),
   isRequired: z.boolean().optional().default(true),
   notes: z.string().optional(),
 });
 
 export const UpdateKitItemDTO = z.object({
-  assetCategoryId: z.string().uuid().optional().nullable(),
-  assetModelId: z.string().uuid().optional().nullable(),
+  assetCategoryId: z.string().min(24).max(25).optional().nullable(),
+  assetModelId: z.string().min(24).max(25).optional().nullable(),
   quantity: z.number().int().positive().optional(),
   isRequired: z.boolean().optional(),
   notes: z.string().optional(),
 });
 
 export const AssetKitDTO = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(24).max(25),
   name: z.string(),
   code: z.string(),
   description: z.string().nullable(),
@@ -68,10 +68,10 @@ export const AssetKitDTO = z.object({
 });
 
 export const AssetKitItemDTO = z.object({
-  id: z.string().uuid(),
-  kitId: z.string().uuid(),
-  assetCategoryId: z.string().uuid().nullable(),
-  assetModelId: z.string().uuid().nullable(),
+  id: z.string().min(24).max(25),
+  kitId: z.string().min(24).max(25),
+  assetCategoryId: z.string().min(24).max(25).nullable(),
+  assetModelId: z.string().min(24).max(25).nullable(),
   quantity: z.number(),
   isRequired: z.boolean(),
   notes: z.string().nullable(),

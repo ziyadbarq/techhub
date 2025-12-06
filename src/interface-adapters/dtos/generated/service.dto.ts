@@ -38,9 +38,9 @@ export const CreateServiceSchema = z.object({
   currentStatus: z.nativeEnum(ServiceStatus).default("PRODUCTION"),
   lastPatchDate: z.coerce.date().nullish(),
   plannedDecommissionDate: z.coerce.date().nullish(),
-  vendorId: z.string().uuid().nullish(),
+  vendorId: z.string().min(24).max(25).nullish(),
   slaDetails: z.record(z.string(), z.unknown()).nullish(),
-  businessProcessId: z.string().uuid().nullish(),
+  businessProcessId: z.string().min(24).max(25).nullish(),
   isInCentralRegister: z.boolean().default(true),
   complianceNotes: z.string().nullish(),
   metadata: z.record(z.string(), z.unknown()).nullish(),
@@ -73,21 +73,21 @@ export type UpdateServiceDTO = z.infer<typeof UpdateServiceSchema>;
 // ==================== Service Ownership DTOs ====================
 
 export const AddServiceOwnerSchema = z.object({
-  serviceId: z.string().uuid("Invalid service ID"),
-  personId: z.string().uuid("Invalid person ID"),
+  serviceId: z.string().min(24).max(25),
+  personId: z.string().min(24).max(25),
   ownershipType: z.nativeEnum(OwnershipType),
   isPrimary: z.boolean().default(false),
 });
 
 export const RemoveServiceOwnerSchema = z.object({
-  serviceId: z.string().uuid("Invalid service ID"),
-  personId: z.string().uuid("Invalid person ID"),
+  serviceId: z.string().min(24).max(25),
+  personId: z.string().min(24).max(25),
   ownershipType: z.nativeEnum(OwnershipType),
 });
 
 export const SetPrimaryOwnerSchema = z.object({
-  serviceId: z.string().uuid("Invalid service ID"),
-  personId: z.string().uuid("Invalid person ID"),
+  serviceId: z.string().min(24).max(25),
+  personId: z.string().min(24).max(25),
   ownershipType: z.nativeEnum(OwnershipType),
 });
 
@@ -145,7 +145,7 @@ export type UpdateBusinessProcessDTO = z.infer<
 // ==================== Service Infrastructure DTOs ====================
 
 export const CreateServiceInfrastructureSchema = z.object({
-  serviceId: z.string().uuid("Invalid service ID"),
+  serviceId: z.string().min(24).max(25),
   location: z.nativeEnum(ServiceLocation),
   cloudProvider: z.string().nullish(),
   compartment: z.string().nullish(),
@@ -203,8 +203,8 @@ export type UpdateServiceInfrastructureDTO = z.infer<
 // ==================== Service Asset Linking DTOs ====================
 
 export const LinkServiceToAssetSchema = z.object({
-  serviceId: z.string().uuid("Invalid service ID"),
-  assetId: z.string().uuid("Invalid asset ID").nullish(),
+  serviceId: z.string().min(24).max(25),
+  assetId: z.string().min(24).max(25).nullish(),
   relationship: z.nativeEnum(AssetRelationship),
   description: z.string().nullish(),
 });
@@ -219,8 +219,8 @@ export const SearchServicesSchema = z.object({
   currentStatus: z.nativeEnum(ServiceStatus).optional(),
   criticality: z.nativeEnum(CriticalityLevel).optional(),
   isEssentialService: z.boolean().optional(),
-  vendorId: z.string().uuid().optional(),
-  businessProcessId: z.string().uuid().optional(),
+  vendorId: z.string().min(24).max(25).optional(),
+  businessProcessId: z.string().min(24).max(25).optional(),
 });
 
 export type SearchServicesDTO = z.infer<typeof SearchServicesSchema>;
@@ -230,8 +230,8 @@ export const ListServicesSchema = z.object({
   currentStatus: z.nativeEnum(ServiceStatus).optional(),
   criticality: z.nativeEnum(CriticalityLevel).optional(),
   isEssentialService: z.boolean().optional(),
-  vendorId: z.string().uuid().optional(),
-  businessProcessId: z.string().uuid().optional(),
+  vendorId: z.string().min(24).max(25).optional(),
+  businessProcessId: z.string().min(24).max(25).optional(),
 });
 
 export type ListServicesDTO = z.infer<typeof ListServicesSchema>;

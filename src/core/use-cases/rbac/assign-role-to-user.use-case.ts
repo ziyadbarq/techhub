@@ -8,6 +8,7 @@ import type { IUserRoleRepository } from "../../repositories/user-role-repositor
 import type { IRoleRepository } from "../../repositories/role-repository.interface";
 import type { IAuditLogRepository } from "../../repositories/audit-log-repository.interface";
 import type { ILoggerService } from "@/core/services";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { UserRole } from "../../domain/entities/user-role.entity";
 import {
   RoleNotFoundError,
@@ -55,6 +56,8 @@ export class AssignRoleToUserUseCase {
     private readonly permissionCacheService: IPermissionCacheService,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   @LogExecution("rbac.user_role.assign")
@@ -138,12 +141,15 @@ export class AssignRoleToUserUseCase {
     }
 
     // Create user role assignment
-    const userRole = UserRole.create({
-      userId: request.userId,
-      roleId: request.roleId,
-      expiresAt: request.expiresAt,
-      createdBy: request.assignedBy,
-    });
+    const userRole = UserRole.create(
+      {
+        userId: request.userId,
+        roleId: request.roleId,
+        expiresAt: request.expiresAt,
+        createdBy: request.assignedBy,
+      },
+      this.idGenerator,
+    );
 
     // Persist assignment
     const createdUserRole = await this.userRoleRepository.create(userRole);

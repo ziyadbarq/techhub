@@ -7,19 +7,11 @@ import { z } from "zod";
 // Create DataOwnership DTO
 export const CreateDataOwnershipSchema = z
   .object({
-    dataDomainId: z.string().uuid("Invalid data domain ID"),
-    ciClassId: z.string().uuid("Invalid CI class ID").optional().nullable(),
-    assetCategoryId: z
-      .string()
-      .uuid("Invalid asset category ID")
-      .optional()
-      .nullable(),
-    ownerPersonId: z.string().uuid("Invalid person ID").optional().nullable(),
-    ownerOrgUnitId: z
-      .string()
-      .uuid("Invalid organization unit ID")
-      .optional()
-      .nullable(),
+    dataDomainId: z.string().min(24).max(25),
+    ciClassId: z.string().min(24).max(25).optional().nullable(),
+    assetCategoryId: z.string().min(24).max(25).optional().nullable(),
+    ownerPersonId: z.string().min(24).max(25).optional().nullable(),
+    ownerOrgUnitId: z.string().min(24).max(25).optional().nullable(),
     note: z
       .string()
       .trim()
@@ -30,10 +22,13 @@ export const CreateDataOwnershipSchema = z
   .refine(
     (data) => {
       // Must have exactly one target type
-      const hasCIClass = data.ciClassId !== null && data.ciClassId !== undefined;
+      const hasCIClass =
+        data.ciClassId !== null && data.ciClassId !== undefined;
       const hasAssetCategory =
         data.assetCategoryId !== null && data.assetCategoryId !== undefined;
-      return (hasCIClass && !hasAssetCategory) || (!hasCIClass && hasAssetCategory);
+      return (
+        (hasCIClass && !hasAssetCategory) || (!hasCIClass && hasAssetCategory)
+      );
     },
     {
       message:
@@ -58,19 +53,11 @@ export const CreateDataOwnershipSchema = z
 // Update DataOwnership DTO
 export const UpdateDataOwnershipSchema = z
   .object({
-    dataDomainId: z.string().uuid("Invalid data domain ID").optional(),
-    ciClassId: z.string().uuid("Invalid CI class ID").optional().nullable(),
-    assetCategoryId: z
-      .string()
-      .uuid("Invalid asset category ID")
-      .optional()
-      .nullable(),
-    ownerPersonId: z.string().uuid("Invalid person ID").optional().nullable(),
-    ownerOrgUnitId: z
-      .string()
-      .uuid("Invalid organization unit ID")
-      .optional()
-      .nullable(),
+    dataDomainId: z.string().min(24).max(25).optional(),
+    ciClassId: z.string().min(24).max(25).optional().nullable(),
+    assetCategoryId: z.string().min(24).max(25).optional().nullable(),
+    ownerPersonId: z.string().min(24).max(25).optional().nullable(),
+    ownerOrgUnitId: z.string().min(24).max(25).optional().nullable(),
     note: z
       .string()
       .trim()
@@ -81,7 +68,8 @@ export const UpdateDataOwnershipSchema = z
   .refine(
     (data) => {
       // If updating target, must have exactly one target type
-      const hasCIClass = data.ciClassId !== null && data.ciClassId !== undefined;
+      const hasCIClass =
+        data.ciClassId !== null && data.ciClassId !== undefined;
       const hasAssetCategory =
         data.assetCategoryId !== null && data.assetCategoryId !== undefined;
 
@@ -89,7 +77,9 @@ export const UpdateDataOwnershipSchema = z
       if (!hasCIClass && !hasAssetCategory) return true;
 
       // If one is provided, the other must not be
-      return (hasCIClass && !hasAssetCategory) || (!hasCIClass && hasAssetCategory);
+      return (
+        (hasCIClass && !hasAssetCategory) || (!hasCIClass && hasAssetCategory)
+      );
     },
     {
       message:

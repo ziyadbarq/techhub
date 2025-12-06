@@ -7,25 +7,34 @@
  * - Polymorphic target validation
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { Attachment } from "../attachment.entity";
 import { TargetObjectTypeEnum } from "@/generated/prisma";
 import { ValidationError } from "../../errors/validation.error";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
+// Mock ID generator for tests
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => "test-cuid-clx7abc123"),
+};
 
 describe("Attachment Entity", () => {
   describe("create - successful creation", () => {
     it("should create an attachment with valid properties", () => {
       // Act
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.ASSET,
-        targetId: "asset-123",
-        fileName: "document.pdf",
-        filePath: "uploads/2025/01/abc123.pdf",
-        mimeType: "application/pdf",
-        sizeBytes: BigInt(1024 * 100), // 100 KB
-        attachmentTypeId: "type-1",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.ASSET,
+          targetId: "asset-123",
+          fileName: "document.pdf",
+          filePath: "uploads/2025/01/abc123.pdf",
+          mimeType: "application/pdf",
+          sizeBytes: BigInt(1024 * 100), // 100 KB
+          attachmentTypeId: "type-1",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(attachment).toBeDefined();
@@ -43,15 +52,18 @@ describe("Attachment Entity", () => {
 
     it("should create attachment without optional mimeType", () => {
       // Act
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.CI,
-        targetId: "ci-123",
-        fileName: "config.txt",
-        filePath: "uploads/config.txt",
-        sizeBytes: BigInt(512),
-        attachmentTypeId: "type-2",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.CI,
+          targetId: "ci-123",
+          fileName: "config.txt",
+          filePath: "uploads/config.txt",
+          sizeBytes: BigInt(512),
+          attachmentTypeId: "type-2",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(attachment.mimeType).toBeNull();
@@ -70,15 +82,18 @@ describe("Attachment Entity", () => {
 
       // Act & Assert
       targetTypes.forEach((targetType) => {
-        const attachment = Attachment.create({
-          targetType,
-          targetId: "target-123",
-          fileName: "file.pdf",
-          filePath: "uploads/file.pdf",
-          sizeBytes: BigInt(1024),
-          attachmentTypeId: "type-1",
-          uploadedById: "user-1",
-        });
+        const attachment = Attachment.create(
+          {
+            targetType,
+            targetId: "target-123",
+            fileName: "file.pdf",
+            filePath: "uploads/file.pdf",
+            sizeBytes: BigInt(1024),
+            attachmentTypeId: "type-1",
+            uploadedById: "user-1",
+          },
+          mockIdGenerator,
+        );
         expect(attachment.targetType).toBe(targetType);
       });
     });
@@ -88,93 +103,114 @@ describe("Attachment Entity", () => {
     it("should throw ValidationError for empty fileName", () => {
       // Act & Assert
       expect(() =>
-        Attachment.create({
-          targetType: TargetObjectTypeEnum.ASSET,
-          targetId: "asset-123",
-          fileName: "",
-          filePath: "uploads/file.pdf",
-          sizeBytes: BigInt(1024),
-          attachmentTypeId: "type-1",
-          uploadedById: "user-1",
-        }),
+        Attachment.create(
+          {
+            targetType: TargetObjectTypeEnum.ASSET,
+            targetId: "asset-123",
+            fileName: "",
+            filePath: "uploads/file.pdf",
+            sizeBytes: BigInt(1024),
+            attachmentTypeId: "type-1",
+            uploadedById: "user-1",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
       expect(() =>
-        Attachment.create({
-          targetType: TargetObjectTypeEnum.ASSET,
-          targetId: "asset-123",
-          fileName: "",
-          filePath: "uploads/file.pdf",
-          sizeBytes: BigInt(1024),
-          attachmentTypeId: "type-1",
-          uploadedById: "user-1",
-        }),
+        Attachment.create(
+          {
+            targetType: TargetObjectTypeEnum.ASSET,
+            targetId: "asset-123",
+            fileName: "",
+            filePath: "uploads/file.pdf",
+            sizeBytes: BigInt(1024),
+            attachmentTypeId: "type-1",
+            uploadedById: "user-1",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow("File name is required");
     });
 
     it("should throw ValidationError for fileName exceeding 255 characters", () => {
       // Act & Assert
       expect(() =>
-        Attachment.create({
-          targetType: TargetObjectTypeEnum.ASSET,
-          targetId: "asset-123",
-          fileName: "A".repeat(256) + ".pdf",
-          filePath: "uploads/file.pdf",
-          sizeBytes: BigInt(1024),
-          attachmentTypeId: "type-1",
-          uploadedById: "user-1",
-        }),
+        Attachment.create(
+          {
+            targetType: TargetObjectTypeEnum.ASSET,
+            targetId: "asset-123",
+            fileName: "A".repeat(256) + ".pdf",
+            filePath: "uploads/file.pdf",
+            sizeBytes: BigInt(1024),
+            attachmentTypeId: "type-1",
+            uploadedById: "user-1",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
     });
 
     it("should throw ValidationError for empty filePath", () => {
       // Act & Assert
       expect(() =>
-        Attachment.create({
-          targetType: TargetObjectTypeEnum.ASSET,
-          targetId: "asset-123",
-          fileName: "file.pdf",
-          filePath: "",
-          sizeBytes: BigInt(1024),
-          attachmentTypeId: "type-1",
-          uploadedById: "user-1",
-        }),
+        Attachment.create(
+          {
+            targetType: TargetObjectTypeEnum.ASSET,
+            targetId: "asset-123",
+            fileName: "file.pdf",
+            filePath: "",
+            sizeBytes: BigInt(1024),
+            attachmentTypeId: "type-1",
+            uploadedById: "user-1",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
       expect(() =>
-        Attachment.create({
-          targetType: TargetObjectTypeEnum.ASSET,
-          targetId: "asset-123",
-          fileName: "file.pdf",
-          filePath: "",
-          sizeBytes: BigInt(1024),
-          attachmentTypeId: "type-1",
-          uploadedById: "user-1",
-        }),
+        Attachment.create(
+          {
+            targetType: TargetObjectTypeEnum.ASSET,
+            targetId: "asset-123",
+            fileName: "file.pdf",
+            filePath: "",
+            sizeBytes: BigInt(1024),
+            attachmentTypeId: "type-1",
+            uploadedById: "user-1",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow("File path is required");
     });
 
     it("should throw ValidationError for negative file size", () => {
       // Act & Assert
       expect(() =>
-        Attachment.create({
-          targetType: TargetObjectTypeEnum.ASSET,
-          targetId: "asset-123",
-          fileName: "file.pdf",
-          filePath: "uploads/file.pdf",
-          sizeBytes: BigInt(-100),
-          attachmentTypeId: "type-1",
-          uploadedById: "user-1",
-        }),
+        Attachment.create(
+          {
+            targetType: TargetObjectTypeEnum.ASSET,
+            targetId: "asset-123",
+            fileName: "file.pdf",
+            filePath: "uploads/file.pdf",
+            sizeBytes: BigInt(-100),
+            attachmentTypeId: "type-1",
+            uploadedById: "user-1",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
       expect(() =>
-        Attachment.create({
-          targetType: TargetObjectTypeEnum.ASSET,
-          targetId: "asset-123",
-          fileName: "file.pdf",
-          filePath: "uploads/file.pdf",
-          sizeBytes: BigInt(-100),
-          attachmentTypeId: "type-1",
-          uploadedById: "user-1",
-        }),
+        Attachment.create(
+          {
+            targetType: TargetObjectTypeEnum.ASSET,
+            targetId: "asset-123",
+            fileName: "file.pdf",
+            filePath: "uploads/file.pdf",
+            sizeBytes: BigInt(-100),
+            attachmentTypeId: "type-1",
+            uploadedById: "user-1",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow("File size cannot be negative");
     });
   });
@@ -186,16 +222,19 @@ describe("Attachment Entity", () => {
 
       // Act & Assert
       imageTypes.forEach((mimeType) => {
-        const attachment = Attachment.create({
-          targetType: TargetObjectTypeEnum.ASSET,
-          targetId: "asset-123",
-          fileName: "photo.jpg",
-          filePath: "uploads/photo.jpg",
-          mimeType,
-          sizeBytes: BigInt(1024),
-          attachmentTypeId: "type-1",
-          uploadedById: "user-1",
-        });
+        const attachment = Attachment.create(
+          {
+            targetType: TargetObjectTypeEnum.ASSET,
+            targetId: "asset-123",
+            fileName: "photo.jpg",
+            filePath: "uploads/photo.jpg",
+            mimeType,
+            sizeBytes: BigInt(1024),
+            attachmentTypeId: "type-1",
+            uploadedById: "user-1",
+          },
+          mockIdGenerator,
+        );
         expect(attachment.isImage()).toBe(true);
         expect(attachment.isPDF()).toBe(false);
       });
@@ -203,16 +242,19 @@ describe("Attachment Entity", () => {
 
     it("should detect PDF files", () => {
       // Arrange
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.CONTRACT,
-        targetId: "contract-123",
-        fileName: "contract.pdf",
-        filePath: "uploads/contract.pdf",
-        mimeType: "application/pdf",
-        sizeBytes: BigInt(1024 * 500),
-        attachmentTypeId: "type-1",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.CONTRACT,
+          targetId: "contract-123",
+          fileName: "contract.pdf",
+          filePath: "uploads/contract.pdf",
+          mimeType: "application/pdf",
+          sizeBytes: BigInt(1024 * 500),
+          attachmentTypeId: "type-1",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       expect(attachment.isPDF()).toBe(true);
@@ -221,16 +263,19 @@ describe("Attachment Entity", () => {
 
     it("should return false for unknown file types", () => {
       // Arrange
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.ASSET,
-        targetId: "asset-123",
-        fileName: "data.json",
-        filePath: "uploads/data.json",
-        mimeType: "application/json",
-        sizeBytes: BigInt(512),
-        attachmentTypeId: "type-1",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.ASSET,
+          targetId: "asset-123",
+          fileName: "data.json",
+          filePath: "uploads/data.json",
+          mimeType: "application/json",
+          sizeBytes: BigInt(512),
+          attachmentTypeId: "type-1",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       expect(attachment.isImage()).toBe(false);
@@ -239,15 +284,18 @@ describe("Attachment Entity", () => {
 
     it("should handle missing mimeType", () => {
       // Arrange
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.ASSET,
-        targetId: "asset-123",
-        fileName: "file.txt",
-        filePath: "uploads/file.txt",
-        sizeBytes: BigInt(100),
-        attachmentTypeId: "type-1",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.ASSET,
+          targetId: "asset-123",
+          fileName: "file.txt",
+          filePath: "uploads/file.txt",
+          sizeBytes: BigInt(100),
+          attachmentTypeId: "type-1",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       expect(attachment.isImage()).toBe(false);
@@ -267,15 +315,18 @@ describe("Attachment Entity", () => {
 
       // Act & Assert
       testCases.forEach(({ fileName, expected }) => {
-        const attachment = Attachment.create({
-          targetType: TargetObjectTypeEnum.ASSET,
-          targetId: "asset-123",
-          fileName,
-          filePath: "uploads/" + fileName,
-          sizeBytes: BigInt(1024),
-          attachmentTypeId: "type-1",
-          uploadedById: "user-1",
-        });
+        const attachment = Attachment.create(
+          {
+            targetType: TargetObjectTypeEnum.ASSET,
+            targetId: "asset-123",
+            fileName,
+            filePath: "uploads/" + fileName,
+            sizeBytes: BigInt(1024),
+            attachmentTypeId: "type-1",
+            uploadedById: "user-1",
+          },
+          mockIdGenerator,
+        );
         expect(attachment.getFileExtension()).toBe(expected);
       });
     });
@@ -284,15 +335,18 @@ describe("Attachment Entity", () => {
   describe("business methods - file size formatting", () => {
     it("should format bytes correctly", () => {
       // Arrange
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.ASSET,
-        targetId: "asset-123",
-        fileName: "tiny.txt",
-        filePath: "uploads/tiny.txt",
-        sizeBytes: BigInt(512),
-        attachmentTypeId: "type-1",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.ASSET,
+          targetId: "asset-123",
+          fileName: "tiny.txt",
+          filePath: "uploads/tiny.txt",
+          sizeBytes: BigInt(512),
+          attachmentTypeId: "type-1",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       expect(attachment.getFormattedFileSize()).toBe("512 B");
@@ -300,15 +354,18 @@ describe("Attachment Entity", () => {
 
     it("should format kilobytes correctly", () => {
       // Arrange
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.ASSET,
-        targetId: "asset-123",
-        fileName: "small.txt",
-        filePath: "uploads/small.txt",
-        sizeBytes: BigInt(1024 * 5.5), // 5.5 KB
-        attachmentTypeId: "type-1",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.ASSET,
+          targetId: "asset-123",
+          fileName: "small.txt",
+          filePath: "uploads/small.txt",
+          sizeBytes: BigInt(1024 * 5.5), // 5.5 KB
+          attachmentTypeId: "type-1",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       expect(attachment.getFormattedFileSize()).toBe("5.5 KB");
@@ -316,15 +373,18 @@ describe("Attachment Entity", () => {
 
     it("should format megabytes correctly", () => {
       // Arrange
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.CONTRACT,
-        targetId: "contract-123",
-        fileName: "contract.pdf",
-        filePath: "uploads/contract.pdf",
-        sizeBytes: (1024n * 1024n * 23n) / 10n, // ~2.3 MB
-        attachmentTypeId: "type-1",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.CONTRACT,
+          targetId: "contract-123",
+          fileName: "contract.pdf",
+          filePath: "uploads/contract.pdf",
+          sizeBytes: (1024n * 1024n * 23n) / 10n, // ~2.3 MB
+          attachmentTypeId: "type-1",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       expect(attachment.getFormattedFileSize()).toBe("2.3 MB");
@@ -332,15 +392,18 @@ describe("Attachment Entity", () => {
 
     it("should format gigabytes correctly", () => {
       // Arrange
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.ASSET,
-        targetId: "asset-123",
-        fileName: "large-file.zip",
-        filePath: "uploads/large-file.zip",
-        sizeBytes: (1024n * 1024n * 1024n * 15n) / 10n, // 1.5 GB
-        attachmentTypeId: "type-1",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.ASSET,
+          targetId: "asset-123",
+          fileName: "large-file.zip",
+          filePath: "uploads/large-file.zip",
+          sizeBytes: (1024n * 1024n * 1024n * 15n) / 10n, // 1.5 GB
+          attachmentTypeId: "type-1",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       expect(attachment.getFormattedFileSize()).toBe("1.5 GB");
@@ -350,15 +413,18 @@ describe("Attachment Entity", () => {
   describe("business methods - getFileSizeMB", () => {
     it("should return file size in megabytes", () => {
       // Arrange
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.ASSET,
-        targetId: "asset-123",
-        fileName: "file.zip",
-        filePath: "uploads/file.zip",
-        sizeBytes: BigInt(1024 * 1024 * 5), // 5 MB
-        attachmentTypeId: "type-1",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.ASSET,
+          targetId: "asset-123",
+          fileName: "file.zip",
+          filePath: "uploads/file.zip",
+          sizeBytes: BigInt(1024 * 1024 * 5), // 5 MB
+          attachmentTypeId: "type-1",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       expect(attachment.getFileSizeMB()).toBe(5);
@@ -366,15 +432,18 @@ describe("Attachment Entity", () => {
 
     it("should handle fractional megabytes", () => {
       // Arrange
-      const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.ASSET,
-        targetId: "asset-123",
-        fileName: "file.pdf",
-        filePath: "uploads/file.pdf",
-        sizeBytes: BigInt(1024 * 1024 * 2 + 1024 * 512), // 2.5 MB
-        attachmentTypeId: "type-1",
-        uploadedById: "user-1",
-      });
+      const attachment = Attachment.create(
+        {
+          targetType: TargetObjectTypeEnum.ASSET,
+          targetId: "asset-123",
+          fileName: "file.pdf",
+          filePath: "uploads/file.pdf",
+          sizeBytes: BigInt(1024 * 1024 * 2 + 1024 * 512), // 2.5 MB
+          attachmentTypeId: "type-1",
+          uploadedById: "user-1",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       expect(attachment.getFileSizeMB()).toBeCloseTo(2.5, 1);

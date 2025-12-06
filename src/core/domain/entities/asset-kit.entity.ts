@@ -5,6 +5,8 @@
  * Defines what categories/models of assets should be included in the kit.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export type KitType =
   | "NEW_HIRE"
   | "CONTRACTOR"
@@ -38,14 +40,17 @@ export class AssetKit {
     this.validate();
   }
 
-  static create(props: CreateAssetKitProps): AssetKit {
+  static create(
+    props: CreateAssetKitProps,
+    idGenerator: IIdGenerator,
+  ): AssetKit {
     AssetKit.validateName(props.name);
     AssetKit.validateCode(props.code);
 
     const now = new Date();
 
     return new AssetKit({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       name: props.name.trim(),
       code: props.code.trim().toUpperCase(),
       description: props.description?.trim() || null,

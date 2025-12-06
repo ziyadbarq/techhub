@@ -9,6 +9,7 @@ import { DI_TOKENS } from "@/di/types";
 import { FieldDefinition } from "@/core/domain/entities/field-definition.entity";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import type { FieldDataTypeEnum } from "@/core/domain/value-objects/foundation-enums";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateFieldDefinitionProps {
   name: string;
@@ -35,6 +36,9 @@ export class CreateFieldDefinitionUseCase {
   constructor(
     @inject(DI_TOKENS.IFieldDefinitionRepository)
     private readonly fieldDefinitionRepository: IFieldDefinitionRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

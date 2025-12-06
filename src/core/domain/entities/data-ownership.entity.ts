@@ -5,7 +5,7 @@
  * or asset categories, with ownership assigned to persons or organizational units.
  */
 
-import { v4 as uuid } from "uuid";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateDataOwnershipProps {
   dataDomainId: string;
@@ -108,7 +108,9 @@ export class DataOwnership {
 
   // Business logic methods
   public hasOwner(): boolean {
-    return this.props.ownerPersonId !== null || this.props.ownerOrgUnitId !== null;
+    return (
+      this.props.ownerPersonId !== null || this.props.ownerOrgUnitId !== null
+    );
   }
 
   public isOwnedByPerson(): boolean {
@@ -144,7 +146,10 @@ export class DataOwnership {
   }
 
   // Factory method
-  public static create(props: CreateDataOwnershipProps): DataOwnership {
+  public static create(
+    props: CreateDataOwnershipProps,
+    idGenerator: IIdGenerator,
+  ): DataOwnership {
     // Validations
     DataOwnership.validateDataDomainId(props.dataDomainId);
     DataOwnership.validateTargetAssignment(
@@ -155,7 +160,7 @@ export class DataOwnership {
 
     const now = new Date();
     return new DataOwnership({
-      id: uuid(),
+      id: idGenerator.generateId(),
       dataDomainId: props.dataDomainId,
       ciClassId: props.ciClassId ?? null,
       assetCategoryId: props.assetCategoryId ?? null,

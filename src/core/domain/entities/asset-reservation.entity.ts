@@ -6,6 +6,8 @@
  * Supports conflict detection and resolution.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export type ReservationStatus =
   | "PENDING"
   | "CONFIRMED"
@@ -49,7 +51,10 @@ export class AssetReservation {
     this.validate();
   }
 
-  static create(props: CreateAssetReservationProps): AssetReservation {
+  static create(
+    props: CreateAssetReservationProps,
+    idGenerator: IIdGenerator,
+  ): AssetReservation {
     if (!props.assetId?.trim()) {
       throw new Error("Asset ID is required");
     }
@@ -78,7 +83,7 @@ export class AssetReservation {
     const now = new Date();
 
     return new AssetReservation({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       assetId: props.assetId,
       reservedForPersonId: props.reservedForPersonId?.trim() || null,
       reservedForOrgUnitId: props.reservedForOrgUnitId?.trim() || null,

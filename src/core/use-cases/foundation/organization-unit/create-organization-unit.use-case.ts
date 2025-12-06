@@ -6,6 +6,7 @@
 
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { OrganizationUnit } from "@/core/domain/entities/organization-unit.entity";
 import type { OrganizationUnitType } from "@/core/domain/value-objects/foundation-enums";
 import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
@@ -30,6 +31,8 @@ export class CreateOrganizationUnitUseCase {
     private readonly organizationUnitRepository: IOrganizationUnitRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

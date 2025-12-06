@@ -6,9 +6,9 @@ import { z } from "zod";
 
 // Create Relationship Type Scope DTO
 export const CreateRelationshipTypeScopeSchema = z.object({
-  relationshipTypeId: z.string().uuid("Invalid relationship type ID"),
-  fromCiClassId: z.string().uuid("Invalid from CI class ID"),
-  toCiClassId: z.string().uuid("Invalid to CI class ID"),
+  relationshipTypeId: z.string().min(24).max(25),
+  fromCiClassId: z.string().min(24).max(25),
+  toCiClassId: z.string().min(24).max(25),
   note: z
     .string()
     .max(5000, "Note must be 5000 characters or less")

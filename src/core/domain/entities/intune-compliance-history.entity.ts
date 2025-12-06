@@ -5,6 +5,7 @@
  * Used for SAMA governance reporting and compliance trend analysis.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { IntuneComplianceState } from "./intune-device.entity";
 
 export interface IntuneComplianceHistoryProps {
@@ -37,13 +38,14 @@ export class IntuneComplianceHistory {
    */
   static create(
     props: CreateIntuneComplianceHistoryProps,
+    idGenerator: IIdGenerator,
   ): IntuneComplianceHistory {
     if (!props.intuneDeviceId?.trim()) {
       throw new Error("Intune Device ID is required");
     }
 
     return new IntuneComplianceHistory({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       intuneDeviceId: props.intuneDeviceId,
       previousState: props.previousState,
       newState: props.newState,

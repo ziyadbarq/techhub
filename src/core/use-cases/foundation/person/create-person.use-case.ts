@@ -6,6 +6,7 @@
 
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Person } from "@/core/domain/entities/person.entity";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 
@@ -33,6 +34,8 @@ export class CreatePersonUseCase {
   constructor(
     @inject(DI_TOKENS.IPersonRepository)
     private readonly personRepository: IPersonRepository,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

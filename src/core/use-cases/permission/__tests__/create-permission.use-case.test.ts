@@ -8,10 +8,11 @@
  * - Repository integration
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { CreatePermissionUseCase } from "../create-permission.use-case";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { Permission } from "@/core/domain/entities/permission.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Mock Permission Repository
@@ -42,14 +43,22 @@ class MockPermissionRepository implements Partial<IPermissionRepository> {
   }
 }
 
+// Mock ID generator for tests
+let idCounter = 0;
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => `test-cuid-${idCounter++}`),
+};
+
 describe("CreatePermissionUseCase", () => {
   let useCase: CreatePermissionUseCase;
   let mockRepository: MockPermissionRepository;
 
   beforeEach(() => {
+    idCounter = 0;
     mockRepository = new MockPermissionRepository();
     useCase = new CreatePermissionUseCase(
       mockRepository as unknown as IPermissionRepository,
+      mockIdGenerator,
     );
   });
 

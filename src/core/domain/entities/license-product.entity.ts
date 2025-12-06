@@ -4,7 +4,7 @@
  * Represents a licensable software product with its licensing metric type.
  */
 
-import { v4 as uuid } from "uuid";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export enum LicenseMetricType {
   PER_DEVICE = "per_device",
@@ -123,7 +123,10 @@ export class LicenseProduct {
   }
 
   // Factory method
-  public static create(props: CreateLicenseProductProps): LicenseProduct {
+  public static create(
+    props: CreateLicenseProductProps,
+    idGenerator: IIdGenerator,
+  ): LicenseProduct {
     // Validations
     LicenseProduct.validateName(props.name);
     LicenseProduct.validateCode(props.code);
@@ -132,7 +135,7 @@ export class LicenseProduct {
 
     const now = new Date();
     return new LicenseProduct({
-      id: uuid(),
+      id: idGenerator.generateId(),
       name: props.name.trim(),
       code: props.code.trim().toUpperCase(),
       vendorId: props.vendorId,

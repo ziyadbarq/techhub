@@ -3,7 +3,7 @@
  * Represents a role in the RBAC system
  */
 
-import { createId } from "@paralleldrive/cuid2";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { PermissionKey } from "../value-objects/permission-key";
 
 export interface RoleProps {
@@ -46,18 +46,21 @@ export class Role {
   }
 
   // Factory method for creating a new role
-  static create(params: {
-    name: string;
-    displayName: string;
-    description?: string;
-    isSystem?: boolean;
-    isActive?: boolean;
-    createdBy?: string;
-    parentId?: string | null;
-  }): Role {
+  static create(
+    params: {
+      name: string;
+      displayName: string;
+      description?: string;
+      isSystem?: boolean;
+      isActive?: boolean;
+      createdBy?: string;
+      parentId?: string | null;
+    },
+    idGenerator: IIdGenerator,
+  ): Role {
     const now = new Date();
     return new Role({
-      id: createId(),
+      id: idGenerator.generateId(),
       name: params.name.toLowerCase().trim(),
       displayName: params.displayName.trim(),
       description: params.description?.trim(),

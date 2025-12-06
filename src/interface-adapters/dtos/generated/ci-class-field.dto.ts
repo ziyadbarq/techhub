@@ -6,8 +6,8 @@ import { z } from "zod";
 
 // Create CI Class Field DTO
 export const CreateCIClassFieldSchema = z.object({
-  ciClassId: z.string().uuid("Invalid CI class ID"),
-  fieldDefinitionId: z.string().uuid("Invalid field definition ID"),
+  ciClassId: z.string().min(24).max(25),
+  fieldDefinitionId: z.string().min(24).max(25),
   isRequired: z.boolean().optional().default(false),
   isUnique: z.boolean().optional().default(false),
   isVisible: z.boolean().optional().default(true),

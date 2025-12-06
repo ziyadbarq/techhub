@@ -5,6 +5,8 @@
  * Tracks status, dates, and individual asset items.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export type KitCheckoutStatus =
   | "CHECKED_OUT"
   | "PARTIALLY_RETURNED"
@@ -41,7 +43,10 @@ export class AssetKitCheckout {
     this.validate();
   }
 
-  static create(props: CreateAssetKitCheckoutProps): AssetKitCheckout {
+  static create(
+    props: CreateAssetKitCheckoutProps,
+    idGenerator: IIdGenerator,
+  ): AssetKitCheckout {
     if (!props.assetKitId?.trim()) {
       throw new Error("Asset kit ID is required");
     }
@@ -55,7 +60,7 @@ export class AssetKitCheckout {
     const now = new Date();
 
     return new AssetKitCheckout({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       assetKitId: props.assetKitId,
       assigneeType: props.assigneeType,
       assigneeId: props.assigneeId,

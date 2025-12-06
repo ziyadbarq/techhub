@@ -6,6 +6,7 @@ import {
   type CreateRelationshipTypeProps,
 } from "../../../domain/entities/relationship-type.entity";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export type CreateRelationshipTypeRequest = CreateRelationshipTypeProps;
 
@@ -16,6 +17,9 @@ export class CreateRelationshipTypeUseCase {
     private readonly relationshipTypeRepository: IRelationshipTypeRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(
@@ -32,7 +36,10 @@ export class CreateRelationshipTypeUseCase {
       throw new Error(`Relationship type with code already exists: ${code}`);
     }
 
-    const relationshipType = RelationshipType.create({ ...request, code });
+    const relationshipType = RelationshipType.create(
+      { ...request, code },
+      this.idGenerator,
+    );
     return await this.relationshipTypeRepository.create(relationshipType);
   }
 }

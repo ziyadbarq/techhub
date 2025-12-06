@@ -18,6 +18,7 @@ import type { IAssetCategoryFieldRepository } from "@/core/repositories/asset-ca
 import type { ICIClassFieldRepository } from "@/core/repositories/ci-class-field.repository.interface";
 import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export type TargetEntityType = "AssetCategory" | "CIClass" | "LicenseProduct";
 
@@ -51,6 +52,9 @@ export class ApplyFieldTemplateUseCase {
     private readonly ciClassFieldRepository: ICIClassFieldRepository,
     @inject(DI_TOKENS.ILicenseProductFieldRepository)
     private readonly licenseProductFieldRepository: ILicenseProductFieldRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**
@@ -231,12 +235,15 @@ export class ApplyFieldTemplateUseCase {
             fieldDefinition.id,
           );
         if (!existingLicenseLink) {
-          const licenseProductField = LicenseProductField.create({
-            licenseProductId: targetEntityId,
-            fieldDefinitionId: fieldDefinition.id,
-            uiOrder: displayOrder,
-            isRequired,
-          });
+          const licenseProductField = LicenseProductField.create(
+            {
+              licenseProductId: targetEntityId,
+              fieldDefinitionId: fieldDefinition.id,
+              uiOrder: displayOrder,
+              isRequired,
+            },
+            this.idGenerator,
+          );
           await this.licenseProductFieldRepository.create(licenseProductField);
         }
         break;

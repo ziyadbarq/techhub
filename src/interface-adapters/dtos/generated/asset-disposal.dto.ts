@@ -3,7 +3,7 @@ import { currencyField, currencyCode } from "../validation-helpers";
 
 // Asset Disposal DTOs
 export const CreateAssetDisposalDTO = z.object({
-  assetId: z.string().uuid(),
+  assetId: z.string().min(24).max(25),
   disposalType: z.enum([
     "DONATION",
     "SALE",
@@ -14,12 +14,12 @@ export const CreateAssetDisposalDTO = z.object({
   reason: z.string().optional(),
   estimatedValue: currencyField("Estimated value"),
   currency: currencyCode,
-  disposalVendorId: z.string().uuid().optional(),
+  disposalVendorId: z.string().min(24).max(25).optional(),
   recipientInfo: z.string().optional(),
   note: z.string().optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
   approverIds: z
-    .array(z.string().uuid())
+    .array(z.string().min(24).max(25))
     .min(1, "At least one approver is required"),
 });
 
@@ -30,40 +30,40 @@ export const UpdateAssetDisposalDTO = z.object({
   reason: z.string().optional(),
   estimatedValue: currencyField("Estimated value"),
   currency: currencyCode,
-  disposalVendorId: z.string().uuid().optional(),
+  disposalVendorId: z.string().min(24).max(25).optional(),
   recipientInfo: z.string().optional(),
   note: z.string().optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const StartDisposalDTO = z.object({
-  disposalId: z.string().uuid(),
+  disposalId: z.string().min(24).max(25),
 });
 
 export const CompleteSanitizationDTO = z.object({
-  disposalId: z.string().uuid(),
+  disposalId: z.string().min(24).max(25),
   checkedItems: z.array(z.string()),
-  performedById: z.string().uuid(),
+  performedById: z.string().min(24).max(25),
 });
 
 export const CompleteDisposalDTO = z.object({
-  disposalId: z.string().uuid(),
+  disposalId: z.string().min(24).max(25),
   disposalDate: z.coerce.date(),
   actualProceeds: currencyField("Actual proceeds"),
 });
 
 export const GenerateCertificateDTO = z.object({
-  disposalId: z.string().uuid(),
+  disposalId: z.string().min(24).max(25),
 });
 
 export const CancelDisposalDTO = z.object({
-  disposalId: z.string().uuid(),
+  disposalId: z.string().min(24).max(25),
   cancellationReason: z.string().min(1, "Cancellation reason is required"),
 });
 
 export const AssetDisposalDTO = z.object({
-  id: z.string().uuid(),
-  assetId: z.string().uuid(),
+  id: z.string().min(24).max(25),
+  assetId: z.string().min(24).max(25),
   disposalType: z.string(),
   reason: z.string().nullable(),
   initiatedById: z.string(),

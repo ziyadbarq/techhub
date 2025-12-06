@@ -58,13 +58,13 @@ model AssetDisposal {
 // DisposalApproval model
 // Multi-level approval tracking for disposal requests
 model DisposalApproval {
-  id         String    @id @default(cuid())
+  id         String                     @id @default(cuid())
   disposalId String
   approverId String
   status     DisposalApprovalStatusEnum @default(PENDING)
   decisionAt DateTime?
-  comment    String?   @db.Text
-  createdAt  DateTime  @default(now())
+  comment    String?                    @db.Text
+  createdAt  DateTime                   @default(now())
 
   // Relations
   disposal AssetDisposal @relation(fields: [disposalId], references: [id], onDelete: Cascade)

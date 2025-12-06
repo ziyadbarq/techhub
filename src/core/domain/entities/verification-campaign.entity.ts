@@ -5,7 +5,7 @@
  * Used to schedule and track verification activities across multiple items.
  */
 
-import { v4 as uuid } from "uuid";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 // Enum for target object type
 export enum TargetObjectTypeEnum {
@@ -176,6 +176,7 @@ export class VerificationCampaign {
   // Factory method
   public static create(
     props: CreateVerificationCampaignProps,
+    idGenerator: IIdGenerator,
   ): VerificationCampaign {
     // Validations
     VerificationCampaign.validateName(props.name);
@@ -189,7 +190,7 @@ export class VerificationCampaign {
 
     const now = new Date();
     return new VerificationCampaign({
-      id: uuid(),
+      id: idGenerator.generateId(),
       name: props.name.trim(),
       description: props.description?.trim() || null,
       targetType: props.targetType,

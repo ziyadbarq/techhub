@@ -5,6 +5,7 @@
  * Supports dependency tracking, impact analysis, and temporal validity.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { ServiceRelationshipType } from "@/generated/prisma";
 
 export interface ServiceRelationshipProps {
@@ -49,7 +50,10 @@ export class ServiceRelationship {
   /**
    * Factory method to create a new service relationship
    */
-  static create(props: CreateServiceRelationshipProps): ServiceRelationship {
+  static create(
+    props: CreateServiceRelationshipProps,
+    idGenerator: IIdGenerator,
+  ): ServiceRelationship {
     // Validation
     if (!props.fromServiceId?.trim()) {
       throw new Error("From Service ID is required");
@@ -73,7 +77,7 @@ export class ServiceRelationship {
     }
 
     return new ServiceRelationship({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       fromServiceId: props.fromServiceId,
       toServiceId: props.toServiceId,
       relationshipType: props.relationshipType,

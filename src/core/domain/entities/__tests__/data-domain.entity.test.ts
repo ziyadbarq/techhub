@@ -7,19 +7,28 @@
  * - Code formatting and validation
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { DataDomain } from "../data-domain.entity";
 import { ValidationError } from "../../errors/validation.error";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
+// Mock ID generator for tests
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => "test-cuid-clx7abc123"),
+};
 
 describe("DataDomain Entity", () => {
   describe("create - successful creation", () => {
     it("should create a data domain with valid properties", () => {
       // Act
-      const dataDomain = DataDomain.create({
-        name: "Customer PII",
-        code: "CUST-PII",
-        description: "Personal Identifiable Information",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Customer PII",
+          code: "CUST-PII",
+          description: "Personal Identifiable Information",
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(dataDomain).toBeDefined();
@@ -34,10 +43,13 @@ describe("DataDomain Entity", () => {
 
     it("should auto-uppercase code", () => {
       // Act
-      const dataDomain = DataDomain.create({
-        name: "Financial Data",
-        code: "fin-data",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Financial Data",
+          code: "fin-data",
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(dataDomain.code).toBe("FIN-DATA");
@@ -45,11 +57,14 @@ describe("DataDomain Entity", () => {
 
     it("should create with isActive=false when specified", () => {
       // Act
-      const dataDomain = DataDomain.create({
-        name: "Test Domain",
-        code: "TEST",
-        isActive: false,
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Test Domain",
+          code: "TEST",
+          isActive: false,
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(dataDomain.isActive).toBe(false);
@@ -57,10 +72,13 @@ describe("DataDomain Entity", () => {
 
     it("should create without description (optional)", () => {
       // Act
-      const dataDomain = DataDomain.create({
-        name: "Minimal Domain",
-        code: "MIN",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Minimal Domain",
+          code: "MIN",
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(dataDomain.description).toBeNull();
@@ -68,10 +86,13 @@ describe("DataDomain Entity", () => {
 
     it("should trim whitespace from name and code", () => {
       // Act
-      const dataDomain = DataDomain.create({
-        name: "  Trimmed Name  ",
-        code: "  TRIM-CODE  ",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "  Trimmed Name  ",
+          code: "  TRIM-CODE  ",
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(dataDomain.name).toBe("Trimmed Name");
@@ -83,100 +104,136 @@ describe("DataDomain Entity", () => {
     it("should throw ValidationError for empty name", () => {
       // Act & Assert
       expect(() =>
-        DataDomain.create({
-          name: "",
-          code: "TEST",
-        }),
+        DataDomain.create(
+          {
+            name: "",
+            code: "TEST",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
       expect(() =>
-        DataDomain.create({
-          name: "",
-          code: "TEST",
-        }),
+        DataDomain.create(
+          {
+            name: "",
+            code: "TEST",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow("Data domain name is required");
     });
 
     it("should throw ValidationError for whitespace-only name", () => {
       // Act & Assert
       expect(() =>
-        DataDomain.create({
-          name: "   ",
-          code: "TEST",
-        }),
+        DataDomain.create(
+          {
+            name: "   ",
+            code: "TEST",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
     });
 
     it("should throw ValidationError for name exceeding 255 characters", () => {
       // Act & Assert
       expect(() =>
-        DataDomain.create({
-          name: "A".repeat(256),
-          code: "TEST",
-        }),
+        DataDomain.create(
+          {
+            name: "A".repeat(256),
+            code: "TEST",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
       expect(() =>
-        DataDomain.create({
-          name: "A".repeat(256),
-          code: "TEST",
-        }),
+        DataDomain.create(
+          {
+            name: "A".repeat(256),
+            code: "TEST",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow("Data domain name must not exceed 255 characters");
     });
 
     it("should throw ValidationError for empty code", () => {
       // Act & Assert
       expect(() =>
-        DataDomain.create({
-          name: "Test",
-          code: "",
-        }),
+        DataDomain.create(
+          {
+            name: "Test",
+            code: "",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
       expect(() =>
-        DataDomain.create({
-          name: "Test",
-          code: "",
-        }),
+        DataDomain.create(
+          {
+            name: "Test",
+            code: "",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow("Data domain code is required");
     });
 
     it("should throw ValidationError for whitespace-only code", () => {
       // Act & Assert
       expect(() =>
-        DataDomain.create({
-          name: "Test",
-          code: "   ",
-        }),
+        DataDomain.create(
+          {
+            name: "Test",
+            code: "   ",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
     });
 
     it("should throw ValidationError for code exceeding 50 characters", () => {
       // Act & Assert
       expect(() =>
-        DataDomain.create({
-          name: "Test",
-          code: "A".repeat(51),
-        }),
+        DataDomain.create(
+          {
+            name: "Test",
+            code: "A".repeat(51),
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
       expect(() =>
-        DataDomain.create({
-          name: "Test",
-          code: "A".repeat(51),
-        }),
+        DataDomain.create(
+          {
+            name: "Test",
+            code: "A".repeat(51),
+          },
+          mockIdGenerator,
+        ),
       ).toThrow("Data domain code must not exceed 50 characters");
     });
 
     it("should throw ValidationError for code with invalid characters", () => {
       // Act & Assert
       expect(() =>
-        DataDomain.create({
-          name: "Test",
-          code: "INVALID CODE!",
-        }),
+        DataDomain.create(
+          {
+            name: "Test",
+            code: "INVALID CODE!",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(ValidationError);
       expect(() =>
-        DataDomain.create({
-          name: "Test",
-          code: "INVALID CODE!",
-        }),
+        DataDomain.create(
+          {
+            name: "Test",
+            code: "INVALID CODE!",
+          },
+          mockIdGenerator,
+        ),
       ).toThrow(
         "Data domain code must contain only alphanumeric characters, hyphens, and underscores",
       );
@@ -186,11 +243,14 @@ describe("DataDomain Entity", () => {
   describe("business methods", () => {
     it("should activate an inactive data domain", () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Test",
-        code: "TEST",
-        isActive: false,
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Test",
+          code: "TEST",
+          isActive: false,
+        },
+        mockIdGenerator,
+      );
 
       // Act
       dataDomain.activate();
@@ -201,10 +261,13 @@ describe("DataDomain Entity", () => {
 
     it("should deactivate an active data domain", () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Test",
-        code: "TEST",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Test",
+          code: "TEST",
+        },
+        mockIdGenerator,
+      );
 
       // Act
       dataDomain.deactivate();
@@ -215,10 +278,13 @@ describe("DataDomain Entity", () => {
 
     it("should update code and auto-uppercase", () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Test",
-        code: "OLD-CODE",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Test",
+          code: "OLD-CODE",
+        },
+        mockIdGenerator,
+      );
 
       // Act
       dataDomain.updateCode("new-code");
@@ -229,10 +295,13 @@ describe("DataDomain Entity", () => {
 
     it("should throw ValidationError when updating code with invalid value", () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Test",
-        code: "VALID",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Test",
+          code: "VALID",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       expect(() => dataDomain.updateCode("INVALID!")).toThrow(ValidationError);
@@ -242,10 +311,13 @@ describe("DataDomain Entity", () => {
   describe("edge cases", () => {
     it("should handle name at max length (255 chars)", () => {
       // Act
-      const dataDomain = DataDomain.create({
-        name: "A".repeat(255),
-        code: "MAX",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "A".repeat(255),
+          code: "MAX",
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(dataDomain.name.length).toBe(255);
@@ -253,10 +325,13 @@ describe("DataDomain Entity", () => {
 
     it("should handle code at max length (50 chars)", () => {
       // Act
-      const dataDomain = DataDomain.create({
-        name: "Test",
-        code: "A".repeat(50),
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Test",
+          code: "A".repeat(50),
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(dataDomain.code.length).toBe(50);
@@ -264,10 +339,13 @@ describe("DataDomain Entity", () => {
 
     it("should handle code with hyphens and underscores", () => {
       // Act
-      const dataDomain = DataDomain.create({
-        name: "Test",
-        code: "TEST_CODE-123",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Test",
+          code: "TEST_CODE-123",
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(dataDomain.code).toBe("TEST_CODE-123");
@@ -275,10 +353,13 @@ describe("DataDomain Entity", () => {
 
     it("should handle special characters in name", () => {
       // Act
-      const dataDomain = DataDomain.create({
-        name: "Data Domain (SAMA Compliance) - PII",
-        code: "SAMA-PII",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Data Domain (SAMA Compliance) - PII",
+          code: "SAMA-PII",
+        },
+        mockIdGenerator,
+      );
 
       // Assert
       expect(dataDomain.name).toBe("Data Domain (SAMA Compliance) - PII");

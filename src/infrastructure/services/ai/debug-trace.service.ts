@@ -6,10 +6,10 @@
  */
 
 import { injectable, inject } from "inversify";
-import { createId } from "@paralleldrive/cuid2";
 import type {
   IAIDebugTraceService,
   IFileStorageService,
+  IIdGenerator,
 } from "@/core/services";
 import { DI_TOKENS } from "@/di/types";
 import type {
@@ -82,6 +82,8 @@ export class AIDebugTraceService implements IAIDebugTraceService {
   constructor(
     @inject(DI_TOKENS.IFileStorageService)
     private readonly fileStorage: IFileStorageService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {
     // Check environment variable
     this.debugEnabled = env.AI_DEBUG_MODE ?? false;
@@ -109,7 +111,7 @@ export class AIDebugTraceService implements IAIDebugTraceService {
     }
 
     // Generate session ID
-    const sessionId = createId();
+    const sessionId = this.idGenerator.generateId();
     const now = new Date().toISOString();
 
     // Initialize session

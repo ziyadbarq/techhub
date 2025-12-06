@@ -6,6 +6,7 @@
 
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Location } from "@/core/domain/entities/location.entity";
 import type { ILocationRepository } from "@/core/repositories/location.repository.interface";
 import type { LocationType } from "@/core/domain/value-objects/foundation-enums";
@@ -37,6 +38,8 @@ export class CreateLocationUseCase {
     private readonly locationRepository: ILocationRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

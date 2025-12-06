@@ -8,11 +8,12 @@
  * - Entity validation (delegated to entity)
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { CreateAssetCategoryUseCase } from "../create-asset-category.use-case";
 import type { CreateAssetCategoryProps } from "../create-asset-category.use-case";
 import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { AssetCategory } from "@/core/domain/entities/asset-category.entity";
 
 /**
@@ -70,6 +71,11 @@ class MockCodeGeneratorService implements Partial<ICodeGeneratorService> {
   }
 }
 
+// Mock ID generator for tests
+const mockIdGenerator: IIdGenerator = {
+  generateId: vi.fn(() => "test-cuid-clx7abc123"),
+};
+
 describe("CreateAssetCategoryUseCase", () => {
   let useCase: CreateAssetCategoryUseCase;
   let mockRepository: MockAssetCategoryRepository;
@@ -81,6 +87,7 @@ describe("CreateAssetCategoryUseCase", () => {
     useCase = new CreateAssetCategoryUseCase(
       mockRepository as unknown as IAssetCategoryRepository,
       mockCodeGenerator as unknown as ICodeGeneratorService,
+      mockIdGenerator,
     );
   });
 

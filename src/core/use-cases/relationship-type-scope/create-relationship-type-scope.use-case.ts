@@ -8,6 +8,7 @@ import type { IRelationshipTypeScopeRepository } from "@/core/repositories/relat
 import type { IRelationshipTypeRepository } from "@/core/repositories/relationship-type.repository.interface";
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
 import { RelationshipTypeScope } from "@/core/domain/entities/relationship-type-scope.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateRelationshipTypeScopeRequest {
   relationshipTypeId: string;
@@ -25,6 +26,9 @@ export class CreateRelationshipTypeScopeUseCase {
     private relationshipTypeRepository: IRelationshipTypeRepository,
     @inject(DI_TOKENS.ICIClassRepository)
     private ciClassRepository: ICIClassRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(

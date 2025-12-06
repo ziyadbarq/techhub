@@ -5,6 +5,7 @@
  * check results, response times, and error details.
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { ServiceHealthStatus } from "@/generated/prisma";
 
 export interface ServiceHealthHistoryProps {
@@ -39,11 +40,14 @@ export class ServiceHealthHistory {
     this.validate();
   }
 
-  static create(props: CreateServiceHealthHistoryProps): ServiceHealthHistory {
+  static create(
+    props: CreateServiceHealthHistoryProps,
+    idGenerator: IIdGenerator,
+  ): ServiceHealthHistory {
     const now = new Date();
 
     return new ServiceHealthHistory({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       serviceId: props.serviceId,
       previousStatus: props.previousStatus,
       newStatus: props.newStatus,

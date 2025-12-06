@@ -7,6 +7,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IAttachmentTypeRepository } from "@/core/repositories/attachment-type.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import { AttachmentType } from "@/core/domain/entities/attachment-type.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateAttachmentTypeRequest {
   name: string;
@@ -24,6 +25,9 @@ export class CreateAttachmentTypeUseCase {
     private attachmentTypeRepository: IAttachmentTypeRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateAttachmentTypeRequest): Promise<AttachmentType> {
@@ -48,14 +52,17 @@ export class CreateAttachmentTypeUseCase {
     }
 
     // Create attachment type entity
-    const attachmentType = AttachmentType.create({
-      name: request.name,
-      code,
-      description: request.description,
-      allowedExtensions: request.allowedExtensions,
-      maxFileSizeMB: request.maxFileSizeMB,
-      isActive: request.isActive,
-    });
+    const attachmentType = AttachmentType.create(
+      {
+        name: request.name,
+        code,
+        description: request.description,
+        allowedExtensions: request.allowedExtensions,
+        maxFileSizeMB: request.maxFileSizeMB,
+        isActive: request.isActive,
+      },
+      this.idGenerator,
+    );
 
     return await this.attachmentTypeRepository.create(attachmentType);
   }

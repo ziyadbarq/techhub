@@ -21,9 +21,9 @@
 import { injectable, inject } from "inversify";
 import { promises as fs } from "fs";
 import path from "path";
-import { createId } from "@paralleldrive/cuid2";
 import type { IFileStorageService } from "@/core/services/file-storage.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { DI_TOKENS } from "@/di/types";
 import { Attachment } from "@/core/domain/entities/attachment.entity";
 
@@ -42,6 +42,8 @@ export class LocalFileStorageService implements IFileStorageService {
   constructor(
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {
     // Use process.cwd() as project root
     this.projectRoot = process.cwd();
@@ -82,7 +84,7 @@ export class LocalFileStorageService implements IFileStorageService {
       }
 
       // Generate unique file name using CUID
-      const uniqueId = createId();
+      const uniqueId = this.idGenerator.generateId();
       const uniqueFileName = `${uniqueId}${ext}`;
 
       // Build directory path: uploads/{year}/{month}

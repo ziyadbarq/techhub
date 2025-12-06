@@ -7,6 +7,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IDataOwnershipRepository } from "@/core/repositories/data-ownership.repository.interface";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
 import { DataOwnership } from "@/core/domain/entities/data-ownership.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateDataOwnershipRequest {
   dataDomainId: string;
@@ -24,6 +25,9 @@ export class CreateDataOwnershipUseCase {
     private dataOwnershipRepository: IDataOwnershipRepository,
     @inject(DI_TOKENS.IDataDomainRepository)
     private dataDomainRepository: IDataDomainRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateDataOwnershipRequest): Promise<DataOwnership> {
@@ -54,14 +58,17 @@ export class CreateDataOwnershipUseCase {
     }
 
     // Create data ownership entity
-    const dataOwnership = DataOwnership.create({
-      dataDomainId: request.dataDomainId,
-      ciClassId: request.ciClassId,
-      assetCategoryId: request.assetCategoryId,
-      ownerPersonId: request.ownerPersonId,
-      ownerOrgUnitId: request.ownerOrgUnitId,
-      note: request.note,
-    });
+    const dataOwnership = DataOwnership.create(
+      {
+        dataDomainId: request.dataDomainId,
+        ciClassId: request.ciClassId,
+        assetCategoryId: request.assetCategoryId,
+        ownerPersonId: request.ownerPersonId,
+        ownerOrgUnitId: request.ownerOrgUnitId,
+        note: request.note,
+      },
+      this.idGenerator,
+    );
 
     return await this.dataOwnershipRepository.create(dataOwnership);
   }

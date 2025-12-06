@@ -15,6 +15,7 @@ import type { IUserRoleRepository } from "@/core/repositories/user-role-reposito
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import type { IPasswordService } from "@/core/services/password.service.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateUserForPersonRequest {
   personId: string;
@@ -49,6 +50,9 @@ export class CreateUserForPersonUseCase {
     private logger: ILoggerService,
     @inject(DI_TOKENS.IPasswordService)
     private passwordService: IPasswordService,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(
@@ -116,11 +120,14 @@ export class CreateUserForPersonUseCase {
       );
     }
 
-    const userRole = UserRole.create({
-      userId: user.id,
-      roleId: viewerRole.id,
-      createdBy: request.createdBy,
-    });
+    const userRole = UserRole.create(
+      {
+        userId: user.id,
+        roleId: viewerRole.id,
+        createdBy: request.createdBy,
+      },
+      this.idGenerator,
+    );
 
     await this.userRoleRepository.create(userRole);
 

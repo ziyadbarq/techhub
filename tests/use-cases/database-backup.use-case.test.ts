@@ -17,6 +17,7 @@ import type { IJobQueueService } from "@/core/services/job-queue.service.interfa
 import type { JobType } from "bullmq";
 import type { IDatabaseBackupService } from "@/core/services/database-backup.service.interface";
 import type { ILoggerService } from "@/core/services";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { MAINTENANCE_JOBS, QUEUE_NAMES } from "@/core/domain/jobs/job-names";
 import { CreateDatabaseBackupUseCase } from "@/core/use-cases/database-backup/create-backup.use-case";
 import { RestoreDatabaseFromBackupUseCase } from "@/core/use-cases/database-backup/restore-from-backup.use-case";
@@ -230,12 +231,17 @@ describe("Database Backup Use Cases", () => {
   let repository: MockBackupRepository;
   let jobQueue: MockJobQueue;
   let backupService: MockBackupService;
+  let idCounter = 0;
+  const mockIdGenerator: IIdGenerator = {
+    generateId: () => `backup-test-id-${idCounter++}`,
+  };
 
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-01T00:00:00Z"));
     process.env.DATABASE_URL =
       "postgresql://user:password@localhost:5432/barq_assets_test";
+    idCounter = 0;
 
     container = new Container();
     repository = new MockBackupRepository();
@@ -254,6 +260,9 @@ describe("Database Backup Use Cases", () => {
     container
       .bind<ILoggerService>(DI_TOKENS.ILoggerService)
       .toConstantValue(mockLogger);
+    container
+      .bind<IIdGenerator>(DI_TOKENS.IIdGenerator)
+      .toConstantValue(mockIdGenerator);
 
     container
       .bind<CreateDatabaseBackupUseCase>(DI_TOKENS.CreateDatabaseBackupUseCase)

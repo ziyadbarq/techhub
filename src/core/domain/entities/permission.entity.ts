@@ -3,7 +3,7 @@
  * Represents a permission in the RBAC system
  */
 
-import { createId } from "@paralleldrive/cuid2";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { PermissionKey } from "../value-objects/permission-key";
 
 export interface PermissionProps {
@@ -51,21 +51,24 @@ export class Permission {
   }
 
   // Factory method for creating a new permission
-  static create(params: {
-    resource: string;
-    action: string;
-    displayName: string;
-    description?: string;
-    isSystem?: boolean;
-    isActive?: boolean;
-  }): Permission {
+  static create(
+    params: {
+      resource: string;
+      action: string;
+      displayName: string;
+      description?: string;
+      isSystem?: boolean;
+      isActive?: boolean;
+    },
+    idGenerator: IIdGenerator,
+  ): Permission {
     const now = new Date();
     const resource = params.resource.toLowerCase().trim();
     const action = params.action.toLowerCase().trim();
     const name = `${resource}:${action}`;
 
     return new Permission({
-      id: createId(),
+      id: idGenerator.generateId(),
       name,
       displayName: params.displayName.trim(),
       description: params.description?.trim(),

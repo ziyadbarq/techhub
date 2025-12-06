@@ -8,6 +8,7 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import { LifecycleModel } from "@/core/domain/entities/lifecycle-model.entity";
 import type { ILifecycleModelRepository } from "@/core/repositories/lifecycle-model.repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateLifecycleModelProps {
   name: string;
@@ -19,6 +20,9 @@ export class CreateLifecycleModelUseCase {
   constructor(
     @inject(DI_TOKENS.ILifecycleModelRepository)
     private readonly lifecycleModelRepository: ILifecycleModelRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

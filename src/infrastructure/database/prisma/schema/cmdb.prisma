@@ -109,13 +109,13 @@ model ConfigurationItem {
   createdBy           Person?           @relation("ConfigurationItemCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   updatedBy           Person?           @relation("ConfigurationItemUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 
+  @@unique([linkedAssetId])
   // Indexes
   @@index([ciClassId])
   @@index([lifecycleStateId])
   @@index([primaryOwnerPersonId])
   @@index([primaryOwnerOrgUnitId])
   @@index([locationId])
-  @@unique([linkedAssetId])
   @@index([ciKey])
   @@index([name])
   @@index([deletedAt])

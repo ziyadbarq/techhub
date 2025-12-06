@@ -6,6 +6,7 @@
 
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { VendorContact } from "@/core/domain/entities/vendor-contact.entity";
 import type { IVendorContactRepository } from "@/core/repositories/vendor-contact.repository.interface";
 
@@ -29,6 +30,8 @@ export class CreateVendorContactUseCase {
   constructor(
     @inject(DI_TOKENS.IVendorContactRepository)
     private readonly vendorContactRepository: IVendorContactRepository,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   /**

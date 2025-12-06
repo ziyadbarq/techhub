@@ -3,6 +3,8 @@
  * Domain entity representing an audit log entry
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export interface AuditLogProps {
   id: string;
   userId?: string;
@@ -19,10 +21,13 @@ export interface AuditLogProps {
 export class AuditLog {
   private constructor(private readonly props: AuditLogProps) {}
 
-  static create(props: Omit<AuditLogProps, "id" | "createdAt">): AuditLog {
+  static create(
+    props: Omit<AuditLogProps, "id" | "createdAt">,
+    idGenerator: IIdGenerator,
+  ): AuditLog {
     return new AuditLog({
       ...props,
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       createdAt: new Date(),
     });
   }

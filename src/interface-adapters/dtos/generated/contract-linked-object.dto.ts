@@ -7,9 +7,9 @@ import { TargetObjectType } from "@/core/domain/entities/contract-linked-object.
 
 // Create ContractLinkedObject DTO
 export const CreateContractLinkedObjectSchema = z.object({
-  contractId: z.string().uuid("Invalid contract ID"),
+  contractId: z.string().min(24).max(25),
   targetType: z.nativeEnum(TargetObjectType),
-  targetId: z.string().uuid("Invalid target ID"),
+  targetId: z.string().min(24).max(25),
   note: z
     .string()
     .trim()

@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IBusinessProcessRepository } from "@/core/repositories/business-process.repository.interface";
 import { BusinessProcess } from "@/core/domain/entities/business-process.entity";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateBusinessProcessRequest {
   code: string;
@@ -20,6 +21,9 @@ export class CreateBusinessProcessUseCase {
   constructor(
     @inject(DI_TOKENS.IBusinessProcessRepository)
     private readonly businessProcessRepository: IBusinessProcessRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(
@@ -35,14 +39,20 @@ export class CreateBusinessProcessUseCase {
       );
     }
 
-    const businessProcess = BusinessProcess.create({
-      code: request.code,
-      name: request.name,
-      description: request.description,
-      category: request.category,
-      metadata: request.metadata,
-    });
+    const businessProcess = BusinessProcess.create(
+      {
+        code: request.code,
+        name: request.name,
+        description: request.description,
+        category: request.category,
+        metadata: request.metadata,
+      },
+      this.idGenerator,
+    );
 
-    return this.businessProcessRepository.create(businessProcess);
+    return this.businessProcessRepository.create(
+      businessProcess,
+      this.idGenerator,
+    );
   }
 }

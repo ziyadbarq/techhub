@@ -5,7 +5,7 @@
  * with polymorphic target support for flexible document management.
  */
 
-import { v4 as uuid } from "uuid";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { TargetObjectTypeEnum } from "@/generated/prisma";
 import { ValidationError } from "../errors/validation.error";
 
@@ -251,7 +251,10 @@ export class Attachment {
   }
 
   // Factory method
-  public static create(props: CreateAttachmentProps): Attachment {
+  public static create(
+    props: CreateAttachmentProps,
+    idGenerator: IIdGenerator,
+  ): Attachment {
     // Validations
     Attachment.validateFileName(props.fileName);
     Attachment.validateFileExtension(props.fileName);
@@ -264,7 +267,7 @@ export class Attachment {
     }
 
     return new Attachment({
-      id: uuid(),
+      id: idGenerator.generateId(),
       attachmentTypeId: props.attachmentTypeId,
       targetType: props.targetType,
       targetId: props.targetId,

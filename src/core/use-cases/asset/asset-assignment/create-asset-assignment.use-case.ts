@@ -6,6 +6,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import {
   AssetAssignment,
   type CreateAssetAssignmentProps,
@@ -16,6 +17,9 @@ export class CreateAssetAssignmentUseCase {
   constructor(
     @inject(DI_TOKENS.IAssetAssignmentRepository)
     private readonly assetAssignmentRepository: IAssetAssignmentRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(props: CreateAssetAssignmentProps): Promise<AssetAssignment> {

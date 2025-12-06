@@ -12,6 +12,7 @@ import { PrismaDataDomainRepository } from "../prisma-data-domain.repository";
 import { DataDomain } from "@/core/domain/entities/data-domain.entity";
 import type { PrismaClient } from "@/generated/prisma/server";
 import type { ILoggerService } from "@/core/services";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 interface DataDomainData {
   id: string;
@@ -105,6 +106,8 @@ class MockPrismaClient {
   }
 }
 
+let mockIdGenerator: IIdGenerator;
+
 describe("PrismaDataDomainRepository - Integration Tests", () => {
   let repository: PrismaDataDomainRepository;
   let mockPrisma: MockPrismaClient;
@@ -121,6 +124,10 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
   };
 
   beforeEach(() => {
+    let idCounter = 0;
+    mockIdGenerator = {
+      generateId: vi.fn(() => `test-cuid-${idCounter++}`),
+    };
     mockPrisma = new MockPrismaClient();
     repository = new PrismaDataDomainRepository(
       mockPrisma as unknown as PrismaClient,
@@ -132,11 +139,14 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
   describe("findById", () => {
     it("should find a data domain by ID", async () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Customer PII",
-        code: "CUST-PII",
-        description: "Customer Personal Identifiable Information",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Customer PII",
+          code: "CUST-PII",
+          description: "Customer Personal Identifiable Information",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(dataDomain);
 
@@ -162,10 +172,13 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
   describe("findByCode", () => {
     it("should find a data domain by code", async () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Financial Data",
-        code: "FIN-DATA",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Financial Data",
+          code: "FIN-DATA",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(dataDomain);
 
@@ -190,19 +203,28 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
   describe("findAll", () => {
     it("should find all active data domains by default", async () => {
       // Arrange
-      const domain1 = DataDomain.create({
-        name: "Domain A",
-        code: "DOMAIN-A",
-      });
-      const domain2 = DataDomain.create({
-        name: "Domain B",
-        code: "DOMAIN-B",
-      });
-      const domain3 = DataDomain.create({
-        name: "Domain C (Inactive)",
-        code: "DOMAIN-C",
-        isActive: false,
-      });
+      const domain1 = DataDomain.create(
+        {
+          name: "Domain A",
+          code: "DOMAIN-A",
+        },
+        mockIdGenerator,
+      );
+      const domain2 = DataDomain.create(
+        {
+          name: "Domain B",
+          code: "DOMAIN-B",
+        },
+        mockIdGenerator,
+      );
+      const domain3 = DataDomain.create(
+        {
+          name: "Domain C (Inactive)",
+          code: "DOMAIN-C",
+          isActive: false,
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(domain1);
       await repository.create(domain2);
@@ -218,15 +240,21 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
 
     it("should include inactive data domains when specified", async () => {
       // Arrange
-      const domain1 = DataDomain.create({
-        name: "Active Domain",
-        code: "ACTIVE",
-      });
-      const domain2 = DataDomain.create({
-        name: "Inactive Domain",
-        code: "INACTIVE",
-        isActive: false,
-      });
+      const domain1 = DataDomain.create(
+        {
+          name: "Active Domain",
+          code: "ACTIVE",
+        },
+        mockIdGenerator,
+      );
+      const domain2 = DataDomain.create(
+        {
+          name: "Inactive Domain",
+          code: "INACTIVE",
+          isActive: false,
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(domain1);
       await repository.create(domain2);
@@ -240,18 +268,27 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
 
     it("should sort by name ascending", async () => {
       // Arrange
-      const domain1 = DataDomain.create({
-        name: "Zebra Domain",
-        code: "ZEBRA",
-      });
-      const domain2 = DataDomain.create({
-        name: "Apple Domain",
-        code: "APPLE",
-      });
-      const domain3 = DataDomain.create({
-        name: "Mango Domain",
-        code: "MANGO",
-      });
+      const domain1 = DataDomain.create(
+        {
+          name: "Zebra Domain",
+          code: "ZEBRA",
+        },
+        mockIdGenerator,
+      );
+      const domain2 = DataDomain.create(
+        {
+          name: "Apple Domain",
+          code: "APPLE",
+        },
+        mockIdGenerator,
+      );
+      const domain3 = DataDomain.create(
+        {
+          name: "Mango Domain",
+          code: "MANGO",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(domain1);
       await repository.create(domain2);
@@ -270,11 +307,14 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
   describe("create", () => {
     it("should create a new data domain", async () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Payment Card Data",
-        code: "PCI-DATA",
-        description: "PCI DSS compliance data",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Payment Card Data",
+          code: "PCI-DATA",
+          description: "PCI DSS compliance data",
+        },
+        mockIdGenerator,
+      );
 
       // Act
       const created = await repository.create(dataDomain);
@@ -288,10 +328,13 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
 
     it("should create data domain without description", async () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Minimal Domain",
-        code: "MIN",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Minimal Domain",
+          code: "MIN",
+        },
+        mockIdGenerator,
+      );
 
       // Act
       const created = await repository.create(dataDomain);
@@ -302,11 +345,14 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
 
     it("should create inactive data domain", async () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Inactive",
-        code: "INACTIVE",
-        isActive: false,
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Inactive",
+          code: "INACTIVE",
+          isActive: false,
+        },
+        mockIdGenerator,
+      );
 
       // Act
       const created = await repository.create(dataDomain);
@@ -319,10 +365,13 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
   describe("update", () => {
     it("should update data domain properties", async () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Original Name",
-        code: "ORIG",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Original Name",
+          code: "ORIG",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(dataDomain);
 
@@ -342,10 +391,13 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
 
     it("should update isActive status", async () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Test",
-        code: "TEST",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Test",
+          code: "TEST",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(dataDomain);
 
@@ -360,10 +412,13 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
 
     it("should throw error for non-existent data domain", async () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Non-existent",
-        code: "NONE",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Non-existent",
+          code: "NONE",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       await expect(repository.update(dataDomain)).rejects.toThrow();
@@ -373,10 +428,13 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
   describe("delete", () => {
     it("should delete a data domain", async () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "To Delete",
-        code: "DELETE",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "To Delete",
+          code: "DELETE",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(dataDomain);
 
@@ -397,10 +455,13 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
   describe("existsByCode", () => {
     it("should return true if data domain with code exists", async () => {
       // Arrange
-      const dataDomain = DataDomain.create({
-        name: "Test",
-        code: "TEST-CODE",
-      });
+      const dataDomain = DataDomain.create(
+        {
+          name: "Test",
+          code: "TEST-CODE",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(dataDomain);
 

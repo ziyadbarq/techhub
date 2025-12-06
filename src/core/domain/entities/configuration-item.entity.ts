@@ -5,6 +5,8 @@
  * CIs are trackable IT assets or components (servers, applications, services, etc.).
  */
 
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+
 export type CriticalityEnum = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 export type EnvironmentEnum = "PROD" | "UAT" | "DEV" | "DR" | "TEST" | "OTHER";
 
@@ -63,7 +65,10 @@ export class ConfigurationItem {
   /**
    * Factory method to create a new Configuration Item
    */
-  static create(props: CreateConfigurationItemProps): ConfigurationItem {
+  static create(
+    props: CreateConfigurationItemProps,
+    idGenerator: IIdGenerator,
+  ): ConfigurationItem {
     // Validation
     this.validateName(props.name);
 
@@ -86,7 +91,7 @@ export class ConfigurationItem {
     const now = new Date();
 
     return new ConfigurationItem({
-      id: crypto.randomUUID(),
+      id: idGenerator.generateId(),
       name: props.name.trim(),
       ciClassId: props.ciClassId,
       lifecycleStateId: props.lifecycleStateId ?? null,

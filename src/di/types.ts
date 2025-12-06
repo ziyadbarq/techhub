@@ -136,6 +136,12 @@ export const DI_TOKENS = {
   // ==========================================
 
   /**
+   * Token for IIdGenerator
+   * Provides centralized ID generation using CUID2 format
+   */
+  IIdGenerator: Symbol.for("IIdGenerator"),
+
+  /**
    * Token for ILoggerService
    * Provides structured logging throughout the application
    */

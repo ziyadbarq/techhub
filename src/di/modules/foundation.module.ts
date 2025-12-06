@@ -40,6 +40,10 @@ import { PrismaFieldDefinitionRepository } from "@/infrastructure/repositories/p
 import { PrismaFieldTemplateRepository } from "@/infrastructure/repositories/prisma-field-template.repository";
 import { PrismaExchangeRateRepository } from "@/infrastructure/repositories/prisma-exchange-rate.repository";
 
+// ID Generator Service
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { CuidIdGeneratorService } from "@/infrastructure/services/id/cuid-id-generator.service";
+
 // SAR Conversion Service
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 import { SarConversionService } from "@/infrastructure/services/sar-conversion.service";
@@ -229,6 +233,11 @@ export function bindFoundationDependencies(container: Container): void {
   // ==========================================
   // Foundation Services
   // ==========================================
+
+  container
+    .bind<IIdGenerator>(DI_TOKENS.IIdGenerator)
+    .to(CuidIdGeneratorService)
+    .inSingletonScope();
 
   container
     .bind<ISarConversionService>(DI_TOKENS.ISarConversionService)

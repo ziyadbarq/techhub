@@ -12,6 +12,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { PrismaRoleRepository } from "../prisma-role.repository";
 import { Role } from "@/core/domain/entities/role.entity";
 import type { PrismaClient } from "@/generated/prisma/server";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 /**
  * Mock Prisma Client for testing
@@ -151,11 +152,17 @@ class MockPrismaClient {
   }
 }
 
+let mockIdGenerator: IIdGenerator;
+
 describe("PrismaRoleRepository - Integration Tests", () => {
   let repository: PrismaRoleRepository;
   let mockPrisma: MockPrismaClient;
 
   beforeEach(() => {
+    let idCounter = 0;
+    mockIdGenerator = {
+      generateId: vi.fn(() => `test-cuid-${idCounter++}`),
+    };
     mockPrisma = new MockPrismaClient();
     repository = new PrismaRoleRepository(
       mockPrisma as unknown as PrismaClient,
@@ -166,10 +173,13 @@ describe("PrismaRoleRepository - Integration Tests", () => {
   describe("findById", () => {
     it("should find a role by ID", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(role);
 
@@ -194,10 +204,13 @@ describe("PrismaRoleRepository - Integration Tests", () => {
   describe("findByName", () => {
     it("should find a role by name", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(role);
 
@@ -221,18 +234,27 @@ describe("PrismaRoleRepository - Integration Tests", () => {
   describe("findAll", () => {
     it("should find all active roles by default", async () => {
       // Arrange
-      const role1 = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
-      const role2 = Role.create({
-        name: "viewer",
-        displayName: "Viewer",
-      });
-      const role3 = Role.create({
-        name: "inactive",
-        displayName: "Inactive",
-      }).deactivate();
+      const role1 = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
+      const role2 = Role.create(
+        {
+          name: "viewer",
+          displayName: "Viewer",
+        },
+        mockIdGenerator,
+      );
+      const role3 = Role.create(
+        {
+          name: "inactive",
+          displayName: "Inactive",
+        },
+        mockIdGenerator,
+      ).deactivate();
 
       await repository.create(role1);
       await repository.create(role2);
@@ -248,14 +270,20 @@ describe("PrismaRoleRepository - Integration Tests", () => {
 
     it("should include inactive roles when specified", async () => {
       // Arrange
-      const role1 = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
-      const role2 = Role.create({
-        name: "inactive",
-        displayName: "Inactive",
-      }).deactivate();
+      const role1 = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
+      const role2 = Role.create(
+        {
+          name: "inactive",
+          displayName: "Inactive",
+        },
+        mockIdGenerator,
+      ).deactivate();
 
       await repository.create(role1);
       await repository.create(role2);
@@ -269,21 +297,30 @@ describe("PrismaRoleRepository - Integration Tests", () => {
 
     it("should sort by isSystem desc, then name asc", async () => {
       // Arrange
-      const role1 = Role.create({
-        name: "zebra",
-        displayName: "Zebra",
-        isSystem: false,
-      });
-      const role2 = Role.create({
-        name: "admin",
-        displayName: "Admin",
-        isSystem: true,
-      });
-      const role3 = Role.create({
-        name: "apple",
-        displayName: "Apple",
-        isSystem: false,
-      });
+      const role1 = Role.create(
+        {
+          name: "zebra",
+          displayName: "Zebra",
+          isSystem: false,
+        },
+        mockIdGenerator,
+      );
+      const role2 = Role.create(
+        {
+          name: "admin",
+          displayName: "Admin",
+          isSystem: true,
+        },
+        mockIdGenerator,
+      );
+      const role3 = Role.create(
+        {
+          name: "apple",
+          displayName: "Apple",
+          isSystem: false,
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(role1);
       await repository.create(role2);
@@ -302,12 +339,15 @@ describe("PrismaRoleRepository - Integration Tests", () => {
   describe("create", () => {
     it("should create a new role", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-        description: "Can edit content",
-        createdBy: "admin-1",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+          description: "Can edit content",
+          createdBy: "admin-1",
+        },
+        mockIdGenerator,
+      );
 
       // Act
       const created = await repository.create(role);
@@ -322,11 +362,14 @@ describe("PrismaRoleRepository - Integration Tests", () => {
 
     it("should create system role", async () => {
       // Arrange
-      const role = Role.create({
-        name: "admin",
-        displayName: "Admin",
-        isSystem: true,
-      });
+      const role = Role.create(
+        {
+          name: "admin",
+          displayName: "Admin",
+          isSystem: true,
+        },
+        mockIdGenerator,
+      );
 
       // Act
       const created = await repository.create(role);
@@ -339,10 +382,13 @@ describe("PrismaRoleRepository - Integration Tests", () => {
   describe("update", () => {
     it("should update role properties", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(role);
 
@@ -362,10 +408,13 @@ describe("PrismaRoleRepository - Integration Tests", () => {
 
     it("should throw error for non-existent role", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
 
       // Act & Assert
       await expect(repository.update(role)).rejects.toThrow();
@@ -375,10 +424,13 @@ describe("PrismaRoleRepository - Integration Tests", () => {
   describe("delete", () => {
     it("should delete a role", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(role);
 
@@ -399,10 +451,13 @@ describe("PrismaRoleRepository - Integration Tests", () => {
   describe("existsByName", () => {
     it("should return true if role exists", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(role);
 
@@ -425,10 +480,13 @@ describe("PrismaRoleRepository - Integration Tests", () => {
   describe("getRolePermissions", () => {
     it("should return permissions for a role", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(role);
 
@@ -443,10 +501,13 @@ describe("PrismaRoleRepository - Integration Tests", () => {
   describe("assignPermissions", () => {
     it("should assign permissions to a role", async () => {
       // Arrange
-      const role = Role.create({
-        name: "editor",
-        displayName: "Editor",
-      });
+      const role = Role.create(
+        {
+          name: "editor",
+          displayName: "Editor",
+        },
+        mockIdGenerator,
+      );
 
       await repository.create(role);
 

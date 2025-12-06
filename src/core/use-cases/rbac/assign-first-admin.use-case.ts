@@ -9,6 +9,7 @@ import type { IUserRoleRepository } from "@/core/repositories/user-role-reposito
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
 import type { ILoggerService } from "@/core/services";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 
 export interface AssignFirstAdminRequest {
@@ -37,6 +38,8 @@ export class AssignFirstAdminUseCase {
     private readonly auditLogRepository: IAuditLogRepository,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(
@@ -87,11 +90,14 @@ export class AssignFirstAdminUseCase {
     }
 
     // Create user role assignment
-    const userRole = UserRole.create({
-      userId,
-      roleId: adminRole.id,
-      createdBy: "system", // First admin is assigned by system
-    });
+    const userRole = UserRole.create(
+      {
+        userId,
+        roleId: adminRole.id,
+        createdBy: "system", // First admin is assigned by system
+      },
+      this.idGenerator,
+    );
 
     await this.userRoleRepository.create(userRole);
 

@@ -2,6 +2,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIRelationshipRepository } from "../../../repositories/ci-relationship.repository.interface";
 import type { IRelationshipTypeRepository } from "../../../repositories/relationship-type.repository.interface";
+import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import {
   CIRelationship,
   type CreateCIRelationshipProps,
@@ -16,6 +17,9 @@ export class CreateCIRelationshipUseCase {
     private readonly ciRelationshipRepository: ICIRelationshipRepository,
     @inject(DI_TOKENS.IRelationshipTypeRepository)
     private readonly relationshipTypeRepository: IRelationshipTypeRepository,
+
+    @inject(DI_TOKENS.IIdGenerator)
+    private readonly idGenerator: IIdGenerator,
   ) {}
 
   async execute(request: CreateCIRelationshipRequest): Promise<CIRelationship> {
@@ -40,7 +44,7 @@ export class CreateCIRelationshipUseCase {
       throw new Error("Relationship already exists between these CIs");
     }
 
-    const relationship = CIRelationship.create(request);
+    const relationship = CIRelationship.create(request, this.idGenerator);
     return await this.ciRelationshipRepository.create(relationship);
   }
 }
