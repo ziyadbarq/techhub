@@ -753,14 +753,12 @@ export async function getImportLookupMapsAction(): Promise<
  */
 export async function checkAssetDuplicatesAction(
   serialNumbers: string[],
-): Promise<{
-  success: boolean;
-  data?: {
+): Promise<
+  ActionResponse<{
     duplicates: Array<{ id: string; serialNumber: string; assetTag: string }>;
     duplicateCount: number;
-  };
-  error?: string;
-}> {
+  }>
+> {
   try {
     await requirePermission(PERMISSIONS.ASSETS_CREATE);
 
@@ -799,11 +797,11 @@ export async function checkAssetDuplicatesAction(
       },
     };
   } catch (error) {
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to check duplicates",
-    };
+    return handleControllerError(
+      error,
+      { function: "checkAssetDuplicatesAction" },
+      "Failed to check duplicates",
+    );
   }
 }
 
@@ -815,9 +813,8 @@ export async function checkAssetDuplicatesAction(
 export async function bulkUpsertAssetsAction(
   assetsData: Record<string, unknown>[],
   strategy: "skip" | "overwrite" | "fail" | "append",
-): Promise<{
-  success: boolean;
-  data?: {
+): Promise<
+  ActionResponse<{
     createdCount: number;
     updatedCount: number;
     skipCount: number;
@@ -826,9 +823,8 @@ export async function bulkUpsertAssetsAction(
     updated?: Array<{ assetTag: string; serialNumber?: string }>;
     skipped?: Array<{ identifier: string; reason: string }>;
     failures?: Array<{ index: number; identifier: string; error: string }>;
-  };
-  error?: string;
-}> {
+  }>
+> {
   try {
     await requirePermission(PERMISSIONS.ASSETS_CREATE);
 
@@ -1013,11 +1009,14 @@ export async function bulkUpsertAssetsAction(
       data: results,
     };
   } catch (error) {
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to bulk upsert assets",
-    };
+    return handleControllerError(
+      error,
+      {
+        function: "bulkUpsertAssetsAction",
+        strategy,
+      },
+      "Failed to bulk upsert assets",
+    );
   }
 }
 

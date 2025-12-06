@@ -29,10 +29,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2, CheckCircle2, AlertCircle, Upload } from "lucide-react";
+import { UserAvatar } from "@/components/shared/user-avatar";
+import { Loader2, CheckCircle2, AlertCircle, Upload, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { updateMyProfileAction } from "@/interface-adapters/controllers/my-dashboard.controller";
+import {
+  updateMyProfileAction,
+  uploadProfilePhotoAction,
+} from "@/interface-adapters/controllers/my-dashboard.controller";
 import { toast } from "sonner";
 import {
   getMyPreferencesAction,
@@ -49,6 +52,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Enable2FADialog } from "./enable-2fa-dialog";
+import { Disable2FADialog } from "./disable-2fa-dialog";
+import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+import { useRef } from "react";
+import { authClient } from "@/lib/auth/client";
 
 // Validation schema
 const profileSchema = z.object({
@@ -65,6 +75,8 @@ interface SettingsFormProps {
     name?: string | null;
     email?: string | null;
     image?: string | null;
+    twoFactorEnabled?: boolean | null;
+    lastLoginMethod?: string | null;
   };
 }
 
@@ -79,6 +91,17 @@ export function SettingsForm({ user }: SettingsFormProps) {
   const [preferences, setPreferences] = useState<UserPreferencesDTO | null>(
     null,
   );
+  const [enable2FAOpen, setEnable2FAOpen] = useState(false);
+  const [disable2FAOpen, setDisable2FAOpen] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isRemovingPhoto, setIsRemovingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Check if ATTACHMENTS feature is enabled
+  const attachmentsEnabled = useIsFeatureEnabled(FEATURE_FLAGS.ATTACHMENTS);
+
+  // Determine if user is SSO (Microsoft OAuth)
+  const isSSOUser = user.lastLoginMethod === "microsoft";
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -88,14 +111,6 @@ export function SettingsForm({ user }: SettingsFormProps) {
       image: user.image || "",
     },
   });
-
-  const initials = user.name
-    ? user.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-    : user.email?.[0]?.toUpperCase() || "U";
 
   const onSubmit = async (_data: ProfileFormData) => {
     try {
@@ -120,6 +135,9 @@ export function SettingsForm({ user }: SettingsFormProps) {
         type: "success",
         text: "Profile updated successfully!",
       });
+
+      // Refresh Better Auth session cache (updates UserMenu and other client components)
+      await authClient.$fetch("/get-session");
 
       // Refresh the page to show updated data
       router.refresh();
@@ -172,6 +190,57 @@ export function SettingsForm({ user }: SettingsFormProps) {
     }
   };
 
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Client-side validation
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Invalid file type. Only JPEG, PNG, and WebP are allowed.");
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      toast.error("File size exceeds 5MB. Please choose a smaller image.");
+      return;
+    }
+
+    setIsUploadingPhoto(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const result = await uploadProfilePhotoAction(formData);
+
+      if (!result.success) {
+        toast.error(result.error || "Failed to upload photo");
+        return;
+      }
+
+      // Success - refresh both server data and client session cache
+      toast.success("Profile photo updated successfully");
+
+      // Refresh Better Auth session cache (updates UserMenu and other client components)
+      await authClient.$fetch("/get-session");
+
+      // Force a hard refresh to update server component data
+      window.location.reload();
+    } catch (_error) {
+      toast.error("Failed to upload photo. Please try again.");
+    } finally {
+      setIsUploadingPhoto(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   return (
     <Form {...form}>
       <div className="space-y-6">
@@ -180,47 +249,186 @@ export function SettingsForm({ user }: SettingsFormProps) {
           <CardHeader>
             <CardTitle>Profile Picture</CardTitle>
             <CardDescription>
-              Update your profile picture by providing an image URL
+              {isSSOUser
+                ? "Your profile picture is managed by Microsoft"
+                : attachmentsEnabled
+                  ? "Upload a custom profile picture or provide an image URL"
+                  : "Update your profile picture by providing an image URL"}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-6">
-              <Avatar className="h-20 w-20">
-                <AvatarImage
-                  src={form.watch("image") || user.image || undefined}
-                  alt={user.name || ""}
-                />
-                <AvatarFallback className="text-xl">{initials}</AvatarFallback>
-              </Avatar>
+              <UserAvatar
+                name={user.name || undefined}
+                email={user.email || undefined}
+                image={user.image || undefined}
+                size="lg"
+              />
 
-              <div className="flex-1">
-                <FormField
-                  control={form.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image URL</FormLabel>
-                      <FormControl>
-                        <div className="flex gap-2">
+              <div className="flex-1 space-y-4">
+                {/* Case 1: SSO User (Read-only) */}
+                {isSSOUser ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Label>Avatar Status</Label>
+                      <Badge variant="secondary">Managed by Microsoft</Badge>
+                    </div>
+                    <Alert>
+                      <Info className="h-4 w-4" />
+                      <AlertDescription>
+                        Your profile picture is automatically synced from
+                        Microsoft. Contact your IT admin to update it.
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                ) : attachmentsEnabled ? (
+                  /* Case 2: Email/Password User + ATTACHMENTS Enabled */
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Upload Photo</Label>
+                      <div className="flex gap-2">
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png,image/webp"
+                          onChange={handleFileUpload}
+                          disabled={isUploadingPhoto}
+                          className="hidden"
+                          id="photo-upload"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={isUploadingPhoto}
+                          className="w-full sm:w-auto"
+                        >
+                          {isUploadingPhoto ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-2 h-4 w-4" />
+                              Choose File
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      <p className="text-muted-foreground text-sm">
+                        Upload a custom photo (JPEG, PNG, WebP - max 5MB)
+                      </p>
+                    </div>
+
+                    {/* Show current upload status if user has uploaded avatar */}
+                    {user.image?.includes("/avatars/") && (
+                      <div className="space-y-2">
+                        <Label>Current Avatar</Label>
+                        <Alert>
+                          <CheckCircle2 className="h-4 w-4" />
+                          <AlertDescription className="flex items-center justify-between">
+                            <span>Using uploaded profile photo</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              disabled={isRemovingPhoto}
+                              onClick={async (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                setIsRemovingPhoto(true);
+                                try {
+                                  // Remove uploaded photo and reset to default
+                                  const result = await updateMyProfileAction({
+                                    image: "",
+                                  });
+
+                                  if (result.success) {
+                                    toast.success("Profile photo removed");
+
+                                    // Refresh Better Auth session cache first
+                                    await authClient.$fetch("/get-session");
+
+                                    // Force a hard refresh to update server component data
+                                    window.location.reload();
+                                  } else {
+                                    toast.error(
+                                      result.error ?? "Failed to remove photo",
+                                    );
+                                  }
+                                } catch (error) {
+                                  console.error("Error removing photo:", error);
+                                  toast.error(
+                                    "Failed to remove photo. Please try again.",
+                                  );
+                                } finally {
+                                  setIsRemovingPhoto(false);
+                                }
+                              }}
+                            >
+                              {isRemovingPhoto ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Removing...
+                                </>
+                              ) : (
+                                "Remove"
+                              )}
+                            </Button>
+                          </AlertDescription>
+                        </Alert>
+                      </div>
+                    )}
+
+                    {/* Optional: URL input (hidden when using uploaded avatar) */}
+                    {!user.image?.includes("/avatars/") && (
+                      <FormField
+                        control={form.control}
+                        name="image"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Or use Image URL</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="https://example.com/avatar.jpg"
+                                disabled={isLoading || isUploadingPhoto}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Alternatively, provide a direct image URL
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </div>
+                ) : (
+                  /* Case 3: Email/Password User + ATTACHMENTS Disabled */
+                  <FormField
+                    control={form.control}
+                    name="image"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Image URL</FormLabel>
+                        <FormControl>
                           <Input
                             placeholder="https://example.com/avatar.jpg"
                             disabled={isLoading}
                             {...field}
                           />
-                          <Button type="button" variant="outline" disabled>
-                            <Upload className="mr-2 h-4 w-4" />
-                            Upload
-                          </Button>
-                        </div>
-                      </FormControl>
-                      <FormDescription>
-                        Enter a URL to your profile picture or upload an image
-                        (upload coming soon)
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        </FormControl>
+                        <FormDescription>
+                          Provide an image URL for your profile picture
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
             </div>
           </CardContent>
@@ -508,19 +716,61 @@ export function SettingsForm({ user }: SettingsFormProps) {
             </div>
 
             <div className="flex items-center justify-between rounded-lg border p-4">
-              <div>
-                <p className="font-medium">Two-Factor Authentication</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <p className="font-medium">Two-Factor Authentication</p>
+                  {user.twoFactorEnabled ? (
+                    <Badge variant="default" className="bg-green-500">
+                      Enabled
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary">Not Enabled</Badge>
+                  )}
+                </div>
                 <p className="text-muted-foreground text-sm">
-                  Add an extra layer of security to your account
+                  {user.twoFactorEnabled
+                    ? "Your account is protected with 2FA"
+                    : "Add an extra layer of security to your account"}
                 </p>
               </div>
-              <Button variant="outline" disabled>
-                Coming soon
-              </Button>
+              {user.twoFactorEnabled ? (
+                <Button
+                  variant="outline"
+                  onClick={() => setDisable2FAOpen(true)}
+                >
+                  Disable 2FA
+                </Button>
+              ) : (
+                <Button
+                  variant="default"
+                  onClick={() => setEnable2FAOpen(true)}
+                >
+                  Enable 2FA
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* 2FA Dialogs */}
+      <Enable2FADialog
+        open={enable2FAOpen}
+        onOpenChange={setEnable2FAOpen}
+        onSuccess={() => {
+          router.refresh();
+          toast.success("2FA has been enabled successfully");
+        }}
+      />
+
+      <Disable2FADialog
+        open={disable2FAOpen}
+        onOpenChange={setDisable2FAOpen}
+        onSuccess={() => {
+          router.refresh();
+          toast.success("2FA has been disabled");
+        }}
+      />
     </Form>
   );
 }

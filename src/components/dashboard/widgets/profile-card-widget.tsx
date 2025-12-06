@@ -9,21 +9,12 @@ import { useCurrentPersonContext } from "@/contexts/current-person-context";
 import { WidgetContainer } from "@/components/dashboard/widget-container";
 import { WidgetSkeleton } from "@/components/dashboard/widget-skeleton";
 import { WidgetEmpty } from "@/components/dashboard/widget-empty";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User, Building2, ExternalLink, Calendar, Hash } from "lucide-react";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils/date-format";
-
-function getInitials(
-  firstName?: string | null,
-  lastName?: string | null,
-): string {
-  const first = firstName?.charAt(0) || "";
-  const last = lastName?.charAt(0) || "";
-  return (first + last).toUpperCase() || "?";
-}
 
 export function ProfileCardWidget() {
   const { person, isLoading, hasLinkedPerson } = useCurrentPersonContext();
@@ -66,11 +57,7 @@ export function ProfileCardWidget() {
     >
       <div className="space-y-4">
         <div className="flex items-center gap-4">
-          <Avatar className="h-16 w-16">
-            <AvatarFallback className="bg-primary/10 text-lg">
-              {getInitials(person.firstName, person.lastName)}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar name={fullName} email={person.email} size="md" />
           <div>
             <h3 className="text-lg font-semibold">{fullName}</h3>
             {person.title && (

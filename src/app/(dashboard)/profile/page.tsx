@@ -7,7 +7,7 @@
  * - Roles and permissions
  */
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import {
   Card,
   CardContent,
@@ -32,15 +32,6 @@ const isDateLike = (value: unknown): value is Date | string =>
 export default async function ProfilePage() {
   const { user, person, assets, licenses, reservations, errors } =
     await loadProfileSummary();
-
-  // Generate initials for avatar fallback
-  const initials = user.name
-    ? user.name
-        .split(" ")
-        .map((segment: string) => segment?.[0] ?? "")
-        .join("")
-        .toUpperCase()
-    : user.email?.[0]?.toUpperCase() || "U";
 
   const isEmailVerified = Boolean(user.emailVerified);
 
@@ -99,13 +90,7 @@ export default async function ProfilePage() {
         <CardContent>
           <div className="flex items-start gap-6">
             {/* Avatar */}
-            <Avatar className="h-24 w-24">
-              <AvatarImage
-                src={user.image || undefined}
-                alt={user.name || ""}
-              />
-              <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
-            </Avatar>
+            <UserAvatar user={user} size="xl" />
 
             {/* User Details */}
             <div className="flex-1 space-y-4">

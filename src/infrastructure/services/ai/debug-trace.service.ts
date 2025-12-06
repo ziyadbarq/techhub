@@ -456,8 +456,8 @@ export class AIDebugTraceService implements IAIDebugTraceService {
       this.logger.info(
         `Wrote all artifacts for session ${sessionId} to .ai-debug/`,
       );
-    } catch (_error) {
-      this.logger.error("Failed to write artifacts:", _error as Error);
+    } catch (error) {
+      this.logger.error("Failed to write artifacts:", error as Error);
       // Don't throw - debug artifacts are non-critical
     }
   }

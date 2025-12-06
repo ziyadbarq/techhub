@@ -20,6 +20,8 @@ import { bindCodeGeneratorDependencies } from "./modules/code-generator.module";
 import { bindDatabaseDependencies } from "./modules/database.module";
 import { bindRBACDependencies } from "./modules/rbac.module";
 import { bindUserProvisioningDependencies } from "./modules/user-provisioning.module";
+import { bindUserPreferencesDependencies } from "./modules/user-preferences.module";
+import { bindTwoFactorDependencies } from "./modules/two-factor.module";
 import { bindSystemSetupDependencies } from "./modules/system-setup.module";
 import { bindDatabaseBackupDependencies } from "./modules/database-backup.module";
 import { bindFeatureFlagsDependencies } from "./modules/feature-flags.module";
@@ -122,6 +124,30 @@ export const USER_PROVISIONING_MODULE: DIModule = {
   isLoaded: false,
   bindFunction: (container: Container) => {
     bindUserProvisioningDependencies(container);
+  },
+};
+
+export const USER_PREFERENCES_MODULE: DIModule = {
+  name: "user-preferences",
+  displayName: "User Preferences",
+  tier: ModuleTier.CORE,
+  description: "User preferences management (timezone, notifications, etc.)",
+  dependencies: ["logger", "database"],
+  isLoaded: false,
+  bindFunction: (container: Container) => {
+    bindUserPreferencesDependencies(container);
+  },
+};
+
+export const TWO_FACTOR_MODULE: DIModule = {
+  name: "two-factor",
+  displayName: "Two-Factor Authentication",
+  tier: ModuleTier.CORE,
+  description: "TOTP-based 2FA management with Better Auth",
+  dependencies: ["logger", "database"],
+  isLoaded: false,
+  bindFunction: (container: Container) => {
+    bindTwoFactorDependencies(container);
   },
 };
 
@@ -455,6 +481,8 @@ export const ALL_MODULES: DIModule[] = [
   DATABASE_MODULE,
   RBAC_MODULE,
   USER_PROVISIONING_MODULE,
+  USER_PREFERENCES_MODULE,
+  TWO_FACTOR_MODULE,
   SYSTEM_SETUP_MODULE,
   DATABASE_BACKUP_MODULE,
   FEATURE_FLAGS_MODULE,

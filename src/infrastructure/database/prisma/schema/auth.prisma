@@ -21,11 +21,20 @@ model User {
   lastLoginMethod String? // 'email' | 'microsoft' | other OAuth providers
   lastLoginAt     DateTime?
 
+  // Session invalidation (increment on 2FA enable/disable to force re-auth)
+  tokenVersion Int @default(0)
+
+  // Two-Factor Authentication (Better Auth TOTP plugin)
+  twoFactorEnabled Boolean? @default(false)
+  twoFactorSecret  String?  @db.Text
+
   // Relations
   accounts        Account[]
   sessions        Session[]
   roles           UserRole[]
   person          Person? // Optional link to organizational person
+  preferences     UserPreferences? // User preferences (timezone, notifications, etc.)
+  twoFactor       TwoFactor?
   auditLogsAsUser AuditLogEntry[] @relation("AuditLogChangedByUser")
   backupsCreated  DatabaseBackup[] @relation("BackupCreator")
   backupsDeleted  DatabaseBackup[] @relation("BackupDeletedByUser")
@@ -86,4 +95,39 @@ model Verification {
   @@unique([identifier])
   @@index([expiresAt]) // Medium-priority: Cleanup expired tokens
   @@map("verification")
+}
+
+model TwoFactor {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  secret      String   @db.Text // Encrypted TOTP secret managed by Better Auth
+  backupCodes String?  @db.Text // Encrypted backup codes JSON blob
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("two_factor")
+}
+
+model UserPreferences {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  // Display preferences
+  timezone        String @default("Asia/Riyadh")
+  dateFormat      String @default("dd/MM/yyyy")
+  currencyDisplay String @default("dual")
+
+  // Notification preferences (stored as JSON)
+  notifications Json @default("{\"emailNotifications\":true,\"teamsNotifications\":false,\"whatsappNotifications\":false,\"weeklyDigest\":true,\"assetAlerts\":true,\"approvalAlerts\":true,\"warrantyAlerts\":true}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_preferences")
 }

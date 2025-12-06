@@ -1037,10 +1037,6 @@ export type NullableEnumBackupStageFieldUpdateOperationsInput = {
   set?: $Enums.BackupStage | null
 }
 
-export type NullableBoolFieldUpdateOperationsInput = {
-  set?: boolean | null
-}
-
 export type DatabaseBackupCreateWithoutCreatedByInput = {
   id?: string
   filename: string

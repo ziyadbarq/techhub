@@ -1,6 +1,7 @@
 "use client";
 
 import { createAuthClient } from "better-auth/react";
+import { twoFactorClient } from "better-auth/client/plugins";
 import { toast } from "sonner";
 
 export const authClient = createAuthClient({
@@ -13,6 +14,17 @@ export const authClient = createAuthClient({
       }
     },
   },
+  plugins: [
+    twoFactorClient({
+      onTwoFactorRedirect: async () => {
+        if (typeof window === "undefined") return;
+        const params = new URLSearchParams();
+        const callbackPath = `${window.location.pathname}${window.location.search}`;
+        params.set("callbackURL", callbackPath || "/dashboard");
+        window.location.href = `/auth/two-factor?${params.toString()}`;
+      },
+    }),
+  ],
 });
 
 export const { useSession } = authClient;

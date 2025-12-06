@@ -46,6 +46,9 @@ next-env.d.ts
 /data/uploads
 /data/exports
 
+# user uploads (avatars, attachments, etc.)
+/public/uploads
+
 # prisma - ignore SQLite database files (development only)
 src/infrastructure/database/prisma/*.db
 src/infrastructure/database/prisma/*.db-journal

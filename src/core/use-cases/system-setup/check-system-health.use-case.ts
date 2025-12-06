@@ -50,9 +50,9 @@ export class CheckSystemHealthUseCase {
       databaseConnected =
         await this.systemSetupRepository.checkDatabaseConnection();
       databaseResponseTime = Math.round(performance.now() - dbStart);
-    } catch (_error) {
+    } catch (error) {
       databaseError =
-        _error instanceof Error ? _error.message : "Unknown database error";
+        error instanceof Error ? error.message : "Unknown database error";
     }
 
     // Check Redis connection
@@ -63,9 +63,9 @@ export class CheckSystemHealthUseCase {
       const redisStart = performance.now();
       redisConnected = await this.systemSetupRepository.checkRedisConnection();
       redisResponseTime = Math.round(performance.now() - redisStart);
-    } catch (_error) {
+    } catch (error) {
       redisError =
-        _error instanceof Error ? _error.message : "Unknown Redis error";
+        error instanceof Error ? error.message : "Unknown Redis error";
     }
 
     // Check environment variables
@@ -93,9 +93,9 @@ export class CheckSystemHealthUseCase {
         await this.systemSetupRepository.areMigrationsApplied();
       pendingMigrationsCount =
         await this.systemSetupRepository.getPendingMigrationsCount();
-    } catch (_error) {
+    } catch (error) {
       const errorMsg =
-        _error instanceof Error ? _error.message : "Unknown migrations error";
+        error instanceof Error ? error.message : "Unknown migrations error";
       // Simplify error message for missing migrations table
       if (
         errorMsg.includes("_prisma_migrations") &&
@@ -128,9 +128,9 @@ export class CheckSystemHealthUseCase {
       maintenanceWorkerActive = await this.jobQueueService.hasActiveWorkers(
         QUEUE_NAMES.MAINTENANCE,
       );
-    } catch (_error) {
+    } catch (error) {
       workerError =
-        _error instanceof Error ? _error.message : "Unknown worker error";
+        error instanceof Error ? error.message : "Unknown worker error";
     }
 
     // Check MS Graph SSO connection
@@ -152,9 +152,9 @@ export class CheckSystemHealthUseCase {
         msGraphSSOConnected = await this.graphService.testConnection();
         msGraphSSOResponseTime = Math.round(performance.now() - msGraphStart);
       }
-    } catch (_error) {
+    } catch (error) {
       msGraphSSOError =
-        _error instanceof Error ? _error.message : "Unknown MS Graph error";
+        error instanceof Error ? error.message : "Unknown MS Graph error";
     }
 
     // Check Intune connection
@@ -176,9 +176,9 @@ export class CheckSystemHealthUseCase {
         intuneConnected = await this.graphService.testIntuneConnection();
         intuneResponseTime = Math.round(performance.now() - intuneStart);
       }
-    } catch (_error) {
+    } catch (error) {
       intuneError =
-        _error instanceof Error ? _error.message : "Unknown Intune error";
+        error instanceof Error ? error.message : "Unknown Intune error";
     }
 
     // Check Email service connection
@@ -201,9 +201,9 @@ export class CheckSystemHealthUseCase {
         emailConnected = await this.emailService.testConnection();
         emailResponseTime = Math.round(performance.now() - emailStart);
       }
-    } catch (_error) {
+    } catch (error) {
       emailError =
-        _error instanceof Error ? _error.message : "Unknown email error";
+        error instanceof Error ? error.message : "Unknown email error";
     }
 
     // Core services health (deployment gate - excludes worker)

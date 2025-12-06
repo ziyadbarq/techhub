@@ -196,6 +196,22 @@ const BASE_PERMISSIONS: PermissionDefinition[] = [
   }),
 
   // ==========================================
+  // Two-Factor Authentication
+  // ==========================================
+  createPermission("settings", "2fa:view", {
+    displayName: "View 2FA Status",
+    description: "View two-factor authentication status",
+  }),
+  createPermission("settings", "2fa:enable", {
+    displayName: "Enable 2FA",
+    description: "Enable two-factor authentication for own account",
+  }),
+  createPermission("settings", "2fa:disable", {
+    displayName: "Disable 2FA",
+    description: "Disable two-factor authentication for own account",
+  }),
+
+  // ==========================================
   // Database Backups
   // ==========================================
   createPermission("database-backups", "manage", {

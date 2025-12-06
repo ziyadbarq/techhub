@@ -1,15 +1,15 @@
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { nextCookies } from "better-auth/next-js";
-import { lastLoginMethod } from "better-auth/plugins";
-import { createAuthMiddleware } from "better-auth/api";
-import { createId } from "@paralleldrive/cuid2";
-import type { PrismaClient } from "@/generated/prisma/client";
-import { encryptTokens, decryptTokens } from "@/lib/auth/encryption";
-import { getContainer } from "@/di/container";
-import { DI_TOKENS } from "@/di/types";
 import type { IEmailService } from "@/core/services/email.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import { getContainer } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/client";
+import { decryptTokens, encryptTokens } from "@/lib/auth/encryption";
+import { createId } from "@paralleldrive/cuid2";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { createAuthMiddleware } from "better-auth/api";
+import { lastLoginMethod, twoFactor } from "better-auth/plugins";
+import { nextCookies } from "./plugins/next-cookies";
 
 /**
  * Prisma Client Extension for Token Encryption
@@ -719,6 +719,10 @@ export const auth = betterAuth({
     lastLoginMethod({
       // Use default logic to track login methods
       customResolveMethod: () => null,
+    }),
+    twoFactor({
+      issuer: "TechHub.barq",
+      skipVerificationOnEnable: false,
     }),
   ],
 

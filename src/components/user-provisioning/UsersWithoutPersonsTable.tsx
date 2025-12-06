@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { LinkUserToPersonDialog } from "./LinkUserToPersonDialog";
 import { formatDate } from "@/lib/utils/date-format";
 
@@ -51,18 +51,6 @@ export function UsersWithoutPersonsTable({
     if (linked) {
       router.refresh();
     }
-  };
-
-  const getInitials = (name: string | null, email: string) => {
-    if (name) {
-      return name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    }
-    return email.slice(0, 2).toUpperCase();
   };
 
   if (data.length === 0) {
@@ -100,12 +88,12 @@ export function UsersWithoutPersonsTable({
                 <TableRow key={user.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={user.image || undefined} />
-                        <AvatarFallback className="text-xs">
-                          {getInitials(user.name, user.email)}
-                        </AvatarFallback>
-                      </Avatar>
+                      <UserAvatar
+                        name={user.name || undefined}
+                        email={user.email}
+                        image={user.image || undefined}
+                        size="sm"
+                      />
                       <div>
                         <div className="font-medium">
                           {user.name || (

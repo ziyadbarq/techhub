@@ -29,6 +29,42 @@ const nextConfig: NextConfig = {
     "reflect-metadata",
     "better-auth",
   ],
+  // Image optimization configuration
+  images: {
+    // Allow local avatar optimization
+    localPatterns: [
+      {
+        pathname: "/uploads/avatars/**",
+        search: "",
+      },
+      {
+        pathname: "/logos/**",
+        search: "",
+      },
+    ],
+    // Remote patterns for SSO providers (Microsoft Graph)
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "graph.microsoft.com",
+        pathname: "/v1.0/users/*/photo/$value",
+      },
+      {
+        protocol: "https",
+        hostname: "**.blob.core.windows.net", // Azure Storage fallback
+      },
+    ],
+    // Modern image formats with fallbacks
+    formats: ["image/avif", "image/webp"],
+    // Device sizes for responsive images
+    deviceSizes: [32, 64, 128, 256, 384, 640, 750, 828, 1080, 1200],
+    // Image sizes for different use cases
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Disable external SVG (security risk)
+    dangerouslyAllowSVG: false,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
   // Security headers
   async headers() {
     const isProduction = process.env.NODE_ENV === "production";
@@ -76,7 +112,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https: blob:",
+              "img-src 'self' data: https: blob: https://graph.microsoft.com https://*.blob.core.windows.net",
               "font-src 'self' data:",
               "connect-src 'self'",
               "frame-ancestors 'none'",

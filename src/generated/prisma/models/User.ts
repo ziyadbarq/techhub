@@ -20,8 +20,18 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  tokenVersion: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  tokenVersion: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -34,6 +44,9 @@ export type UserMinAggregateOutputType = {
   updatedAt: Date | null
   lastLoginMethod: string | null
   lastLoginAt: Date | null
+  tokenVersion: number | null
+  twoFactorEnabled: boolean | null
+  twoFactorSecret: string | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -46,6 +59,9 @@ export type UserMaxAggregateOutputType = {
   updatedAt: Date | null
   lastLoginMethod: string | null
   lastLoginAt: Date | null
+  tokenVersion: number | null
+  twoFactorEnabled: boolean | null
+  twoFactorSecret: string | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -58,9 +74,20 @@ export type UserCountAggregateOutputType = {
   updatedAt: number
   lastLoginMethod: number
   lastLoginAt: number
+  tokenVersion: number
+  twoFactorEnabled: number
+  twoFactorSecret: number
   _all: number
 }
 
+
+export type UserAvgAggregateInputType = {
+  tokenVersion?: true
+}
+
+export type UserSumAggregateInputType = {
+  tokenVersion?: true
+}
 
 export type UserMinAggregateInputType = {
   id?: true
@@ -72,6 +99,9 @@ export type UserMinAggregateInputType = {
   updatedAt?: true
   lastLoginMethod?: true
   lastLoginAt?: true
+  tokenVersion?: true
+  twoFactorEnabled?: true
+  twoFactorSecret?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -84,6 +114,9 @@ export type UserMaxAggregateInputType = {
   updatedAt?: true
   lastLoginMethod?: true
   lastLoginAt?: true
+  tokenVersion?: true
+  twoFactorEnabled?: true
+  twoFactorSecret?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -96,6 +129,9 @@ export type UserCountAggregateInputType = {
   updatedAt?: true
   lastLoginMethod?: true
   lastLoginAt?: true
+  tokenVersion?: true
+  twoFactorEnabled?: true
+  twoFactorSecret?: true
   _all?: true
 }
 
@@ -137,6 +173,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -167,6 +215,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
@@ -181,7 +231,12 @@ export type UserGroupByOutputType = {
   updatedAt: Date
   lastLoginMethod: string | null
   lastLoginAt: Date | null
+  tokenVersion: number
+  twoFactorEnabled: boolean | null
+  twoFactorSecret: string | null
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -214,10 +269,15 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   lastLoginMethod?: Prisma.StringNullableFilter<"User"> | string | null
   lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  tokenVersion?: Prisma.IntFilter<"User"> | number
+  twoFactorEnabled?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
   accounts?: Prisma.AccountListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   roles?: Prisma.UserRoleListRelationFilter
   person?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
+  preferences?: Prisma.XOR<Prisma.UserPreferencesNullableScalarRelationFilter, Prisma.UserPreferencesWhereInput> | null
+  twoFactor?: Prisma.XOR<Prisma.TwoFactorNullableScalarRelationFilter, Prisma.TwoFactorWhereInput> | null
   auditLogsAsUser?: Prisma.AuditLogEntryListRelationFilter
   backupsCreated?: Prisma.DatabaseBackupListRelationFilter
   backupsDeleted?: Prisma.DatabaseBackupListRelationFilter
@@ -233,10 +293,15 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   lastLoginMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  tokenVersion?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   roles?: Prisma.UserRoleOrderByRelationAggregateInput
   person?: Prisma.PersonOrderByWithRelationInput
+  preferences?: Prisma.UserPreferencesOrderByWithRelationInput
+  twoFactor?: Prisma.TwoFactorOrderByWithRelationInput
   auditLogsAsUser?: Prisma.AuditLogEntryOrderByRelationAggregateInput
   backupsCreated?: Prisma.DatabaseBackupOrderByRelationAggregateInput
   backupsDeleted?: Prisma.DatabaseBackupOrderByRelationAggregateInput
@@ -255,10 +320,15 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   lastLoginMethod?: Prisma.StringNullableFilter<"User"> | string | null
   lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  tokenVersion?: Prisma.IntFilter<"User"> | number
+  twoFactorEnabled?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
   accounts?: Prisma.AccountListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   roles?: Prisma.UserRoleListRelationFilter
   person?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
+  preferences?: Prisma.XOR<Prisma.UserPreferencesNullableScalarRelationFilter, Prisma.UserPreferencesWhereInput> | null
+  twoFactor?: Prisma.XOR<Prisma.TwoFactorNullableScalarRelationFilter, Prisma.TwoFactorWhereInput> | null
   auditLogsAsUser?: Prisma.AuditLogEntryListRelationFilter
   backupsCreated?: Prisma.DatabaseBackupListRelationFilter
   backupsDeleted?: Prisma.DatabaseBackupListRelationFilter
@@ -274,9 +344,14 @@ export type UserOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   lastLoginMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  tokenVersion?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -292,6 +367,9 @@ export type UserScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   lastLoginMethod?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   lastLoginAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  tokenVersion?: Prisma.IntWithAggregatesFilter<"User"> | number
+  twoFactorEnabled?: Prisma.BoolNullableWithAggregatesFilter<"User"> | boolean | null
+  twoFactorSecret?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
 }
 
 export type UserCreateInput = {
@@ -304,10 +382,15 @@ export type UserCreateInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
@@ -323,10 +406,15 @@ export type UserUncheckedCreateInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
@@ -342,10 +430,15 @@ export type UserUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
@@ -361,10 +454,15 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
@@ -380,6 +478,9 @@ export type UserCreateManyInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -392,6 +493,9 @@ export type UserUpdateManyMutationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -404,6 +508,9 @@ export type UserUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -416,6 +523,13 @@ export type UserCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   lastLoginMethod?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
+  tokenVersion?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+}
+
+export type UserAvgOrderByAggregateInput = {
+  tokenVersion?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -428,6 +542,9 @@ export type UserMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   lastLoginMethod?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
+  tokenVersion?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -440,6 +557,13 @@ export type UserMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   lastLoginMethod?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
+  tokenVersion?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+}
+
+export type UserSumOrderByAggregateInput = {
+  tokenVersion?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -450,6 +574,10 @@ export type UserScalarRelationFilter = {
 export type UserNullableScalarRelationFilter = {
   is?: Prisma.UserWhereInput | null
   isNot?: Prisma.UserWhereInput | null
+}
+
+export type NullableBoolFieldUpdateOperationsInput = {
+  set?: boolean | null
 }
 
 export type UserCreateNestedOneWithoutAccountsInput = {
@@ -478,6 +606,34 @@ export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutSessionsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSessionsInput, Prisma.UserUpdateWithoutSessionsInput>, Prisma.UserUncheckedUpdateWithoutSessionsInput>
+}
+
+export type UserCreateNestedOneWithoutTwoFactorInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTwoFactorInput, Prisma.UserUncheckedCreateWithoutTwoFactorInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTwoFactorInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTwoFactorNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTwoFactorInput, Prisma.UserUncheckedCreateWithoutTwoFactorInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTwoFactorInput
+  upsert?: Prisma.UserUpsertWithoutTwoFactorInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTwoFactorInput, Prisma.UserUpdateWithoutTwoFactorInput>, Prisma.UserUncheckedUpdateWithoutTwoFactorInput>
+}
+
+export type UserCreateNestedOneWithoutPreferencesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPreferencesInput, Prisma.UserUncheckedCreateWithoutPreferencesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPreferencesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPreferencesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPreferencesInput, Prisma.UserUncheckedCreateWithoutPreferencesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPreferencesInput
+  upsert?: Prisma.UserUpsertWithoutPreferencesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPreferencesInput, Prisma.UserUpdateWithoutPreferencesInput>, Prisma.UserUncheckedUpdateWithoutPreferencesInput>
 }
 
 export type UserCreateNestedOneWithoutBackupsCreatedInput = {
@@ -566,9 +722,14 @@ export type UserCreateWithoutAccountsInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
@@ -584,9 +745,14 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
@@ -618,9 +784,14 @@ export type UserUpdateWithoutAccountsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
@@ -636,9 +807,14 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
@@ -654,9 +830,14 @@ export type UserCreateWithoutSessionsInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
@@ -672,9 +853,14 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
@@ -706,9 +892,14 @@ export type UserUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
@@ -724,9 +915,230 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
+}
+
+export type UserCreateWithoutTwoFactorInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
+}
+
+export type UserUncheckedCreateWithoutTwoFactorInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
+}
+
+export type UserCreateOrConnectWithoutTwoFactorInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTwoFactorInput, Prisma.UserUncheckedCreateWithoutTwoFactorInput>
+}
+
+export type UserUpsertWithoutTwoFactorInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTwoFactorInput, Prisma.UserUncheckedUpdateWithoutTwoFactorInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTwoFactorInput, Prisma.UserUncheckedCreateWithoutTwoFactorInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTwoFactorInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTwoFactorInput, Prisma.UserUncheckedUpdateWithoutTwoFactorInput>
+}
+
+export type UserUpdateWithoutTwoFactorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTwoFactorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
+}
+
+export type UserCreateWithoutPreferencesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
+}
+
+export type UserUncheckedCreateWithoutPreferencesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
+}
+
+export type UserCreateOrConnectWithoutPreferencesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPreferencesInput, Prisma.UserUncheckedCreateWithoutPreferencesInput>
+}
+
+export type UserUpsertWithoutPreferencesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPreferencesInput, Prisma.UserUncheckedUpdateWithoutPreferencesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPreferencesInput, Prisma.UserUncheckedCreateWithoutPreferencesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPreferencesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPreferencesInput, Prisma.UserUncheckedUpdateWithoutPreferencesInput>
+}
+
+export type UserUpdateWithoutPreferencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPreferencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
@@ -742,10 +1154,15 @@ export type UserCreateWithoutBackupsCreatedInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
   backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
 }
@@ -760,10 +1177,15 @@ export type UserUncheckedCreateWithoutBackupsCreatedInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
 }
@@ -783,10 +1205,15 @@ export type UserCreateWithoutBackupsDeletedInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
 }
@@ -801,10 +1228,15 @@ export type UserUncheckedCreateWithoutBackupsDeletedInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
 }
@@ -835,10 +1267,15 @@ export type UserUpdateWithoutBackupsCreatedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
 }
@@ -853,10 +1290,15 @@ export type UserUncheckedUpdateWithoutBackupsCreatedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
 }
@@ -882,10 +1324,15 @@ export type UserUpdateWithoutBackupsDeletedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
 }
@@ -900,10 +1347,15 @@ export type UserUncheckedUpdateWithoutBackupsDeletedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
 }
@@ -918,9 +1370,14 @@ export type UserCreateWithoutPersonInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
@@ -936,9 +1393,14 @@ export type UserUncheckedCreateWithoutPersonInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
@@ -970,9 +1432,14 @@ export type UserUpdateWithoutPersonInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
@@ -988,9 +1455,14 @@ export type UserUncheckedUpdateWithoutPersonInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
@@ -1006,10 +1478,15 @@ export type UserCreateWithoutAuditLogsAsUserInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
   backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
 }
@@ -1024,10 +1501,15 @@ export type UserUncheckedCreateWithoutAuditLogsAsUserInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
 }
@@ -1058,10 +1540,15 @@ export type UserUpdateWithoutAuditLogsAsUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
 }
@@ -1076,10 +1563,15 @@ export type UserUncheckedUpdateWithoutAuditLogsAsUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
 }
@@ -1094,9 +1586,14 @@ export type UserCreateWithoutRolesInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
@@ -1112,9 +1609,14 @@ export type UserUncheckedCreateWithoutRolesInput = {
   updatedAt?: Date | string
   lastLoginMethod?: string | null
   lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
@@ -1146,9 +1648,14 @@ export type UserUpdateWithoutRolesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
@@ -1164,9 +1671,14 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
   backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
   backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
@@ -1258,10 +1770,15 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   lastLoginMethod?: boolean
   lastLoginAt?: boolean
+  tokenVersion?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
   person?: boolean | Prisma.User$personArgs<ExtArgs>
+  preferences?: boolean | Prisma.User$preferencesArgs<ExtArgs>
+  twoFactor?: boolean | Prisma.User$twoFactorArgs<ExtArgs>
   auditLogsAsUser?: boolean | Prisma.User$auditLogsAsUserArgs<ExtArgs>
   backupsCreated?: boolean | Prisma.User$backupsCreatedArgs<ExtArgs>
   backupsDeleted?: boolean | Prisma.User$backupsDeletedArgs<ExtArgs>
@@ -1278,6 +1795,9 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   lastLoginMethod?: boolean
   lastLoginAt?: boolean
+  tokenVersion?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1290,6 +1810,9 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   lastLoginMethod?: boolean
   lastLoginAt?: boolean
+  tokenVersion?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1302,14 +1825,19 @@ export type UserSelectScalar = {
   updatedAt?: boolean
   lastLoginMethod?: boolean
   lastLoginAt?: boolean
+  tokenVersion?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "image" | "emailVerified" | "createdAt" | "updatedAt" | "lastLoginMethod" | "lastLoginAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "image" | "emailVerified" | "createdAt" | "updatedAt" | "lastLoginMethod" | "lastLoginAt" | "tokenVersion" | "twoFactorEnabled" | "twoFactorSecret", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
   person?: boolean | Prisma.User$personArgs<ExtArgs>
+  preferences?: boolean | Prisma.User$preferencesArgs<ExtArgs>
+  twoFactor?: boolean | Prisma.User$twoFactorArgs<ExtArgs>
   auditLogsAsUser?: boolean | Prisma.User$auditLogsAsUserArgs<ExtArgs>
   backupsCreated?: boolean | Prisma.User$backupsCreatedArgs<ExtArgs>
   backupsDeleted?: boolean | Prisma.User$backupsDeletedArgs<ExtArgs>
@@ -1325,6 +1853,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     roles: Prisma.$UserRolePayload<ExtArgs>[]
     person: Prisma.$PersonPayload<ExtArgs> | null
+    preferences: Prisma.$UserPreferencesPayload<ExtArgs> | null
+    twoFactor: Prisma.$TwoFactorPayload<ExtArgs> | null
     auditLogsAsUser: Prisma.$AuditLogEntryPayload<ExtArgs>[]
     backupsCreated: Prisma.$DatabaseBackupPayload<ExtArgs>[]
     backupsDeleted: Prisma.$DatabaseBackupPayload<ExtArgs>[]
@@ -1339,6 +1869,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     updatedAt: Date
     lastLoginMethod: string | null
     lastLoginAt: Date | null
+    tokenVersion: number
+    twoFactorEnabled: boolean | null
+    twoFactorSecret: string | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1737,6 +2270,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   roles<T extends Prisma.User$rolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   person<T extends Prisma.User$personArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$personArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  preferences<T extends Prisma.User$preferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$preferencesArgs<ExtArgs>>): Prisma.Prisma__UserPreferencesClient<runtime.Types.Result.GetResult<Prisma.$UserPreferencesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  twoFactor<T extends Prisma.User$twoFactorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$twoFactorArgs<ExtArgs>>): Prisma.Prisma__TwoFactorClient<runtime.Types.Result.GetResult<Prisma.$TwoFactorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   auditLogsAsUser<T extends Prisma.User$auditLogsAsUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsAsUserArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   backupsCreated<T extends Prisma.User$backupsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$backupsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DatabaseBackupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   backupsDeleted<T extends Prisma.User$backupsDeletedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$backupsDeletedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DatabaseBackupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1778,6 +2313,9 @@ export interface UserFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly lastLoginMethod: Prisma.FieldRef<"User", 'String'>
   readonly lastLoginAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly tokenVersion: Prisma.FieldRef<"User", 'Int'>
+  readonly twoFactorEnabled: Prisma.FieldRef<"User", 'Boolean'>
+  readonly twoFactorSecret: Prisma.FieldRef<"User", 'String'>
 }
     
 
@@ -2254,6 +2792,44 @@ export type User$personArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   include?: Prisma.PersonInclude<ExtArgs> | null
   where?: Prisma.PersonWhereInput
+}
+
+/**
+ * User.preferences
+ */
+export type User$preferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserPreferences
+   */
+  select?: Prisma.UserPreferencesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserPreferences
+   */
+  omit?: Prisma.UserPreferencesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserPreferencesInclude<ExtArgs> | null
+  where?: Prisma.UserPreferencesWhereInput
+}
+
+/**
+ * User.twoFactor
+ */
+export type User$twoFactorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TwoFactor
+   */
+  select?: Prisma.TwoFactorSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TwoFactor
+   */
+  omit?: Prisma.TwoFactorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TwoFactorInclude<ExtArgs> | null
+  where?: Prisma.TwoFactorWhereInput
 }
 
 /**

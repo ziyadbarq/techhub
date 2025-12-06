@@ -46,6 +46,8 @@ The DI container has been refactored into a three-tier modular system to support
 - `database` - Prisma database client and base repositories
 - `rbac` - Role-based access control
 - `user-provisioning` - User account creation and password reset
+- `user-preferences` - User preferences management (timezone, notifications, etc.)
+- `two-factor` - TOTP-based 2FA management with Better Auth
 - `system-setup` - System health checks and setup utilities
 - `database-backup` - Database backup and restore
 - `feature-flags` - Feature flag management
@@ -103,6 +105,8 @@ logger (no deps)
   ├─> database
   │    ├─> rbac
   │    │    └─> user-provisioning
+  │    ├─> user-preferences
+  │    ├─> two-factor
   │    ├─> system-setup
   │    ├─> database-backup
   │    ├─> feature-flags
@@ -147,7 +151,7 @@ import { initContainer, ModuleTier } from '@/di/container';
 await initContainer(ModuleTier.CORE);
 ```
 
-**Modules Loaded**: 14 CORE modules
+**Modules Loaded**: 16 CORE modules
 **Load Time**: ~100-200ms
 **Memory**: Minimal
 

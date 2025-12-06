@@ -17,7 +17,9 @@
 import type { Container } from "inversify";
 import { DI_TOKENS } from "../types";
 import type { IFileStorageService } from "@/core/services/file-storage.service.interface";
+import type { IImageOptimizationService } from "@/core/services/image-optimization.service.interface";
 import { LocalFileStorageService } from "@/infrastructure/services/local-file-storage.service";
+import { ImageOptimizationService } from "@/infrastructure/services/image-optimization.service";
 
 /**
  * Binds file storage service dependencies to the container
@@ -46,6 +48,17 @@ export function bindFileStorageDependencies(container: Container): void {
   container
     .bind<IFileStorageService>(DI_TOKENS.IFileStorageService)
     .to(LocalFileStorageService)
+    .inSingletonScope();
+
+  // ==========================================
+  // Bind Image Optimization Service
+  // ==========================================
+
+  // Bind IImageOptimizationService to ImageOptimizationService implementation
+  // Singleton ensures consistent avatar optimization operations
+  container
+    .bind<IImageOptimizationService>(DI_TOKENS.IImageOptimizationService)
+    .to(ImageOptimizationService)
     .inSingletonScope();
 
   // Only log during development to avoid cluttering build output

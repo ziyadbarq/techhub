@@ -31,7 +31,7 @@ import { logger } from "@/lib/logger";
  *         id: created.id,
  *       });
  *       return this.toDomain(created);
- *     } catch (_error) {
+ *     } catch (error) {
  *       this.logger.error('create', 'Failed to create presentation', error, {
  *         name: entity.name,
  *       });

@@ -15,6 +15,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { getContainer } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +30,19 @@ export default async function SettingsPage() {
     handlePermissionRedirect(error, "/settings");
     throw error;
   }
+
+  // Fetch latest user data from database (session may be cached)
+  const container = getContainer();
+  const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
+  const userWithMetadata = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: {
+      twoFactorEnabled: true,
+      lastLoginMethod: true,
+      image: true,
+      name: true,
+    },
+  });
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
@@ -47,7 +63,15 @@ export default async function SettingsPage() {
       </div>
 
       {/* Settings Form */}
-      <SettingsForm user={user} />
+      <SettingsForm
+        user={{
+          ...user,
+          twoFactorEnabled: userWithMetadata?.twoFactorEnabled ?? false,
+          lastLoginMethod: userWithMetadata?.lastLoginMethod ?? null,
+          image: userWithMetadata?.image ?? user.image,
+          name: userWithMetadata?.name ?? user.name,
+        }}
+      />
     </div>
   );
 }

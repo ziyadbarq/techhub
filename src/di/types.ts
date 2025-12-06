@@ -47,6 +47,8 @@ export const DI_TOKENS = {
   IPermissionRepository: Symbol.for("IPermissionRepository"),
   IUserRoleRepository: Symbol.for("IUserRoleRepository"),
   IUserRepository: Symbol.for("IUserRepository"),
+  IUserPreferencesRepository: Symbol.for("IUserPreferencesRepository"),
+  ITwoFactorRepository: Symbol.for("ITwoFactorRepository"),
   IAuditLogRepository: Symbol.for("IAuditLogRepository"),
 
   // System Setup Repository
@@ -162,6 +164,12 @@ export const DI_TOKENS = {
    * Provides file system operations for debug artifacts and other files
    */
   IFileStorageService: Symbol.for("IFileStorageService"),
+
+  /**
+   * Token for IImageOptimizationService
+   * Provides avatar image optimization (resize, WebP conversion, compression)
+   */
+  IImageOptimizationService: Symbol.for("IImageOptimizationService"),
 
   /**
    * Token for ICSVService
@@ -298,6 +306,13 @@ export const DI_TOKENS = {
   ResetUserPasswordUseCase: Symbol.for("ResetUserPasswordUseCase"),
   LinkUserToPersonUseCase: Symbol.for("LinkUserToPersonUseCase"),
   IPasswordService: Symbol.for("IPasswordService"),
+
+  // User Preferences Use Cases
+  GetUserPreferencesUseCase: Symbol.for("GetUserPreferencesUseCase"),
+  UpdateUserPreferencesUseCase: Symbol.for("UpdateUserPreferencesUseCase"),
+
+  // Two-Factor Authentication Use Cases
+  GetTwoFactorStatusUseCase: Symbol.for("GetTwoFactorStatusUseCase"),
 
   // System Setup Use Cases
   CheckSystemHealthUseCase: Symbol.for("CheckSystemHealthUseCase"),

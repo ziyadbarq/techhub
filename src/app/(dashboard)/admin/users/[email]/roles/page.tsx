@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 
 export default function UserRolesPage() {
   const params = useParams();
@@ -75,18 +75,6 @@ export default function UserRolesPage() {
   React.useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const getInitials = (name: string | null, email: string): string => {
-    if (name) {
-      return name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    }
-    return email[0].toUpperCase();
-  };
 
   if (loading) {
     return (
@@ -171,15 +159,12 @@ export default function UserRolesPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
-                <AvatarImage
-                  src={user.image || undefined}
-                  alt={user.name || user.email}
-                />
-                <AvatarFallback className="text-lg">
-                  {getInitials(user.name, user.email)}
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar
+                name={user.name || undefined}
+                email={user.email}
+                image={user.image || undefined}
+                size="lg"
+              />
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                   <UserIcon className="text-muted-foreground h-4 w-4" />

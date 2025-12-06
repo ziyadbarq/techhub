@@ -41,6 +41,11 @@ export const PERMISSIONS = {
   SETTINGS_VIEW: "settings:view",
   SETTINGS_MANAGE: "settings:manage",
 
+  // Two-Factor Authentication
+  SETTINGS_2FA_VIEW: "settings:2fa:view",
+  SETTINGS_2FA_ENABLE: "settings:2fa:enable",
+  SETTINGS_2FA_DISABLE: "settings:2fa:disable",
+
   // Data Import
   DATA_IMPORT_MANAGE: "data-import:manage",
 

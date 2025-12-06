@@ -88,6 +88,16 @@ export type Session = Prisma.SessionModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model TwoFactor
+ * 
+ */
+export type TwoFactor = Prisma.TwoFactorModel
+/**
+ * Model UserPreferences
+ * 
+ */
+export type UserPreferences = Prisma.UserPreferencesModel
+/**
  * Model DatabaseBackup
  * 
  */

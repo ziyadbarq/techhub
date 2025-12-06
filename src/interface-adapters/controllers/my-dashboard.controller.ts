@@ -26,7 +26,12 @@ import type { IAssetRepository } from "@/core/repositories/asset.repository.inte
 import { AllocationTargetType } from "@/core/domain/entities/license-allocation.entity";
 import { z } from "zod";
 import type { PrismaClient } from "@/generated/prisma/server";
-import { getRedis } from "@/lib/redis";
+import type { GetUserPreferencesUseCase } from "@/core/use-cases/user-preferences/get-user-preferences.use-case";
+import type { UpdateUserPreferencesUseCase } from "@/core/use-cases/user-preferences/update-user-preferences.use-case";
+import type { IImageOptimizationService } from "@/core/services/image-optimization.service.interface";
+import { isFeatureEnabled } from "@/lib/features/server";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+import type { ILoggerService } from "@/core/services";
 
 // ============================================================================
 // Person / Profile Actions
@@ -92,27 +97,54 @@ export type UpdateProfileDTO = z.infer<typeof UpdateProfileSchema>;
 export async function updateMyProfileAction(
   data: UpdateProfileDTO,
 ): Promise<ActionResponse<{ name?: string; image?: string | null }>> {
+  const container = getContainer();
+  const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+
   try {
     const userId = await getCurrentUserId();
     if (!userId) {
+      logger.warn("Profile update attempted without authentication", {
+        function: "updateMyProfileAction",
+      });
       return { success: false, error: "Not authenticated" };
     }
 
     const validated = UpdateProfileSchema.parse(data);
 
-    const container = getContainer();
+    logger.info("Profile update initiated", {
+      function: "updateMyProfileAction",
+      userId,
+      hasNameUpdate: !!validated.name,
+      hasImageUpdate: validated.image !== undefined,
+      imageAction:
+        validated.image === "" ? "remove" : validated.image ? "set" : "none",
+    });
+
     const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
+
+    // Build update data object - only include fields that are explicitly provided
+    const updateData: { name?: string; image?: string | null } = {};
+    if (validated.name !== undefined) {
+      updateData.name = validated.name;
+    }
+    if (validated.image !== undefined) {
+      updateData.image = validated.image === "" ? null : validated.image;
+    }
 
     const updated = await prisma.user.update({
       where: { id: userId },
-      data: {
-        name: validated.name,
-        image: validated.image === "" ? null : validated.image,
-      },
+      data: updateData,
       select: {
         name: true,
         image: true,
       },
+    });
+
+    logger.info("Profile updated successfully", {
+      function: "updateMyProfileAction",
+      userId,
+      updatedName: !!updated.name,
+      updatedImage: !!updated.image,
     });
 
     return {
@@ -123,6 +155,15 @@ export async function updateMyProfileAction(
       },
     };
   } catch (error) {
+    logger.error(
+      "Profile update failed",
+      error instanceof Error ? error : undefined,
+      {
+        function: "updateMyProfileAction",
+        error: error instanceof Error ? error.message : String(error),
+      },
+    );
+
     return handleControllerError(
       error,
       { function: "updateMyProfileAction" },
@@ -131,8 +172,204 @@ export async function updateMyProfileAction(
   }
 }
 
-// Preferences stored in Redis (per-user key)
-const preferencesKey = (userId: string) => `user:preferences:${userId}`;
+/**
+ * Upload Profile Photo
+ * Login-method-based strategy:
+ * - SSO users (Microsoft OAuth): Cannot upload (avatar managed by Microsoft)
+ * - Email/Password users: Can upload if ATTACHMENTS feature flag is enabled
+ */
+export async function uploadProfilePhotoAction(
+  formData: FormData,
+): Promise<ActionResponse<{ imageUrl: string }>> {
+  const startTime = Date.now();
+  const container = getContainer();
+  const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      logger.warn("Profile photo upload attempted without authentication", {
+        function: "uploadProfilePhotoAction",
+      });
+      return { success: false, error: "Not authenticated" };
+    }
+
+    logger.info("Profile photo upload initiated", {
+      function: "uploadProfilePhotoAction",
+      userId,
+    });
+
+    const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
+
+    // Fetch user with login method
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, lastLoginMethod: true, email: true },
+    });
+
+    if (!user) {
+      logger.error("User not found for profile photo upload", undefined, {
+        function: "uploadProfilePhotoAction",
+        userId,
+      });
+      return { success: false, error: "User not found" };
+    }
+
+    // Check login method: SSO users cannot upload custom avatars
+    if (user.lastLoginMethod === "microsoft") {
+      logger.warn("SSO user attempted to upload custom avatar", {
+        function: "uploadProfilePhotoAction",
+        userId,
+        loginMethod: user.lastLoginMethod,
+      });
+      return {
+        success: false,
+        error:
+          "SSO users cannot upload custom avatars. Your profile picture is automatically synced from Microsoft. Contact your IT admin to update it.",
+      };
+    }
+
+    // Check feature flag: ATTACHMENTS must be enabled for email/password users
+    const attachmentsEnabled = await isFeatureEnabled(
+      FEATURE_FLAGS.ATTACHMENTS,
+    );
+    if (!attachmentsEnabled) {
+      logger.warn("Profile photo upload attempted with ATTACHMENTS disabled", {
+        function: "uploadProfilePhotoAction",
+        userId,
+        featureFlag: FEATURE_FLAGS.ATTACHMENTS,
+      });
+      return {
+        success: false,
+        error:
+          "File uploads are currently disabled. Please use the image URL input instead.",
+      };
+    }
+
+    // Extract file from FormData
+    const file = formData.get("file") as File | null;
+    if (!file) {
+      logger.warn("Profile photo upload attempted without file", {
+        function: "uploadProfilePhotoAction",
+        userId,
+      });
+      return { success: false, error: "No file provided" };
+    }
+
+    logger.debug("File received for upload", {
+      function: "uploadProfilePhotoAction",
+      userId,
+      fileName: file.name,
+      fileType: file.type,
+      fileSize: file.size,
+    });
+
+    // Validate file type (JPEG, PNG, WebP)
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedMimeTypes.includes(file.type)) {
+      logger.warn("Invalid file type for profile photo upload", {
+        function: "uploadProfilePhotoAction",
+        userId,
+        fileName: file.name,
+        fileType: file.type,
+        allowedTypes: allowedMimeTypes,
+      });
+      return {
+        success: false,
+        error:
+          "Invalid file type. Only JPEG, PNG, and WebP images are allowed.",
+      };
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      logger.warn("File size exceeds limit for profile photo upload", {
+        function: "uploadProfilePhotoAction",
+        userId,
+        fileName: file.name,
+        fileSize: file.size,
+        maxSize,
+        fileSizeMB: (file.size / (1024 * 1024)).toFixed(2),
+      });
+      return {
+        success: false,
+        error: "File size exceeds 5MB limit. Please choose a smaller image.",
+      };
+    }
+
+    // Convert file to Buffer
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    logger.debug("File converted to buffer, starting optimization", {
+      function: "uploadProfilePhotoAction",
+      userId,
+      bufferSize: buffer.length,
+    });
+
+    // Optimize avatar and generate multiple size variants
+    const optimizationService = container.get<IImageOptimizationService>(
+      DI_TOKENS.IImageOptimizationService,
+    );
+
+    const optimizationStart = Date.now();
+    const result = await optimizationService.optimizeAvatar(
+      buffer,
+      userId,
+      file.name,
+    );
+    const optimizationDuration = Date.now() - optimizationStart;
+
+    logger.info("Avatar optimization completed", {
+      function: "uploadProfilePhotoAction",
+      userId,
+      variants: Object.keys(result.variants),
+      optimizationDurationMs: optimizationDuration,
+      originalSize: file.size,
+    });
+
+    // Update User.image with default 128px variant (most common size)
+    const imageUrl = result.variants[128];
+    await prisma.user.update({
+      where: { id: userId },
+      data: { image: imageUrl },
+    });
+
+    const totalDuration = Date.now() - startTime;
+
+    logger.info("Profile photo upload completed successfully", {
+      function: "uploadProfilePhotoAction",
+      userId,
+      imageUrl,
+      totalDurationMs: totalDuration,
+      optimizationDurationMs: optimizationDuration,
+      uploadDurationMs: totalDuration - optimizationDuration,
+    });
+
+    return {
+      success: true,
+      data: { imageUrl },
+    };
+  } catch (error) {
+    const totalDuration = Date.now() - startTime;
+    logger.error(
+      "Profile photo upload failed",
+      error instanceof Error ? error : undefined,
+      {
+        function: "uploadProfilePhotoAction",
+        error: error instanceof Error ? error.message : String(error),
+        totalDurationMs: totalDuration,
+      },
+    );
+
+    return handleControllerError(
+      error,
+      { function: "uploadProfilePhotoAction" },
+      "Failed to upload profile photo",
+    );
+  }
+}
 
 const PreferencesSchema = z.object({
   timezone: z.string().optional(),
@@ -156,23 +393,8 @@ const PreferencesSchema = z.object({
 
 export type UserPreferencesDTO = z.infer<typeof PreferencesSchema>;
 
-const defaultPreferences: Required<UserPreferencesDTO> = {
-  timezone: "Asia/Riyadh",
-  dateFormat: "dd/MM/yyyy",
-  currencyDisplay: "dual",
-  notifications: {
-    emailNotifications: true,
-    teamsNotifications: false,
-    whatsappNotifications: false,
-    weeklyDigest: true,
-    assetAlerts: true,
-    approvalAlerts: true,
-    warrantyAlerts: true,
-  },
-};
-
 /**
- * Get current user's preferences (Redis-backed)
+ * Get current user's preferences (Database-backed)
  */
 export async function getMyPreferencesAction(): Promise<
   ActionResponse<UserPreferencesDTO>
@@ -183,22 +405,26 @@ export async function getMyPreferencesAction(): Promise<
       return { success: false, error: "Not authenticated" };
     }
 
-    const redis = getRedis();
-    const raw = await redis.get(preferencesKey(userId));
-    if (!raw) {
-      return { success: true, data: defaultPreferences };
-    }
+    const container = getContainer();
+    const getUserPreferences = container.get<GetUserPreferencesUseCase>(
+      DI_TOKENS.GetUserPreferencesUseCase,
+    );
 
-    const parsed = PreferencesSchema.partial().parse(JSON.parse(raw));
+    const preferences = await getUserPreferences.execute(userId);
+
     return {
       success: true,
       data: {
-        ...defaultPreferences,
-        ...parsed,
-        notifications: {
-          ...defaultPreferences.notifications,
-          ...(parsed.notifications ?? {}),
-        },
+        timezone: preferences.timezone,
+        dateFormat: preferences.dateFormat as
+          | "dd/MM/yyyy"
+          | "MM/dd/yyyy"
+          | "yyyy-MM-dd",
+        currencyDisplay: preferences.currencyDisplay as
+          | "sar"
+          | "original"
+          | "dual",
+        notifications: preferences.notifications,
       },
     };
   } catch (error) {
@@ -211,7 +437,7 @@ export async function getMyPreferencesAction(): Promise<
 }
 
 /**
- * Update current user's preferences (Redis-backed)
+ * Update current user's preferences (Database-backed)
  */
 export async function updateMyPreferencesAction(
   data: UserPreferencesDTO,
@@ -222,21 +448,36 @@ export async function updateMyPreferencesAction(
       return { success: false, error: "Not authenticated" };
     }
 
-    const redis = getRedis();
     const validated = PreferencesSchema.parse(data);
 
-    const merged: UserPreferencesDTO = {
-      ...defaultPreferences,
-      ...validated,
-      notifications: {
-        ...defaultPreferences.notifications,
-        ...(validated.notifications ?? {}),
+    const container = getContainer();
+    const updateUserPreferences = container.get<UpdateUserPreferencesUseCase>(
+      DI_TOKENS.UpdateUserPreferencesUseCase,
+    );
+
+    const preferences = await updateUserPreferences.execute({
+      userId,
+      timezone: validated.timezone,
+      dateFormat: validated.dateFormat,
+      currencyDisplay: validated.currencyDisplay,
+      notifications: validated.notifications,
+    });
+
+    return {
+      success: true,
+      data: {
+        timezone: preferences.timezone,
+        dateFormat: preferences.dateFormat as
+          | "dd/MM/yyyy"
+          | "MM/dd/yyyy"
+          | "yyyy-MM-dd",
+        currencyDisplay: preferences.currencyDisplay as
+          | "sar"
+          | "original"
+          | "dual",
+        notifications: preferences.notifications,
       },
     };
-
-    await redis.set(preferencesKey(userId), JSON.stringify(merged));
-
-    return { success: true, data: merged };
   } catch (error) {
     return handleControllerError(
       error,

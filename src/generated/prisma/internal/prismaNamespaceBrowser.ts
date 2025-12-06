@@ -65,6 +65,8 @@ export const ModelName = {
   Account: 'Account',
   Session: 'Session',
   Verification: 'Verification',
+  TwoFactor: 'TwoFactor',
+  UserPreferences: 'UserPreferences',
   DatabaseBackup: 'DatabaseBackup',
   CIClass: 'CIClass',
   CIClassField: 'CIClassField',
@@ -353,7 +355,10 @@ export const UserScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   lastLoginMethod: 'lastLoginMethod',
-  lastLoginAt: 'lastLoginAt'
+  lastLoginAt: 'lastLoginAt',
+  tokenVersion: 'tokenVersion',
+  twoFactorEnabled: 'twoFactorEnabled',
+  twoFactorSecret: 'twoFactorSecret'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -404,6 +409,32 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const TwoFactorScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  secret: 'secret',
+  backupCodes: 'backupCodes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TwoFactorScalarFieldEnum = (typeof TwoFactorScalarFieldEnum)[keyof typeof TwoFactorScalarFieldEnum]
+
+
+export const UserPreferencesScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  timezone: 'timezone',
+  dateFormat: 'dateFormat',
+  currencyDisplay: 'currencyDisplay',
+  notifications: 'notifications',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserPreferencesScalarFieldEnum = (typeof UserPreferencesScalarFieldEnum)[keyof typeof UserPreferencesScalarFieldEnum]
 
 
 export const DatabaseBackupScalarFieldEnum = {
@@ -1695,6 +1726,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: 'JsonNull'
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

@@ -17,6 +17,9 @@ import {
 import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
 import type { ActionResponse } from "@/interface-adapters/controllers/types";
 import { requireAuth } from "@/lib/auth/session";
+import { getContainer } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 
 type UnwrapResult<T> = {
   data: T;
@@ -61,6 +64,24 @@ export async function loadProfileSummary(): Promise<ProfileSummary> {
   const { user } = await requireAuth();
   const errors: string[] = [];
 
+  // Fetch latest user data from database (session may be cached)
+  const container = getContainer();
+  const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
+  const freshUserData = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: {
+      image: true,
+      name: true,
+    },
+  });
+
+  // Merge fresh data with session user
+  const userWithFreshData: User = {
+    ...user,
+    image: freshUserData?.image ?? user.image,
+    name: freshUserData?.name ?? user.name,
+  };
+
   const [personResult, assetsResult, licensesResult, reservationsResult] =
     await Promise.allSettled([
       getCurrentPersonAction(),
@@ -89,7 +110,7 @@ export async function loadProfileSummary(): Promise<ProfileSummary> {
   });
 
   return {
-    user,
+    user: userWithFreshData,
     person: person.data,
     assets: assets.data,
     licenses: licenses.data,

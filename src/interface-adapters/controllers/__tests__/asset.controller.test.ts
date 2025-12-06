@@ -879,7 +879,9 @@ describe("Asset Controller", () => {
 
       // Assert
       expect(result.success).toBe(false);
-      expect(result.error).toBe("Database error");
+      if (!result.success) {
+        expect(result.error).toBe("Database error");
+      }
     });
   });
 
@@ -1066,7 +1068,9 @@ describe("Asset Controller", () => {
 
       // Assert
       expect(result.success).toBe(false);
-      expect(result.error).toBe("Database error");
+      if (!result.success) {
+        expect(result.error).toBe("Database error");
+      }
     });
   });
 

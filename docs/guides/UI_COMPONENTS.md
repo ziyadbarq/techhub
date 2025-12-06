@@ -3,6 +3,7 @@
 Advanced UI component patterns for building production-ready interfaces with TanStack Table, React Hook Form, and CSV operations.
 
 ## Table of Contents
+- [UserAvatar Component](#useravatar-component)
 
 - [EntityDisplay Component](#entitydisplay-component)
 - [DataTable Component](#datatable-component)
@@ -10,6 +11,65 @@ Advanced UI component patterns for building production-ready interfaces with Tan
 - [CSV Import/Export](#csv-importexport)
 - [Form Utilities](#form-utilities)
 - [Best Practices](#best-practices)
+
+---
+
+## UserAvatar Component
+
+Reusable avatar component with automatic image optimization, size variants, and fallback handling. See [Avatar Optimization](../features/AVATAR_OPTIMIZATION.md) for complete documentation.
+
+### Quick Start
+
+```tsx
+import { UserAvatar } from "@/components/shared/user-avatar";
+
+// With user object
+<UserAvatar user={user} size="md" />
+
+// Individual props
+<UserAvatar name="John Doe" email="john@example.com" size="sm" />
+
+// SSO avatar
+<UserAvatar
+  name="Jane Smith"
+  image="https://graph.microsoft.com/v1.0/users/jane@company.com/photo/$value"
+  size="lg"
+/>
+```
+
+### Size Reference
+
+| Size | Pixels | Common Use Cases |
+|------|--------|------------------|
+| `xs` | 24px | Very small icons |
+| `sm` | 32px | **Tables, dropdowns, user menu** |
+| `md` | 48px | **Cards, widgets** (default) |
+| `lg` | 64px | **Profile headers** |
+| `xl` | 128px | Full profile pages, settings |
+
+### In Tables
+
+```tsx
+import { UserAvatar } from "@/components/shared/user-avatar";
+
+const columns: ColumnDef<User>[] = [
+  {
+    accessorKey: "user",
+    header: "User",
+    cell: ({ row }) => <UserAvatar user={row.original} size="sm" />,
+  },
+];
+```
+
+### Features
+
+- **Automatic optimization**: Smart URL rewriting for size variants
+- **SSO support**: Microsoft Graph images pass through unchanged
+- **Fallback colors**: Deterministic color assignment (same name = same color)
+- **Next.js Image**: Automatic optimization with responsive sizing
+- **Tooltips**: Optional hover tooltips with user info
+
+For full API reference and advanced usage, see [Avatar Optimization](../features/AVATAR_OPTIMIZATION.md).
 
 ---
 

@@ -25,7 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { BulkRoleAssignmentModal } from "@/components/users/BulkRoleAssignmentModal";
 import { InlineRoleEditor } from "@/components/users/InlineRoleEditor";
 import { UserRoleHistory } from "@/components/users/UserRoleHistory";
@@ -55,18 +55,6 @@ export function UserTable({
     email: string;
   } | null>(null);
 
-  const getInitials = (name: string | null, email: string): string => {
-    if (name) {
-      return name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    }
-    return email[0].toUpperCase();
-  };
-
   const columns: ColumnDef<UserWithRolesDTO>[] = [
     {
       accessorKey: "user",
@@ -77,15 +65,12 @@ export function UserTable({
         const user = row.original;
         return (
           <div className="flex items-center gap-3">
-            <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={user.image || undefined}
-                alt={user.name || user.email}
-              />
-              <AvatarFallback>
-                {getInitials(user.name, user.email)}
-              </AvatarFallback>
-            </Avatar>
+            <UserAvatar
+              name={user.name || undefined}
+              email={user.email}
+              image={user.image || undefined}
+              size="sm"
+            />
             <div className="flex flex-col">
               <span className="font-medium">{user.name || "Unnamed User"}</span>
               <span className="text-muted-foreground flex items-center gap-1 text-xs">

@@ -22,7 +22,13 @@ Technical documentation for system architecture and design decisions:
 - [RBAC Architecture](./architecture/RBAC_ARCHITECTURE.md) - Role-Based Access Control system architecture
 - [Theme System](./architecture/THEME_SYSTEM.md) - Centralized theme system with OKLCH color space
 
-## 👤 Developer Guides
+## 👤 User Guides
+
+End-user documentation for barq TechHub users:
+
+- [Two-Factor Authentication User Guide](./guides/USER_GUIDE_2FA.md) - Complete guide for enabling, using, and troubleshooting 2FA
+
+## 👨‍💻 Developer Guides
 
 Developer-facing documentation for building with the assets app:
 
@@ -117,6 +123,7 @@ Cross-cutting features and utilities:
 - [RBAC Developer Guide](./guides/RBAC_DEVELOPER_GUIDE.md) - Implementing permissions and protecting routes/actions/UI
 - [RBAC Admin Guide](./features/RBAC_ADMIN_GUIDE.md) - Managing roles, permissions, and user access
 - [User Provisioning System](./features/USER_PROVISIONING.md) - Admin user account creation, secure password generation, and password reset for employees
+- [Two-Factor Authentication](./features/TWO_FACTOR_AUTHENTICATION.md) - TOTP-based 2FA with QR code setup, backup codes, and login challenge
 - **[MISSING]** Permission Groups & Dependencies - Permission organization, dependency validation, and auto-fix features
 - **[MISSING]** Role Conflict Detection - Segregation of duties enforcement and conflict resolution
 - **[MISSING]** Role Cloning - One-click role duplication with permission copying
