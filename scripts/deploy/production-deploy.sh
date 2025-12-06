@@ -244,7 +244,7 @@ install_dependencies_resilient() {
 
     while [ "$attempt" -le "$max_attempts" ]; do
         # Use npm ci for deterministic installs; last attempt falls back to npm install
-        # Install with dev deps for type-checking (pruned after build in Stage 4)
+        # Install with dev deps for type-checking and CLI tools (prisma, dotenv) needed throughout deployment
         local cmd
         if [ "$attempt" -lt "$max_attempts" ]; then
             cmd="npm ci --include=dev"
@@ -520,9 +520,9 @@ stage_dependencies() {
 
     log_node_modules_state
 
-    # Install dependencies (include dev deps for type-checking)
+    # Install dependencies (include dev deps for type-checking and CLI tools)
     # Note: Dev deps required for TypeScript type-check during deployment (acts as CI/CD gate)
-    # Dev deps are pruned after build completes (Stage 4) to minimize production footprint
+    # and for CLI tools (prisma, dotenv) used in later stages (migrations, seeding)
     if [ "$FORCE_INSTALL" = true ]; then
         log "Force reinstall requested (--install): running npm ci --include=dev (HUSKY=0, resilient)..."
         clean_node_modules
@@ -616,19 +616,9 @@ stage_build() {
     build_size=$(file_size "$ROOT_DIR/.next")
     log_success "Build complete (${build_size})"
 
-    # Prune dev dependencies (no longer needed after build)
-    log "Pruning dev dependencies for production runtime..."
-    local nm_size_before nm_size_after
-    nm_size_before=$(du -sm "$ROOT_DIR/node_modules" 2>/dev/null | awk '{print $1}' || echo "0")
-
-    if npm prune --production --no-audit --no-fund >> "$DEPLOY_LOG" 2>&1; then
-        nm_size_after=$(du -sm "$ROOT_DIR/node_modules" 2>/dev/null | awk '{print $1}' || echo "0")
-        local size_saved=$((nm_size_before - nm_size_after))
-        log_success "Dev dependencies pruned (saved ${size_saved}MB: ${nm_size_before}MB → ${nm_size_after}MB)"
-    else
-        log_warning "Failed to prune dev dependencies (non-critical, continuing)"
-        log "Production node_modules may contain unnecessary dev packages"
-    fi
+    # NOTE: Pruning dev dependencies previously caused deploy failures because CLI tools (prisma, dotenv)
+    # live in devDependencies. Skip pruning to keep required executables available during deployment.
+    log "Skipping dev dependency pruning to retain required CLI tools"
 }
 
 # ========================================
