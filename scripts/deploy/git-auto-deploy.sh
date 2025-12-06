@@ -30,6 +30,14 @@ LOCK_TIMEOUT=1800  # 30 minutes - stale lock threshold
 WEB_USER="www"
 WEB_GROUP="www"
 
+# Source common deployment utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+COMMON_LIB="$SCRIPT_DIR/lib/common.sh"
+if [ -f "$COMMON_LIB" ]; then
+    # shellcheck disable=SC1090
+    source "$COMMON_LIB"
+fi
+
 # Source environment variables from .env.local if it exists
 if [ -f "$PROJECT_DIR/.env.local" ]; then
     set -a
@@ -322,60 +330,35 @@ notify_health_critical() {
 # Health Check Functions
 # ========================================
 
-# Parse health response JSON into readable format (no jq dependency)
+# Parse health response JSON into readable format using jq
 # Usage: parse_health_response "$json_response"
 parse_health_response() {
     local response="$1"
     local msg=""
 
-    # Normalize: remove newlines and extra spaces for consistent matching
-    local normalized
-    normalized=$(echo "$response" | tr -d '\n\r\t' | sed 's/  */ /g')
+    # Requires jq (already verified in preflight)
+    local db_connected redis_connected env_valid migrations_applied pending_migrations error
 
-    # Database - look for "database" section with "connected":true (flexible whitespace)
-    if echo "$normalized" | grep -qE '"database"[^}]*"connected"\s*:\s*true'; then
-        msg+="✅ DB"
-    elif echo "$normalized" | grep -q '"database"'; then
-        msg+="❌ DB"
-    else
-        msg+="❓ DB"
-    fi
+    db_connected=$(echo "$response" | jq -r '.database.connected // .data.database.connected // false' 2>/dev/null)
+    redis_connected=$(echo "$response" | jq -r '.redis.connected // .data.redis.connected // false' 2>/dev/null)
+    env_valid=$(echo "$response" | jq -r '.environment.valid // .data.environment.valid // false' 2>/dev/null)
+    migrations_applied=$(echo "$response" | jq -r '.migrations.applied // .data.migrations.applied // false' 2>/dev/null)
+    pending_migrations=$(echo "$response" | jq -r '.migrations.pending // .data.migrations.pending // 0' 2>/dev/null)
+    error=$(echo "$response" | jq -r '.error // .data.error // ""' 2>/dev/null)
 
-    # Redis
-    if echo "$normalized" | grep -qE '"redis"[^}]*"connected"\s*:\s*true'; then
-        msg+=" ✅ Redis"
-    elif echo "$normalized" | grep -q '"redis"'; then
-        msg+=" ❌ Redis"
-    else
-        msg+=" ❓ Redis"
-    fi
+    [ "$db_connected" = "true" ] && msg+="✅ DB" || msg+="❌ DB"
+    [ "$redis_connected" = "true" ] && msg+=" ✅ Redis" || msg+=" ❌ Redis"
+    [ "$env_valid" = "true" ] && msg+=" ✅ Env" || msg+=" ❌ Env"
 
-    # Environment
-    if echo "$normalized" | grep -qE '"environment"[^}]*"valid"\s*:\s*true'; then
-        msg+=" ✅ Env"
-    elif echo "$normalized" | grep -q '"environment"'; then
-        msg+=" ❌ Env"
-    else
-        msg+=" ❓ Env"
-    fi
-
-    # Migrations
-    if echo "$normalized" | grep -qE '"migrations"[^}]*"applied"\s*:\s*true'; then
+    if [ "$migrations_applied" = "true" ]; then
         msg+=" ✅ Migrations"
-    elif echo "$normalized" | grep -q '"migrations"'; then
-        local pending
-        pending=$(echo "$normalized" | grep -oE '"pending"\s*:\s*[0-9]+' | grep -o '[0-9]*' | head -1)
-        msg+=" ⚠️ ${pending:-?} pending migrations"
+    elif [ "$pending_migrations" -gt 0 ]; then
+        msg+=" ⚠️ ${pending_migrations} pending migrations"
     else
         msg+=" ❓ Migrations"
     fi
 
-    # Extract first error if present (handle escaped quotes in error message)
-    local error
-    error=$(echo "$normalized" | grep -oE '"error"\s*:\s*"[^"]*"' | head -1 | sed 's/.*"error"\s*:\s*"//;s/"$//')
-    if [ -n "$error" ] && [ "$error" != "null" ]; then
-        msg+=$'\n'"🔴 $error"
-    fi
+    [ -n "$error" ] && [ "$error" != "null" ] && msg+=$'\n'"🔴 $error"
 
     echo "$msg"
 }
@@ -606,18 +589,33 @@ main() {
     fi
     log "Database connectivity: OK"
 
-    # Check Redis connectivity (using redis-cli if available, otherwise skip)
+    # Check Redis connectivity (using robust parsing)
     if command -v redis-cli >/dev/null 2>&1; then
-        # Extract host and port from REDIS_URL (format: redis://host:port)
-        REDIS_HOST=$(echo "$REDIS_URL" | sed -E 's|redis://([^:]+):.*|\1|')
-        REDIS_PORT=$(echo "$REDIS_URL" | sed -E 's|redis://[^:]+:([0-9]+).*|\1|')
+        if command -v parse_redis_url >/dev/null 2>&1 && command -v validate_redis_connectivity >/dev/null 2>&1; then
+            # Use common library functions if available
+            if validate_redis_connectivity "$REDIS_URL"; then
+                log "Redis connectivity: OK"
+            else
+                log_error "Redis validation failed - cannot deploy"
+                notify "Barq Deploy Error" "Redis unreachable - deployment aborted" 1
+                exit 2
+            fi
+        else
+            # Fallback to inline parsing if common.sh not available
+            if [[ "$REDIS_URL" =~ redis://([^:]+):([0-9]+) ]]; then
+                REDIS_HOST="${BASH_REMATCH[1]}"
+                REDIS_PORT="${BASH_REMATCH[2]}"
 
-        if ! redis-cli -h "$REDIS_HOST" -p "$REDIS_PORT" PING >/dev/null 2>&1; then
-            log_error "Redis validation failed - cannot deploy"
-            notify "Barq Deploy Error" "Redis unreachable - deployment aborted" 1
-            exit 2
+                if ! redis-cli -h "$REDIS_HOST" -p "$REDIS_PORT" PING >/dev/null 2>&1; then
+                    log_error "Redis validation failed - cannot deploy"
+                    notify "Barq Deploy Error" "Redis unreachable - deployment aborted" 1
+                    exit 2
+                fi
+                log "Redis connectivity: OK"
+            else
+                log_warning "Cannot parse REDIS_URL format, skipping validation"
+            fi
         fi
-        log "Redis connectivity: OK"
     else
         log "Redis validation skipped (redis-cli not available)"
     fi
@@ -679,7 +677,10 @@ main() {
             exit 3
 
         elif [ $DEPLOY_EXIT_CODE -eq 80 ]; then
-            # WARNING: Health check - services degraded (treat as success)
+            # WARNING: Health check failed (services degraded)
+            # Note: This exit code indicates health check issues, not worker issues
+            # Worker status is checked separately by this script (lines 729-748)
+            # after deployment completes to avoid duplicate notifications
             log "Deployment succeeded with warnings (exit code 80)"
             log "Note: Worker status will be checked separately after deployment"
 
@@ -721,6 +722,14 @@ main() {
     notify_deployment_success "$LOCAL_HEAD" "$REMOTE_HEAD" "$DEPLOY_DURATION"
 
     echo "✓ Deployment complete! ${LOCAL_HEAD:0:7} → ${REMOTE_HEAD:0:7} (${DEPLOY_DURATION}s)" | tee -a "$LOG_FILE"
+
+    # Record deployment metrics
+    if command -v record_deployment_metric >/dev/null 2>&1; then
+        record_deployment_metric "auto_deployment_duration_seconds" "$DEPLOY_DURATION"
+        record_deployment_metric "auto_deployment_success" "1"
+        record_deployment_metric "deployed_from_sha" "${LOCAL_HEAD:0:7}"
+        record_deployment_metric "deployed_to_sha" "${REMOTE_HEAD:0:7}"
+    fi
 
     # ========================================
     # Post-Deployment Worker Status Check

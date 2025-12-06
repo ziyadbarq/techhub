@@ -20,6 +20,14 @@ set -euo pipefail
 # ========================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source common deployment utilities
+COMMON_LIB="$SCRIPT_DIR/lib/common.sh"
+if [ -f "$COMMON_LIB" ]; then
+    # shellcheck disable=SC1090
+    source "$COMMON_LIB"
+fi
+
 # Initial guess: repo root (script lives in scripts/deploy)
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 LOG_DIR=""
@@ -236,6 +244,7 @@ install_dependencies_resilient() {
 
     while [ "$attempt" -le "$max_attempts" ]; do
         # Use npm ci for deterministic installs; last attempt falls back to npm install
+        # Install with dev deps for type-checking (pruned after build in Stage 4)
         local cmd
         if [ "$attempt" -lt "$max_attempts" ]; then
             cmd="npm ci --include=dev"
@@ -245,8 +254,16 @@ install_dependencies_resilient() {
 
         log "Running: $cmd (HUSKY=0, attempt $attempt/$max_attempts)"
 
+        # Check npm version to determine if --unsafe-perm is needed (deprecated in npm 7+)
+        local npm_major
+        npm_major=$(npm --version | cut -d. -f1)
+        local npm_flags="--foreground-scripts --no-progress"
+        if [ "$npm_major" -lt 7 ]; then
+            npm_flags="--unsafe-perm $npm_flags"
+        fi
+
         # Allow scripts to run with current user and skip husky hooks
-        if env HUSKY=0 $cmd --unsafe-perm --foreground-scripts --no-progress >> "$DEPLOY_LOG" 2>&1; then
+        if env HUSKY=0 $cmd $npm_flags >> "$DEPLOY_LOG" 2>&1; then
             log_success "$cmd completed"
             return 0
         fi
@@ -370,6 +387,16 @@ stage_preflight() {
     npm_version=$(npm --version)
     log_success "npm version: $npm_version"
 
+    # Check jq availability (required for JSON parsing)
+    if ! check_jq_available; then
+        log_error "jq not found (required for JSON parsing)"
+        log "Install: brew install jq"
+        exit 10
+    fi
+    local jq_version
+    jq_version=$(jq --version)
+    log_success "jq available: $jq_version"
+
     # Validate environment variables
     log "Validating environment variables..."
     local missing_vars=()
@@ -389,6 +416,13 @@ stage_preflight() {
     fi
 
     log_success "Environment variables validated"
+
+    # Validate PORT environment variable
+    if [ -z "${PORT:-}" ]; then
+        log_warning "PORT not set, using default 2212"
+        export PORT=2212
+    fi
+    log_success "Application port: $PORT"
 
     # Check database connectivity
     log "Checking PostgreSQL connection..."
@@ -487,6 +521,8 @@ stage_dependencies() {
     log_node_modules_state
 
     # Install dependencies (include dev deps for type-checking)
+    # Note: Dev deps required for TypeScript type-check during deployment (acts as CI/CD gate)
+    # Dev deps are pruned after build completes (Stage 4) to minimize production footprint
     if [ "$FORCE_INSTALL" = true ]; then
         log "Force reinstall requested (--install): running npm ci --include=dev (HUSKY=0, resilient)..."
         clean_node_modules
@@ -579,6 +615,20 @@ stage_build() {
     local build_size
     build_size=$(file_size "$ROOT_DIR/.next")
     log_success "Build complete (${build_size})"
+
+    # Prune dev dependencies (no longer needed after build)
+    log "Pruning dev dependencies for production runtime..."
+    local nm_size_before nm_size_after
+    nm_size_before=$(du -sm "$ROOT_DIR/node_modules" 2>/dev/null | awk '{print $1}' || echo "0")
+
+    if npm prune --production --no-audit --no-fund >> "$DEPLOY_LOG" 2>&1; then
+        nm_size_after=$(du -sm "$ROOT_DIR/node_modules" 2>/dev/null | awk '{print $1}' || echo "0")
+        local size_saved=$((nm_size_before - nm_size_after))
+        log_success "Dev dependencies pruned (saved ${size_saved}MB: ${nm_size_before}MB → ${nm_size_after}MB)"
+    else
+        log_warning "Failed to prune dev dependencies (non-critical, continuing)"
+        log "Production node_modules may contain unnecessary dev packages"
+    fi
 }
 
 # ========================================
@@ -850,6 +900,11 @@ main() {
     log "Log file: $DEPLOY_LOG"
     log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
+    # Record deployment start metric
+    if command -v record_deployment_metric >/dev/null 2>&1; then
+        record_deployment_metric "deployment_started" "1"
+    fi
+
     # Execute deployment stages
     stage_preflight
     stage_backup
@@ -864,6 +919,19 @@ main() {
     local end_time
     end_time=$(date +%s)
     local duration=$((end_time - start_time))
+
+    # Record deployment metrics
+    if command -v record_deployment_metric >/dev/null 2>&1; then
+        record_deployment_metric "deployment_duration_seconds" "$duration"
+        record_deployment_metric "deployment_success" "1"
+
+        # Record build size if available
+        if [ -d "$ROOT_DIR/.next" ]; then
+            local build_size_mb
+            build_size_mb=$(du -sm "$ROOT_DIR/.next" 2>/dev/null | awk '{print $1}' || echo "0")
+            record_deployment_metric "build_size_mb" "$build_size_mb"
+        fi
+    fi
 
     # Log success
     log ""
