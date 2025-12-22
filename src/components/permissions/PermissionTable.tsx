@@ -2,7 +2,7 @@
  * PermissionTable Component
  *
  * Advanced data table for permissions using TanStack Table.
- * Features: sorting, filtering, grouping by resource, row actions.
+ * Features: sorting, filtering, grouping by resource, row actions, multi-field search.
  */
 
 "use client";
@@ -10,106 +10,56 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import {
-  MoreHorizontal,
-  Trash2,
-  Pencil,
-  Shield,
-  ShieldCheck,
-  ShieldOff,
-} from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { format } from "date-fns";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { TableSearch } from "@/components/ui/table-search";
 
 import type { PermissionDTO } from "@/interface-adapters/presenters/permission.presenter";
-import { deletePermissionAction } from "@/interface-adapters/controllers/permission.controller";
+import { useTableFilters } from "@/hooks/use-table-filters";
 
 interface PermissionTableProps {
   data: PermissionDTO[];
   loading?: boolean;
-  onRefresh: () => void;
 }
 
 export function PermissionTable({
   data,
   loading = false,
-  onRefresh,
 }: PermissionTableProps) {
-  const router = useRouter();
-  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-  const [permissionToDelete, setPermissionToDelete] =
-    React.useState<PermissionDTO | null>(null);
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  // Search state management
+  const filters = useTableFilters<Record<string, never>>({
+    initialFilters: {},
+    searchConfig: { debounceMs: 250 },
+  });
 
-  const handleDelete = async (permission: PermissionDTO) => {
-    setIsDeleting(true);
-    try {
-      const result = await deletePermissionAction(permission.id);
-      if (result.success) {
-        toast.success("Permission deleted successfully");
-        onRefresh();
-      } else {
-        toast.error(result.error);
-      }
-    } catch (_error) {
-      toast.error("Failed to delete permission");
-    } finally {
-      setIsDeleting(false);
-      setDeleteDialogOpen(false);
-      setPermissionToDelete(null);
-    }
-  };
+  // Pre-filter data based on search
+  const filteredData = React.useMemo(() => {
+    let result = data;
 
-  const handleEdit = (permission: PermissionDTO) => {
-    router.push(`/admin/permissions/${encodeURIComponent(permission.name)}`);
-  };
-
-  const getStatusBadge = (permission: PermissionDTO) => {
-    if (!permission.isActive) {
-      return (
-        <Badge variant="outline" className="text-muted-foreground">
-          <ShieldOff className="mr-1 h-3 w-3" />
-          Inactive
-        </Badge>
+    // Apply search across multiple fields
+    if (filters.debouncedSearchTerm) {
+      const term = filters.debouncedSearchTerm.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.displayName.toLowerCase().includes(term) ||
+          p.name.toLowerCase().includes(term) ||
+          p.resource.toLowerCase().includes(term) ||
+          p.action.toLowerCase().includes(term),
       );
     }
 
-    if (permission.isSystem) {
-      return (
-        <Badge variant="default" className="bg-primary">
-          <ShieldCheck className="mr-1 h-3 w-3" />
-          System
-        </Badge>
-      );
-    }
+    return result;
+  }, [data, filters.debouncedSearchTerm]);
 
+  const getStatusBadge = () => {
+    // All permissions are system permissions
     return (
-      <Badge variant="outline" className="text-foreground">
-        <Shield className="mr-1 h-3 w-3" />
-        Active
+      <Badge variant="default" className="bg-primary">
+        <ShieldCheck className="mr-1 h-3 w-3" />
+        System
       </Badge>
     );
   };
@@ -195,15 +145,7 @@ export function PermissionTable({
     {
       id: "status",
       header: "Status",
-      cell: ({ row }) => getStatusBadge(row.original),
-      filterFn: (row, id, value) => {
-        const permission = row.original;
-        if (value.includes("system")) return permission.isSystem;
-        if (value.includes("active"))
-          return permission.isActive && !permission.isSystem;
-        if (value.includes("inactive")) return !permission.isActive;
-        return false;
-      },
+      cell: () => getStatusBadge(),
       meta: {
         label: "Status",
       },
@@ -225,85 +167,26 @@ export function PermissionTable({
         label: "Created",
       },
     },
-    {
-      id: "actions",
-      cell: ({ row }) => {
-        const permission = row.original;
-
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon-sm">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => handleEdit(permission)}>
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit
-              </DropdownMenuItem>
-              {!permission.isSystem && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setPermissionToDelete(permission);
-                      setDeleteDialogOpen(true);
-                    }}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
-    },
   ];
 
   return (
-    <>
-      <DataTable
-        columns={columns}
-        data={data}
-        loading={loading}
-        searchable
-        searchKey="displayName"
-        searchPlaceholder="Search permissions..."
-        showColumnToggle
-        emptyMessage="No permissions found. Create one to get started!"
-      />
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Permission</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete the permission{" "}
-              <strong>{permissionToDelete?.name}</strong>? This action cannot be
-              undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() =>
-                permissionToDelete && handleDelete(permissionToDelete)
-              }
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+    <DataTable
+      columns={columns}
+      data={filteredData}
+      loading={loading}
+      showColumnToggle
+      emptyMessage="No permissions found."
+      pagination={{
+        pageSize: 10,
+      }}
+      toolbarSlot={
+        <TableSearch
+          value={filters.searchTerm}
+          onChange={filters.setSearchTerm}
+          placeholder="Search permissions..."
+          loading={loading}
+        />
+      }
+    />
   );
 }

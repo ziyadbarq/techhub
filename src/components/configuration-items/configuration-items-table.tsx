@@ -28,7 +28,7 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { ConfigurationItemDTO } from "@/interface-adapters/dtos/generated/configuration-item.dto";
 import { deleteConfigurationItemAction } from "@/interface-adapters/controllers/configuration-item.controller";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
-import { useTableState } from "@/hooks/use-table-state";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { useTableFilters } from "@/hooks/use-table-filters";
 import { usePresetFilters } from "@/hooks/use-preset-filters";
 import { formatRelativeTime } from "@/lib/utils/date-format";
@@ -58,21 +58,6 @@ interface FilterValues extends Record<string, unknown> {
   owner: string;
   assetLink: string;
 }
-
-const DEFAULT_HIDDEN_COLUMNS = {
-  ciKey: false,
-  primaryOwnerName: false,
-  updatedAt: false,
-  actions: false,
-  // Custom attribute fields - hidden by default
-  ipv4: false,
-  ipv6: false,
-  macAddress: false,
-  fqdn: false,
-  gateway: false,
-  primaryDns: false,
-  secondaryDns: false,
-} as const;
 
 const CRITICALITY_OPTIONS = [
   { value: "LOW", label: "Low" },
@@ -226,7 +211,7 @@ function buildUpdatedColumn(): ColumnDef<ConfigurationItemDTO> {
   return {
     accessorKey: "updatedAt",
     header: "Updated",
-    meta: { label: "Last Updated" },
+    meta: { label: "Last Updated", hiddenByDefault: true },
     cell: ({ row }) => {
       const stale = isCIStale(row.original.updatedAt);
       return (
@@ -257,7 +242,7 @@ function buildCustomAttributeColumn(
         attributeKey,
       ),
     header: label,
-    meta: { label },
+    meta: { label, hiddenByDefault: true },
     cell: ({ row }) => {
       const value = getAttributeValue(
         row.original.attributes as Record<string, unknown> | null,
@@ -290,19 +275,6 @@ export function ConfigurationItemsTable({
     entityName: "Configuration Item",
   });
 
-  // Table state (sorting, pagination, column visibility) with URL sync
-  const tableState = useTableState({
-    enableUrlSync: true,
-    urlSyncOptions: {
-      pagination: { defaultPageSize: 25 },
-      columnVisibility: { key: "hide" },
-    },
-    initialState: {
-      pagination: { pageIndex: 0, pageSize: 25 },
-      columnVisibility: DEFAULT_HIDDEN_COLUMNS,
-    },
-  });
-
   // Filter state (search term + dropdown filters)
   const filters = useTableFilters<FilterValues>({
     initialFilters: {
@@ -312,7 +284,6 @@ export function ConfigurationItemsTable({
       assetLink: "all",
     },
     searchConfig: { debounceMs: 250 },
-    onFilterChange: tableState.resetPagination,
   });
 
   // Preset filter combinations
@@ -366,7 +337,7 @@ export function ConfigurationItemsTable({
   }, [data, filters.debouncedSearchTerm, filters.filters]);
 
   // Column definitions
-  const columns = useMemo<ColumnDef<ConfigurationItemDTO>[]>(
+  const baseColumns = useMemo<ColumnDef<ConfigurationItemDTO>[]>(
     () => [
       buildNameColumn(onView),
       {
@@ -382,11 +353,11 @@ export function ConfigurationItemsTable({
       {
         accessorKey: "ciKey",
         header: "CI Key",
-        meta: { label: "CI Key" },
         cell: ({ row }) => (
           <div className="font-mono text-xs">{row.original.ciKey || "—"}</div>
         ),
         enableHiding: true,
+        meta: { label: "CI Key", hiddenByDefault: true },
       },
       buildLinkedAssetColumn(),
       buildCriticalityColumn(),
@@ -394,7 +365,7 @@ export function ConfigurationItemsTable({
       {
         accessorKey: "primaryOwnerName",
         header: "Owner",
-        meta: { label: "Owner" },
+        meta: { label: "Owner", hiddenByDefault: true },
         cell: ({ row }) => (
           <div className="text-sm">{row.original.primaryOwnerName || "—"}</div>
         ),
@@ -413,6 +384,13 @@ export function ConfigurationItemsTable({
         "SECONDARY_DNS",
         "Secondary DNS",
       ),
+    ],
+    [onView],
+  );
+
+  // Actions column
+  const actionsColumn = useMemo(
+    () =>
       buildActionsColumn<ConfigurationItemDTO>([
         {
           type: "view",
@@ -434,26 +412,31 @@ export function ConfigurationItemsTable({
           onClick: deleteDialog.openDialog,
         },
       ]),
-    ],
     [onView, onEdit, deleteDialog.openDialog],
   );
+
+  // Merge static columns + actions column
+  const allColumns = useMemo(() => {
+    return [...baseColumns, actionsColumn];
+  }, [baseColumns, actionsColumn]);
+
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<ConfigurationItemDTO>({
+      storageKey: "configuration-items-table-columns",
+      columns: allColumns,
+    });
 
   // ==================== RENDER ====================
 
   return (
     <>
       <DataTable
-        columns={columns}
+        columns={allColumns}
         data={filteredData}
         loading={loading}
-        controlledState={{
-          sorting: tableState.sorting,
-          pagination: tableState.pagination,
-          columnVisibility: tableState.columnVisibility,
-        }}
-        onSortingChange={tableState.setSorting}
-        onPaginationChange={tableState.setPagination}
-        onColumnVisibilityChange={tableState.setColumnVisibility}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
         showColumnToggle
         emptyMessage="No configuration items found"
         toolbarSlot={

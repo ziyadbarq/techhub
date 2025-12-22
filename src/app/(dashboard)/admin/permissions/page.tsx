@@ -6,10 +6,7 @@
  */
 
 import { Suspense } from "react";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PermissionsPageClient } from "./permissions-page-client";
 import { listPermissionsAction } from "@/interface-adapters/controllers/permission.controller";
@@ -18,7 +15,7 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 export const metadata = {
   title: "Permissions | Admin",
-  description: "Manage system permissions and access control",
+  description: "View system permissions and access control",
 };
 
 async function PermissionsList() {
@@ -59,19 +56,24 @@ export default async function PermissionsPage() {
   return (
     <div className="container mx-auto space-y-6 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Permissions</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage system permissions and access control
-          </p>
-        </div>
-        <Link href="/admin/permissions/new">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Permission
-          </Button>
-        </Link>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Permissions</h1>
+        <p className="text-muted-foreground mt-2">
+          Browse system permissions defined in the codebase
+        </p>
+      </div>
+
+      {/* Info Card */}
+      <div className="bg-muted/50 rounded-lg border p-4">
+        <h2 className="mb-2 font-semibold">Code-Managed Permissions</h2>
+        <p className="text-muted-foreground text-sm">
+          All permissions are defined in{" "}
+          <code className="bg-muted rounded px-1 py-0.5 font-mono text-xs">
+            permission-key.ts
+          </code>{" "}
+          and automatically seeded to the database. To add new permissions,
+          update the codebase and run the seed command.
+        </p>
       </div>
 
       {/* Permissions Table */}

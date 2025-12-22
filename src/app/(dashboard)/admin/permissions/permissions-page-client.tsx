@@ -1,13 +1,12 @@
 /**
  * Permissions Page Client Component
  *
- * Client-side wrapper for the permissions table with refresh capability.
+ * Client-side wrapper for the permissions table.
  */
 
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { PermissionTable } from "@/components/permissions/PermissionTable";
 import type { PermissionDTO } from "@/interface-adapters/presenters/permission.presenter";
 
@@ -18,15 +17,7 @@ interface PermissionsPageClientProps {
 export function PermissionsPageClient({
   initialData,
 }: PermissionsPageClientProps) {
-  const router = useRouter();
-  const [_isPending, startTransition] = useTransition();
   const [data] = useState(initialData);
 
-  const handleRefresh = () => {
-    startTransition(() => {
-      router.refresh();
-    });
-  };
-
-  return <PermissionTable data={data} onRefresh={handleRefresh} />;
+  return <PermissionTable data={data} />;
 }

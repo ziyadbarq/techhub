@@ -243,12 +243,14 @@ export function DataTable<TData, TValue>({
       }
     },
     onPaginationChange: (updaterOrValue) => {
-      const current = pagination
-        ? {
-            pageIndex: pagination.pageIndex ?? 0,
-            pageSize: pagination.pageSize ?? DEFAULT_PAGE_SIZE,
-          }
-        : internalPagination;
+      const current =
+        controlledState?.pagination ??
+        (pagination
+          ? {
+              pageIndex: pagination.pageIndex ?? 0,
+              pageSize: pagination.pageSize ?? DEFAULT_PAGE_SIZE,
+            }
+          : internalPagination);
       const next =
         typeof updaterOrValue === "function"
           ? updaterOrValue(current)
@@ -275,7 +277,7 @@ export function DataTable<TData, TValue>({
         (pagination
           ? {
               pageIndex: pagination.pageIndex ?? 0,
-              pageSize: pagination.pageSize ?? 10,
+              pageSize: pagination.pageSize ?? DEFAULT_PAGE_SIZE,
             }
           : internalPagination),
     },
@@ -466,10 +468,24 @@ export function DataTable<TData, TValue>({
       {/* Pagination */}
       <div className="flex items-center justify-between px-2">
         <div className="text-muted-foreground flex-1 text-sm">
-          {selectable && (
+          {selectable ? (
             <span>
               {table.getFilteredSelectedRowModel().rows.length} of{" "}
               {table.getFilteredRowModel().rows.length} row(s) selected.
+            </span>
+          ) : (
+            <span>
+              Showing{" "}
+              {table.getState().pagination.pageIndex *
+                table.getState().pagination.pageSize +
+                1}{" "}
+              to{" "}
+              {Math.min(
+                (table.getState().pagination.pageIndex + 1) *
+                  table.getState().pagination.pageSize,
+                table.getFilteredRowModel().rows.length,
+              )}{" "}
+              of {table.getFilteredRowModel().rows.length} results
             </span>
           )}
         </div>
