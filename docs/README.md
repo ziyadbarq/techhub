@@ -8,6 +8,7 @@ Welcome to the comprehensive documentation for Barq Assets. This index provides 
 
 - [Main README](../README.md) - Project overview, features, and quick start guide
 - [CLAUDE.md](../CLAUDE.md) - Architecture guide and development workflows for AI assistants
+- [Business Requirements Document](./business/BUSINESS_REQUIREMENTS_DOCUMENT.md) - High-level non-technical business requirements and objectives
 
 ## 🏗️ Architecture & Technical Design
 
