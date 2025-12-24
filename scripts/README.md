@@ -37,7 +37,7 @@ npm run fix:admin-perms      # Ensure system admin has all permissions
 scripts/
 ├── deploy/          # Production deployment pipeline (4 scripts)
 ├── db/              # Database operations (4 scripts)
-├── imports/         # Data import tools (9 scripts)
+├── imports/         # Data import tools (10 scripts)
 ├── users/           # User & admin management (5 scripts)
 ├── build/           # Build & bundling tools (7 scripts)
 ├── dev/             # Development utilities (9 scripts)
@@ -79,8 +79,9 @@ scripts/
 | **import-service-cis.ts** | Import service-to-CI relationships | `npx tsx scripts/imports/import-service-cis.ts` |
 | **import-service-ownership.ts** | Import service ownership | `npx tsx scripts/imports/import-service-ownership.ts` |
 | **import-service-bia.ts** | Import business impact analysis | `npx tsx scripts/imports/import-service-bia.ts` |
+| **download-oci-data.ts** | Download OCI inventory from n8n webhook | `npm run download:oci` |
 
-**Note:** All import scripts support `--dry-run` mode and source from `local/barq-data/`.
+**Note:** All import scripts support `--dry-run` mode. Most source from `local/barq-data/`, except `download-oci-data.ts` which downloads to `local/oci-data/`.
 
 ### User Management
 
