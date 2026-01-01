@@ -49,6 +49,7 @@ type DownloadResult = {
   error?: string;
   size?: number;
   details?: string;
+  hint?: string;
 };
 
 // Type for failed service tracking
