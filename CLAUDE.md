@@ -54,6 +54,35 @@ npx prisma studio     # Visual DB editor
 # See scripts/README.md for user management, backups, and deployment tools
 ```
 
+## CI/CD Pipeline
+
+**Platform**: GitLab CI (http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub)
+**Deployment**: Kubernetes via Helm (OCI + GCP clouds)
+**Duration**: ~18-22 minutes (full pipeline with cache)
+
+```bash
+# View pipeline status
+# GitLab UI > CI/CD > Pipelines
+
+# Manual deployment to OCI production (main branch)
+# GitLab UI > CI/CD > Pipelines > [Pipeline] > deploy-oci-prod > Play
+
+# Automatic deployment to GCP dev (develop branch)
+# Push to develop branch - auto-deploys after successful build
+
+# Check K8s deployments
+kubectl get pods -n istio-dev -l app=techhub              # OCI production
+kubectl get pods -n horizontal-services -l app=techhub    # GCP development
+```
+
+**Pipeline Stages**: Install → Validate (type-check, lint, tests) → Build → Test (PostgreSQL + Redis) → Docker → Deploy (Helm to K8s)
+
+**Deployment Targets**:
+- OCI Cloud: `istio-dev` namespace (production, manual trigger)
+- GCP Cloud: `horizontal-services` namespace (development, auto-deploy)
+
+See **[docs/deployment/GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md)** for setup, [docs/deployment/BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) for build process, and [docs/deployment/KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) for K8s operations.
+
 ## Documentation
 
 ### Essential Reading (Start Here)

@@ -170,7 +170,19 @@ Development tools and utilities:
 
 Operational documentation and deployment resources:
 
-- [Automated Deployment Guide](./operations/AUTOMATED_DEPLOYMENT.md) - PM2 deployment workflows and automation
+### CI/CD Pipeline
+
+GitLab CI/CD pipeline with Kubernetes deployment:
+
+- [GitLab CI Setup Guide](./deployment/GITLAB_CI_SETUP.md) - Complete setup with Helm, K8s, and container registries
+- [Build Steps Reference](./deployment/BUILD_STEPS.md) - Detailed breakdown of all build stages and commands
+- [Kubernetes Operations](./deployment/KUBERNETES_OPERATIONS.md) - Day-to-day K8s operations and kubectl commands
+
+### Operations
+
+Production operations and security:
+
+- [Automated Deployment Guide](./operations/AUTOMATED_DEPLOYMENT.md) - PM2 deployment workflows and automation (production scripts)
 - [TechHub Risk Assessment](./operations/TechHub-Risk-Assessment.md) - Comprehensive risk assessment for CMDB and IT asset management platform
 - [Auth Security Testing Guide](./testing/AUTH_SECURITY_TESTING_GUIDE.md) - Security testing procedures and validation
 

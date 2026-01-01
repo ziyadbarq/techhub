@@ -7,6 +7,8 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // Standalone output for Docker deployment
+  output: "standalone",
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   typescript: {
     // Type checking enabled for production-ready builds
