@@ -164,7 +164,7 @@ build-oci:
         --dockerfile Dockerfile-build \
         --destination ${FULL_IMAGE_NAME}
 
-    - echo "✅ Successfully built image: ${FULL_IMAGE_NAME}"
+    - echo "${FULL_IMAGE_NAME}"
   dependencies:
     - validate
 
@@ -216,7 +216,7 @@ build-gcp:
         --dockerfile Dockerfile-build \
         --destination ${FULL_IMAGE_NAME}
 
-    - echo "✅ Successfully built image: ${FULL_IMAGE_NAME}"
+    - echo "${FULL_IMAGE_NAME}"
   dependencies:
     - validate
 
@@ -268,7 +268,7 @@ build-and-push-oci-to-argo:
         --dockerfile Dockerfile-build \
         --destination ${FULL_IMAGE_NAME}
 
-    - echo "✅ Built and pushed image: ${FULL_IMAGE_NAME}"
+    - echo "${FULL_IMAGE_NAME}"
 
     # Update ArgoCD values.yaml (GitOps)
     - export IMAGE_NAME="${FULL_IMAGE_NAME}"
@@ -356,7 +356,7 @@ build-and-push-gcp-to-argo:
         --dockerfile Dockerfile-build \
         --destination ${FULL_IMAGE_NAME}
 
-    - echo "✅ Built and pushed image: ${FULL_IMAGE_NAME}"
+    - echo "${FULL_IMAGE_NAME}"
 
     # Update ArgoCD values.yaml (GitOps)
     - export IMAGE_NAME="${FULL_IMAGE_NAME}"
@@ -413,7 +413,7 @@ build-and-push-gcp-to-argo:
         echo "ERROR: No image found to promote. Make sure build job completed successfully."
         exit 1
       fi
-    - echo "Promoting image: $FULL_IMAGE_NAME"
+    - echo "$FULL_IMAGE_NAME"
   script:
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cd deployment-configs && git checkout main
