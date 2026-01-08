@@ -120,9 +120,9 @@ stages:
     - npm run test -- --run --reporter=verbose
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web"'
-    - if: '$CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH'
+    - if: "$CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH"
       when: always
-    - if: '$CI_COMMIT_BRANCH == $DEV_BRANCH'
+    - if: "$CI_COMMIT_BRANCH == $DEV_BRANCH"
       when: always
     - when: never
   artifacts:
