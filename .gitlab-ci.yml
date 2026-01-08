@@ -163,8 +163,8 @@ build-oci:
         --destination ${FULL_IMAGE_NAME}
 
     - echo "${FULL_IMAGE_NAME}"
-  dependencies:
-    - validate
+  # dependencies:
+  #   - validate
 
 # ====================
 # Stage 2: Build Only (GCP)
@@ -213,8 +213,8 @@ build-gcp:
         --destination ${FULL_IMAGE_NAME}
 
     - echo "${FULL_IMAGE_NAME}"
-  dependencies:
-    - validate
+  # dependencies:
+  #   - validate
 
 # ====================
 # Stage 3: Build and Deploy to ArgoCD (OCI)
@@ -297,8 +297,8 @@ build-and-push-oci-to-argo:
     paths:
       - build_info.env
     expire_in: 1 week
-  dependencies:
-    - validate
+  # dependencies:
+  #   - validate
 
 # ====================
 # Stage 3: Build and Deploy to ArgoCD (GCP)
@@ -383,8 +383,8 @@ build-and-push-gcp-to-argo:
     paths:
       - build_info.env
     expire_in: 1 week
-  dependencies:
-    - validate
+  # dependencies:
+  #   - validate
 
 # ====================
 # Stage 4: Image Promotion (Template)
