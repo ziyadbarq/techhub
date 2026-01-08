@@ -1,16 +1,15 @@
 # GitLab CI/CD Setup Guide
 
-Complete setup instructions for the TechHub GitLab CI/CD pipeline with Kubernetes deployment.
+Complete setup instructions for the TechHub GitLab CI/CD pipeline using GitOps with ArgoCD deployment to Kubernetes.
 
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Setup Steps](#setup-steps)
-  - [1. Configure Container Registries](#1-configure-container-registries)
-  - [2. Configure Kubernetes Access](#2-configure-kubernetes-access)
-  - [3. Configure GitLab CI/CD Variables](#3-configure-gitlab-cicd-variables)
-  - [4. Set Up Helm Values](#4-set-up-helm-values)
-  - [5. Enable the Pipeline](#5-enable-the-pipeline)
+  - [1. Configure GitLab CI/CD Variables](#1-configure-gitlab-cicd-variables)
+  - [2. Set Up Helm Values in Deployment-Configs](#2-set-up-helm-values-in-deployment-configs)
+  - [3. Configure ArgoCD Applications](#3-configure-argocd-applications)
+  - [4. Enable the Pipeline](#4-enable-the-pipeline)
 - [Testing the Pipeline](#testing-the-pipeline)
 - [Troubleshooting](#troubleshooting)
 
@@ -18,141 +17,79 @@ Complete setup instructions for the TechHub GitLab CI/CD pipeline with Kubernete
 
 Before setting up the GitLab CI/CD pipeline, ensure you have:
 
-1. **GitLab Account** with Maintainer role on the repository
-   - Repository: http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub
-2. **Container Registry Access**:
-   - OCI Registry credentials (for production deployments)
-   - GCP Registry service account (for development deployments)
-3. **Kubernetes Cluster Access**:
-   - Kubeconfig with permissions to deploy to target namespaces
-   - OCI namespace: `istio-dev`
-   - GCP namespace: `horizontal-services`
-4. **Pushover Account** for deployment notifications
-   - API Token (create at https://pushover.net/apps/build)
-   - User Key (found at https://pushover.net)
-5. **Helm 3** installed locally for testing
+1. **GitLab Account** with Maintainer role on repositories:
+   - **TechHub Repository**: http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub
+   - **Deployment-Configs Repository**: http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs
+
+2. **GitLab Runners** (configured by DevOps team):
+   - **OCI Runner**: Tagged with `ocinode18`
+   - **GCP Runner**: Tagged with `globalnodegcp`
+   - Both runners have Kaniko executor pre-installed
+   - Both runners have authenticated access to respective container registries
+
+3. **ArgoCD** (configured by DevOps team):
+   - Monitoring deployment-configs repository
+   - Auto-sync enabled for dev environments
+   - Access to target Kubernetes clusters:
+     - **OCI**: namespace `istio-dev`
+     - **GCP**: namespace `horizontal-services`
+
+4. **Container Registries** (authentication configured on runners):
+   - **OCI Registry**: `jed.ocir.io/axbp9ow0rohq`
+   - **GCP Registry**: `me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo`
+
+5. **Backend-Configs Repository** (optional, for runtime environment variables):
+   - http://gitlab.dev.baraq.com.internal/baraq-engineering/backend-shared/backend-configs
 
 ## Setup Steps
 
-### 1. Configure Container Registries
-
-#### OCI Registry (Production)
-
-**Obtain credentials from DevOps team**:
-- Registry URL (e.g., `oci.registry.baraq.com`)
-- Registry username
-- Registry password
-
-#### GCP Registry (Development)
-
-**Obtain service account key from DevOps team**:
-- Registry URL (e.g., `gcr.io/baraq-project`)
-- Service account JSON key file
-
-**Encode service account key** (if needed):
-```bash
-# The JSON key should be stored as-is in GitLab CI variable
-cat service-account-key.json
-```
-
-### 2. Configure Kubernetes Access
-
-#### Obtain Kubeconfig
-
-**From DevOps team**, get kubeconfig with permissions to:
-- OCI cluster: namespace `istio-dev`
-- GCP cluster: namespace `horizontal-services`
-
-#### Test Kubernetes Access
-
-```bash
-# Set kubeconfig
-export KUBECONFIG=/path/to/kubeconfig
-
-# Test OCI cluster access
-kubectl cluster-info
-kubectl get pods -n istio-dev
-
-# Test GCP cluster access (if separate cluster)
-kubectl get pods -n horizontal-services
-```
-
-### 3. Configure GitLab CI/CD Variables
+### 1. Configure GitLab CI/CD Variables
 
 Navigate to your GitLab project:
 
 **Settings** > **CI/CD** > **Variables** > **Add variable**
 
-Add the following variables:
+#### Required Variables
 
-#### Container Registry Variables (OCI)
+| Key | Value | Type | Protected | Masked | Description |
+|-----|-------|------|-----------|--------|-------------|
+| `GITLAB_UN` | `<gitlab-username>` | Variable | ✅ | ✅ | GitLab username for cloning deployment-configs |
+| `GITLAB_TOKEN` | `<gitlab-access-token>` | Variable | ✅ | ✅ | GitLab personal access token with `read_repository` and `write_repository` scopes |
 
-| Key | Value | Type | Protected | Masked |
-|-----|-------|------|-----------|--------|
-| `OCI_REGISTRY_URL` | `<oci-registry-url>` | Variable | ✅ | ❌ |
-| `OCI_REGISTRY_USERNAME` | `<username>` | Variable | ✅ | ✅ |
-| `OCI_REGISTRY_PASSWORD` | `<password>` | Variable | ✅ | ✅ |
+**How to create GitLab Access Token**:
+1. Go to GitLab > **User Settings** > **Access Tokens**
+2. Create token with:
+   - **Name**: `techhub-ci-deployment`
+   - **Scopes**: `read_repository`, `write_repository`
+   - **Expiration**: Set appropriate expiration (90-365 days)
+3. Copy token immediately (shown only once)
 
-#### Container Registry Variables (GCP)
+#### Optional Variables (Notifications)
 
-| Key | Value | Type | Protected | Masked |
-|-----|-------|------|-----------|--------|
-| `GCP_REGISTRY_URL` | `<gcp-registry-url>` | Variable | ✅ | ❌ |
-| `GCP_SERVICE_ACCOUNT_KEY` | `<json-key-content>` | Variable | ✅ | ✅ |
+| Key | Value | Type | Protected | Masked | Description |
+|-----|-------|------|-----------|--------|-------------|
+| `PUSHOVER_API_TOKEN` | `<your-app-token>` | Variable | ❌ | ✅ | Pushover app token for deployment notifications |
+| `PUSHOVER_USER_KEY` | `<your-user-key>` | Variable | ❌ | ✅ | Pushover user key |
 
-**GCP_SERVICE_ACCOUNT_KEY** instructions:
-```bash
-# Paste the ENTIRE JSON content:
-{
-  "type": "service_account",
-  "project_id": "baraq-project",
-  "private_key_id": "...",
-  "private_key": "-----BEGIN PRIVATE KEY-----\n...",
-  ...
-}
-```
-
-#### Kubernetes Variables
-
-| Key | Value | Type | Protected | Masked |
-|-----|-------|------|-----------|--------|
-| `KUBECONFIG_CONTENT` | `<kubeconfig-yaml>` | Variable | ✅ | ✅ |
-
-**KUBECONFIG_CONTENT** instructions:
-```bash
-# Display kubeconfig
-cat ~/.kube/config
-
-# Copy the ENTIRE output including:
-# apiVersion: v1
-# clusters:
-# - cluster:
-#     certificate-authority-data: ...
-#     server: https://...
-# ...
-```
-
-Paste this entire YAML content into the `KUBECONFIG_CONTENT` variable value.
-
-#### Notification Variables
-
-| Key | Value | Type | Protected | Masked |
-|-----|-------|------|-----------|--------|
-| `PUSHOVER_API_TOKEN` | `<your-app-token>` | Variable | ❌ | ✅ |
-| `PUSHOVER_USER_KEY` | `<your-user-key>` | Variable | ❌ | ✅ |
-
-Get these from:
+**Get Pushover credentials**:
 - **API Token**: https://pushover.net/apps/build (create new application)
 - **User Key**: https://pushover.net (top right after login)
 
 #### Variable Settings Explained
 
-- **Protected**: Only available in protected branches (main, develop)
-  - Use for production secrets (registry credentials, kubeconfig)
+- **Protected**: Only available in protected branches (`main`, `develop`)
+  - Use for deployment credentials
 - **Masked**: Hidden in job logs (shows `[masked]` instead of value)
-  - Use for all sensitive values (passwords, keys, tokens)
+  - Use for all sensitive values (tokens, passwords)
 
-### 4. Set Up Helm Values
+**Important Notes**:
+- Container registry authentication is handled by GitLab runners (Kaniko pre-configured)
+- No Kubernetes credentials needed in CI (GitOps via ArgoCD)
+- Pipeline only needs Git access to update deployment-configs
+
+---
+
+### 2. Set Up Helm Values in Deployment-Configs
 
 #### Clone Deployment Configs Repository
 
@@ -163,20 +100,21 @@ cd deployment-configs
 
 #### Create Helm Values for TechHub
 
-**For OCI Production** (`manifests/techhub/values-oci-prod.yaml`):
+Create four values files for different environments:
+
+**1. Development (OCI)** - `manifests/techhub/values-dev.yaml`:
 ```yaml
 # Reference: manifests/auth-service/values-dev.yaml
 
-replicaCount: 2
-
-image:
-  repository: <OCI_REGISTRY>/techhub
+deployment:
+  replicaCount: 2
+  imageName: jed.ocir.io/axbp9ow0rohq/techhub:1.0.0-abc123-456789  # Updated by CI
   pullPolicy: IfNotPresent
-  tag: latest  # Will be overridden by CI
 
 service:
   type: ClusterIP
   port: 3000
+  targetPort: 3000
 
 ingress:
   enabled: true
@@ -186,6 +124,7 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+  tls: []
 
 resources:
   limits:
@@ -195,33 +134,57 @@ resources:
     cpu: 500m
     memory: 1Gi
 
+# Prisma migrations job (controlled by CI via npm_migration flag)
+jobs:
+  migrate:
+    enabled: false  # Set to true by CI when npm_migration=true
+    imageName: jed.ocir.io/axbp9ow0rohq/techhub:1.0.0-abc123-456789
+    command: ["npx", "prisma", "migrate", "deploy"]
+
+# Environment variables (reference backend-configs ConfigMaps/Secrets)
 env:
   - name: NODE_ENV
     value: "production"
   - name: PORT
     value: "3000"
-  # Add references to backend-configs ConfigMaps/Secrets
-  # DATABASE_URL, REDIS_URL, etc. from backend-configs repo
 
 envFrom:
   - configMapRef:
       name: techhub-config
   - secretRef:
       name: techhub-secrets
+
+# Health checks
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 5
 ```
 
-**For GCP Development** (`manifests/techhub/values-dev.yaml`):
+**2. Development (GCP)** - `manifests/techhub/values-gcpdev.yaml`:
 ```yaml
-# Similar to values-oci-prod.yaml but for development
+# Similar to values-dev.yaml but for GCP
 
-replicaCount: 1
+deployment:
+  replicaCount: 1  # Lower for dev
+  imageName: me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/techhub:1.0.0-abc123-456789
+  pullPolicy: Always  # Always pull latest in dev
 
-image:
-  repository: <GCP_REGISTRY>/techhub
-  pullPolicy: Always
-  tag: latest
+service:
+  type: ClusterIP
+  port: 3000
 
 ingress:
+  enabled: true
   hosts:
     - host: techhub-dev.baraq.com
       paths:
@@ -236,7 +199,11 @@ resources:
     cpu: 250m
     memory: 512Mi
 
-# Reference backend-configs for dev environment
+jobs:
+  migrate:
+    enabled: false
+    imageName: me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/techhub:1.0.0-abc123-456789
+
 envFrom:
   - configMapRef:
       name: techhub-dev-config
@@ -244,242 +211,379 @@ envFrom:
       name: techhub-dev-secrets
 ```
 
+**3. UAT (OCI)** - `manifests/techhub/values-uat.yaml`:
+```yaml
+# Copy from values-dev.yaml and adjust:
+# - Higher resources
+# - Different ingress host (techhub-uat.baraq.com)
+# - Reference uat ConfigMaps/Secrets
+```
+
+**4. Test/Perf (OCI)** - `manifests/techhub/values-test.yaml` and `values-perf.yaml`:
+```yaml
+# Similar adjustments for test and perf environments
+```
+
 #### Commit Helm Values
 
 ```bash
 git add manifests/techhub/
-git commit -m "feat: Add TechHub Helm values for OCI and GCP"
+git commit -m "feat: Add TechHub Helm values for all environments"
 git push origin main
 ```
 
-### 5. Enable the Pipeline
+---
 
-The pipeline is now ready! The `.gitlab-ci.yml` file is already in the repository.
+### 3. Configure ArgoCD Applications
 
-**Pipeline will automatically run on**:
-- Push to `main` branch (build + test, manual deploy to OCI)
-- Push to `develop` branch (build + test + auto-deploy to GCP)
-- Merge requests (build + test only)
+**Performed by DevOps team** - create ArgoCD Application resources for TechHub:
+
+#### OCI Development Application
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: techhub-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+    targetRevision: main
+    path: manifests/techhub
+    helm:
+      valueFiles:
+        - values-dev.yaml
+  destination:
+    server: https://oci-k8s-cluster-api
+    namespace: istio-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+```
+
+#### GCP Development Application
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: techhub-gcpdev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+    targetRevision: main
+    path: manifests/techhub
+    helm:
+      valueFiles:
+        - values-gcpdev.yaml
+  destination:
+    server: https://gcp-k8s-cluster-api
+    namespace: horizontal-services
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+```
+
+Repeat for UAT, Test, Perf environments.
+
+**ArgoCD will now**:
+- Monitor deployment-configs repository for changes
+- Automatically sync when `values-*.yaml` files are updated
+- Deploy to Kubernetes clusters
+- Handle Helm chart rendering
+
+---
+
+### 4. Enable the Pipeline
+
+The pipeline is already configured in `.gitlab-ci.yml` and will run automatically.
+
+**Pipeline Triggers**:
+
+| Event | Stage | Action |
+|-------|-------|--------|
+| Push to `main` | `validate` | Run type-check, lint, tests |
+| Push to `main` | `build_and_deploy` | Build image → Update values-dev.yaml → ArgoCD deploys |
+| Push to `develop` | `validate` | Run validation |
+| Push to `develop` | `build_and_deploy` | Build image → Update values-gcpdev.yaml → ArgoCD deploys |
+| Web trigger (manual) | `build_only` | Build image only (no deployment) |
+| Web trigger (manual) | `build_and_deploy` | Build + deploy to selected cloud |
+| Manual job | `image-promotion` | Promote image to UAT/Test/Perf |
+
+**UI-Selectable Variables** (Web triggers):
+
+When manually triggering pipeline via GitLab UI:
+
+1. **type**: Operation mode
+   - `build_only` - Build Docker image without deployment
+   - `build_and_deploy` - Build + update ArgoCD values
+
+2. **CLOUD**: Target cloud platform
+   - `oci` - Oracle Cloud Infrastructure
+   - `gcp` - Google Cloud Platform
+
+3. **npm_migration**: Prisma migration flag
+   - `true` - Enable migrations (sets `jobs.migrate.enabled=true`)
+   - `false` - Skip migrations (default)
+
+---
 
 ## Testing the Pipeline
 
-### Running the Full Pipeline
+### 1. Verify GitLab Runners
 
-1. Navigate to **CI/CD** > **Pipelines** in GitLab UI
-2. You should see a new pipeline running automatically after pushing code
-3. Monitor the stages:
-   - ✅ **install** - Dependencies and Prisma generation
-   - ✅ **validate** - Type-check, lint, unit tests (parallel)
-   - ✅ **build** - Next.js production build
-   - ✅ **test** - Integration tests with PostgreSQL + Redis
-   - ✅ **docker** - Build and push Docker image
-   - ⏸️ **deploy** - Kubernetes deployment (manual for production)
-
-### Manual Deployment to Production (OCI)
-
-The deployment to OCI production requires manual approval:
-
-1. **CI/CD** > **Pipelines** > Select your pipeline
-2. Find the **deploy-oci-prod** job
-3. Click the **Play** button ▶️
-4. Monitor deployment progress
-5. Check for Pushover notification on completion
-
-### Automatic Deployment to Development (GCP)
-
-Deployments to GCP development happen automatically on `develop` branch:
-
-1. Push to `develop` branch
-2. Pipeline runs through all stages
-3. **deploy-gcp-dev** automatically deploys after Docker build succeeds
-4. Check Pushover notification
-
-### Verifying Deployment
-
-After deployment completes:
+Check that runners are available and healthy:
 
 ```bash
-# Set kubeconfig
-export KUBECONFIG=/path/to/kubeconfig
+# In GitLab UI:
+# Settings > CI/CD > Runners
 
-# Check OCI deployment
-kubectl get pods -n istio-dev -l app=techhub
-kubectl get svc -n istio-dev -l app=techhub
-kubectl get ingress -n istio-dev
-
-# Check GCP deployment
-kubectl get pods -n horizontal-services -l app=techhub
-
-# View logs
-kubectl logs -n istio-dev -l app=techhub --tail=100 -f
-
-# Check application health
-curl https://techhub.baraq.com/api/health
-# or
-curl https://techhub-dev.baraq.com/api/health
+# Look for:
+# - Runner tagged with "ocinode18" (green status)
+# - Runner tagged with "globalnodegcp" (green status)
 ```
+
+### 2. Test Validation Stage
+
+Create a feature branch and push:
+
+```bash
+git checkout -b test/pipeline-validation
+git commit --allow-empty -m "test: Trigger pipeline validation"
+git push origin test/pipeline-validation
+```
+
+**Expected**:
+- Pipeline runs `validate` stage only
+- Type-check, lint, and tests pass
+- No build or deployment occurs
+
+### 3. Test Automatic Deployment (Develop)
+
+Push to `develop` branch:
+
+```bash
+git checkout develop
+git merge test/pipeline-validation
+git push origin develop
+```
+
+**Expected**:
+1. `validate` stage passes (~2-3 min)
+2. `build-and-push-gcp-to-argo` runs (~10-12 min):
+   - Builds Docker image
+   - Pushes to GCP registry
+   - Updates `manifests/techhub/values-gcpdev.yaml`
+   - Commits change to deployment-configs
+3. ArgoCD detects change and syncs to GCP K8s cluster
+4. New pods deployed in `horizontal-services` namespace
+
+**Verify deployment**:
+```bash
+# Check ArgoCD UI
+# https://argocd.baraq.com
+
+# Or use kubectl (if you have access)
+kubectl get pods -n horizontal-services -l app=techhub
+kubectl get deployment techhub -n horizontal-services
+```
+
+### 4. Test Manual Build Trigger
+
+Trigger pipeline manually via GitLab UI:
+
+1. **CI/CD** > **Pipelines** > **Run pipeline**
+2. Select branch: `main`
+3. Set variables:
+   - `type`: `build_only`
+   - `CLOUD`: `oci`
+   - `npm_migration`: `false`
+4. Click **Run pipeline**
+
+**Expected**:
+- `validate` stage passes
+- `build-oci` job runs
+- Docker image built and pushed to OCI registry
+- **No deployment** (values.yaml not updated)
+
+### 5. Test Production Deployment (Main)
+
+Push to `main` branch (or merge PR):
+
+```bash
+git checkout main
+git merge develop
+git push origin main
+```
+
+**Expected**:
+1. `validate` stage passes
+2. `build-and-push-oci-to-argo` runs:
+   - Builds Docker image for OCI
+   - Updates `manifests/techhub/values-dev.yaml`
+3. ArgoCD syncs to OCI K8s cluster (`istio-dev` namespace)
+4. Production deployment complete
+
+**Verify**:
+```bash
+kubectl get pods -n istio-dev -l app=techhub
+curl https://techhub.baraq.com/api/health
+```
+
+### 6. Test Image Promotion
+
+After successful dev deployment, promote to UAT:
+
+1. **CI/CD** > **Pipelines** > Select successful pipeline
+2. Find `promote-to-uat-oci` job
+3. Click **Play** button ▶️
+4. Pipeline prompts for image tag (pre-filled from previous stage)
+5. Click **Run job**
+
+**Expected**:
+- `promote-to-uat-oci` updates `values-uat.yaml` with dev image tag
+- ArgoCD syncs to UAT environment
+- Same image now running in UAT (no rebuild)
+
+---
 
 ## Troubleshooting
 
-### Common Issues
-
-#### Issue 1: Docker Login Failed
+### Issue 1: Pipeline Fails with "git clone failed"
 
 **Symptoms**:
 ```
-Error response from daemon: Get https://registry/v2/: unauthorized
+fatal: could not read Username for 'http://gitlab.dev.baraq.com.internal': No such device or address
 ```
 
 **Causes**:
-- Wrong registry credentials
-- Expired service account key (GCP)
-- Registry URL incorrect
+- Missing `GITLAB_UN` or `GITLAB_TOKEN` variables
+- Token expired or has insufficient permissions
+- Token doesn't have `read_repository` and `write_repository` scopes
 
 **Solutions**:
+1. Verify variables exist: **Settings** > **CI/CD** > **Variables**
+2. Check token hasn't expired
+3. Regenerate token with correct scopes:
+   - `read_repository`
+   - `write_repository`
+4. Ensure variables are marked as **Protected** (available only in main/develop)
 
-**For OCI Registry**:
-```bash
-# Verify GitLab CI variables
-# Settings > CI/CD > Variables
-# Check: OCI_REGISTRY_URL, OCI_REGISTRY_USERNAME, OCI_REGISTRY_PASSWORD
-```
+---
 
-**For GCP Registry**:
-```bash
-# Verify service account key is valid JSON
-echo "$GCP_SERVICE_ACCOUNT_KEY" | jq .
-
-# Check registry URL format
-# Should be: gcr.io/project-id or <region>-docker.pkg.dev/project-id
-```
-
-#### Issue 2: Kubernetes Connection Failed
+### Issue 2: Kaniko Build Fails
 
 **Symptoms**:
 ```
-error: You must be logged in to the server (Unauthorized)
+error building image: error building stage: failed to execute command
 ```
 
 **Causes**:
-- Invalid kubeconfig
-- Expired certificates
-- Wrong cluster URL
+- Dockerfile syntax error (from deployment-configs)
+- Missing Dockerfile in deployment-configs repo
+- Incorrect Dockerfile path
 
 **Solutions**:
-```bash
-# Test kubeconfig locally first
-export KUBECONFIG=/path/to/kubeconfig
-kubectl cluster-info
+1. Verify deployment-configs has Dockerfiles:
+   ```bash
+   git clone http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+   ls -la deployment-configs/dockerfiles/
+   # Should show: nodejs-Dockerfile-optimize, nodejs-gcp-Dockerfile-optimize
+   ```
 
-# Verify kubeconfig has correct cluster URL and credentials
-cat ~/.kube/config
+2. Test Dockerfile locally:
+   ```bash
+   docker build -f deployment-configs/dockerfiles/nodejs-Dockerfile-optimize .
+   ```
 
-# Ensure KUBECONFIG_CONTENT variable contains entire YAML
-# Including certificate-authority-data and client-certificate-data
-```
+3. Check .gitlab-ci.yml copies correct Dockerfile:
+   ```yaml
+   - cp deployment-configs/dockerfiles/nodejs-Dockerfile-optimize ./Dockerfile-build
+   ```
 
-#### Issue 3: Helm Deployment Failed
+---
+
+### Issue 3: ArgoCD Not Syncing
 
 **Symptoms**:
-```
-Error: failed to create: secrets "sh.helm.release.v1.techhub.v1" already exists
-```
+- CI pipeline succeeds
+- values.yaml updated in deployment-configs
+- But pods not updating in Kubernetes
 
 **Causes**:
-- Previous failed deployment
-- Helm release in bad state
+- ArgoCD Application not configured
+- ArgoCD not monitoring deployment-configs repo
+- ArgoCD sync disabled or manual
 
 **Solutions**:
-```bash
-# Check Helm release status
-helm list -n istio-dev
+1. Check ArgoCD Application exists:
+   ```bash
+   kubectl get application techhub-dev -n argocd
+   ```
 
-# Check release history
-helm history techhub -n istio-dev
+2. Check ArgoCD UI:
+   - https://argocd.baraq.com
+   - Find TechHub application
+   - Check sync status
 
-# If stuck, delete and re-deploy
-helm uninstall techhub -n istio-dev
-# Re-run pipeline
-```
+3. Manual sync (if auto-sync disabled):
+   ```bash
+   argocd app sync techhub-dev
+   ```
 
-#### Issue 4: Image Pull Errors in Kubernetes
+4. Verify ArgoCD monitoring correct repo:
+   ```bash
+   kubectl get application techhub-dev -n argocd -o yaml | grep repoURL
+   # Should show: deployment-configs.git
+   ```
+
+---
+
+### Issue 4: Image Tag Not Updating in values.yaml
 
 **Symptoms**:
-```
-Failed to pull image: unauthorized or image not found
-```
+- Build succeeds
+- But values.yaml shows old image tag
+- Git commit not appearing in deployment-configs
 
 **Causes**:
-- Image not pushed to registry
-- Wrong image repository in values
-- Missing imagePullSecrets
+- `yq` command failed
+- Git push failed (permissions)
+- Git user not configured
 
 **Solutions**:
-```bash
-# Verify image exists in registry
-# For OCI:
-docker login $OCI_REGISTRY_URL
-docker pull $OCI_REGISTRY/techhub:$CI_COMMIT_SHORT_SHA
+1. Check job logs for `yq` errors:
+   ```bash
+   # In GitLab pipeline logs, look for:
+   yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/techhub/values-dev.yaml
+   ```
 
-# Check Helm values
-cat manifests/techhub/values-oci-prod.yaml | grep repository
+2. Verify git config in pipeline:
+   ```yaml
+   script:
+     - git config user.email "gitlab-ci@baraq.com"
+     - git config user.name "GitLab CI"
+   ```
 
-# Create imagePullSecret if needed
-kubectl create secret docker-registry techhub-registry \
-  --docker-server=$OCI_REGISTRY_URL \
-  --docker-username=$USERNAME \
-  --docker-password=$PASSWORD \
-  -n istio-dev
-```
+3. Check git push output:
+   ```bash
+   git push origin -o ci.skip HEAD:main
+   # Should show: branch main -> main
+   ```
 
-#### Issue 5: PostgreSQL/Redis Connection Failed in Tests
+4. Verify `GITLAB_TOKEN` has `write_repository` scope
 
-**Symptoms**:
-```
-Error: connect ECONNREFUSED postgres:5432
-```
+---
 
-**Causes**:
-- PostgreSQL service not ready
-- Wrong connection string
-
-**Solutions**:
-
-The `.gitlab-ci.yml` already includes a readiness check:
-```yaml
-before_script:
-  - until PGPASSWORD=test psql -h postgres -U test -d test -c '\q'; do
-      echo "Waiting for PostgreSQL...";
-      sleep 2;
-    done
-```
-
-If still failing, check GitLab Runner logs for service startup errors.
-
-#### Issue 6: Build Fails with "DATABASE_URL not found"
-
-**Symptoms**:
-```
-Error: Environment variable DATABASE_URL is not set
-```
-
-**Causes**:
-- Prisma client initialization during build requires DATABASE_URL
-- Missing mock DATABASE_URL in build stage
-
-**Solution**:
-
-The `.gitlab-ci.yml` already includes mock DATABASE_URL:
-```yaml
-build-nextjs:
-  variables:
-    DATABASE_URL: "postgresql://build:build@localhost:5432/build"
-    REDIS_URL: "redis://localhost:6379"
-```
-
-If still failing, ensure these variables are present in your `.gitlab-ci.yml`.
-
-#### Issue 7: Deployment Succeeds but Application Crashes
+### Issue 5: Pods Crashing After Deployment
 
 **Symptoms**:
 ```
@@ -488,82 +592,146 @@ kubectl get pods -n istio-dev
 ```
 
 **Causes**:
-- Missing runtime environment variables
+- Missing environment variables (ConfigMap/Secret)
 - Database connection failed
 - Redis connection failed
+- Application startup error
 
 **Solutions**:
-```bash
-# Check pod logs
-kubectl logs -n istio-dev -l app=techhub --tail=100
-
-# Common issues:
-# 1. Missing DATABASE_URL, REDIS_URL in ConfigMap/Secret
-# 2. Wrong database host (should be GCP Cloud SQL proxy)
-# 3. Missing backend-configs ConfigMap/Secret
-
-# Verify ConfigMap exists
-kubectl get configmap techhub-config -n istio-dev -o yaml
-
-# Verify Secret exists
-kubectl get secret techhub-secrets -n istio-dev
-
-# Create from backend-configs if missing
-# See: http://gitlab.dev.baraq.com.internal/baraq-engineering/backend-shared/backend-configs
-```
-
-### Debug Mode
-
-Enable verbose logging for troubleshooting:
-
-Add to `.gitlab-ci.yml` (temporarily):
-```yaml
-variables:
-  CI_DEBUG_TRACE: "true"  # Show all commands
-  DOCKER_BUILDKIT: "0"    # Disable BuildKit for verbose output
-```
-
-**Warning**: This logs ALL commands including potentially sensitive data. Remove after debugging.
-
-### Getting Help
-
-If you encounter issues not covered here:
-
-1. **Check GitLab CI logs**:
-   - **CI/CD** > **Pipelines** > Select pipeline > Click failed job
-   - Look for error messages and stack traces
-
-2. **Check Kubernetes logs**:
+1. Check pod logs:
    ```bash
    kubectl logs -n istio-dev -l app=techhub --tail=200
-   kubectl describe pod -n istio-dev -l app=techhub
    ```
 
-3. **Review pipeline architecture**:
-   - See [PIPELINE_ARCHITECTURE.md](PIPELINE_ARCHITECTURE.md) for detailed stage information
-   - See [BUILD_STEPS.md](BUILD_STEPS.md) for command-by-command breakdown
+2. Verify ConfigMap/Secret exist:
+   ```bash
+   kubectl get configmap techhub-config -n istio-dev
+   kubectl get secret techhub-secrets -n istio-dev
+   ```
 
-4. **Check deployment configs**:
-   - Review Helm values in deployment-configs repo
-   - Verify backend-configs has correct environment variables
+3. Check environment variables in pod:
+   ```bash
+   kubectl exec -it <pod-name> -n istio-dev -- env | grep DATABASE
+   ```
+
+4. Create ConfigMap/Secret from backend-configs:
+   ```bash
+   # See backend-configs repository for instructions
+   # http://gitlab.dev.baraq.com.internal/baraq-engineering/backend-shared/backend-configs
+   ```
+
+---
+
+### Issue 6: Prisma Migrations Not Running
+
+**Symptoms**:
+- Deployed successfully
+- But database schema not updated
+- Migration job pod not created
+
+**Causes**:
+- `npm_migration` variable set to `false`
+- `jobs.migrate.enabled` not updated in values.yaml
+- Migration job failed
+
+**Solutions**:
+1. Re-run pipeline with `npm_migration=true`:
+   - **CI/CD** > **Pipelines** > **Run pipeline**
+   - Set `npm_migration`: `true`
+
+2. Verify values.yaml was updated:
+   ```bash
+   cat manifests/techhub/values-dev.yaml | grep -A 3 "jobs:"
+   # Should show: enabled: true
+   ```
+
+3. Check migration job logs:
+   ```bash
+   kubectl get jobs -n istio-dev | grep techhub-migrate
+   kubectl logs job/techhub-migrate -n istio-dev
+   ```
+
+4. Run migrations manually:
+   ```bash
+   kubectl exec -it <pod-name> -n istio-dev -- npx prisma migrate deploy
+   ```
+
+---
+
+### Issue 7: Runner Not Picking Up Job
+
+**Symptoms**:
+- Pipeline stuck on "pending"
+- Job waiting for runner
+
+**Causes**:
+- No runner with matching tag available
+- Runner offline or busy
+- Runner quota exceeded
+
+**Solutions**:
+1. Check runner status: **Settings** > **CI/CD** > **Runners**
+2. Verify runner tags match job requirements:
+   - OCI jobs need: `ocinode18`
+   - GCP jobs need: `globalnodegcp`
+3. Contact DevOps to:
+   - Restart runner
+   - Increase runner capacity
+   - Check runner registration
+
+---
+
+## GitOps Workflow Summary
+
+**Traditional CI/CD (Old)**:
+```
+CI Pipeline → kubectl apply / helm install → Kubernetes
+```
+
+**GitOps with ArgoCD (Current)**:
+```
+CI Pipeline → Update values.yaml → Git Push → ArgoCD Detects Change → Kubernetes
+```
+
+**Benefits**:
+- **Declarative**: Desired state in Git
+- **Auditable**: All changes tracked in Git history
+- **Reversible**: Git revert to rollback
+- **Secure**: CI doesn't need K8s credentials
+- **Automated**: ArgoCD continuously syncs
+
+---
 
 ## Next Steps
 
 After successful setup:
 
-1. **Test deployment workflow**:
-   - Make a small change (e.g., update README)
-   - Push to `develop` branch
-   - Verify automatic deployment to GCP
-   - Test application functionality
+1. **Monitor deployments**:
+   - ArgoCD UI: https://argocd.baraq.com
+   - Kubernetes dashboards
+   - Application logs: `kubectl logs`
 
-2. **Review deployment operations**:
-   - See [DEPLOYMENT_PLAYBOOK.md](DEPLOYMENT_PLAYBOOK.md) for day-to-day operations
+2. **Set up alerts** (optional):
+   - ArgoCD Slack notifications
+   - Prometheus alerts for pod health
+   - Pushover notifications from CI
 
-3. **Understand pipeline architecture**:
-   - See [PIPELINE_ARCHITECTURE.md](PIPELINE_ARCHITECTURE.md) for optimization strategies
+3. **Review operations guide**:
+   - See [KUBERNETES_OPERATIONS.md](KUBERNETES_OPERATIONS.md) for day-to-day K8s management
+   - See [BUILD_STEPS.md](BUILD_STEPS.md) for detailed pipeline reference
 
-4. **Set up monitoring** (optional):
-   - Configure GitLab pipeline badges
-   - Set up Grafana dashboards for K8s metrics
-   - Configure Sentry for application error tracking
+4. **Understand image promotion**:
+   - Dev → UAT → Test → Perf
+   - Immutable images (build once, promote many)
+   - Manual approval gates
+
+---
+
+## Related Documentation
+
+- [BUILD_STEPS.md](BUILD_STEPS.md) - Detailed build process and stages
+- [KUBERNETES_OPERATIONS.md](KUBERNETES_OPERATIONS.md) - Day-to-day K8s operations
+- **Deployment Configs**: http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs
+- **Backend Configs**: http://gitlab.dev.baraq.com.internal/baraq-engineering/backend-shared/backend-configs
+- **GitLab Repository**: http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub
+- **ArgoCD Docs**: https://argo-cd.readthedocs.io/en/stable/

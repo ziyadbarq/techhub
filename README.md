@@ -1,7 +1,7 @@
 # Barq TechHub
 
 [![GitLab CI/CD](https://img.shields.io/badge/CI%2FCD-GitLab-orange?logo=gitlab)](docs/deployment/GITLAB_CI_SETUP.md)
-[![Deployment](https://img.shields.io/badge/Deployment-Automated-success)](docs/deployment/DEPLOYMENT_PLAYBOOK.md)
+[![Deployment](https://img.shields.io/badge/Deployment-GitOps-success)](docs/deployment/KUBERNETES_OPERATIONS.md)
 
 **Internal enterprise CMDB and IT Asset Management system for Barq Technology Operations**
 
@@ -665,9 +665,9 @@ See [scripts/README.md](scripts/README.md) for detailed documentation of all uti
 ### Operations & Deployment
 
 **CI/CD Pipeline (Kubernetes):**
-- [GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md) - GitLab CI/CD setup with Helm and K8s
-- [BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) - Detailed build process and stages
-- [KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) - K8s operations and kubectl commands
+- [GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md) - GitLab CI/CD setup with GitOps and ArgoCD
+- [BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) - Detailed build process and pipeline stages
+- [KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) - Day-to-day K8s operations and kubectl commands
 
 **Operations:**
 - [AUTOMATED_DEPLOYMENT.md](docs/operations/AUTOMATED_DEPLOYMENT.md) - Alternative PM2-based deployment (on-premises)

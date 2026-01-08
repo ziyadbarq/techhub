@@ -1,410 +1,487 @@
 # TechHub CI/CD Build Steps
 
-Complete reference for all build steps executed in the GitLab CI/CD pipeline.
+Complete reference for all build steps executed in the GitLab CI/CD pipeline following Barq's standard GitOps pattern.
 
 ## Pipeline Overview
 
 **Repository**: http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub
-**Pipeline Duration**: ~18-22 minutes (with cache) | ~28-32 minutes (cold start)
-**Target Platforms**: OCI Cloud (production) | GCP Cloud (development)
+**Pipeline Duration**: ~15-20 minutes (with cache) | ~25-30 minutes (cold start)
+**Target Platforms**: OCI Cloud (main branch) | GCP Cloud (develop branch)
+**Deployment Method**: GitOps via ArgoCD (CI updates values.yaml, ArgoCD deploys)
 
-## Build Stages
+## Pipeline Stages
 
-### Stage 1: Install Dependencies (~1-3 minutes)
+### Stage 1: Validation (~2-3 minutes)
 
-**Purpose**: Install Node.js dependencies and generate Prisma client
+**Purpose**: Validate code quality through type-checking, linting, and unit tests
+
+**Job**: `validate`
+**Runs on**: All commits to `main` and `develop` branches, web triggers
+**Runner**: `ocinode18` (OCI runner)
+**Image**: `gitlab-runner-node-18-alpine`
 
 **Commands**:
 ```bash
-# Install system dependencies for native modules
-apk add --no-cache python3 make g++
+# Copy .npmrc for private registry access
+cp /.npmrc .
 
-# Install Node.js dependencies (reproducible builds)
-npm ci --cache .npm --prefer-offline --include=dev
+# Install dependencies (reproducible builds)
+npm ci --prefer-offline --cache $NPM_CACHE_DIR
 
-# Generate Prisma client (required for TypeScript and build)
+# Generate Prisma client (required for TypeScript)
 npm run db:generate
+
+# Run validation checks
+npm run type-check  # TypeScript compilation check
+npm run lint        # ESLint validation
+npm run test -- --run --reporter=verbose  # Vitest unit tests
 ```
 
 **Outputs**:
-- `node_modules/` - All dependencies
-- `src/generated/prisma/` - Prisma client
+- Code coverage report (Cobertura format)
+- Coverage artifacts (30-day retention)
 
 **Caching**:
-- Cache key: Based on `package-lock.json` hash
+- Cache key: `validate-${CI_COMMIT_REF_SLUG}`
 - Cached paths: `node_modules/`, `.npm/`
-- Cache invalidation: Automatic when dependencies change
+- Policy: `pull-push` (read and update cache)
 
 **Duration**:
-- With cache: ~1 minute
+- With cache: ~2 minutes
 - Without cache: ~3 minutes
 
 ---
 
-### Stage 2: Code Validation (~2 minutes, parallel execution)
+### Stage 2a: Build Only - OCI (Manual Web Trigger)
 
-**Purpose**: Validate code quality through parallel checks
+**Purpose**: Build Docker image for OCI registry without deployment
 
-#### Job 2a: Type-Check (~1-2 minutes)
+**Job**: `build-oci`
+**Trigger**: Manual web trigger with `type=build_only` and `CLOUD=oci`
+**Runner**: `ocinode18`
+**Timeout**: 20 minutes
+
+**Dockerfile Source**:
+- Cloned from deployment-configs repo
+- Uses: `dockerfiles/nodejs-Dockerfile-optimize`
+- Entrypoint: `dockerfiles/nodejs-entrypoint.sh`
+
+**Build Process**:
 ```bash
-npm run type-check
-```
-- Runs TypeScript compiler in check mode
-- Validates type safety across entire codebase
-- No JavaScript output generated
+# Clone deployment-configs for standardized Dockerfile
+git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+cp deployment-configs/dockerfiles/nodejs-Dockerfile-optimize ./Dockerfile-build
+cp deployment-configs/dockerfiles/nodejs-entrypoint.sh .
+cp /.npmrc .
 
-#### Job 2b: Lint (~30 seconds - 1 minute)
-```bash
-npm run lint
-```
-- Runs ESLint validation
-- Checks code style and best practices
-- Enforces import rules and architectural boundaries
+# Install dependencies
+npm ci --prefer-offline --cache $NPM_CACHE_DIR
+npm run db:generate
 
-#### Job 2c: Unit Tests (~1-2 minutes)
-```bash
-npm run test -- --run --reporter=verbose
-```
-- Runs Vitest unit tests
-- Generates code coverage reports
-- Coverage exported to Cobertura format
+# Build Next.js application
+npm run build
 
-**Parallelization**: All three jobs run simultaneously
-**Total Duration**: ~2 minutes (limited by slowest job)
+# Generate image tag: {version}-{commit_id}-{CI_JOB_ID}
+version=`jq -r '.version' package.json`
+commit_id=`git rev-parse --short=6 HEAD`
+export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
+export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+
+# Build with Kaniko (daemonless Docker builder)
+/kaniko/executor \
+  --context $CI_PROJECT_DIR \
+  --dockerfile Dockerfile-build \
+  --destination ${FULL_IMAGE_NAME}
+```
+
+**Image Tag Format**: `{version}-{commit_id}-{CI_JOB_ID}`
+- Example: `1.0.0-a3f5c2-123456`
+- version: from package.json
+- commit_id: short Git commit hash (6 chars)
+- CI_JOB_ID: GitLab job ID for traceability
+
+**Registry**: `jed.ocir.io/axbp9ow0rohq/techhub`
+
+**Duration**: ~8-10 minutes
 
 ---
 
-### Stage 3: Application Build (~3-5 minutes)
+### Stage 2b: Build Only - GCP (Manual Web Trigger)
 
-**Purpose**: Build production Next.js application
+**Purpose**: Build Docker image for GCP registry without deployment
 
-**Environment Variables**:
+**Job**: `build-gcp`
+**Trigger**: Manual web trigger with `type=build_only` and `CLOUD=gcp`
+**Runner**: `globalnodegcp`
+**Timeout**: 20 minutes
+
+**Dockerfile Source**:
+- Uses: `dockerfiles/nodejs-gcp-Dockerfile-optimize` (GCP-optimized variant)
+
+**Process**: Same as OCI build but with GCP-specific configuration:
+- Registry: `me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/techhub`
+- Additional sysctl tuning for GCP runners
+
+**Duration**: ~8-10 minutes
+
+---
+
+### Stage 3a: Build and Deploy - OCI (GitOps)
+
+**Purpose**: Build image, push to registry, update ArgoCD values for automatic deployment
+
+**Job**: `build-and-push-oci-to-argo`
+**Trigger**:
+- Automatic: Push to `main` branch
+- Manual: Web trigger with `type=build_and_deploy` and `CLOUD=oci`
+
+**Runner**: `ocinode18`
+**Timeout**: 20 minutes
+
+**GitOps Workflow**:
 ```bash
-# Mock DATABASE_URL (Prisma client initialization only)
-DATABASE_URL="postgresql://build:build@localhost:5432/build"
-REDIS_URL="redis://localhost:6379"
-SKIP_TYPE_CHECK="true"  # Already type-checked in previous stage
-NODE_ENV="production"
+# 1. Build Docker image with Kaniko (same as Stage 2a)
+/kaniko/executor \
+  --context $CI_PROJECT_DIR \
+  --dockerfile Dockerfile-build \
+  --destination ${FULL_IMAGE_NAME}
+
+# 2. Clone deployment-configs repository
+cd /tmp
+git clone http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+cd deployment-configs
+
+# Configure git
+git config user.email "gitlab-ci@baraq.com"
+git config user.name "GitLab CI"
+
+# 3. Update values.yaml with new image tag (GitOps pattern)
+# Install yq (YAML processor)
+wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+chmod +x /usr/local/bin/yq
+
+# Update image name in values-dev.yaml
+export IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+export NPM_MIGRATION="${npm_migration}"
+
+yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_OCI_VALUES}
+yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_OCI_VALUES}
+
+# 4. Commit and push changes to trigger ArgoCD sync
+git add manifests/${PROJECT}/${DEV_OCI_VALUES}
+git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
+git push origin -o ci.skip HEAD:main
 ```
 
-**Commands**:
+**Key Concepts**:
+- **GitOps**: CI only updates configuration (values.yaml), ArgoCD handles deployment
+- **ArgoCD**: Monitors deployment-configs repo and automatically syncs changes to Kubernetes
+- **Separation of Concerns**: Build pipeline doesn't need kubectl/helm access
+- **Prisma Migrations**: Controlled via `npm_migration` UI variable → sets `jobs.migrate.enabled` in values.yaml
+
+**Values File**: `manifests/techhub/values-dev.yaml`
+**Namespace**: `istio-dev`
+**URL**: https://techhub.baraq.com
+
+**Duration**: ~10-12 minutes
+
+---
+
+### Stage 3b: Build and Deploy - GCP (GitOps)
+
+**Purpose**: Build image for GCP and update ArgoCD values for automatic deployment
+
+**Job**: `build-and-push-gcp-to-argo`
+**Trigger**:
+- Automatic: Push to `develop` branch
+- Manual: Web trigger with `type=build_and_deploy` and `CLOUD=gcp`
+
+**Process**: Same GitOps workflow as OCI but with GCP-specific configuration:
+- Values file: `manifests/techhub/values-gcpdev.yaml`
+- Namespace: `horizontal-services`
+- Registry: GCP Artifact Registry
+- URL: https://techhub-dev.baraq.com
+
+**Duration**: ~10-12 minutes
+
+---
+
+### Stage 4: Image Promotion (Manual)
+
+**Purpose**: Promote existing dev images to higher environments without rebuilding
+
+**Jobs**:
+- `promote-to-uat-oci` - Promote to UAT (OCI)
+- `promote-to-test-oci` - Promote to TEST (OCI)
+- `promote-to-perf-oci` - Promote to PERF (OCI)
+- `promote-to-uat-gcp` - Promote to UAT (GCP)
+
+**Trigger**: Manual (requires DevOps approval)
+**Input**: Image tag from previous stage (e.g., `1.0.0-a3f5c2-123456`)
+
+**Process**:
 ```bash
-npm run build:fast
+# No rebuild - just update values.yaml for target environment
+yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${TARGET_VALUES}
+git commit -m "🚀 Promote ${PROJECT} to ${ENVIRONMENT}: ${IMAGE_TAG}"
+git push origin -o ci.skip HEAD:main
 ```
 
-**What Happens**:
-1. Next.js compiles React components to optimized JavaScript
-2. Server-side rendering (SSR) code bundled
-3. Static assets optimized and fingerprinted
-4. Standalone server output generated (for Docker)
+**Benefits**:
+- Same image promotes through environments (immutable)
+- No rebuilds = faster, safer deployments
+- Reduces drift between environments
+- Audit trail via Git commits
 
-**Outputs**:
-- `.next/` - Complete build output
-- `.next/standalone/` - Standalone server (for Docker)
+**Duration**: ~1-2 minutes per promotion
+
+---
+
+## Build Artifacts and Outputs
+
+### Docker Image
+
+**Base Image**: `node:18-alpine` (via deployment-configs Dockerfile)
+**Build Type**: Multi-stage (deps → builder → runner)
+**Output Mode**: Next.js standalone (enabled in `next.config.ts`)
+
+**Image Contents**:
+- Node.js runtime
+- Next.js standalone server
+- `.next/standalone/` - Self-contained server
 - `.next/static/` - Static assets
 - `public/` - Public assets
+- `node_modules/` (production only)
+- Prisma client (generated)
 
-**Caching**:
-- Cache key: Branch-specific
-- Cached paths: `.next/cache/` (incremental builds)
+**Image Size**: ~250-350MB (Alpine-based)
 
-**Duration**:
-- With cache: ~3 minutes
-- Without cache: ~5 minutes
+**Image Layers**:
+1. System dependencies (Alpine packages)
+2. Node.js dependencies (npm ci)
+3. Prisma client generation
+4. Next.js build output
+5. Production runtime configuration
 
----
+### Image Tagging Strategy
 
-### Stage 4: Integration Tests (~2-4 minutes)
+**Format**: `{version}-{commit_id}-{CI_JOB_ID}`
 
-**Purpose**: Test with real database and cache services
+**Example**: `1.0.0-a3f5c2-123456`
 
-**Services Started**:
-```yaml
-services:
-  - postgres:16-alpine  # PostgreSQL database
-  - redis:7-alpine      # Redis cache
-```
+**Components**:
+- **version**: From `package.json` (e.g., `1.0.0`)
+- **commit_id**: Git short SHA (6 chars, e.g., `a3f5c2`)
+- **CI_JOB_ID**: GitLab job ID (e.g., `123456`)
 
-**Environment Variables**:
-```bash
-DATABASE_URL="postgresql://test:test@postgres:5432/test"
-REDIS_URL="redis://redis:6379"
-```
-
-**Pre-Test Setup**:
-```bash
-# Install PostgreSQL client
-apk add --no-cache postgresql-client
-
-# Wait for PostgreSQL readiness
-until PGPASSWORD=test psql -h postgres -U test -d test -c '\q'; do
-  echo "Waiting for PostgreSQL..."
-  sleep 2
-done
-
-# Run database migrations on test database
-npx dotenv -e .env.local -- prisma migrate deploy || true
-```
-
-**Test Execution**:
-```bash
-npm run test -- --run --reporter=verbose tests/use-cases/ tests/di/
-```
-
-**What's Tested**:
-- Use case business logic with real database
-- Dependency injection container resolution
-- Repository implementations with Prisma
-- Database queries and transactions
-- Redis caching functionality
-
-**Duration**: 2-4 minutes (depends on test suite size)
-
----
-
-### Stage 5: Docker Image Build (~3-5 minutes)
-
-**Purpose**: Build and push Docker container images
-
-#### 5a: OCI Registry (main branch → production)
-
-**Login**:
-```bash
-echo "$OCI_REGISTRY_PASSWORD" | docker login -u "$OCI_REGISTRY_USERNAME" --password-stdin $OCI_REGISTRY
-```
-
-**Build**:
-```bash
-docker build \
-  --build-arg NODE_ENV=production \
-  --build-arg NEXT_PUBLIC_APP_VERSION=$CI_COMMIT_SHORT_SHA \
-  -t $OCI_REGISTRY/techhub:$CI_COMMIT_SHORT_SHA \
-  -t $OCI_REGISTRY/techhub:latest \
-  -f Dockerfile .
-```
-
-**Push**:
-```bash
-docker push $OCI_REGISTRY/techhub:$CI_COMMIT_SHORT_SHA
-docker push $OCI_REGISTRY/techhub:latest
-```
-
-#### 5b: GCP Registry (develop branch → development)
-
-**Login**:
-```bash
-echo "$GCP_SERVICE_ACCOUNT_KEY" | docker login -u _json_key --password-stdin $GCP_REGISTRY
-```
-
-**Build & Push**: Same as OCI but to GCP registry
-
-**Dockerfile Multi-Stage Build**:
-1. **Stage 1 (deps)**: Install dependencies
-2. **Stage 2 (builder)**: Build Next.js application
-3. **Stage 3 (runner)**: Create minimal production image
-
-**Image Size**: ~200-300MB (Alpine-based, standalone output)
-
-**Duration**: 3-5 minutes (depends on layer caching)
-
----
-
-### Stage 6: Kubernetes Deployment (~2-3 minutes)
-
-**Purpose**: Deploy to Kubernetes using Helm
-
-#### 6a: Deploy to OCI Production (main branch, manual trigger)
-
-**Environment**:
-- Cloud: OCI
-- Namespace: `istio-dev`
-- URL: https://techhub.baraq.com
-- Trigger: Manual
-
-**Setup**:
-```bash
-# Install kubectl
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-chmod +x kubectl && mv kubectl /usr/local/bin/
-
-# Configure kubeconfig
-echo "$KUBECONFIG_CONTENT" > ~/.kube/config
-chmod 600 ~/.kube/config
-
-# Verify connection
-kubectl cluster-info
-```
-
-**Clone Deployment Configs**:
-```bash
-git clone http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-cd deployment-configs
-```
-
-**Helm Deploy**:
-```bash
-helm upgrade --install techhub ./manifests/techhub \
-  --namespace istio-dev \
-  --values manifests/techhub/values-oci-prod.yaml \
-  --set image.tag=$CI_COMMIT_SHORT_SHA \
-  --set image.repository=$OCI_REGISTRY/techhub \
-  --wait \
-  --timeout 5m
-```
-
-**Verification**:
-```bash
-kubectl rollout status deployment/techhub -n istio-dev
-kubectl get pods -n istio-dev -l app=techhub
-```
-
-**Notifications**:
-```bash
-# Send Pushover notification on success/failure
-curl -s --form-string "token=$PUSHOVER_API_TOKEN" \
-  --form-string "user=$PUSHOVER_USER_KEY" \
-  --form-string "title=TechHub Deployment Success (OCI)" \
-  --form-string "message=✅ Deployed $CI_COMMIT_SHORT_SHA to OCI Kubernetes" \
-  https://api.pushover.net/1/messages.json
-```
-
-#### 6b: Deploy to GCP Development (develop branch, automatic)
-
-**Environment**:
-- Cloud: GCP
-- Namespace: `horizontal-services`
-- URL: https://techhub-dev.baraq.com
-- Trigger: Automatic on successful build
-
-**Deployment**: Same process as OCI but with GCP values and automatic trigger
+**Benefits**:
+- Traceability: Links image to specific code version and CI job
+- Immutability: Same image promoted through environments
+- Debugging: Easy to identify exact build
 
 ---
 
 ## Environment Variables
 
-### Build-Time Variables (Set in GitLab CI)
+### UI-Selectable Variables (GitLab Web Interface)
 
-**Docker Registry (OCI)**:
-- `OCI_REGISTRY_URL` - OCI container registry URL
-- `OCI_REGISTRY_USERNAME` - Registry username
-- `OCI_REGISTRY_PASSWORD` - Registry password (masked)
+**type**: Operation mode
+- `build_only` - Build image without deployment
+- `build_and_deploy` - Build + update ArgoCD values
 
-**Docker Registry (GCP)**:
-- `GCP_REGISTRY_URL` - GCP container registry URL
-- `GCP_SERVICE_ACCOUNT_KEY` - Service account JSON key (masked)
+**CLOUD**: Target cloud platform
+- `oci` - Oracle Cloud Infrastructure
+- `gcp` - Google Cloud Platform
 
-**Kubernetes**:
-- `KUBECONFIG_CONTENT` - Kubernetes config file content (protected, masked)
+**npm_migration**: Prisma migration flag
+- `true` - Enable migrations (sets `jobs.migrate.enabled=true` in values.yaml)
+- `false` - Skip migrations (default)
 
-**Notifications**:
-- `PUSHOVER_API_TOKEN` - Pushover app token (masked)
-- `PUSHOVER_USER_KEY` - Pushover user key (masked)
+### Pipeline Variables (Configured in .gitlab-ci.yml)
 
-### Runtime Variables (Stored in backend-configs repo)
+**Project Configuration**:
+- `PROJECT`: `techhub`
+- `AUTOMATIC_TRIGGER_BRANCH`: `main`
+- `DEV_BRANCH`: `develop`
 
-**Reference**: http://gitlab.dev.baraq.com.internal/baraq-engineering/backend-shared/backend-configs
+**OCI Configuration**:
+- `DEV_CNTNR_OCI_REG_IMG_PREFIX`: `jed.ocir.io/axbp9ow0rohq`
+- `DEV_OCI_LAB_TAG`: `ocinode18`
+- `DEV_OCI_VALUES`: `values-dev.yaml`
+- `DEV_OCI_IMAGE`: `jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-18-alpine`
 
-Runtime environment variables are stored in the backend-configs repository and injected into Kubernetes pods via ConfigMaps/Secrets:
+**GCP Configuration**:
+- `DEV_CNTNR_GCP_REG_IMG_PREFIX`: `me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo`
+- `DEV_GCP_LAB_TAG`: `globalnodegcp`
+- `DEV_GCP_VALUES`: `values-gcpdev.yaml`
+- `DEV_GCP_IMAGE`: `me-central2-docker.pkg.dev/.../gitlab-runner-node-18-alpine:latest`
 
+### GitLab CI/CD Secrets (Set by DevOps)
+
+**Required Variables**:
+- `GITLAB_UN` - GitLab username for cloning deployment-configs
+- `GITLAB_TOKEN` - GitLab access token
+
+**Optional Variables** (if using notifications):
+- `PUSHOVER_API_TOKEN` - Pushover app token
+- `PUSHOVER_USER_KEY` - Pushover user key
+
+### Runtime Variables (Kubernetes Secrets/ConfigMaps)
+
+Managed in backend-configs repository:
 - `DATABASE_URL` - PostgreSQL connection (GCP Cloud SQL)
 - `REDIS_URL` - Redis connection (GCP Memorystore)
-- `ENCRYPTION_KEY` - AES-256-GCM key
+- `ENCRYPTION_KEY` - AES-256-GCM encryption key
 - `MICROSOFT_*` - Azure AD/Graph API credentials
 - `AZURE_*` - Intune integration credentials
-- `OPENAI_API_KEY` - AI features (if enabled)
 - `PORT` - Application port (default: 3000)
+
+**Reference**: http://gitlab.dev.baraq.com.internal/baraq-engineering/backend-shared/backend-configs
 
 ---
 
 ## Deployment Flow Diagram
 
 ```
-┌─────────────┐
-│ Git Push    │
-│ (main/dev)  │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────────────────────────────────┐
-│ Stage 1: Install Dependencies (1-3 min)    │
-│ - npm ci                                    │
-│ - Generate Prisma client                   │
-└──────┬──────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────────────┐
-│ Stage 2: Validate (parallel, ~2 min)       │
-│ ├─ Type-check (TypeScript)                 │
-│ ├─ Lint (ESLint)                           │
-│ └─ Unit Tests (Vitest)                     │
-└──────┬──────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────────────┐
-│ Stage 3: Build (3-5 min)                   │
-│ - Next.js production build                 │
-│ - Generate standalone server               │
-└──────┬──────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────────────┐
-│ Stage 4: Integration Tests (2-4 min)       │
-│ - Start PostgreSQL + Redis                 │
-│ - Run use-case tests                       │
-└──────┬──────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────────────┐
-│ Stage 5: Docker Build (3-5 min)            │
-│ - Multi-stage Dockerfile                   │
-│ - Push to OCI/GCP registry                 │
-└──────┬──────────────────────────────────────┘
-       │
-       ▼
-┌─────────────────────────────────────────────┐
-│ Stage 6: Kubernetes Deploy (2-3 min)       │
-│ - Clone deployment-configs                 │
-│ - Helm upgrade --install                   │
-│ - Verify rollout status                    │
-│ - Send Pushover notification               │
-└──────┬──────────────────────────────────────┘
-       │
-       ▼
-┌─────────────┐
-│ Deployed! ✅ │
-└─────────────┘
+┌─────────────────┐
+│ Git Push        │
+│ (main/develop)  │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────────────────────────┐
+│ Stage 1: Validate (2-3 min)        │
+│ - npm ci                            │
+│ - Prisma generate                   │
+│ - Type-check + Lint + Unit Tests    │
+└────────┬────────────────────────────┘
+         │
+         ▼
+    ┌───────────┐
+    │ Success?  │
+    └─────┬─────┘
+          │ Yes
+          ▼
+┌─────────────────────────────────────┐
+│ Stage 2: Build Only (manual)       │
+│ OR                                  │
+│ Stage 3: Build and Deploy (auto)   │
+└────────┬────────────────────────────┘
+         │
+         ├─── Build Only (manual web trigger)
+         │    ├─ build-oci: Build for OCI
+         │    └─ build-gcp: Build for GCP
+         │
+         └─── Build and Deploy (automatic)
+              ├─ build-and-push-oci-to-argo (main branch)
+              │  ├─ Build with Kaniko
+              │  ├─ Push to OCI registry
+              │  ├─ Update values-dev.yaml
+              │  └─ ArgoCD syncs to K8s
+              │
+              └─ build-and-push-gcp-to-argo (develop branch)
+                 ├─ Build with Kaniko
+                 ├─ Push to GCP registry
+                 ├─ Update values-gcpdev.yaml
+                 └─ ArgoCD syncs to K8s
+         │
+         ▼
+┌─────────────────────────────────────┐
+│ Stage 4: Image Promotion (manual)  │
+│ - promote-to-uat-oci                │
+│ - promote-to-test-oci               │
+│ - promote-to-perf-oci               │
+│ - promote-to-uat-gcp                │
+└────────┬────────────────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Deployed! ✅     │
+│ ArgoCD synced   │
+└─────────────────┘
 ```
 
 ---
 
 ## Total Pipeline Duration
 
-| Stage | Duration (Cached) | Duration (Cold) |
-|-------|-------------------|-----------------|
-| Install | 1 min | 3 min |
-| Validate | 2 min | 2 min |
-| Build | 3 min | 5 min |
-| Test | 3 min | 4 min |
-| Docker | 4 min | 5 min |
-| Deploy | 3 min | 3 min |
-| **Total** | **16 min** | **22 min** |
+| Stage | Job | Duration (Cached) | Duration (Cold) |
+|-------|-----|-------------------|-----------------|
+| Validate | validate | 2 min | 3 min |
+| Build Only | build-oci / build-gcp | 8 min | 10 min |
+| Build & Deploy | build-and-push-*-to-argo | 10 min | 12 min |
+| Promotion | promote-to-* | 1 min | 1 min |
 
-**With parallel jobs and caching**: 18-22 minutes average
+**Typical Workflows**:
+- **Development (auto-deploy)**: validate (2m) + build-and-push-gcp (10m) = **~12 minutes**
+- **Production (manual trigger)**: validate (2m) + build-and-push-oci (10m) = **~12 minutes**
+- **Manual build only**: validate (2m) + build-oci/gcp (8m) = **~10 minutes**
+- **Promotion**: promote-to-uat (1m) = **~1 minute**
 
 ---
 
 ## Branch Strategy
 
-| Branch | Registry | Environment | Namespace | Deployment |
-|--------|----------|-------------|-----------|------------|
-| `main` | OCI | Production | `istio-dev` | Manual trigger |
-| `develop` | GCP | Development | `horizontal-services` | Automatic |
-| Feature branches | - | - | - | Tests only |
+| Branch | Cloud | Registry | Environment | Namespace | Deployment Trigger |
+|--------|-------|----------|-------------|-----------|-------------------|
+| `main` | OCI | OCI Registry | Production | `istio-dev` | Automatic (build-and-push-oci-to-argo) |
+| `develop` | GCP | GCP Artifact Registry | Development | `horizontal-services` | Automatic (build-and-push-gcp-to-argo) |
+| Feature branches | - | - | - | - | Validation only |
+
+**Notes**:
+- `main` branch: Production-ready code, automatically builds and updates ArgoCD
+- `develop` branch: Development code, automatically builds and updates ArgoCD
+- Feature branches: Run validation only (no builds or deployments)
+
+---
+
+## Key Technologies
+
+### Kaniko
+**Purpose**: Daemonless Docker image builder for Kubernetes
+**Why**: Works in GitLab runners without Docker daemon, more secure
+**Command**: `/kaniko/executor --context $CI_PROJECT_DIR --dockerfile Dockerfile-build --destination {image}`
+
+### yq
+**Purpose**: YAML processor for updating values.yaml
+**Why**: Programmatic updates to Helm values files
+**Command**: `yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" values.yaml`
+
+### ArgoCD
+**Purpose**: GitOps continuous delivery for Kubernetes
+**Why**: Declarative, automated, auditable deployments
+**How**: Monitors deployment-configs repo, syncs changes to K8s clusters
+
+### Next.js Standalone Output
+**Purpose**: Self-contained server output for Docker
+**Why**: Smaller images, faster builds, production-optimized
+**Config**: `output: "standalone"` in `next.config.ts`
+
+---
+
+## Comparison: Old vs New Pipeline
+
+### Old Pipeline (SSH-based)
+- Direct kubectl/helm commands in CI
+- Pipeline needs K8s credentials
+- No promotion workflow
+- Separate build and deploy stages
+- Docker build with daemon
+
+### New Pipeline (GitOps)
+- CI updates values.yaml, ArgoCD deploys
+- Pipeline only needs Git access
+- Immutable image promotion
+- Combined build-and-deploy stages
+- Kaniko (daemonless builds)
+- Follows Barq's standard pattern
 
 ---
 
 ## Related Documentation
 
 - [GITLAB_CI_SETUP.md](GITLAB_CI_SETUP.md) - Setup and configuration guide
-- [PIPELINE_ARCHITECTURE.md](PIPELINE_ARCHITECTURE.md) - Technical architecture details
-- [DEPLOYMENT_PLAYBOOK.md](DEPLOYMENT_PLAYBOOK.md) - Operations and troubleshooting
+- [KUBERNETES_OPERATIONS.md](KUBERNETES_OPERATIONS.md) - Day-to-day K8s operations
+- **Deployment Configs**: http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs
+- **Backend Configs**: http://gitlab.dev.baraq.com.internal/baraq-engineering/backend-shared/backend-configs
+- **GitLab Repository**: http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub

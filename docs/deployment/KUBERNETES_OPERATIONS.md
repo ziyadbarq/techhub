@@ -24,11 +24,19 @@ Day-to-day operations guide for TechHub deployments on Kubernetes (OCI and GCP c
 # View pipelines
 # GitLab UI: CI/CD > Pipelines
 
-# Trigger manual deployment (OCI production)
-# GitLab UI: CI/CD > Pipelines > [Pipeline] > deploy-oci-prod > Play
+# Deployments via GitOps (ArgoCD):
+# - Pipeline updates values.yaml in deployment-configs repo
+# - ArgoCD automatically syncs changes to Kubernetes
 
-# Automatic deployment (GCP development)
-# Push to develop branch - auto-deploys
+# Automatic deployment (main branch → OCI production)
+# Push to main branch - builds image, updates values-dev.yaml, ArgoCD deploys
+
+# Automatic deployment (develop branch → GCP development)
+# Push to develop branch - builds image, updates values-gcpdev.yaml, ArgoCD deploys
+
+# Manual operations:
+# - Build only: CI/CD > Pipelines > Run pipeline > set type=build_only
+# - Promote image: CI/CD > Pipelines > [Pipeline] > promote-to-uat-oci > Play
 ```
 
 ### Kubernetes Clusters

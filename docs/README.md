@@ -172,10 +172,10 @@ Operational documentation and deployment resources:
 
 ### CI/CD Pipeline
 
-GitLab CI/CD pipeline with Kubernetes deployment:
+GitLab CI/CD pipeline with GitOps deployment to Kubernetes:
 
-- [GitLab CI Setup Guide](./deployment/GITLAB_CI_SETUP.md) - Complete setup with Helm, K8s, and container registries
-- [Build Steps Reference](./deployment/BUILD_STEPS.md) - Detailed breakdown of all build stages and commands
+- [GitLab CI Setup Guide](./deployment/GITLAB_CI_SETUP.md) - Complete GitOps setup with ArgoCD, Kaniko, and container registries
+- [Build Steps Reference](./deployment/BUILD_STEPS.md) - Detailed breakdown of pipeline stages, GitOps workflow, and image promotion
 - [Kubernetes Operations](./deployment/KUBERNETES_OPERATIONS.md) - Day-to-day K8s operations and kubectl commands
 
 ### Operations

@@ -57,29 +57,39 @@ npx prisma studio     # Visual DB editor
 ## CI/CD Pipeline
 
 **Platform**: GitLab CI (http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub)
-**Deployment**: Kubernetes via Helm (OCI + GCP clouds)
-**Duration**: ~18-22 minutes (full pipeline with cache)
+**Deployment**: GitOps via ArgoCD (OCI + GCP clouds)
+**Duration**: ~12-15 minutes (typical workflow with cache)
 
 ```bash
 # View pipeline status
 # GitLab UI > CI/CD > Pipelines
 
-# Manual deployment to OCI production (main branch)
-# GitLab UI > CI/CD > Pipelines > [Pipeline] > deploy-oci-prod > Play
+# Automatic deployment to OCI production (main branch)
+# Push to main → builds image → updates values-dev.yaml → ArgoCD syncs
 
 # Automatic deployment to GCP dev (develop branch)
-# Push to develop branch - auto-deploys after successful build
+# Push to develop → builds image → updates values-gcpdev.yaml → ArgoCD syncs
 
-# Check K8s deployments
+# Manual build only (no deployment)
+# GitLab UI > CI/CD > Pipelines > Run pipeline > set type=build_only
+
+# Image promotion (dev → uat/test/perf)
+# GitLab UI > CI/CD > Pipelines > [Pipeline] > promote-to-uat-oci > Play
+
+# Check K8s deployments (via kubectl or ArgoCD UI)
 kubectl get pods -n istio-dev -l app=techhub              # OCI production
 kubectl get pods -n horizontal-services -l app=techhub    # GCP development
 ```
 
-**Pipeline Stages**: Install → Validate (type-check, lint, tests) → Build → Test (PostgreSQL + Redis) → Docker → Deploy (Helm to K8s)
+**Pipeline Stages**: Validate (type-check, lint, tests) → Build & Deploy (Kaniko, GitOps) → Image Promotion (manual)
+
+**GitOps Workflow**: CI updates values.yaml in deployment-configs repo → ArgoCD monitors repo → Automatically syncs to K8s
 
 **Deployment Targets**:
-- OCI Cloud: `istio-dev` namespace (production, manual trigger)
-- GCP Cloud: `horizontal-services` namespace (development, auto-deploy)
+- OCI Cloud: `istio-dev` namespace (production, auto-deploy from main)
+- GCP Cloud: `horizontal-services` namespace (development, auto-deploy from develop)
+
+**UI-Selectable Variables**: type (build_only/build_and_deploy), CLOUD (oci/gcp), npm_migration (true/false)
 
 See **[docs/deployment/GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md)** for setup, [docs/deployment/BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) for build process, and [docs/deployment/KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) for K8s operations.
 
