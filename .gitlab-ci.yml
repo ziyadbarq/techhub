@@ -1,132 +1,114 @@
 # GitLab CI/CD Pipeline for TechHub
 # Next.js 16 + Prisma 7 + PostgreSQL + Redis
-# Kubernetes deployment via Helm (OCI + GCP clouds)
-#
-# Pipeline Stages:
-# 1. install     - Install dependencies + Prisma client generation (~1-3 min)
-# 2. validate    - Parallel type-check, lint, unit tests (~2 min)
-# 3. build       - Next.js production build (~3-5 min)
-# 4. test        - Integration tests with PostgreSQL + Redis (~2-4 min)
-# 5. docker      - Build and push Docker image (~3-5 min)
-# 6. deploy      - Helm deployment to Kubernetes (~2-3 min)
-#
-# Total Duration: ~18-22 minutes (with cache) | ~28-32 minutes (cold start)
-
-# ====================
-# Global Configuration
-# ====================
-
-image: node:20-alpine
-
-# Global cache configuration
-# Cache is keyed on package-lock.json to invalidate when dependencies change
-cache:
-  key:
-    files:
-      - package-lock.json
-    prefix: $CI_COMMIT_REF_SLUG
-  paths:
-    - node_modules/
-    - .next/cache/
-    - .npm/
-
-# Pipeline stages
-stages:
-  - install
-  - validate
-  - build
-  - test
-  - docker
-  - deploy
-
-# ====================
-# Variables
-# ====================
+# Kubernetes deployment via GitOps (ArgoCD) on OCI + GCP clouds
 
 variables:
-  # Docker image configuration
-  DOCKER_IMAGE_NAME: techhub
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: "/certs"
+  type:
+    description: "Select your desired operation"
+    value: "build_only"
+    options:
+      - "build_only"
+      - "build_and_deploy"
 
-  # OCI Registry (for OCI cloud deployments)
-  OCI_REGISTRY: $OCI_REGISTRY_URL
-  OCI_IMAGE_TAG: $OCI_REGISTRY/$DOCKER_IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  CLOUD:
+    description: "Select on which cloud you need to deploy"
+    value: "oci"
+    options:
+      - "oci"
+      - "gcp"
 
-  # GCP Registry (for GCP cloud deployments)
-  GCP_REGISTRY: $GCP_REGISTRY_URL
-  GCP_IMAGE_TAG: $GCP_REGISTRY/$DOCKER_IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+  npm_migration:
+    description: "Select the flag true to run Prisma migrations"
+    value: "false"
+    options:
+      - "true"
+      - "false"
 
-  # Kubernetes namespaces
-  K8S_NAMESPACE_OCI_DEV: istio-dev
-  K8S_NAMESPACE_GCP_DEV: horizontal-services
+  # Project configuration
+  PROJECT: "techhub"
+  AUTOMATIC_TRIGGER_BRANCH: main
+  DEV_BRANCH: develop
+  DEV_ENV: dev
+  UAT_ENV: uat
+  TEST_ENV: test
+  PERF_ENV: perf
 
-  # Helm chart configuration
-  HELM_CHART_REPO: http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs
-  HELM_VALUES_PATH: manifests/techhub/values-dev.yaml
+  # Cache configuration
+  NPM_CACHE_DIR: "$CI_PROJECT_DIR/.npm"
+
+  # DEV OCI VARIABLES
+  DEV_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
+  DEV_OCI_LAB_TAG: ocinode18
+  DEV_OCI_VALUES: values-dev.yaml
+  DEV_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-18-alpine
+
+  # TEST OCI VARIABLES
+  TEST_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
+  TEST_OCI_LAB_TAG: ocinode18
+  TEST_OCI_VALUES: values-test.yaml
+  TEST_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-18-alpine
+
+  # UAT OCI VARIABLES
+  UAT_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
+  UAT_OCI_LAB_TAG: ocinode18
+  UAT_OCI_VALUES: values-uat.yaml
+  UAT_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-18-alpine
+
+  # PERF OCI VARIABLES (if needed)
+  PERF_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
+  PERF_OCI_LAB_TAG: ocinode18
+  PERF_OCI_VALUES: values-perf.yaml
+  PERF_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-18-alpine
+
+  # DEV GCP VARIABLES
+  DEV_CNTNR_GCP_REG_IMG_PREFIX: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo"
+  DEV_GCP_LAB_TAG: globalnodegcp
+  DEV_GCP_VALUES: values-gcpdev.yaml
+  DEV_GCP_IMAGE: me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/gitlab-runner-node-18-alpine:latest
+
+  # UAT GCP VARIABLES
+  UAT_CNTNR_GCP_REG_IMG_PREFIX: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo"
+  UAT_GCP_LAB_TAG: globalnodegcp
+  UAT_GCP_VALUES: values-gcpuat.yaml
+  UAT_GCP_IMAGE: me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/gitlab-runner-node-18-alpine:latest
+
+stages:
+  - validate
+  - build_only
+  - build_and_deploy
+  - image-promotion
 
 # ====================
-# Stage 1: Install Dependencies
+# Stage 1: Validation (Type-check, Lint, Unit Tests)
 # ====================
 
-install-dependencies:
-  stage: install
-  before_script:
-    # Install system dependencies for node-gyp compilation (sharp, bcrypt, etc.)
-    - apk add --no-cache python3 make g++
-  script:
-    # Use npm ci for reproducible builds
-    - npm ci --cache .npm --prefer-offline --include=dev
-    # Generate Prisma client (required for TypeScript type-checking and builds)
-    - npm run db:generate
-  artifacts:
-    paths:
-      - node_modules/
-      - src/generated/prisma/
-    expire_in: 1 hour
+validate:
+  image: $DEV_OCI_IMAGE
+  stage: validate
+  tags:
+    - $DEV_OCI_LAB_TAG
   cache:
-    key: deps-$CI_COMMIT_REF_SLUG
+    key: "validate-${CI_COMMIT_REF_SLUG}"
     paths:
       - node_modules/
       - .npm/
-  only:
-    - main
-    - develop
-    - merge_requests
-
-# ====================
-# Stage 2: Validation (Parallel Jobs)
-# ====================
-
-type-check:
-  stage: validate
-  needs:
-    - install-dependencies
+    policy: pull-push
+  before_script:
+    - cp /.npmrc .
+    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
+    - npm run db:generate
   script:
+    # Run type-check, lint, and tests
     - npm run type-check
-  only:
-    - main
-    - develop
-    - merge_requests
-
-lint:
-  stage: validate
-  needs:
-    - install-dependencies
-  script:
     - npm run lint
-  only:
-    - main
-    - develop
-    - merge_requests
-
-unit-tests:
-  stage: validate
-  needs:
-    - install-dependencies
-  script:
     - npm run test -- --run --reporter=verbose
-  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == $DEV_BRANCH'
+      when: always
+    - when: never
   artifacts:
     reports:
       coverage_report:
@@ -135,301 +117,412 @@ unit-tests:
     paths:
       - coverage/
     expire_in: 30 days
-  only:
-    - main
-    - develop
-    - merge_requests
 
 # ====================
-# Stage 3: Build
+# Stage 2: Build Only (OCI)
 # ====================
 
-build-nextjs:
-  stage: build
-  needs:
-    - install-dependencies
-    - type-check
-    - lint
+build-oci:
+  timeout: 20m
+  image: $DEV_OCI_IMAGE
+  stage: build_only
   variables:
-    # Mock DATABASE_URL for build (Prisma client initialization)
-    # Next.js build process initializes Prisma client even though it's not used at build time
-    DATABASE_URL: "postgresql://build:build@localhost:5432/build"
-    REDIS_URL: "redis://localhost:6379"
-    SKIP_TYPE_CHECK: "true"
+    DOCKER_CONFIG: "/kaniko/.docker"
+  rules:
+    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_only"'
+    - when: never
+  tags:
+    - $DEV_OCI_LAB_TAG
+  environment:
+    name: $DEV_ENV
+  before_script:
+    - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
   script:
-    - npm run build:fast
+    # Clone deployment-configs for Dockerfile
+    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+    - cp deployment-configs/dockerfiles/nodejs-Dockerfile-optimize ./Dockerfile-build
+    - cp deployment-configs/dockerfiles/nodejs-entrypoint.sh .
+    - cp /.npmrc .
+
+    # Install dependencies and build
+    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
+    - npm run db:generate
+    - npm run build
+
+    # Generate image tag
+    - version=`jq -r '.version' package.json`
+    - commit_id=`git rev-parse --short=6 HEAD`
+    - mkdir -p package
+    - cp -r /package/. package/ || echo "No shared packages to copy"
+
+    # Build with Kaniko
+    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
+    - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+    - |
+      /kaniko/executor \
+        --context $CI_PROJECT_DIR \
+        --dockerfile Dockerfile-build \
+        --destination ${FULL_IMAGE_NAME}
+
+    - echo "✅ Successfully built image: ${FULL_IMAGE_NAME}"
+  dependencies:
+    - validate
+
+# ====================
+# Stage 2: Build Only (GCP)
+# ====================
+
+build-gcp:
+  timeout: 20m
+  image: $DEV_GCP_IMAGE
+  stage: build_only
+  variables:
+    DOCKER_CONFIG: "/kaniko/.docker"
+  rules:
+    - if: '$CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web" && $type == "build_only"'
+    - when: never
+  tags:
+    - $DEV_GCP_LAB_TAG
+  environment:
+    name: $DEV_ENV
+  before_script:
+    - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
+    - echo fs.inotify.max_user_instances=512 | tee -a /etc/sysctl.conf
+    - sysctl -p
+  script:
+    # Clone deployment-configs for Dockerfile
+    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+    - cp deployment-configs/dockerfiles/nodejs-gcp-Dockerfile-optimize ./Dockerfile-build
+    - cp deployment-configs/dockerfiles/nodejs-entrypoint.sh .
+    - cp /.npmrc .
+
+    # Install dependencies and build
+    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
+    - npm run db:generate
+    - npm run build
+
+    # Generate image tag
+    - version=`jq -r '.version' package.json`
+    - commit_id=`git rev-parse --short=6 HEAD`
+    - mkdir -p package
+    - cp -r /package/. package/ || echo "No shared packages to copy"
+
+    # Build with Kaniko
+    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
+    - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+    - |
+      /kaniko/executor \
+        --context $CI_PROJECT_DIR \
+        --dockerfile Dockerfile-build \
+        --destination ${FULL_IMAGE_NAME}
+
+    - echo "✅ Successfully built image: ${FULL_IMAGE_NAME}"
+  dependencies:
+    - validate
+
+# ====================
+# Stage 3: Build and Deploy to ArgoCD (OCI)
+# ====================
+
+build-and-push-oci-to-argo:
+  timeout: 20m
+  image: $DEV_OCI_IMAGE
+  stage: build_and_deploy
+  variables:
+    DOCKER_CONFIG: "/kaniko/.docker"
+  rules:
+    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy" && $type != "build_only"'
+    - if: '$CLOUD == "oci" && $CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE != "web"'
+      when: always
+    - when: never
+  tags:
+    - $DEV_OCI_LAB_TAG
+  environment:
+    name: $DEV_ENV
+  before_script:
+    - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
+  script:
+    # Clone deployment-configs for Dockerfile
+    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+    - cp deployment-configs/dockerfiles/nodejs-Dockerfile-optimize ./Dockerfile-build
+    - cp deployment-configs/dockerfiles/nodejs-entrypoint.sh .
+    - cp /.npmrc .
+
+    # Install dependencies and build
+    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
+    - npm run db:generate
+    - npm run build
+
+    # Generate image tag
+    - version=`jq -r '.version' package.json`
+    - commit_id=`git rev-parse --short=6 HEAD`
+    - mkdir -p package
+    - cp -r /package/. package/ || echo "No shared packages to copy"
+
+    # Build and push with Kaniko
+    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
+    - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+    - |
+      /kaniko/executor \
+        --context $CI_PROJECT_DIR \
+        --dockerfile Dockerfile-build \
+        --destination ${FULL_IMAGE_NAME}
+
+    - echo "✅ Built and pushed image: ${FULL_IMAGE_NAME}"
+
+    # Update ArgoCD values.yaml (GitOps)
+    - export IMAGE_NAME="${FULL_IMAGE_NAME}"
+    - export NPM_MIGRATION="${npm_migration}"
+    - ORIGINAL_DIR=$(pwd)
+    - cd deployment-configs && git checkout main
+    - git config pull.rebase false
+    - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+
+    # Update image name and migration flag in values.yaml
+    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_OCI_VALUES}
+    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_OCI_VALUES}
+    - cat manifests/${PROJECT}/${DEV_OCI_VALUES}
+
+    # Commit and push to trigger ArgoCD sync
+    - git config --global user.email "sdev@barq.com"
+    - git config --global user.name ${GITLAB_UN}
+    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git"
+    - git add manifests/${PROJECT}/${DEV_OCI_VALUES}
+    - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
+    - git push origin -o ci.skip HEAD:main
+
+    - echo "---->>> SUCCESSFULLY PUSHED TO DEV (OCI) <<<----"
+    - cd $ORIGINAL_DIR
+
+    # Export image for promotion jobs
+    - echo "FULL_IMAGE_NAME=${FULL_IMAGE_NAME}" > build_info.env
+    - echo "IMAGE_FOR_UAT=${FULL_IMAGE_NAME}" >> build_info.env
   artifacts:
+    reports:
+      dotenv: build_info.env
     paths:
-      - .next/
-      - public/
-    expire_in: 1 hour
-  cache:
-    key: build-$CI_COMMIT_REF_SLUG
+      - build_info.env
+    expire_in: 1 week
+  dependencies:
+    - validate
+
+# ====================
+# Stage 3: Build and Deploy to ArgoCD (GCP)
+# ====================
+
+build-and-push-gcp-to-argo:
+  timeout: 20m
+  image: $DEV_GCP_IMAGE
+  stage: build_and_deploy
+  variables:
+    DOCKER_CONFIG: "/kaniko/.docker"
+  rules:
+    - if: '$CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy" && $type != "build_only"'
+    - if: '$CLOUD == "gcp" && $CI_COMMIT_BRANCH == $DEV_BRANCH && $CI_PIPELINE_SOURCE != "web"'
+      when: always
+    - when: never
+  tags:
+    - $DEV_GCP_LAB_TAG
+  environment:
+    name: $DEV_ENV
+  before_script:
+    - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
+    - echo fs.inotify.max_user_instances=512 | tee -a /etc/sysctl.conf
+    - sysctl -p
+  script:
+    # Clone deployment-configs for Dockerfile
+    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+    - cp deployment-configs/dockerfiles/nodejs-gcp-Dockerfile-optimize ./Dockerfile-build
+    - cp deployment-configs/dockerfiles/nodejs-entrypoint.sh .
+    - cp /.npmrc .
+
+    # Install dependencies and build
+    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
+    - npm run db:generate
+    - npm run build
+
+    # Generate image tag
+    - version=`jq -r '.version' package.json`
+    - commit_id=`git rev-parse --short=6 HEAD`
+    - mkdir -p package
+    - cp -r /package/. package/ || echo "No shared packages to copy"
+
+    # Build and push with Kaniko
+    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
+    - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+    - |
+      /kaniko/executor \
+        --context $CI_PROJECT_DIR \
+        --dockerfile Dockerfile-build \
+        --destination ${FULL_IMAGE_NAME}
+
+    - echo "✅ Built and pushed image: ${FULL_IMAGE_NAME}"
+
+    # Update ArgoCD values.yaml (GitOps)
+    - export IMAGE_NAME="${FULL_IMAGE_NAME}"
+    - export NPM_MIGRATION="${npm_migration}"
+    - ORIGINAL_DIR=$(pwd)
+    - cd deployment-configs && git checkout main
+    - git config pull.rebase false
+    - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+
+    # Update image name and migration flag in values.yaml
+    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_GCP_VALUES}
+    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_GCP_VALUES}
+    - cat manifests/${PROJECT}/${DEV_GCP_VALUES}
+
+    # Commit and push to trigger ArgoCD sync
+    - git config --global user.email "sdev@barq.com"
+    - git config --global user.name ${GITLAB_UN}
+    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git"
+    - git add manifests/${PROJECT}/${DEV_GCP_VALUES}
+    - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
+    - git push origin -o ci.skip HEAD:main
+
+    - echo "---->>> SUCCESSFULLY PUSHED TO DEV (GCP) <<<----"
+    - cd $ORIGINAL_DIR
+
+    # Export image for promotion jobs
+    - echo "FULL_IMAGE_NAME=${FULL_IMAGE_NAME}" > build_info.env
+    - echo "IMAGE_FOR_UAT=${FULL_IMAGE_NAME}" >> build_info.env
+  artifacts:
+    reports:
+      dotenv: build_info.env
     paths:
-      - .next/cache/
-  only:
-    - main
-    - develop
-    - merge_requests
+      - build_info.env
+    expire_in: 1 week
+  dependencies:
+    - validate
 
 # ====================
-# Stage 4: Integration Tests
+# Stage 4: Image Promotion (Template)
 # ====================
 
-integration-tests:
-  stage: test
-  needs:
-    - install-dependencies
-  services:
-    - name: postgres:16-alpine
-      alias: postgres
-      variables:
-        POSTGRES_DB: test
-        POSTGRES_USER: test
-        POSTGRES_PASSWORD: test
-    - name: redis:7-alpine
-      alias: redis
-  variables:
-    DATABASE_URL: "postgresql://test:test@postgres:5432/test"
-    REDIS_URL: "redis://redis:6379"
-  before_script:
-    # Install PostgreSQL client for connection testing
-    - apk add --no-cache postgresql-client
-    # Wait for PostgreSQL to be ready (retry until connection succeeds)
-    - until PGPASSWORD=test psql -h postgres -U test -d test -c '\q'; do echo "Waiting for PostgreSQL..."; sleep 2; done
-    # Run migrations on test database
-    # Note: Using || true because some migrations may already be applied or fail in test environment
-    - npx dotenv -e .env.local -- prisma migrate deploy || true
-  script:
-    # Run integration tests (use-cases and DI container tests)
-    - npm run test -- --run --reporter=verbose tests/use-cases/ tests/di/
-  only:
-    - main
-    - develop
-    - merge_requests
-
-# ====================
-# Stage 5: Docker Build & Push
-# ====================
-
-.docker-build-template: &docker-build-template
-  stage: docker
-  image: docker:24-dind
-  services:
-    - docker:24-dind
-  needs:
-    - build-nextjs
-    - unit-tests
-    - integration-tests
-  before_script:
-    - docker info
-  only:
-    - main
-    - develop
-
-# Build and push to OCI Registry
-docker-build-oci:
-  <<: *docker-build-template
-  script:
-    # Login to OCI registry
-    - echo "$OCI_REGISTRY_PASSWORD" | docker login -u "$OCI_REGISTRY_USERNAME" --password-stdin $OCI_REGISTRY
-
-    # Build Docker image
-    - |
-      docker build \
-        --build-arg NODE_ENV=production \
-        --build-arg NEXT_PUBLIC_APP_VERSION=$CI_COMMIT_SHORT_SHA \
-        -t $OCI_IMAGE_TAG \
-        -t $OCI_REGISTRY/$DOCKER_IMAGE_NAME:latest \
-        -f Dockerfile .
-
-    # Push to OCI registry
-    - docker push $OCI_IMAGE_TAG
-    - docker push $OCI_REGISTRY/$DOCKER_IMAGE_NAME:latest
-
-    # Cleanup
-    - docker logout $OCI_REGISTRY
-  only:
-    - main
-
-# Build and push to GCP Registry
-docker-build-gcp:
-  <<: *docker-build-template
-  script:
-    # Login to GCP registry (using service account key)
-    - echo "$GCP_SERVICE_ACCOUNT_KEY" | docker login -u _json_key --password-stdin $GCP_REGISTRY
-
-    # Build Docker image
-    - |
-      docker build \
-        --build-arg NODE_ENV=production \
-        --build-arg NEXT_PUBLIC_APP_VERSION=$CI_COMMIT_SHORT_SHA \
-        -t $GCP_IMAGE_TAG \
-        -t $GCP_REGISTRY/$DOCKER_IMAGE_NAME:latest \
-        -f Dockerfile .
-
-    # Push to GCP registry
-    - docker push $GCP_IMAGE_TAG
-    - docker push $GCP_REGISTRY/$DOCKER_IMAGE_NAME:latest
-
-    # Cleanup
-    - docker logout $GCP_REGISTRY
-  only:
-    - develop
-
-# ====================
-# Stage 6: Deploy to Kubernetes
-# ====================
-
-.deploy-template: &deploy-template
-  stage: deploy
-  image: alpine/helm:latest
-  before_script:
-    # Install kubectl
-    - apk add --no-cache curl
-    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    - chmod +x kubectl
-    - mv kubectl /usr/local/bin/
-
-    # Configure kubectl
-    - mkdir -p ~/.kube
-    - echo "$KUBECONFIG_CONTENT" > ~/.kube/config
-    - chmod 600 ~/.kube/config
-
-    # Verify connection
-    - kubectl version --client
-    - kubectl cluster-info
-
-# Deploy to OCI Kubernetes (main branch → production)
-deploy-oci-prod:
-  <<: *deploy-template
-  needs:
-    - docker-build-oci
-  environment:
-    name: oci-production
-    url: https://techhub.baraq.com
-  variables:
-    K8S_NAMESPACE: $K8S_NAMESPACE_OCI_DEV
-    IMAGE_TAG: $OCI_IMAGE_TAG
-  script:
-    # Clone deployment configs repo
-    - git clone http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-    - cd deployment-configs
-
-    # Deploy using Helm
-    - |
-      helm upgrade --install techhub ./manifests/techhub \
-        --namespace $K8S_NAMESPACE \
-        --values manifests/techhub/values-oci-prod.yaml \
-        --set image.tag=$CI_COMMIT_SHORT_SHA \
-        --set image.repository=$OCI_REGISTRY/$DOCKER_IMAGE_NAME \
-        --wait \
-        --timeout 5m
-
-    # Verify deployment
-    - kubectl rollout status deployment/techhub -n $K8S_NAMESPACE
-    - kubectl get pods -n $K8S_NAMESPACE -l app=techhub
-  after_script:
-    # Send Pushover notification
-    - apk add --no-cache curl
-    - |
-      if [ "$CI_JOB_STATUS" = "success" ]; then
-        curl -s --retry 2 --max-time 10 \
-          --form-string "token=$PUSHOVER_API_TOKEN" \
-          --form-string "user=$PUSHOVER_USER_KEY" \
-          --form-string "title=TechHub Deployment Success (OCI)" \
-          --form-string "message=✅ Deployed $CI_COMMIT_SHORT_SHA to OCI Kubernetes
-
-      Environment: oci-production
-      Namespace: $K8S_NAMESPACE_OCI_DEV
-      Duration: $CI_JOB_DURATION seconds
-      Pipeline: $CI_PIPELINE_URL" \
-          https://api.pushover.net/1/messages.json
-      else
-        curl -s --retry 2 --max-time 10 \
-          --form-string "token=$PUSHOVER_API_TOKEN" \
-          --form-string "user=$PUSHOVER_USER_KEY" \
-          --form-string "title=TechHub Deployment Failed (OCI)" \
-          --form-string "message=❌ Deployment failed
-
-      Environment: oci-production
-      Commit: $CI_COMMIT_SHORT_SHA
-      Pipeline: $CI_PIPELINE_URL" \
-          --form-string "priority=1" \
-          https://api.pushover.net/1/messages.json
-      fi
-  only:
-    - main
-  when: manual  # Require manual trigger for production deployments
-
-# Deploy to GCP Kubernetes (develop branch → development)
-deploy-gcp-dev:
-  <<: *deploy-template
-  needs:
-    - docker-build-gcp
-  environment:
-    name: gcp-development
-    url: https://techhub-dev.baraq.com
-  variables:
-    K8S_NAMESPACE: $K8S_NAMESPACE_GCP_DEV
-    IMAGE_TAG: $GCP_IMAGE_TAG
-  script:
-    # Clone deployment configs repo
-    - git clone http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-    - cd deployment-configs
-
-    # Deploy using Helm (reference existing values like auth-service)
-    - |
-      helm upgrade --install techhub ./manifests/techhub \
-        --namespace $K8S_NAMESPACE \
-        --values manifests/techhub/values-dev.yaml \
-        --set image.tag=$CI_COMMIT_SHORT_SHA \
-        --set image.repository=$GCP_REGISTRY/$DOCKER_IMAGE_NAME \
-        --wait \
-        --timeout 5m
-
-    # Verify deployment
-    - kubectl rollout status deployment/techhub -n $K8S_NAMESPACE
-    - kubectl get pods -n $K8S_NAMESPACE -l app=techhub
-  after_script:
-    # Send Pushover notification
-    - apk add --no-cache curl
-    - |
-      if [ "$CI_JOB_STATUS" = "success" ]; then
-        curl -s --form-string "token=$PUSHOVER_API_TOKEN" \
-          --form-string "user=$PUSHOVER_USER_KEY" \
-          --form-string "title=TechHub Deployment Success (GCP)" \
-          --form-string "message=✅ Deployed $CI_COMMIT_SHORT_SHA to GCP Kubernetes
-
-      Environment: gcp-development
-      Namespace: $K8S_NAMESPACE_GCP_DEV
-      Duration: $CI_JOB_DURATION seconds" \
-          https://api.pushover.net/1/messages.json
-      fi
-  only:
-    - develop
-  when: on_success  # Auto-deploy to dev environment
-
-# ====================
-# Utility Jobs
-# ====================
-
-# Manual rollback job (if deployment fails)
-rollback:
-  stage: deploy
-  image: alpine/helm:latest
-  variables:
-    K8S_NAMESPACE: $K8S_NAMESPACE_OCI_DEV
-  before_script:
-    - apk add --no-cache curl
-    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    - chmod +x kubectl && mv kubectl /usr/local/bin/
-    - mkdir -p ~/.kube
-    - echo "$KUBECONFIG_CONTENT" > ~/.kube/config
-  script:
-    - helm rollback techhub -n $K8S_NAMESPACE
-    - kubectl rollout status deployment/techhub -n $K8S_NAMESPACE
+.promote_to_base: &promote_to_base
+  stage: image-promotion
   when: manual
-  only:
-    - main
-    - develop
+  allow_failure: true
+  before_script:
+    - |
+      if [ -n "$FULL_IMAGE_NAME" ]; then
+        echo "Using image from environment: $FULL_IMAGE_NAME"
+      elif [ -f build_info.env ]; then
+        source build_info.env
+        echo "Using image from artifact: $FULL_IMAGE_NAME"
+      else
+        echo "ERROR: No image found to promote. Make sure build job completed successfully."
+        exit 1
+      fi
+    - echo "Promoting image: $FULL_IMAGE_NAME"
+  script:
+    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+    - cd deployment-configs && git checkout main
+    - git config pull.rebase false
+    - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+
+    # Update target environment values.yaml
+    - export IMAGE_NAME="${FULL_IMAGE_NAME}"
+    - export NPM_MIGRATION="${npm_migration}"
+    - yq e -i ".deployment.imageName = strenv(FULL_IMAGE_NAME)" manifests/${PROJECT}/${VALUES_FILE}
+    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${VALUES_FILE}
+    - echo "Updated configuration:"
+    - cat manifests/${PROJECT}/${VALUES_FILE}
+
+    # Commit and push
+    - git config --global user.email "sdev@barq.com"
+    - git config --global user.name ${GITLAB_UN}
+    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git"
+    - git add manifests/${PROJECT}/${VALUES_FILE}
+    - git commit -m "🚀 Promote ${PROJECT} image to ${TARGET_ENV}"
+    - git push origin -o ci.skip HEAD:main
+
+    - echo "---->>> SUCCESSFULLY PROMOTED TO ${TARGET_ENV} <<<----"
+    - echo "Image ${IMAGE_NAME} has been promoted"
+
+# OCI Promotions
+promote-to-uat-oci:
+  <<: *promote_to_base
+  image: $UAT_OCI_IMAGE
+  tags:
+    - $UAT_OCI_LAB_TAG
+  environment:
+    name: uat
+  variables:
+    VALUES_FILE: $UAT_OCI_VALUES
+    TARGET_ENV: "UAT (OCI)"
+  rules:
+    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
+      when: manual
+    - if: '$CLOUD == "oci" && $CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE != "web"'
+      when: manual
+    - when: never
+  dependencies:
+    - build-and-push-oci-to-argo
+  needs:
+    - job: build-and-push-oci-to-argo
+      artifacts: true
+
+promote-to-test-oci:
+  <<: *promote_to_base
+  image: $TEST_OCI_IMAGE
+  tags:
+    - $TEST_OCI_LAB_TAG
+  environment:
+    name: test
+  variables:
+    VALUES_FILE: $TEST_OCI_VALUES
+    TARGET_ENV: "TEST (OCI)"
+  rules:
+    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
+      when: manual
+    - if: '$CLOUD == "oci" && $CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE != "web"'
+      when: manual
+    - when: never
+  dependencies:
+    - build-and-push-oci-to-argo
+  needs:
+    - job: build-and-push-oci-to-argo
+      artifacts: true
+
+promote-to-perf-oci:
+  <<: *promote_to_base
+  image: $PERF_OCI_IMAGE
+  tags:
+    - $PERF_OCI_LAB_TAG
+  environment:
+    name: perf
+  variables:
+    VALUES_FILE: $PERF_OCI_VALUES
+    TARGET_ENV: "PERF (OCI)"
+  rules:
+    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
+      when: manual
+    - when: never
+  dependencies:
+    - build-and-push-oci-to-argo
+  needs:
+    - job: build-and-push-oci-to-argo
+      artifacts: true
+
+# GCP Promotions
+promote-to-uat-gcp:
+  <<: *promote_to_base
+  image: $UAT_GCP_IMAGE
+  tags:
+    - $UAT_GCP_LAB_TAG
+  environment:
+    name: uat
+  variables:
+    VALUES_FILE: $UAT_GCP_VALUES
+    TARGET_ENV: "UAT (GCP)"
+  rules:
+    - if: '$CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
+      when: manual
+    - if: '$CLOUD == "gcp" && $CI_COMMIT_BRANCH == $DEV_BRANCH && $CI_PIPELINE_SOURCE != "web"'
+      when: manual
+    - when: never
+  dependencies:
+    - build-and-push-gcp-to-argo
+  needs:
+    - job: build-and-push-gcp-to-argo
+      artifacts: true
