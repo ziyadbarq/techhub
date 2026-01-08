@@ -38,25 +38,25 @@ variables:
 
   # DEV OCI VARIABLES
   DEV_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  DEV_OCI_LAB_TAG: ocinode18
+  DEV_OCI_LAB_TAG: globalnodeoci
   DEV_OCI_VALUES: values-dev.yaml
   DEV_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-18-alpine
 
   # TEST OCI VARIABLES
   TEST_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  TEST_OCI_LAB_TAG: ocinode18
+  TEST_OCI_LAB_TAG: globalnodeoci
   TEST_OCI_VALUES: values-test.yaml
   TEST_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-18-alpine
 
   # UAT OCI VARIABLES
   UAT_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  UAT_OCI_LAB_TAG: ocinode18
+  UAT_OCI_LAB_TAG: globalnodeoci
   UAT_OCI_VALUES: values-uat.yaml
   UAT_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-18-alpine
 
   # PERF OCI VARIABLES (if needed)
   PERF_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  PERF_OCI_LAB_TAG: ocinode18
+  PERF_OCI_LAB_TAG: globalnodeoci
   PERF_OCI_VALUES: values-perf.yaml
   PERF_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-18-alpine
 
