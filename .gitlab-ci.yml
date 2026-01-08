@@ -140,8 +140,6 @@ build-oci:
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-    - cp deployment-configs/dockerfiles/nodejs-Dockerfile-optimize ./Dockerfile-build
-    - cp deployment-configs/dockerfiles/nodejs-entrypoint.sh .
     - cp /.npmrc .
 
     # Install dependencies and build
@@ -161,7 +159,7 @@ build-oci:
     - |
       /kaniko/executor \
         --context $CI_PROJECT_DIR \
-        --dockerfile Dockerfile-build \
+        --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
 
     - echo "${FULL_IMAGE_NAME}"
@@ -192,8 +190,6 @@ build-gcp:
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-    - cp deployment-configs/dockerfiles/nodejs-gcp-Dockerfile-optimize ./Dockerfile-build
-    - cp deployment-configs/dockerfiles/nodejs-entrypoint.sh .
     - cp /.npmrc .
 
     # Install dependencies and build
@@ -213,7 +209,7 @@ build-gcp:
     - |
       /kaniko/executor \
         --context $CI_PROJECT_DIR \
-        --dockerfile Dockerfile-build \
+        --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
 
     - echo "${FULL_IMAGE_NAME}"
@@ -244,8 +240,6 @@ build-and-push-oci-to-argo:
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-    - cp deployment-configs/dockerfiles/nodejs-Dockerfile-optimize ./Dockerfile-build
-    - cp deployment-configs/dockerfiles/nodejs-entrypoint.sh .
     - cp /.npmrc .
 
     # Install dependencies and build
@@ -265,7 +259,7 @@ build-and-push-oci-to-argo:
     - |
       /kaniko/executor \
         --context $CI_PROJECT_DIR \
-        --dockerfile Dockerfile-build \
+        --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
 
     - echo "${FULL_IMAGE_NAME}"
@@ -332,8 +326,6 @@ build-and-push-gcp-to-argo:
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-    - cp deployment-configs/dockerfiles/nodejs-gcp-Dockerfile-optimize ./Dockerfile-build
-    - cp deployment-configs/dockerfiles/nodejs-entrypoint.sh .
     - cp /.npmrc .
 
     # Install dependencies and build
@@ -353,7 +345,7 @@ build-and-push-gcp-to-argo:
     - |
       /kaniko/executor \
         --context $CI_PROJECT_DIR \
-        --dockerfile Dockerfile-build \
+        --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
 
     - echo "${FULL_IMAGE_NAME}"
