@@ -82,7 +82,7 @@ stages:
 # Stage 1: Validation (Type-check, Lint, Unit Tests)
 # ====================
 
-validate:
+.validate:
   image: $DEV_OCI_IMAGE
   stage: validate
   tags:
