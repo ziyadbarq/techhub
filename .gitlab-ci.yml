@@ -447,8 +447,6 @@ promote-to-uat-oci:
   rules:
     - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
       when: manual
-    - if: '$CLOUD == "oci" && $CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE != "web"'
-      when: manual
     - when: never
   dependencies:
     - build-and-push-oci-to-argo
@@ -468,8 +466,6 @@ promote-to-test-oci:
     TARGET_ENV: "TEST (OCI)"
   rules:
     - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
-      when: manual
-    - if: '$CLOUD == "oci" && $CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE != "web"'
       when: manual
     - when: never
   dependencies:
@@ -511,8 +507,6 @@ promote-to-uat-gcp:
     TARGET_ENV: "UAT (GCP)"
   rules:
     - if: '$CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
-      when: manual
-    - if: '$CLOUD == "gcp" && $CI_COMMIT_BRANCH == $DEV_BRANCH && $CI_PIPELINE_SOURCE != "web"'
       when: manual
     - when: never
   dependencies:
