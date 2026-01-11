@@ -38,25 +38,25 @@ variables:
 
   # DEV OCI VARIABLES
   DEV_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  DEV_OCI_LAB_TAG: ocinode22
+  DEV_OCI_LAB_TAG: globalnodeoci
   DEV_OCI_VALUES: values-dev.yaml
   DEV_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
 
   # TEST OCI VARIABLES
   TEST_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  TEST_OCI_LAB_TAG: ocinode22
+  TEST_OCI_LAB_TAG: globalnodeoci
   TEST_OCI_VALUES: values-test.yaml
   TEST_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
 
   # UAT OCI VARIABLES
   UAT_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  UAT_OCI_LAB_TAG: ocinode22
+  UAT_OCI_LAB_TAG: globalnodeoci
   UAT_OCI_VALUES: values-uat.yaml
   UAT_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
 
   # PERF OCI VARIABLES (if needed)
   PERF_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  PERF_OCI_LAB_TAG: ocinode22
+  PERF_OCI_LAB_TAG: globalnodeoci
   PERF_OCI_VALUES: values-perf.yaml
   PERF_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
 
@@ -401,7 +401,7 @@ build-and-push-gcp-to-argo:
       if [ -n "$FULL_IMAGE_NAME" ]; then
         echo "Using image from environment: $FULL_IMAGE_NAME"
       elif [ -f build_info.env ]; then
-        source build_info.env
+        . build_info.env
         echo "Using image from artifact: $FULL_IMAGE_NAME"
       else
         echo "ERROR: No image found to promote. Make sure build job completed successfully."
