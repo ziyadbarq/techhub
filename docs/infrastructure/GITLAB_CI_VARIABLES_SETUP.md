@@ -10,11 +10,26 @@ For now, you must use direct GitLab CI/CD variables.
 
 Go to: **GitLab UI > Project > Settings > CI/CD > Variables > Add variable**
 
-### Critical Variables
+### Option A: Build-Only (Docker Image Creation)
+
+**Use this if you only need to build the Docker image without running migrations/seeds:**
 
 | Variable Name         | Description                          | Example Value                              | Protected | Masked |
 |-----------------------|--------------------------------------|--------------------------------------------|-----------|--------|
-| `DATABASE_URL`        | PostgreSQL connection string         | `postgresql://user:pass@host:5432/techhub` | ✅ Yes    | ✅ Yes |
+| `DATABASE_URL`        | Dummy PostgreSQL URL (build only)   | `postgresql://dummy:dummy@localhost:5432/dummy` | No    | No |
+
+**Why this works:**
+- Prisma `generate` validates URL format but doesn't connect
+- TypeScript compilation uses generated types, no connection needed
+- Next.js build bundles code, no database access during build
+
+### Option B: Full CI/CD (Build + Deploy + Migrations)
+
+**Use this if you need to run migrations, seeds, or deploy to environments with real databases:**
+
+| Variable Name         | Description                          | Example Value                              | Protected | Masked |
+|-----------------------|--------------------------------------|--------------------------------------------|-----------|--------|
+| `DATABASE_URL`        | Real PostgreSQL connection string    | `postgresql://user:pass@host:5432/techhub` | ✅ Yes    | ✅ Yes |
 | `REDIS_URL`           | Redis connection string              | `redis://redis-host:6379`                  | ✅ Yes    | ✅ Yes |
 | `BETTER_AUTH_URL`     | Application URL                      | `https://techhub.baraq.com`                | No        | No     |
 | `BETTER_AUTH_SECRET`  | Auth secret key (generate random)    | `[64-char random string]`                  | ✅ Yes    | ✅ Yes |
