@@ -4,6 +4,10 @@
   "description": "Enterprise CMDB and IT Asset Management system with Clean Architecture, DI, RBAC, and comprehensive Foundation layer",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "dev:restart": "bash scripts/dev/restart-dev.sh && npm run dev",
@@ -127,6 +131,7 @@
     "bullmq": "^5.63.2",
     "chalk": "^5.6.2",
     "class-variance-authority": "^0.7.1",
+    "cloud-config-client": "^1.6.2",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
@@ -184,6 +189,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/cloud-config-client": "^1.4.0",
     "@types/dagre": "^0.7.48",
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.1",
