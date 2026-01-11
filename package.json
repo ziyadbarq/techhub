@@ -39,6 +39,7 @@
     "drift:check-warn": "dotenv -e .env.local -- tsx scripts/db/verify-migration-drift.ts --warn-only",
     "drift:fix": "dotenv -e .env.local -- tsx scripts/db/fix-migration-drift.ts",
     "drift:rollback": "dotenv -e .env.local -- tsx scripts/db/rollback-migration-fix.ts",
+    "config:verify": "dotenv -e .env.local -- tsx scripts/config/verify-cloud-config.ts",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:email": "dotenv -e .env.local -- tsx --import ./scripts/build/shim-server-only.js scripts/dev/test-email.ts",

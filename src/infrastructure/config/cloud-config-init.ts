@@ -93,6 +93,29 @@ async function initializeCloudConfig(): Promise<void> {
         `   Sample keys: ${sampleKeys.join(", ")}${configKeys.length > 5 ? "..." : ""}`,
       );
     }
+
+    // Validate critical environment variables are present
+    const criticalVars = [
+      "DATABASE_URL",
+      "REDIS_URL",
+      "BETTER_AUTH_URL",
+      "BETTER_AUTH_SECRET",
+    ];
+    const missingCriticalVars = criticalVars.filter(
+      (varName) => !process.env[varName],
+    );
+
+    if (missingCriticalVars.length > 0) {
+      console.warn(
+        `⚠️  Warning: ${missingCriticalVars.length} critical environment variables are missing:`,
+      );
+      console.warn(`   ${missingCriticalVars.join(", ")}`);
+      console.warn(
+        `   These should be present in either config server or local .env`,
+      );
+    } else {
+      console.log(`✅ All critical environment variables are present`);
+    }
   } else {
     // Fallback to local .env files (already loaded by Next.js)
     console.warn(
@@ -100,6 +123,29 @@ async function initializeCloudConfig(): Promise<void> {
     );
     console.warn(`   Error: ${result.metadata.error}`);
     console.warn(`   Retry attempts: ${result.metadata.retryAttempts}`);
+
+    // Validate critical variables exist in local .env
+    const criticalVars = [
+      "DATABASE_URL",
+      "REDIS_URL",
+      "BETTER_AUTH_URL",
+      "BETTER_AUTH_SECRET",
+    ];
+    const missingCriticalVars = criticalVars.filter(
+      (varName) => !process.env[varName],
+    );
+
+    if (missingCriticalVars.length > 0) {
+      console.error(
+        `❌ CRITICAL: ${missingCriticalVars.length} required environment variables are missing:`,
+      );
+      console.error(`   ${missingCriticalVars.join(", ")}`);
+      console.error(
+        `   Application will fail to start. Check your .env.local file.`,
+      );
+    } else {
+      console.log(`✅ All critical environment variables found in local .env`);
+    }
   }
 
   console.log("=======================================\n");
