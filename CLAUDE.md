@@ -267,6 +267,27 @@ Keep messages concise with relevant context.
 **Environment Variables**: Copy `.env.example` to `.env.local`
 - Required: `DATABASE_URL`, `REDIS_URL`, `OPENAI_API_KEY`
 - Debug: `PRISMA_VERBOSE_LOGS=true`, `AUTH_DEBUG_LOGS=true`, `LOG_LEVEL=debug`
+- Config Server (optional): `CONFIG_SERVER_URL`, `SPRING_PROFILE` - See instrumentation.ts for Spring Cloud Config integration
+
+## Git Workflow
+
+**Dual Remote Setup**: Repository uses two remotes for backup and CI/CD
+- `origin` → GitHub (https://github.com/azzuwayed/barq-assets.git) - Backup repository
+- `gitlab` → GitLab (git@gitlab.dev.baraq.com.internal:baraq-engineering/webdev/techhub.git) - CI/CD trigger
+
+**Workflow**: Always commit locally first, then push to both remotes. Pushing to `gitlab` remote triggers CI/CD pipeline.
+
+```bash
+# Check commit status (ahead/behind remotes)
+git status
+
+# Push to both remotes
+git push origin main    # Backup to GitHub
+git push gitlab main    # Trigger CI/CD pipeline on GitLab
+
+# Check remote configuration
+git remote -v
+```
 
 ## Naming Conventions
 
