@@ -189,13 +189,160 @@ npm run dev  # Should use .env.local only
 
 ## CI/CD Integration
 
-The config server integration works seamlessly in CI/CD:
+### Current Status
 
-1. **GitLab CI Variables:** Set `CONFIG_SERVER_URL` in GitLab CI/CD variables
-2. **Automatic Detection:** Scripts detect `$CI` environment variable
-3. **Fallback:** If config server is unavailable, CI uses local variables
+**⚠️ Spring Cloud Config is NOT YET ACTIVE in CI/CD pipeline**
 
-No special configuration needed - the same code works in both local development and CI.
+The application code supports Spring Cloud Config (via `instrumentation.ts`), but the CI/CD pipeline currently uses direct GitLab CI/CD variables. This is intentional to allow gradual migration.
+
+### Migration Path
+
+**Phase 1: Current (Direct Variables)**
+```yaml
+# GitLab CI/CD Variables (current setup)
+DATABASE_URL=postgresql://user:pass@host:5432/db
+REDIS_URL=redis://host:6379
+BETTER_AUTH_URL=https://app.example.com
+BETTER_AUTH_SECRET=xxx
+```
+
+**Phase 2: Hybrid (Both Sources)**
+```yaml
+# Add CONFIG_SERVER_URL alongside existing variables
+CONFIG_SERVER_URL=http://config-server.baraq.com:8888
+
+# Keep direct variables as fallback
+DATABASE_URL=postgresql://user:pass@host:5432/db
+...
+```
+
+**Phase 3: Config Server Only (Future)**
+```yaml
+# Only CONFIG_SERVER_URL needed
+CONFIG_SERVER_URL=http://config-server.baraq.com:8888
+
+# All other variables loaded from config server
+```
+
+### Setup Instructions
+
+#### Option 1: Use Direct Environment Variables (Current)
+
+**Recommended for now** until config server is deployed and tested.
+
+1. Go to GitLab UI > Project > Settings > CI/CD > Variables
+2. Add required variables:
+   - `DATABASE_URL` - PostgreSQL connection string
+   - `REDIS_URL` - Redis connection string
+   - `BETTER_AUTH_URL` - Application URL
+   - `BETTER_AUTH_SECRET` - Auth secret
+   - Other app-specific variables
+
+#### Option 2: Use Spring Cloud Config Server (Future)
+
+**Prerequisites:**
+- Config server deployed and reachable from GitLab runners
+- Config server configured for `techhub` application
+- Config server provides all required environment variables
+
+**Steps:**
+
+1. **Deploy Config Server**
+   - Set up Spring Cloud Config Server at `http://config-server.baraq.com:8888`
+   - Configure server to serve `techhub` application
+   - Add profiles: `dev`, `uat`, `prod`
+
+2. **Configure Application in Config Server**
+
+   Create config files in your Git repo (or use Vault/etc.):
+   ```
+   techhub-dev.yml
+   techhub-uat.yml
+   techhub-prod.yml
+   ```
+
+   Example `techhub-dev.yml`:
+   ```yaml
+   database:
+     url: postgresql://user:pass@dev-db:5432/techhub_dev
+   redis:
+     url: redis://dev-redis:6379
+   better_auth:
+     url: https://dev.techhub.baraq.com
+     secret: dev_secret_here
+   ```
+
+3. **Test Config Server Manually**
+   ```bash
+   # Test from GitLab runner network
+   curl http://config-server.baraq.com:8888/techhub/dev
+   curl http://config-server.baraq.com:8888/actuator/health
+   ```
+
+4. **Add CONFIG_SERVER_URL to GitLab CI/CD**
+   - Go to GitLab UI > Project > Settings > CI/CD > Variables
+   - Add variable:
+     - Name: `CONFIG_SERVER_URL`
+     - Value: `http://config-server.baraq.com:8888`
+     - Protected: Yes (optional)
+     - Masked: No
+
+5. **Gradual Migration**
+   - Keep direct variables alongside `CONFIG_SERVER_URL` initially
+   - Monitor CI pipeline logs for config loading success
+   - Once stable, remove direct variables one-by-one
+
+6. **Verify in CI**
+
+   Check pipeline logs for:
+   ```
+   === Spring Cloud Config Integration ===
+   📦 Application: techhub
+   🏷️  Profile: dev
+   🌐 Config Server: http://config-server.baraq.com:8888
+   ✅ Config loaded from config-server: 42 keys loaded
+   ✅ All critical environment variables are present
+   =======================================
+   ```
+
+### Profile Detection in CI
+
+| Branch      | NODE_ENV   | Spring Profile |
+|-------------|------------|----------------|
+| main        | production | prod           |
+| develop     | development| dev            |
+| feature/*   | development| dev            |
+
+Override with `SPRING_PROFILE` GitLab CI variable if needed.
+
+### Troubleshooting CI Issues
+
+**Error: "DATABASE_URL not set in CI environment"**
+
+This means neither direct variables nor config server provided `DATABASE_URL`.
+
+**Solutions:**
+1. Add `DATABASE_URL` directly to GitLab CI/CD variables (quick fix)
+2. Set up config server and add `CONFIG_SERVER_URL` to GitLab variables
+3. Verify config server is reachable from GitLab runners
+4. Check config server logs for errors
+
+**Config Server Unreachable from CI**
+
+Common causes:
+- Config server not running
+- Network firewall blocking GitLab runners
+- Wrong URL in `CONFIG_SERVER_URL` variable
+- DNS resolution issues
+
+**Test from runner:**
+```yaml
+test-config-server:
+  stage: test
+  script:
+    - curl -v http://config-server.baraq.com:8888/actuator/health
+    - curl -v http://config-server.baraq.com:8888/techhub/dev
+```
 
 ## Troubleshooting
 
