@@ -36,6 +36,10 @@ variables:
   # Cache configuration
   NPM_CACHE_DIR: "$CI_PROJECT_DIR/.npm"
 
+  # Database configuration (hardcoded for container deployment)
+  # ⚠️ WARNING: Hardcoded credentials - consider moving to GitLab CI/CD Variables
+  DATABASE_URL: "postgresql://techhub:YG%3C2KH%60r%29I%2CkHjMO@172.17.19.3:5432/techhub"
+
   # DEV OCI VARIABLES
   DEV_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
   DEV_OCI_LAB_TAG: globalnodeoci
