@@ -40,6 +40,11 @@ variables:
   # ⚠️ WARNING: Hardcoded credentials - consider moving to GitLab CI/CD Variables
   DATABASE_URL: "postgresql://techhub:YG%3C2KH%60r%29I%2CkHjMO@172.17.19.3:5432/techhub"
 
+  # Authentication secrets (hardcoded for container deployment)
+  # ⚠️ WARNING: Hardcoded secrets - consider moving to GitLab CI/CD Variables
+  ENCRYPTION_KEY: "0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc"
+  BETTER_AUTH_SECRET: "jpJlqIIKxyT1co5772FbiD+n7QMIlIS+bCjkfFpb970="
+
   # DEV OCI VARIABLES
   DEV_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
   DEV_OCI_LAB_TAG: globalnodeoci
