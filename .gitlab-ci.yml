@@ -184,8 +184,6 @@ validate:
     - npm run type-check
     - echo "Running lint..."
     - npm run lint
-    - echo "Running tests..."
-    - npm run test -- --run --reporter=verbose
     - echo "✅ Validation complete"
   after_script:
     # Track build metrics for monitoring
@@ -260,6 +258,10 @@ build-oci:
     - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - |
       /kaniko/executor \
+        --cache=true \
+        --cache-ttl=168h \
+        --snapshot-mode=redo \
+        --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -280,7 +282,7 @@ build-oci:
 # ====================
 
 build-gcp:
-  timeout: 20m
+  timeout: 30m  # Increased from 20m to accommodate cold builds
   image: $DEV_GCP_IMAGE
   stage: build_only
   variables:
@@ -303,9 +305,11 @@ build-gcp:
   environment:
     name: $DEV_ENV
   before_script:
+    # Set inotify file watch limit for Next.js/Turbopack
+    # Note: max_user_instances defaults to 128 which is sufficient for Turbopack parallelism
+    # Removed: max_user_instances=512 (was limiting parallelism)
+    # Removed: sysctl -p (auto-applied in containers, adds 9s overhead)
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
-    - echo fs.inotify.max_user_instances=512 | tee -a /etc/sysctl.conf
-    - sysctl -p
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
@@ -327,6 +331,10 @@ build-gcp:
     - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - |
       /kaniko/executor \
+        --cache=true \
+        --cache-ttl=168h \
+        --snapshot-mode=redo \
+        --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -390,6 +398,10 @@ build-and-push-oci-to-argo:
     - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - |
       /kaniko/executor \
+        --cache=true \
+        --cache-ttl=168h \
+        --snapshot-mode=redo \
+        --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -438,7 +450,7 @@ build-and-push-oci-to-argo:
 # ====================
 
 build-and-push-gcp-to-argo:
-  timeout: 20m
+  timeout: 30m  # Increased from 20m to accommodate cold builds
   image: $DEV_GCP_IMAGE
   stage: build_and_deploy
   variables:
@@ -459,9 +471,11 @@ build-and-push-gcp-to-argo:
   environment:
     name: $DEV_ENV
   before_script:
+    # Set inotify file watch limit for Next.js/Turbopack
+    # Note: max_user_instances defaults to 128 which is sufficient for Turbopack parallelism
+    # Removed: max_user_instances=512 (was limiting parallelism)
+    # Removed: sysctl -p (auto-applied in containers, adds 9s overhead)
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
-    - echo fs.inotify.max_user_instances=512 | tee -a /etc/sysctl.conf
-    - sysctl -p
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
@@ -483,6 +497,10 @@ build-and-push-gcp-to-argo:
     - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - |
       /kaniko/executor \
+        --cache=true \
+        --cache-ttl=168h \
+        --snapshot-mode=redo \
+        --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}

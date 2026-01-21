@@ -1,0 +1,120 @@
+# ====================
+# Docker Build Context Exclusions
+# ====================
+# This file reduces the Docker build context from ~2GB to ~200MB
+# by excluding files not needed during the container build process.
+#
+# Impact: Kaniko COPY operations go from ~8 minutes to ~1 minute
+
+# ====================
+# Dependencies (rebuilt in container)
+# ====================
+node_modules/
+.npm/
+.pnpm-store/
+
+# ====================
+# Build Artifacts (rebuilt in container)
+# ====================
+.next/
+out/
+.turbo/
+build/
+dist/
+
+# ====================
+# Git and Version Control
+# ====================
+.git/
+.gitignore
+.gitattributes
+.github/
+.gitlab/
+
+# ====================
+# CI/CD Configuration
+# ====================
+.gitlab-ci.yml
+deployment-configs/
+ecosystem.config.cjs
+
+# ====================
+# Documentation (not needed at runtime)
+# ====================
+docs/
+roadmap/
+*.md
+!README.md
+
+# ====================
+# Development and Testing
+# ====================
+coverage/
+.vitest/
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+vitest.config.ts
+vitest.setup.ts
+vitest.component.setup.ts
+
+# ====================
+# Logs
+# ====================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+local/logs/
+
+# ====================
+# IDE and Editor Files
+# ====================
+.vscode/
+.idea/
+.vs/
+*.swp
+*.swo
+*.swn
+*~
+.DS_Store
+Thumbs.db
+
+# ====================
+# Environment Files
+# ====================
+.env
+.env.local
+.env.development
+.env.test
+.env*.local
+
+# ====================
+# Scripts (not needed in production container)
+# ====================
+scripts/
+
+# ====================
+# Temporary and Cache Files
+# ====================
+tmp/
+temp/
+*.tmp
+.cache/
+build-*.txt
+build_info.env
+metrics-*.txt
+
+# ====================
+# Husky Git Hooks
+# ====================
+.husky/
+
+# ====================
+# Plan Files
+# ====================
+.claude/

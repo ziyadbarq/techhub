@@ -2,9 +2,16 @@
 # Optimized for production deployment on Kubernetes
 
 # ====================
+# Build Arguments
+# ====================
+# BASE_REGISTRY: Container registry hosting the Node.js base image
+# Defaults to OCI registry, can be overridden for GCP or other clouds
+ARG BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq
+
+# ====================
 # Stage 1: Dependencies
 # ====================
-FROM node:20-alpine AS deps
+FROM ${BASE_REGISTRY}/node:22-alpine AS deps
 
 # Install system dependencies for node-gyp
 RUN apk add --no-cache libc6-compat python3 make g++
@@ -20,7 +27,9 @@ RUN npm ci --include=dev
 # ====================
 # Stage 2: Builder
 # ====================
-FROM node:20-alpine AS builder
+# Reuse BASE_REGISTRY from build args
+ARG BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq
+FROM ${BASE_REGISTRY}/node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -50,7 +59,9 @@ RUN npm run build:fast
 # ====================
 # Stage 3: Runner
 # ====================
-FROM node:20-alpine AS runner
+# Reuse BASE_REGISTRY from build args
+ARG BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq
+FROM ${BASE_REGISTRY}/node:22-alpine AS runner
 
 # Install system dependencies
 RUN apk add --no-cache \
