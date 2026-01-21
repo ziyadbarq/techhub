@@ -121,6 +121,27 @@ stages:
   - build_and_deploy
   - image-promotion
 
+# Shared build cache for non-validate jobs
+.build_cache: &build_cache
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - node_modules/
+    - .npm/
+    - .next/cache/
+  policy: pull
+
+# Shared build metrics collection for build-only jobs
+.build_metrics_after_script: &build_metrics_after_script
+  # Track build metrics
+  - 'echo "📊 Build Metrics (${BUILD_METRICS_LABEL})" | tee ${BUILD_METRICS_FILE}'
+  - 'echo "Job Duration: ${CI_JOB_DURATION}s" | tee -a ${BUILD_METRICS_FILE}'
+  - 'echo "Pipeline: ${CI_PIPELINE_ID}" | tee -a ${BUILD_METRICS_FILE}'
+  - 'echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a ${BUILD_METRICS_FILE}'
+  - 'if [ -d .next ]; then echo "Next.js build size: $(du -sh .next | cut -f1)" | tee -a ${BUILD_METRICS_FILE}; echo "Static files: $(du -sh .next/static 2>/dev/null | cut -f1 || echo \"N/A\")" | tee -a ${BUILD_METRICS_FILE}; fi'
+  - 'if [ -d node_modules ]; then echo "node_modules size: $(du -sh node_modules | cut -f1)" | tee -a ${BUILD_METRICS_FILE}; fi'
+
 # ====================
 # Stage 1: Validation (Type-check, Lint, Unit Tests)
 # ====================
@@ -199,16 +220,11 @@ build-oci:
   stage: build_only
   variables:
     DOCKER_CONFIG: "/kaniko/.docker"
+    BUILD_METRICS_LABEL: "OCI"
+    BUILD_METRICS_FILE: "build-size-oci.txt"
   cache:
     # Reuse cache from validate stage for faster builds
-    key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .next/cache/
-    policy: pull
+    <<: *build_cache
   rules:
     # Automatic: dev branch → build_only
     - if: '$CI_COMMIT_BRANCH == $DEV_BRANCH && $CI_PIPELINE_SOURCE == "push"'
@@ -250,19 +266,11 @@ build-oci:
 
     - echo "${FULL_IMAGE_NAME}"
   after_script:
-    # Track build metrics
-    - echo "📊 Build Metrics (OCI)" | tee build-size-oci.txt
-    - 'echo "Job Duration: ${CI_JOB_DURATION}s" | tee -a build-size-oci.txt'
-    - 'echo "Pipeline: ${CI_PIPELINE_ID}" | tee -a build-size-oci.txt'
-    - 'echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-size-oci.txt'
-    - 'if [ -d .next ]; then echo "Next.js build size: $(du -sh .next | cut -f1)" | tee -a build-size-oci.txt; echo "Static files: $(du -sh .next/static 2>/dev/null | cut -f1 || echo \"N/A\")" | tee -a build-size-oci.txt; fi'
-    - 'if [ -d node_modules ]; then echo "node_modules size: $(du -sh node_modules | cut -f1)" | tee -a build-size-oci.txt; fi'
+    *build_metrics_after_script
   artifacts:
     paths:
       - build-size-oci.txt
     expire_in: 7 days
-  dependencies:
-    - validate
   needs:
     - job: validate
       artifacts: false
@@ -277,16 +285,11 @@ build-gcp:
   stage: build_only
   variables:
     DOCKER_CONFIG: "/kaniko/.docker"
+    BUILD_METRICS_LABEL: "GCP"
+    BUILD_METRICS_FILE: "build-size-gcp.txt"
   cache:
     # Reuse cache from validate stage for faster builds
-    key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .next/cache/
-    policy: pull
+    <<: *build_cache
   rules:
     # Automatic: dev branch → build_only (GCP)
     - if: '$CI_COMMIT_BRANCH == $DEV_BRANCH && $CI_PIPELINE_SOURCE == "push"'
@@ -330,19 +333,11 @@ build-gcp:
 
     - echo "${FULL_IMAGE_NAME}"
   after_script:
-    # Track build metrics
-    - echo "📊 Build Metrics (GCP)" | tee build-size-gcp.txt
-    - 'echo "Job Duration: ${CI_JOB_DURATION}s" | tee -a build-size-gcp.txt'
-    - 'echo "Pipeline: ${CI_PIPELINE_ID}" | tee -a build-size-gcp.txt'
-    - 'echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-size-gcp.txt'
-    - 'if [ -d .next ]; then echo "Next.js build size: $(du -sh .next | cut -f1)" | tee -a build-size-gcp.txt; echo "Static files: $(du -sh .next/static 2>/dev/null | cut -f1 || echo \"N/A\")" | tee -a build-size-gcp.txt; fi'
-    - 'if [ -d node_modules ]; then echo "node_modules size: $(du -sh node_modules | cut -f1)" | tee -a build-size-gcp.txt; fi'
+    *build_metrics_after_script
   artifacts:
     paths:
       - build-size-gcp.txt
     expire_in: 7 days
-  dependencies:
-    - validate
   needs:
     - job: validate
       artifacts: false
@@ -359,14 +354,7 @@ build-and-push-oci-to-argo:
     DOCKER_CONFIG: "/kaniko/.docker"
   cache:
     # Reuse cache from validate stage for faster builds
-    key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .next/cache/
-    policy: pull
+    <<: *build_cache
   rules:
     # Automatic: main branch → build_and_deploy (OCI production)
     - if: '$CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE == "push"'
@@ -441,8 +429,6 @@ build-and-push-oci-to-argo:
     paths:
       - build_info.env
     expire_in: 1 week
-  dependencies:
-    - validate
   needs:
     - job: validate
       artifacts: false
@@ -459,14 +445,7 @@ build-and-push-gcp-to-argo:
     DOCKER_CONFIG: "/kaniko/.docker"
   cache:
     # Reuse cache from validate stage for faster builds
-    key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .next/cache/
-    policy: pull
+    <<: *build_cache
   rules:
     # Automatic: main branch → build_and_deploy (GCP)
     - if: '$CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE == "push"'
@@ -543,8 +522,6 @@ build-and-push-gcp-to-argo:
     paths:
       - build_info.env
     expire_in: 1 week
-  dependencies:
-    - validate
   needs:
     - job: validate
       artifacts: false
