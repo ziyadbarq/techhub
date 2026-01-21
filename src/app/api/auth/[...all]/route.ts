@@ -1,4 +1,4 @@
-import { auth } from "@/interface-adapters/auth/better-auth";
+import { getAuth } from "@/interface-adapters/auth/better-auth";
 import { logger } from "@/lib/logger";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
@@ -26,7 +26,7 @@ const handleAuthRequest = async (request: Request) => {
   });
 
   try {
-    const response = await auth.handler(request);
+    const response = await getAuth().handler(request);
     const duration = Date.now() - startedAt;
 
     log.info("response", "Auth response", {

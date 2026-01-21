@@ -6,7 +6,7 @@
 "use server";
 
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import { auth } from "@/infrastructure/services/auth/better-auth";
+import { getAuth } from "@/infrastructure/services/auth/better-auth";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
 import { getCurrentUserId } from "@/lib/auth/session";
@@ -61,7 +61,7 @@ export async function enable2FAAction(
     const requestHeaders = await headers();
 
     // Call Better Auth to enable 2FA
-    const result = await auth.api.enableTwoFactor({
+    const result = await getAuth().api.enableTwoFactor({
       body: {
         password: validatedPassword,
       },
@@ -140,7 +140,7 @@ export async function verify2FASetupAction(
     const requestHeaders = await headers();
 
     // Call Better Auth to verify the code
-    const result = await auth.api.verifyTOTP({
+    const result = await getAuth().api.verifyTOTP({
       body: {
         code: validatedCode,
       },
@@ -210,7 +210,7 @@ export async function disable2FAAction(
     const requestHeaders = await headers();
 
     // Call Better Auth to disable 2FA
-    const result = await auth.api.disableTwoFactor({
+    const result = await getAuth().api.disableTwoFactor({
       body: {
         password: validatedPassword,
       },
@@ -271,7 +271,7 @@ export async function regenerateBackupCodesAction(
     const requestHeaders = await headers();
 
     // Call Better Auth to regenerate backup codes
-    const result = await auth.api.generateBackupCodes({
+    const result = await getAuth().api.generateBackupCodes({
       body: {
         password: validatedPassword,
       },

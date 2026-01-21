@@ -48,9 +48,14 @@ export class PinoLoggerService implements ILoggerService {
     // Configure Pino based on environment
     const isDevelopment = env.NODE_ENV === "development";
 
+    // Safe fallback for LOG_LEVEL during build (when env validation is skipped)
+    // Pattern: env.LOG_LEVEL → environment-based default → hard default
+    // Use || instead of ?? to catch empty strings
+    const logLevel = env.LOG_LEVEL || (isDevelopment ? "debug" : "info");
+
     this.logger = pino({
-      // Set log level from environment
-      level: env.LOG_LEVEL as "debug" | "info" | "warn" | "error",
+      // Set log level with safe fallback
+      level: logLevel,
 
       // Add base context to all logs
       base: {
@@ -103,7 +108,8 @@ export class PinoLoggerService implements ILoggerService {
     if (isDevelopment) {
       this.logger.debug(
         {
-          logLevel: env.LOG_LEVEL,
+          logLevel: logLevel,
+          logLevelSource: env.LOG_LEVEL ? "env" : "default",
           nodeEnv: env.NODE_ENV,
           prettyPrint: isDevelopment,
         },

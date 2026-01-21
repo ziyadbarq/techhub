@@ -2,6 +2,11 @@
 
 Complete setup instructions for the TechHub GitLab CI/CD pipeline using GitOps with ArgoCD deployment to Kubernetes.
 
+**Related Documentation**:
+- [CI Optimization Summary](../../CI_OPTIMIZATION_SUMMARY.md) - Caching, branch automation, error detection
+- [CI Monitoring Summary](../../CI_MONITORING_SUMMARY.md) - Metrics tracking, Prisma validation
+- [CI Build Fix Summary](../../CI_BUILD_FIX_SUMMARY.md) - Logger initialization and recent fixes
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
