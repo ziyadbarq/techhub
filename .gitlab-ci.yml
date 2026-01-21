@@ -169,12 +169,12 @@ validate:
   after_script:
     # Track build metrics for monitoring
     - echo "📊 Collecting build metrics..."
-    - echo "Job Duration: ${CI_JOB_DURATION}s" | tee build-metrics.txt
-    - echo "Pipeline ID: ${CI_PIPELINE_ID}" | tee -a build-metrics.txt
-    - echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-metrics.txt
-    - echo "Branch: ${CI_COMMIT_BRANCH}" | tee -a build-metrics.txt
-    - "if [ -f npm-install.log ]; then grep \"added.*packages\" npm-install.log | tee -a build-metrics.txt || echo \"npm install time: unavailable\" | tee -a build-metrics.txt; fi"
-    - "if [ -d node_modules ]; then echo \"node_modules size: $(du -sh node_modules | cut -f1)\" | tee -a build-metrics.txt; fi"
+    - 'echo "Job Duration: ${CI_JOB_DURATION}s" | tee build-metrics.txt'
+    - 'echo "Pipeline ID: ${CI_PIPELINE_ID}" | tee -a build-metrics.txt'
+    - 'echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-metrics.txt'
+    - 'echo "Branch: ${CI_COMMIT_BRANCH}" | tee -a build-metrics.txt'
+    - 'if [ -f npm-install.log ]; then grep "added.*packages" npm-install.log | tee -a build-metrics.txt || echo "npm install time: unavailable" | tee -a build-metrics.txt; fi'
+    - 'if [ -d node_modules ]; then echo "node_modules size: $(du -sh node_modules | cut -f1)" | tee -a build-metrics.txt; fi'
   rules:
     # Run validation on ALL pipelines (not just web/specific branches)
     - when: on_success
@@ -252,11 +252,11 @@ build-oci:
   after_script:
     # Track build metrics
     - echo "📊 Build Metrics (OCI)" | tee build-size-oci.txt
-    - echo "Job Duration: ${CI_JOB_DURATION}s" | tee -a build-size-oci.txt
-    - echo "Pipeline: ${CI_PIPELINE_ID}" | tee -a build-size-oci.txt
-    - echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-size-oci.txt
-    - "if [ -d .next ]; then echo \"Next.js build size: $(du -sh .next | cut -f1)\" | tee -a build-size-oci.txt; echo \"Static files: $(du -sh .next/static 2>/dev/null | cut -f1 || echo 'N/A')\" | tee -a build-size-oci.txt; fi"
-    - "if [ -d node_modules ]; then echo \"node_modules size: $(du -sh node_modules | cut -f1)\" | tee -a build-size-oci.txt; fi"
+    - 'echo "Job Duration: ${CI_JOB_DURATION}s" | tee -a build-size-oci.txt'
+    - 'echo "Pipeline: ${CI_PIPELINE_ID}" | tee -a build-size-oci.txt'
+    - 'echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-size-oci.txt'
+    - 'if [ -d .next ]; then echo "Next.js build size: $(du -sh .next | cut -f1)" | tee -a build-size-oci.txt; echo "Static files: $(du -sh .next/static 2>/dev/null | cut -f1 || echo \"N/A\")" | tee -a build-size-oci.txt; fi'
+    - 'if [ -d node_modules ]; then echo "node_modules size: $(du -sh node_modules | cut -f1)" | tee -a build-size-oci.txt; fi'
   artifacts:
     paths:
       - build-size-oci.txt
@@ -332,11 +332,11 @@ build-gcp:
   after_script:
     # Track build metrics
     - echo "📊 Build Metrics (GCP)" | tee build-size-gcp.txt
-    - echo "Job Duration: ${CI_JOB_DURATION}s" | tee -a build-size-gcp.txt
-    - echo "Pipeline: ${CI_PIPELINE_ID}" | tee -a build-size-gcp.txt
-    - echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-size-gcp.txt
-    - "if [ -d .next ]; then echo \"Next.js build size: $(du -sh .next | cut -f1)\" | tee -a build-size-gcp.txt; echo \"Static files: $(du -sh .next/static 2>/dev/null | cut -f1 || echo 'N/A')\" | tee -a build-size-gcp.txt; fi"
-    - "if [ -d node_modules ]; then echo \"node_modules size: $(du -sh node_modules | cut -f1)\" | tee -a build-size-gcp.txt; fi"
+    - 'echo "Job Duration: ${CI_JOB_DURATION}s" | tee -a build-size-gcp.txt'
+    - 'echo "Pipeline: ${CI_PIPELINE_ID}" | tee -a build-size-gcp.txt'
+    - 'echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-size-gcp.txt'
+    - 'if [ -d .next ]; then echo "Next.js build size: $(du -sh .next | cut -f1)" | tee -a build-size-gcp.txt; echo "Static files: $(du -sh .next/static 2>/dev/null | cut -f1 || echo \"N/A\")" | tee -a build-size-gcp.txt; fi'
+    - 'if [ -d node_modules ]; then echo "node_modules size: $(du -sh node_modules | cut -f1)" | tee -a build-size-gcp.txt; fi'
   artifacts:
     paths:
       - build-size-gcp.txt
