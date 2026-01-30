@@ -39,10 +39,7 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy application source
 COPY . .
 
-# Generate Prisma client
-RUN npx prisma generate
-
-# Build arguments
+# Build arguments and environment setup
 ARG NODE_ENV=production
 ARG NEXT_PUBLIC_APP_VERSION
 ENV NODE_ENV=${NODE_ENV}
@@ -50,8 +47,12 @@ ENV NEXT_PUBLIC_APP_VERSION=${NEXT_PUBLIC_APP_VERSION}
 
 # Mock DATABASE_URL for build (Prisma client initialization)
 # Actual DATABASE_URL will be provided at runtime via K8s secrets
+# MUST be set BEFORE running prisma generate
 ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
 ENV REDIS_URL="redis://localhost:6379"
+
+# Generate Prisma client (requires DATABASE_URL to be set)
+RUN npx prisma generate
 
 # Build Next.js application
 RUN npm run build:fast
