@@ -31,6 +31,9 @@ RUN npm ci --include=dev
 ARG BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq
 FROM ${BASE_REGISTRY}/node:22-alpine AS builder
 
+# Install bash for build scripts (Alpine uses sh by default)
+RUN apk add --no-cache bash
+
 WORKDIR /app
 
 # Copy dependencies from deps stage
