@@ -51,8 +51,12 @@ ENV NEXT_PUBLIC_APP_VERSION=${NEXT_PUBLIC_APP_VERSION}
 ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
 ENV REDIS_URL="redis://localhost:6379"
 
-# Generate Prisma client (requires DATABASE_URL to be set)
-RUN npx prisma generate
+# Set CI environment for db:generate script
+ENV CI=true
+
+# Generate Prisma client and entry points (requires DATABASE_URL and CI to be set)
+# This runs prisma generate + recreates entry point files (index.ts, server.ts, types.ts)
+RUN npm run db:generate
 
 # Build Next.js application
 RUN npm run build:fast
