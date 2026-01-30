@@ -195,7 +195,16 @@ validate:
     - 'if [ -f npm-install.log ]; then grep "added.*packages" npm-install.log | tee -a build-metrics.txt || echo "npm install time: unavailable" | tee -a build-metrics.txt; fi'
     - 'if [ -d node_modules ]; then echo "node_modules size: $(du -sh node_modules | cut -f1)" | tee -a build-metrics.txt; fi'
   rules:
-    # Run validation on ALL pipelines (not just web/specific branches)
+    # Skip validation when only CI/deployment/docs files changed
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - .gitlab-ci.yml
+        - Dockerfile
+        - .dockerignore
+        - docs/**/*
+        - "*.md"
+      when: never
+    # Run validation on ALL other changes
     - when: on_success
   artifacts:
     reports:
@@ -276,6 +285,7 @@ build-oci:
   needs:
     - job: validate
       artifacts: false
+      optional: true
 
 # ====================
 # Stage 2: Build Only (GCP)
@@ -349,6 +359,7 @@ build-gcp:
   needs:
     - job: validate
       artifacts: false
+      optional: true
 
 # ====================
 # Stage 3: Build and Deploy to ArgoCD (OCI)
@@ -444,6 +455,7 @@ build-and-push-oci-to-argo:
   needs:
     - job: validate
       artifacts: false
+      optional: true
 
 # ====================
 # Stage 3: Build and Deploy to ArgoCD (GCP)
@@ -543,6 +555,7 @@ build-and-push-gcp-to-argo:
   needs:
     - job: validate
       artifacts: false
+      optional: true
 
 # ====================
 # Stage 4: Image Promotion (Template)
