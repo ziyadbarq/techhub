@@ -1,0 +1,119 @@
+# Docker Compose for Local Testing
+# This file allows you to test the full Docker deployment locally
+# before pushing to GitLab CI/CD.
+#
+# Setup:
+#   cp .env.docker.example .env.docker  # Create your local config
+#   # Edit .env.docker with your settings
+#
+# Usage:
+#   docker compose up --build    # Build and start all services
+#   docker compose down          # Stop and remove containers
+#   docker compose logs app -f   # Follow app logs
+#
+# The app will be available at http://localhost:3000
+
+version: '3.8'
+
+# Load environment variables from .env.docker if it exists
+# Falls back to inline defaults if file doesn't exist
+env_file:
+  - .env.docker
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: techhub-postgres-local
+    environment:
+      POSTGRES_DB: techhub
+      POSTGRES_USER: techhub
+      POSTGRES_PASSWORD: techhub_local_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U techhub"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: techhub-redis-local
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Use public Docker Hub images for local testing
+      # GitLab CI overrides this with private registry
+      args:
+        BASE_REGISTRY: docker.io/library
+        NEXT_PUBLIC_APP_VERSION: local-docker
+    container_name: techhub-app-local
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Database connection
+      DATABASE_URL: postgresql://techhub:techhub_local_password@postgres:5432/techhub
+
+      # Redis connection
+      REDIS_URL: redis://redis:6379
+
+      # Node environment
+      NODE_ENV: production
+
+      # Better Auth (generate these locally)
+      # Run: openssl rand -base64 32
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-change-me-in-production}
+      BETTER_AUTH_URL: http://localhost:3000
+
+      # Feature flags (optional - defaults to all enabled locally)
+      # Add your specific flags from .env.local if needed
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+
+      # OpenAI (optional - for AI features)
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+
+    # Override entrypoint to run migrations before starting
+    command: >
+      sh -c "
+        echo '🔄 Running database migrations...' &&
+        npx prisma migrate deploy &&
+        echo '🌱 Seeding database (if empty)...' &&
+        npm run db:seed || true &&
+        echo '🚀 Starting application...' &&
+        node server.js
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    name: techhub-postgres-local
+  redis_data:
+    name: techhub-redis-local

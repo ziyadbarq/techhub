@@ -50,6 +50,12 @@ npm run db:reset      # Reset database + seed (drops all data!)
 npx prisma studio     # Visual DB editor
 # See docs/guides/PRISMA_GUIDE.md for migrations, schema, and troubleshooting
 
+# Local Docker Testing
+docker compose up --build    # Test full Docker deployment locally
+docker compose down          # Stop containers
+docker compose logs app -f   # Follow app logs
+# See docs/deployment/LOCAL_DOCKER_TESTING.md for setup and troubleshooting
+
 # Admin Tools & Scripts
 # See scripts/README.md for user management, backups, and deployment tools
 ```
@@ -59,6 +65,7 @@ npx prisma studio     # Visual DB editor
 **Platform**: GitLab CI (http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub)
 **Deployment**: GitOps via ArgoCD (OCI + GCP clouds)
 **Duration**: ~12-15 minutes (typical workflow with cache)
+**Local Testing**: Use `docker compose up --build` to test Docker deployments locally before pushing (see LOCAL_DOCKER_TESTING.md)
 
 ```bash
 # View pipeline status
@@ -91,7 +98,7 @@ kubectl get pods -n horizontal-services -l app=techhub    # GCP development
 
 **UI-Selectable Variables**: type (build_only/build_and_deploy), CLOUD (oci/gcp), npm_migration (true/false)
 
-See **[docs/deployment/GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md)** for setup, [docs/deployment/BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) for build process, and [docs/deployment/KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) for K8s operations.
+See **[docs/deployment/LOCAL_DOCKER_TESTING.md](docs/deployment/LOCAL_DOCKER_TESTING.md)** for local Docker testing, **[docs/deployment/GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md)** for CI/CD setup, [docs/deployment/BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) for build process, and [docs/deployment/KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) for K8s operations.
 
 ## Documentation
 

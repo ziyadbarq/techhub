@@ -5,8 +5,9 @@
 # Build Arguments
 # ====================
 # BASE_REGISTRY: Container registry hosting the Node.js base image
-# Defaults to OCI registry, can be overridden for GCP or other clouds
-ARG BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq
+# Defaults to Docker Hub for local testing
+# GitLab CI overrides this with jed.ocir.io/axbp9ow0rohq for production builds
+ARG BASE_REGISTRY=docker.io/library
 
 # ====================
 # Stage 1: Dependencies
