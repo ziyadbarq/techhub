@@ -94,12 +94,13 @@ Thumbs.db
 .env*.local
 
 # ====================
-# Scripts (exclude dev/admin/ci/db scripts, keep build scripts needed for Docker build)
+# Scripts (exclude dev/admin/ci/deploy scripts, keep build + db/generate scripts needed for Docker build)
 # ====================
 scripts/dev/
 scripts/admin/
 scripts/ci/
-scripts/db/
+scripts/db/*
+!scripts/db/generate.sh
 scripts/deploy/
 
 # ====================
