@@ -94,9 +94,13 @@ Thumbs.db
 .env*.local
 
 # ====================
-# Scripts (not needed in production container)
+# Scripts (exclude dev/admin/ci/db scripts, keep build scripts needed for Docker build)
 # ====================
-scripts/
+scripts/dev/
+scripts/admin/
+scripts/ci/
+scripts/db/
+scripts/deploy/
 
 # ====================
 # Temporary and Cache Files
