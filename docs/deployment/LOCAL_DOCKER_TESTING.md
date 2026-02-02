@@ -6,7 +6,8 @@ This guide explains how to test the full Docker deployment locally before pushin
 
 The project supports multiple deployment methods:
 - **Native Development**: `npm run dev` (local macOS with PostgreSQL/Redis via Homebrew)
-- **Local Docker**: `docker compose up` (full containerized stack - **this guide**)
+- **Local Docker (Fast)**: `./scripts/dev/docker-local.sh` (two-step build: native + Docker packaging - **recommended for local testing**)
+- **Local Docker (Full)**: `docker compose up` (complete production build in Docker - slower but matches CI exactly)
 - **GitLab CI/CD**: Automated builds with Kaniko → ArgoCD → Kubernetes
 
 Local Docker testing allows you to:
@@ -16,6 +17,21 @@ Local Docker testing allows you to:
 - ✅ Catch Docker-specific issues early
 - ✅ Test the complete stack (app + PostgreSQL + Redis) in isolation
 
+### Two Approaches Available
+
+**1. Fast Local Build** (Recommended for daily Docker testing)
+- Build on host (native macOS - **~7 seconds**)
+- Package in Docker (**~25 seconds**)
+- Total: **~32 seconds** vs 30+ minutes
+- Uses: `docker-compose.local.yml` + `Dockerfile.local`
+- Matches GitLab CI approach exactly
+
+**2. Full Production Build** (Use when testing Dockerfile changes)
+- Complete build inside Docker
+- Slower but exact replica of production build
+- Total: **20-30 minutes** on macOS
+- Uses: `docker-compose.yml` + `Dockerfile`
+
 ## Prerequisites
 
 - Docker Desktop installed and running
@@ -23,20 +39,26 @@ Local Docker testing allows you to:
 
 ## Quick Start
 
-### 1. Create Local Docker Configuration
+### Option A: Fast Local Build (Recommended)
+
+The fast approach builds on your native macOS (fast) and packages in Docker (fast):
 
 ```bash
-# Copy the example file
-cp .env.docker.example .env.docker
+# One command does everything:
+# 1. Builds app on host (~7s)
+# 2. Packages in Docker (~25s)
+# 3. Starts all services
+./scripts/dev/docker-local.sh
 
-# Generate a secure auth secret
-openssl rand -base64 32
-
-# Edit .env.docker and add your settings
-# At minimum, set BETTER_AUTH_SECRET to the generated value
+# Or use the helper script in detached mode
+./scripts/dev/docker-local.sh -d
 ```
 
-### 2. Build and Start Services
+**Total time: ~32 seconds** 🚀
+
+### Option B: Full Production Build
+
+Use this when you need to test Dockerfile changes:
 
 ```bash
 # Build and start all services (app, PostgreSQL, Redis)
@@ -46,17 +68,29 @@ docker compose up --build
 docker compose up --build -d
 ```
 
-### 3. Access the Application
+**Total time: ~20-30 minutes** (builds everything inside Docker)
 
+### Access the Application
+
+**Fast Local Build** (docker-compose.local.yml):
+- **Application**: http://localhost:3000
+- **Health Check**: http://localhost:3000/health
+- **PostgreSQL**: localhost:5433 (user: `techhub`, password: `techhub_local_password`, db: `techhub`)
+- **Redis**: localhost:6380
+
+**Full Production Build** (docker-compose.yml):
 - **Application**: http://localhost:3000
 - **Health Check**: http://localhost:3000/health
 - **PostgreSQL**: localhost:5432 (user: `techhub`, password: `techhub_local_password`, db: `techhub`)
 - **Redis**: localhost:6379
 
-### 4. View Logs
+### View Logs
 
 ```bash
-# Follow app logs
+# Fast build (docker-compose.local.yml)
+docker compose -f docker-compose.local.yml logs app -f
+
+# Full build (docker-compose.yml)
 docker compose logs app -f
 
 # View all logs
@@ -66,15 +100,69 @@ docker compose logs -f
 docker compose logs postgres -f
 ```
 
-### 5. Stop Services
+### Stop Services
 
 ```bash
-# Stop and remove containers (keeps data volumes)
+# Stop fast build
+docker compose -f docker-compose.local.yml down
+
+# Stop full build
 docker compose down
 
-# Stop and remove everything including volumes (fresh start)
-docker compose down -v
+# Remove everything including volumes (fresh start)
+docker compose -f docker-compose.local.yml down -v
 ```
+
+## How the Fast Build Works
+
+The fast local build approach matches exactly how GitLab CI works:
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Step 1: Build on Host (Native macOS - FAST)                 │
+├─────────────────────────────────────────────────────────────┤
+│ npm run build:fast                                          │
+│ ├── Next.js build (~7s with Turbopack)                     │
+│ ├── Generates .next/standalone/                             │
+│ ├── Generates .next/static/                                 │
+│ └── Uses native macOS filesystem (optimal performance)      │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│ Step 2: Package in Docker (FAST)                            │
+├─────────────────────────────────────────────────────────────┤
+│ Docker build with Dockerfile.local                          │
+│ ├── Copy pre-built artifacts (~25s)                        │
+│ ├── No npm install (standalone includes deps)              │
+│ ├── No Next.js build (already done)                        │
+│ └── Just packages and configures runtime                    │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│ Step 3: Run Containers                                       │
+├─────────────────────────────────────────────────────────────┤
+│ docker compose -f docker-compose.local.yml up               │
+│ ├── PostgreSQL on port 5433                                │
+│ ├── Redis on port 6380                                     │
+│ └── App on port 3000                                        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Files Used
+
+- **Dockerfile.local**: Lightweight Dockerfile that only packages pre-built artifacts
+- **docker-compose.local.yml**: Compose file with local-friendly ports (5433, 6380)
+- **.dockerignore.local**: Includes `.next/` directory (needed for packaging)
+- **scripts/dev/docker-local.sh**: Automated helper script
+
+### Why It's Fast
+
+1. **Native Build**: macOS filesystem is ~10x faster than Docker's virtualized filesystem
+2. **No Dependencies**: Standalone build includes all runtime dependencies
+3. **No Build Step**: Docker just copies files, doesn't compile anything
+4. **Optimized Context**: Only copies what's needed for runtime
 
 ## Configuration
 
@@ -220,16 +308,29 @@ docker compose logs postgres
 
 ### Issue: Port already in use
 
-**Cause**: Another process is using port 3000, 5432, or 6379.
+**Cause**: Another process is using Docker ports.
 
-**Solution**: Stop the conflicting service:
+**Solution**:
+
+For **Fast Build** (uses ports 5433, 6380, 3000):
 ```bash
-# If running native dev server
-# Stop it before starting Docker
+# Check what's using the ports
+lsof -i :5433  # PostgreSQL
+lsof -i :6380  # Redis
+lsof -i :3000  # App
 
-# Or modify docker-compose.yml ports:
-ports:
-  - "3001:3000"  # Use different host port
+# If your native PostgreSQL/Redis are running on 5432/6379,
+# fast build avoids conflicts by using 5433/6380
+```
+
+For **Full Build** (uses ports 5432, 6379, 3000):
+```bash
+# Stop native services first
+brew services stop postgresql@16
+brew services stop redis
+
+# Or use fast build instead (avoids conflicts)
+./scripts/dev/docker-local.sh
 ```
 
 ### Issue: Changes not reflected in container
@@ -285,18 +386,23 @@ Override in `.env.docker`:
 DATABASE_URL=postgresql://user:pass@host.docker.internal:5432/db
 ```
 
-## Comparison: Native vs Docker Development
+## Comparison: Development Approaches
 
-| Aspect | Native Dev | Local Docker |
-|--------|------------|--------------|
-| **Startup Time** | Fast (~5s) | Slow (~2-3min first build) |
-| **Hot Reload** | Yes (Turbopack) | No (requires rebuild) |
-| **Resource Usage** | Light | Heavy (multi-container) |
-| **Isolation** | Shared system | Fully isolated |
-| **Production Parity** | Medium | High (same as K8s) |
-| **Best For** | Daily development | Testing deployments |
+| Aspect | Native Dev | Docker Fast | Docker Full |
+|--------|------------|-------------|-------------|
+| **Startup Time** | ~5s | ~32s | ~20-30min |
+| **Hot Reload** | Yes (Turbopack) | No (rebuild) | No (rebuild) |
+| **Resource Usage** | Light | Medium | Heavy |
+| **Isolation** | Shared system | Fully isolated | Fully isolated |
+| **Production Parity** | Medium | High | Highest |
+| **Best For** | Daily dev | Docker testing | Dockerfile changes |
+| **Command** | `npm run dev` | `./scripts/dev/docker-local.sh` | `docker compose up` |
 
-**Recommendation**: Use native dev (`npm run dev`) for daily work, Docker for testing deployments before pushing to GitLab.
+**Recommendations**:
+- ✅ **Daily development**: Use native dev (`npm run dev`)
+- ✅ **Test Docker deployment**: Use fast build (`./scripts/dev/docker-local.sh`)
+- ✅ **Test Dockerfile changes**: Use full build (`docker compose up --build`)
+- ✅ **Before pushing to GitLab**: Run fast build to verify Docker packaging works
 
 ## CI/CD Integration
 

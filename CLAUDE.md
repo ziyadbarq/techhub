@@ -51,9 +51,10 @@ npx prisma studio     # Visual DB editor
 # See docs/guides/PRISMA_GUIDE.md for migrations, schema, and troubleshooting
 
 # Local Docker Testing
-docker compose up --build    # Test full Docker deployment locally
-docker compose down          # Stop containers
-docker compose logs app -f   # Follow app logs
+./scripts/dev/docker-local.sh           # Fast: Build on host + package in Docker (~32s)
+docker compose up --build               # Full: Complete production build in Docker (~20-30min)
+docker compose -f docker-compose.local.yml down  # Stop fast build containers
+docker compose logs app -f              # Follow app logs
 # See docs/deployment/LOCAL_DOCKER_TESTING.md for setup and troubleshooting
 
 # Admin Tools & Scripts
@@ -65,7 +66,7 @@ docker compose logs app -f   # Follow app logs
 **Platform**: GitLab CI (http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub)
 **Deployment**: GitOps via ArgoCD (OCI + GCP clouds)
 **Duration**: ~12-15 minutes (typical workflow with cache)
-**Local Testing**: Use `docker compose up --build` to test Docker deployments locally before pushing (see LOCAL_DOCKER_TESTING.md)
+**Local Testing**: Use `./scripts/dev/docker-local.sh` for fast Docker testing (~32s, matches CI approach) or `docker compose up --build` for full production build testing (see LOCAL_DOCKER_TESTING.md)
 
 ```bash
 # View pipeline status
