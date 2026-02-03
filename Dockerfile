@@ -10,10 +10,10 @@
 ARG BASE_REGISTRY=docker.io/library
 
 # ====================
-# Stage 1: Dependencies
+# Stage 1: Dependencies (Local Builds Only)
 # ====================
-# Note: This stage is kept for local builds (see docker-local.sh)
-# In CI, dependencies are built on the runner and artifacts are copied
+# This stage is ONLY used for local Docker builds (docker-local.sh)
+# CI builds skip this stage and copy pre-built artifacts from runner
 FROM ${BASE_REGISTRY}/node:22-alpine AS deps
 
 # Install minimal system dependencies
@@ -32,8 +32,9 @@ RUN npm ci --include=dev
 # ====================
 # Stage 2: Builder (Pre-built Artifacts)
 # ====================
-# This stage copies pre-built artifacts from the CI runner
-# Build happens on the runner (faster native filesystem) before Docker build
+# Copies all pre-built artifacts from CI runner
+# Runner performs: npm ci + db:generate + build:fast
+# This eliminates ~5-10 minutes of duplicate build work
 
 # Re-declare ARG to use in this stage (inherits value from global or --build-arg)
 ARG BASE_REGISTRY
@@ -41,21 +42,16 @@ FROM ${BASE_REGISTRY}/node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy pre-built artifacts from runner (included via temporary .dockerignore modification)
-# These artifacts are built on the runner for better performance:
-# - .next/ directory (Next.js build output)
-# - node_modules/.prisma (Prisma client binary)
-# - src/generated/prisma (Prisma client TypeScript)
+# Copy all pre-built artifacts from runner
+# (included in Docker context via temporary .dockerignore modification)
+COPY node_modules ./node_modules
 COPY .next ./.next
-COPY node_modules/.prisma ./node_modules/.prisma
 COPY src/generated/prisma ./src/generated/prisma
-
-# Copy source files needed at runtime
 COPY public ./public
 COPY package.json ./package.json
 
-# Note: No build steps needed - artifacts are pre-built on runner
-# This eliminates duplicate build and speeds up Docker image creation by ~5-10 minutes
+# Note: All artifacts are pre-built on runner (faster native filesystem)
+# CI builds bypass the deps stage entirely
 
 # ====================
 # Stage 3: Runner

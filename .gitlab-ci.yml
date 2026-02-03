@@ -332,15 +332,19 @@ build-gcp:
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
-    # Temporarily modify .dockerignore to include .next/ build artifacts
+    # Temporarily modify .dockerignore to include build artifacts
+    # Include: .next/, node_modules/, src/generated/
+    # Exclude: Large unnecessary files
     - mv .dockerignore .dockerignore.tmp
-    - echo "node_modules/" > .dockerignore
+    - echo ".git/" > .dockerignore
     - echo ".npm/" >> .dockerignore
-    - echo ".git/" >> .dockerignore
     - echo ".husky/" >> .dockerignore
     - echo "coverage/" >> .dockerignore
     - echo "docs/" >> .dockerignore
+    - echo "roadmap/" >> .dockerignore
     - echo "*.md" >> .dockerignore
+    - echo ".vscode/" >> .dockerignore
+    - echo ".idea/" >> .dockerignore
 
     # Build with Kaniko (using pre-built artifacts from runner)
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
@@ -511,15 +515,19 @@ build-and-push-gcp-to-argo:
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
-    # Temporarily modify .dockerignore to include .next/ build artifacts
+    # Temporarily modify .dockerignore to include build artifacts
+    # Include: .next/, node_modules/, src/generated/
+    # Exclude: Large unnecessary files
     - mv .dockerignore .dockerignore.tmp
-    - echo "node_modules/" > .dockerignore
+    - echo ".git/" > .dockerignore
     - echo ".npm/" >> .dockerignore
-    - echo ".git/" >> .dockerignore
     - echo ".husky/" >> .dockerignore
     - echo "coverage/" >> .dockerignore
     - echo "docs/" >> .dockerignore
+    - echo "roadmap/" >> .dockerignore
     - echo "*.md" >> .dockerignore
+    - echo ".vscode/" >> .dockerignore
+    - echo ".idea/" >> .dockerignore
 
     # Build and push with Kaniko (using pre-built artifacts from runner)
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
