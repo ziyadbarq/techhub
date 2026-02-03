@@ -175,8 +175,10 @@ Operational documentation and deployment resources:
 GitLab CI/CD pipeline with GitOps deployment to Kubernetes:
 
 - [GitLab CI Setup Guide](./deployment/GITLAB_CI_SETUP.md) - Complete GitOps setup with ArgoCD, Kaniko, and container registries
+- [GitLab CI Cache Setup](./deployment/GITLAB_CI_CACHE_SETUP.md) - Cache configuration for 2-3x build speedup with GCS backend
 - [Build Steps Reference](./deployment/BUILD_STEPS.md) - Detailed breakdown of pipeline stages, GitOps workflow, and image promotion
 - [Kubernetes Operations](./deployment/KUBERNETES_OPERATIONS.md) - Day-to-day K8s operations and kubectl commands
+- [Local Docker Testing](./deployment/LOCAL_DOCKER_TESTING.md) - Fast local Docker testing with build-on-host pattern
 
 ### Operations
 
