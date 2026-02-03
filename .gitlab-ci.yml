@@ -320,10 +320,11 @@ build-gcp:
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
 
-    # Install dependencies and build
+    # Install dependencies and build on runner (fast - native filesystem)
+    # Using build:fast since type-check already ran in validate stage
     - npm ci --prefer-offline --cache $NPM_CACHE_DIR
     - npm run db:generate
-    - npm run build
+    - npm run build:fast
 
     # Generate image tag
     - version=`jq -r '.version' package.json`
@@ -331,7 +332,17 @@ build-gcp:
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
-    # Build with Kaniko
+    # Temporarily modify .dockerignore to include .next/ build artifacts
+    - mv .dockerignore .dockerignore.tmp
+    - echo "node_modules/" > .dockerignore
+    - echo ".npm/" >> .dockerignore
+    - echo ".git/" >> .dockerignore
+    - echo ".husky/" >> .dockerignore
+    - echo "coverage/" >> .dockerignore
+    - echo "docs/" >> .dockerignore
+    - echo "*.md" >> .dockerignore
+
+    # Build with Kaniko (using pre-built artifacts from runner)
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
     - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - |
@@ -340,9 +351,13 @@ build-gcp:
         --cache-ttl=168h \
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
+        --build-arg ENCRYPTION_KEY="${ENCRYPTION_KEY}" \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
+
+    # Restore original .dockerignore
+    - mv .dockerignore.tmp .dockerignore
 
     - echo "${FULL_IMAGE_NAME}"
   after_script: *build_metrics_after_script
@@ -484,10 +499,11 @@ build-and-push-gcp-to-argo:
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
 
-    # Install dependencies and build
+    # Install dependencies and build on runner (fast - native filesystem)
+    # Using build:fast since type-check already ran in validate stage
     - npm ci --prefer-offline --cache $NPM_CACHE_DIR
     - npm run db:generate
-    - npm run build
+    - npm run build:fast
 
     # Generate image tag
     - version=`jq -r '.version' package.json`
@@ -495,7 +511,17 @@ build-and-push-gcp-to-argo:
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
-    # Build and push with Kaniko
+    # Temporarily modify .dockerignore to include .next/ build artifacts
+    - mv .dockerignore .dockerignore.tmp
+    - echo "node_modules/" > .dockerignore
+    - echo ".npm/" >> .dockerignore
+    - echo ".git/" >> .dockerignore
+    - echo ".husky/" >> .dockerignore
+    - echo "coverage/" >> .dockerignore
+    - echo "docs/" >> .dockerignore
+    - echo "*.md" >> .dockerignore
+
+    # Build and push with Kaniko (using pre-built artifacts from runner)
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
     - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - |
@@ -504,9 +530,13 @@ build-and-push-gcp-to-argo:
         --cache-ttl=168h \
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
+        --build-arg ENCRYPTION_KEY="${ENCRYPTION_KEY}" \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
+
+    # Restore original .dockerignore
+    - mv .dockerignore.tmp .dockerignore
 
     - echo "${FULL_IMAGE_NAME}"
 

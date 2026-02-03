@@ -12,9 +12,13 @@ ARG BASE_REGISTRY=docker.io/library
 # ====================
 # Stage 1: Dependencies
 # ====================
+# Note: This stage is kept for local builds (see docker-local.sh)
+# In CI, dependencies are built on the runner and artifacts are copied
 FROM ${BASE_REGISTRY}/node:22-alpine AS deps
 
-# Install system dependencies for node-gyp
+# Install minimal system dependencies
+# - libc6-compat: Required for Node.js compatibility on Alpine
+# - python3, make, g++: Required for native modules (sharp image processing)
 RUN apk add --no-cache libc6-compat python3 make g++
 
 WORKDIR /app
@@ -26,50 +30,38 @@ COPY package.json package-lock.json ./
 RUN npm ci --include=dev
 
 # ====================
-# Stage 2: Builder
+# Stage 2: Builder (Pre-built Artifacts)
 # ====================
-# Reuse BASE_REGISTRY from build args
-ARG BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq
-FROM ${BASE_REGISTRY}/node:22-alpine AS builder
+# This stage copies pre-built artifacts from the CI runner
+# Build happens on the runner (faster native filesystem) before Docker build
 
-# Install bash for build scripts (Alpine uses sh by default)
-RUN apk add --no-cache bash
+# Re-declare ARG to use in this stage (inherits value from global or --build-arg)
+ARG BASE_REGISTRY
+FROM ${BASE_REGISTRY}/node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
+# Copy pre-built artifacts from runner (included via temporary .dockerignore modification)
+# These artifacts are built on the runner for better performance:
+# - .next/ directory (Next.js build output)
+# - node_modules/.prisma (Prisma client binary)
+# - src/generated/prisma (Prisma client TypeScript)
+COPY .next ./.next
+COPY node_modules/.prisma ./node_modules/.prisma
+COPY src/generated/prisma ./src/generated/prisma
 
-# Copy application source
-COPY . .
+# Copy source files needed at runtime
+COPY public ./public
+COPY package.json ./package.json
 
-# Build arguments and environment setup
-ARG NODE_ENV=production
-ARG NEXT_PUBLIC_APP_VERSION
-ENV NODE_ENV=${NODE_ENV}
-ENV NEXT_PUBLIC_APP_VERSION=${NEXT_PUBLIC_APP_VERSION}
-
-# Mock DATABASE_URL for build (Prisma client initialization)
-# Actual DATABASE_URL will be provided at runtime via K8s secrets
-# MUST be set BEFORE running prisma generate
-ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
-ENV REDIS_URL="redis://localhost:6379"
-
-# Set CI environment for db:generate script
-ENV CI=true
-
-# Generate Prisma client and entry points (requires DATABASE_URL and CI to be set)
-# This runs prisma generate + recreates entry point files (index.ts, server.ts, types.ts)
-RUN npm run db:generate
-
-# Build Next.js application
-RUN npm run build:fast
+# Note: No build steps needed - artifacts are pre-built on runner
+# This eliminates duplicate build and speeds up Docker image creation by ~5-10 minutes
 
 # ====================
 # Stage 3: Runner
 # ====================
-# Reuse BASE_REGISTRY from build args
-ARG BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq
+# Re-declare ARG to use in this stage (inherits value from global or --build-arg)
+ARG BASE_REGISTRY
 FROM ${BASE_REGISTRY}/node:22-alpine AS runner
 
 # Install system dependencies
