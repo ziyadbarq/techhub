@@ -22,6 +22,9 @@ out/
 build/
 dist/
 
+# NOTE: node_modules/.prisma is INCLUDED during Docker build
+# It's needed for Prisma client functionality in the runner stage
+
 # ====================
 # Git and Version Control
 # ====================

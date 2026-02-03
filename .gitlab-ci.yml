@@ -78,29 +78,10 @@ variables:
   # Logging (OPTIONAL - defaults based on NODE_ENV)
   LOG_LEVEL: "info"
 
-  # DEV OCI VARIABLES
-  DEV_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  DEV_OCI_LAB_TAG: globalnodeoci
-  DEV_OCI_VALUES: values-dev.yaml
-  DEV_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
-
-  # TEST OCI VARIABLES
-  TEST_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  TEST_OCI_LAB_TAG: globalnodeoci
-  TEST_OCI_VALUES: values-test.yaml
-  TEST_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
-
-  # UAT OCI VARIABLES
-  UAT_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  UAT_OCI_LAB_TAG: globalnodeoci
-  UAT_OCI_VALUES: values-uat.yaml
-  UAT_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
-
-  # PERF OCI VARIABLES (if needed)
-  PERF_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  PERF_OCI_LAB_TAG: globalnodeoci
-  PERF_OCI_VALUES: values-perf.yaml
-  PERF_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
+  # ⚠️ OCI VARIABLES DEPRECATED - Migrated to GCP, kept for reference only
+  # DEV_OCI_VARIABLES (DEPRECATED)
+  # DEV_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
+  # TEST_OCI, UAT_OCI, PERF_OCI configurations removed
 
   # DEV GCP VARIABLES
   DEV_CNTNR_GCP_REG_IMG_PREFIX: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo"
@@ -285,7 +266,7 @@ build-oci:
 # ====================
 
 build-gcp:
-  timeout: 30m  # Increased from 20m to accommodate cold builds
+  timeout: 30m # Increased from 20m to accommodate cold builds
   image: $DEV_GCP_IMAGE
   stage: build_only
   variables:
@@ -333,8 +314,9 @@ build-gcp:
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
     # Temporarily modify .dockerignore to include build artifacts
-    # Include: .next/, node_modules/, src/generated/
-    # Exclude: Large unnecessary files
+    # Include: .next/, node_modules/ (with .prisma), src/generated/
+    # Exclude: Large unnecessary files (logs, tests, docs, etc)
+    # CRITICAL: Do NOT exclude node_modules/.prisma - needed by Prisma client in runner stage
     - mv .dockerignore .dockerignore.tmp
     - echo ".git/" > .dockerignore
     - echo ".npm/" >> .dockerignore
@@ -470,7 +452,7 @@ build-and-push-oci-to-argo:
 # ====================
 
 build-and-push-gcp-to-argo:
-  timeout: 30m  # Increased from 20m to accommodate cold builds
+  timeout: 30m # Increased from 20m to accommodate cold builds
   image: $DEV_GCP_IMAGE
   stage: build_and_deploy
   variables:
