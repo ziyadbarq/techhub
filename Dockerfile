@@ -1,74 +1,42 @@
 # Multi-stage Dockerfile for TechHub (Next.js 16)
-# Optimized for production deployment on Kubernetes
+# Optimized for CI builds with pre-built artifacts
+# Runner performs: npm ci + db:generate + build:fast before Docker build
 
 # ====================
 # Build Arguments
 # ====================
-# BASE_REGISTRY: Container registry hosting the Node.js base image
-# Defaults to Docker Hub for local testing
-# GitLab CI overrides this with jed.ocir.io/axbp9ow0rohq for production builds
-ARG BASE_REGISTRY=docker.io/library
+ARG BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo
 
 # ====================
-# Stage 1: Dependencies (Local Builds Only)
+# Stage 1: Builder (Pre-built Artifacts from CI Runner)
 # ====================
-# This stage is ONLY used for local Docker builds (docker-local.sh)
-# CI builds skip this stage and copy pre-built artifacts from runner
-FROM ${BASE_REGISTRY}/node:22-alpine AS deps
-
-# Install minimal system dependencies
-# - libc6-compat: Required for Node.js compatibility on Alpine
-# - python3, make, g++: Required for native modules (sharp image processing)
-# NOTE: Use http mirrors to avoid local TLS MITM issues when fetching APKINDEX
-RUN sed -i 's/https/http/g' /etc/apk/repositories && \
-    apk add --no-cache libc6-compat python3 make g++
-
-WORKDIR /app
-
-# Copy package files
-COPY package.json package-lock.json ./
-
-# Install dependencies (production + dev for build)
-RUN npm ci --include=dev
-
-# ====================
-# Stage 2: Builder (Pre-built Artifacts)
-# ====================
-# Copies all pre-built artifacts from CI runner
-# Runner performs: npm ci + db:generate + build:fast
-# This eliminates ~5-10 minutes of duplicate build work
-
-# Re-declare ARG to use in this stage (inherits value from global or --build-arg)
-ARG BASE_REGISTRY
+# All artifacts are built on runner (faster native filesystem)
+# This stage just packages them into the image
 FROM ${BASE_REGISTRY}/node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy all pre-built artifacts from runner
-# (included in Docker context via temporary .dockerignore modification)
-COPY node_modules ./node_modules
+# Copy pre-built Next.js output (includes standalone server + dependencies)
 COPY .next ./.next
+
+# Copy Prisma artifacts (binaries + TypeScript types)
+COPY node_modules/.prisma ./node_modules/.prisma
 COPY src/generated/prisma ./src/generated/prisma
+
+# Copy static assets
 COPY public ./public
 COPY package.json ./package.json
 
-# Note: All artifacts are pre-built on runner (faster native filesystem)
-# CI builds bypass the deps stage entirely
-
 # ====================
-# Stage 3: Runner
+# Stage 2: Runtime
 # ====================
-# Re-declare ARG to use in this stage (inherits value from global or --build-arg)
 ARG BASE_REGISTRY
 FROM ${BASE_REGISTRY}/node:22-alpine AS runner
 
 # Install system dependencies
-# NOTE: Use http mirrors to avoid local TLS MITM issues when fetching APKINDEX
+# NOTE: Use http mirrors to avoid local TLS MITM issues
 RUN sed -i 's/https/http/g' /etc/apk/repositories && \
-    apk add --no-cache \
-    libc6-compat \
-    curl \
-    postgresql-client
+    apk add --no-cache libc6-compat curl postgresql-client
 
 WORKDIR /app
 
@@ -79,14 +47,16 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Set environment to production
 ENV NODE_ENV=production
 
-# Copy necessary files from builder
-COPY --from=builder /app/public ./public
+# Copy Next.js standalone server and static files
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
+# Copy Prisma client (both generated types and binaries)
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
 
-# Copy package.json for runtime dependencies check
+# Copy package.json
 COPY --from=builder /app/package.json ./package.json
 
 # Create directories for logs and uploads

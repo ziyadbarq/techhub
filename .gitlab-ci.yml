@@ -88,12 +88,7 @@ variables:
   # Logging (OPTIONAL - defaults based on NODE_ENV)
   LOG_LEVEL: "info"
 
-  # ⚠️ OCI VARIABLES DEPRECATED - Migrated to GCP, kept for reference only
-  # DEV_OCI_VARIABLES (DEPRECATED)
-  # DEV_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  # TEST_OCI, UAT_OCI, PERF_OCI configurations removed
-
-  # DEV GCP VARIABLES
+  # GCP Variables
   DEV_CNTNR_GCP_REG_IMG_PREFIX: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo"
   DEV_GCP_LAB_TAG: globalnodegcp
   DEV_GCP_VALUES: values-gcpdev.yaml
@@ -208,71 +203,7 @@ validate:
     expire_in: 30 days
 
 # ====================
-# Stage 2: Build Only (OCI)
-# ====================
-
-build-oci:
-  timeout: 20m
-  image: $DEV_OCI_IMAGE
-  stage: build_only
-  variables:
-    DOCKER_CONFIG: "/kaniko/.docker"
-    BUILD_METRICS_LABEL: "OCI"
-    BUILD_METRICS_FILE: "build-size-oci.txt"
-  cache:
-    # Reuse cache from validate stage for faster builds
-    <<: *build_cache
-  rules:
-    # DISABLED: OCI deployment disabled, using GCP only
-    - when: never
-  tags:
-    - $DEV_OCI_LAB_TAG
-  environment:
-    name: $DEV_ENV
-  before_script:
-    - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
-  script:
-    # Clone deployment-configs for Dockerfile
-    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-    - cp /.npmrc .
-
-    # Install dependencies and build
-    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
-    - npm run db:generate
-    - npm run build
-
-    # Generate image tag
-    - version=`jq -r '.version' package.json`
-    - commit_id=`git rev-parse --short=6 HEAD`
-    - mkdir -p package
-    - cp -r /package/. package/ || echo "No shared packages to copy"
-
-    # Build with Kaniko
-    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
-    - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
-    - |
-      /kaniko/executor \
-        --cache=true \
-        --cache-ttl=168h \
-        --snapshot-mode=redo \
-        --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
-        --context $CI_PROJECT_DIR \
-        --dockerfile Dockerfile \
-        --destination ${FULL_IMAGE_NAME}
-
-    - echo "${FULL_IMAGE_NAME}"
-  after_script: *build_metrics_after_script
-  artifacts:
-    paths:
-      - build-size-oci.txt
-    expire_in: 7 days
-  needs:
-    - job: validate
-      artifacts: false
-      optional: true
-
-# ====================
-# Stage 2: Build Only (GCP)
+# Stage 2: Build Only
 # ====================
 
 build-gcp:
@@ -367,98 +298,7 @@ build-gcp:
       optional: true
 
 # ====================
-# Stage 3: Build and Deploy to ArgoCD (OCI)
-# ====================
-
-build-and-push-oci-to-argo:
-  timeout: 20m
-  image: $DEV_OCI_IMAGE
-  stage: build_and_deploy
-  variables:
-    DOCKER_CONFIG: "/kaniko/.docker"
-  cache:
-    # Reuse cache from validate stage for faster builds
-    <<: *build_cache
-  rules:
-    # DISABLED: OCI deployment disabled, using GCP only
-    - when: never
-  tags:
-    - $DEV_OCI_LAB_TAG
-  environment:
-    name: $DEV_ENV
-  before_script:
-    - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
-  script:
-    # Clone deployment-configs for Dockerfile
-    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-    - cp /.npmrc .
-
-    # Install dependencies and build
-    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
-    - npm run db:generate
-    - npm run build
-
-    # Generate image tag
-    - version=`jq -r '.version' package.json`
-    - commit_id=`git rev-parse --short=6 HEAD`
-    - mkdir -p package
-    - cp -r /package/. package/ || echo "No shared packages to copy"
-
-    # Build and push with Kaniko
-    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
-    - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
-    - |
-      /kaniko/executor \
-        --cache=true \
-        --cache-ttl=168h \
-        --snapshot-mode=redo \
-        --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
-        --context $CI_PROJECT_DIR \
-        --dockerfile Dockerfile \
-        --destination ${FULL_IMAGE_NAME}
-
-    - echo "${FULL_IMAGE_NAME}"
-
-    # Update ArgoCD values.yaml (GitOps)
-    - export IMAGE_NAME="${FULL_IMAGE_NAME}"
-    - export NPM_MIGRATION="${npm_migration}"
-    - ORIGINAL_DIR=$(pwd)
-    - cd deployment-configs && git checkout main
-    - git config pull.rebase false
-    - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-
-    # Update image name and migration flag in values.yaml
-    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_OCI_VALUES}
-    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_OCI_VALUES}
-    - cat manifests/${PROJECT}/${DEV_OCI_VALUES}
-
-    # Commit and push to trigger ArgoCD sync
-    - git config --global user.email "sdev@barq.com"
-    - git config --global user.name ${GITLAB_UN}
-    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git"
-    - git add manifests/${PROJECT}/${DEV_OCI_VALUES}
-    - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
-    - git push origin -o ci.skip HEAD:main
-
-    - echo "---->>> SUCCESSFULLY PUSHED TO DEV (OCI) <<<----"
-    - cd $ORIGINAL_DIR
-
-    # Export image for promotion jobs
-    - echo "FULL_IMAGE_NAME=${FULL_IMAGE_NAME}" > build_info.env
-    - echo "IMAGE_FOR_UAT=${FULL_IMAGE_NAME}" >> build_info.env
-  artifacts:
-    reports:
-      dotenv: build_info.env
-    paths:
-      - build_info.env
-    expire_in: 1 week
-  needs:
-    - job: validate
-      artifacts: false
-      optional: true
-
-# ====================
-# Stage 3: Build and Deploy to ArgoCD (GCP)
+# Stage 3: Build and Deploy to ArgoCD
 # ====================
 
 build-and-push-gcp-to-argo:
@@ -623,63 +463,11 @@ build-and-push-gcp-to-argo:
     - echo "---->>> SUCCESSFULLY PROMOTED TO ${TARGET_ENV} <<<----"
     - echo "Image ${IMAGE_NAME} has been promoted"
 
-# OCI Promotions (DISABLED - using GCP only)
-promote-to-uat-oci:
-  <<: *promote_to_base
-  image: $UAT_OCI_IMAGE
-  tags:
-    - $UAT_OCI_LAB_TAG
-  environment:
-    name: uat
-  variables:
-    VALUES_FILE: $UAT_OCI_VALUES
-    TARGET_ENV: "UAT (OCI)"
-  rules:
-    - when: never
-  dependencies:
-    - build-and-push-oci-to-argo
-  needs:
-    - job: build-and-push-oci-to-argo
-      artifacts: true
+# ====================
+# Stage 4: Image Promotion to UAT
+# ====================
 
-promote-to-test-oci:
-  <<: *promote_to_base
-  image: $TEST_OCI_IMAGE
-  tags:
-    - $TEST_OCI_LAB_TAG
-  environment:
-    name: test
-  variables:
-    VALUES_FILE: $TEST_OCI_VALUES
-    TARGET_ENV: "TEST (OCI)"
-  rules:
-    - when: never
-  dependencies:
-    - build-and-push-oci-to-argo
-  needs:
-    - job: build-and-push-oci-to-argo
-      artifacts: true
-
-promote-to-perf-oci:
-  <<: *promote_to_base
-  image: $PERF_OCI_IMAGE
-  tags:
-    - $PERF_OCI_LAB_TAG
-  environment:
-    name: perf
-  variables:
-    VALUES_FILE: $PERF_OCI_VALUES
-    TARGET_ENV: "PERF (OCI)"
-  rules:
-    - when: never
-  dependencies:
-    - build-and-push-oci-to-argo
-  needs:
-    - job: build-and-push-oci-to-argo
-      artifacts: true
-
-# GCP Promotions
-promote-to-uat-gcp:
+promote-to-uat:
   <<: *promote_to_base
   image: $UAT_GCP_IMAGE
   tags:
@@ -688,9 +476,9 @@ promote-to-uat-gcp:
     name: uat
   variables:
     VALUES_FILE: $UAT_GCP_VALUES
-    TARGET_ENV: "UAT (GCP)"
+    TARGET_ENV: "UAT"
   rules:
-    - if: '$CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
+    - if: '$CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
       when: manual
     - when: never
   dependencies:
