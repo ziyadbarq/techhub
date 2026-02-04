@@ -1,29 +1,22 @@
-# ====================
-# Docker Build Context Exclusions
-# ====================
-# This file reduces the Docker build context from ~2GB to ~200MB
-# by excluding files not needed during the container build process.
-#
-# Impact: Kaniko COPY operations go from ~8 minutes to ~1 minute
+# Dockerignore for Local Testing with Pre-Built Artifacts (Dockerfile.local)
+# This is used when building with pre-built artifacts from host
+# We need to include .next/ but exclude everything else
 
 # ====================
-# Dependencies (rebuilt in container)
+# Dependencies (not needed - standalone includes runtime deps)
 # ====================
 node_modules/
 .npm/
 .pnpm-store/
 
 # ====================
-# Build Artifacts (rebuilt in container)
+# Build Artifacts (KEEP .next for local builds)
 # ====================
-.next/
+# .next/  # COMMENTED OUT - we need this!
 out/
 .turbo/
 build/
 dist/
-
-# NOTE: node_modules/.prisma is INCLUDED during Docker build
-# It's needed for Prisma client functionality in the runner stage
 
 # ====================
 # Git and Version Control
@@ -42,7 +35,7 @@ deployment-configs/
 ecosystem.config.cjs
 
 # ====================
-# Documentation (not needed at runtime)
+# Documentation
 # ====================
 docs/
 roadmap/
@@ -92,19 +85,20 @@ Thumbs.db
 # ====================
 .env
 .env.local
+.env.docker
+.env.production
 .env.development
 .env.test
 .env*.local
 
 # ====================
-# Scripts (exclude dev/admin/ci/deploy scripts, keep build + db/generate scripts needed for Docker build)
+# Scripts (keep minimal - KEEP scripts/db for migrations)
 # ====================
 scripts/dev/
 scripts/admin/
 scripts/ci/
-scripts/db/*
-!scripts/db/generate.sh
 scripts/deploy/
+!scripts/db/
 
 # ====================
 # Temporary and Cache Files
@@ -126,3 +120,13 @@ metrics-*.txt
 # Plan Files
 # ====================
 .claude/
+
+# ====================
+# Docker Files (not needed inside container)
+# ====================
+Dockerfile
+Dockerfile.local
+docker-compose.yml
+docker-compose.local.yml
+.dockerignore
+.dockerignore.local

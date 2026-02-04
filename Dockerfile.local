@@ -12,7 +12,9 @@ ARG BASE_REGISTRY=docker.io/library
 FROM ${BASE_REGISTRY}/node:22-alpine AS runner
 
 # Install minimal system dependencies and Prisma CLI for migrations
-RUN apk add --no-cache libc6-compat && \
+# NOTE: Use http mirrors to avoid local TLS MITM issues when fetching APKINDEX
+RUN sed -i 's/https/http/g' /etc/apk/repositories && \
+    apk add --no-cache libc6-compat && \
     npm install -g prisma@7.3.0 tsx@4.19.2 dotenv@16.4.7
 
 WORKDIR /app

@@ -53,6 +53,16 @@ variables:
 
   # Cache configuration
   NPM_CACHE_DIR: "$CI_PROJECT_DIR/.npm"
+  # NPM network resiliency (mitigates transient ECONNRESET issues)
+  NPM_CONFIG_FETCH_RETRIES: "5"
+  NPM_CONFIG_FETCH_RETRY_FACTOR: "2"
+  NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
+  NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "120000"
+  NPM_CONFIG_NETWORK_TIMEOUT: "600000"
+  NPM_CONFIG_AUDIT: "false"
+  NPM_CONFIG_FUND: "false"
+  NPM_CONFIG_PROGRESS: "false"
+  NPM_CONFIG_LOGLEVEL: "warn"
 
   # ============================================================================
   # Environment Configuration (hardcoded for container deployment)

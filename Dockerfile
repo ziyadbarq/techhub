@@ -19,7 +19,9 @@ FROM ${BASE_REGISTRY}/node:22-alpine AS deps
 # Install minimal system dependencies
 # - libc6-compat: Required for Node.js compatibility on Alpine
 # - python3, make, g++: Required for native modules (sharp image processing)
-RUN apk add --no-cache libc6-compat python3 make g++
+# NOTE: Use http mirrors to avoid local TLS MITM issues when fetching APKINDEX
+RUN sed -i 's/https/http/g' /etc/apk/repositories && \
+    apk add --no-cache libc6-compat python3 make g++
 
 WORKDIR /app
 
@@ -61,7 +63,9 @@ ARG BASE_REGISTRY
 FROM ${BASE_REGISTRY}/node:22-alpine AS runner
 
 # Install system dependencies
-RUN apk add --no-cache \
+# NOTE: Use http mirrors to avoid local TLS MITM issues when fetching APKINDEX
+RUN sed -i 's/https/http/g' /etc/apk/repositories && \
+    apk add --no-cache \
     libc6-compat \
     curl \
     postgresql-client
