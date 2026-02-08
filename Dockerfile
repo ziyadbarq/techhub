@@ -1,6 +1,9 @@
 # Multi-stage Dockerfile for TechHub (Next.js 16)
 # Optimized for CI builds with pre-built artifacts
 # Runner performs: npm ci + db:generate + build:fast before Docker build
+#
+# Prisma note: engineType = "client" uses WASM engine (no native binaries).
+# All Prisma files live in src/generated/prisma — copied explicitly below.
 
 # ====================
 # Build Arguments
@@ -16,11 +19,10 @@ FROM ${BASE_REGISTRY}/node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy pre-built Next.js output (includes standalone server + dependencies)
+# Copy pre-built Next.js output
 COPY .next ./.next
 
-# Copy Prisma artifacts (binaries + TypeScript types)
-COPY node_modules/.prisma ./node_modules/.prisma
+# Copy Prisma TypeScript types (not included in standalone)
 COPY src/generated/prisma ./src/generated/prisma
 
 # Copy static assets
@@ -52,8 +54,7 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# Copy Prisma client (both generated types and binaries)
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+# Prisma WASM client (engineType = "client") — not traced into standalone, explicit copy required
 COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
 
 # Copy package.json

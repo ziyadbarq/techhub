@@ -255,9 +255,8 @@ build-gcp:
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
     # Temporarily modify .dockerignore to include build artifacts
-    # Include: .next/, node_modules/ (with .prisma), src/generated/
+    # Include: .next/, src/generated/
     # Exclude: Large unnecessary files (logs, tests, docs, etc)
-    # CRITICAL: Do NOT exclude node_modules/.prisma - needed by Prisma client in runner stage
     - mv .dockerignore .dockerignore.tmp
     - echo ".git/" > .dockerignore
     - echo ".npm/" >> .dockerignore
@@ -348,7 +347,7 @@ build-and-push-gcp-to-argo:
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
     # Temporarily modify .dockerignore to include build artifacts
-    # Include: .next/, node_modules/, src/generated/
+    # Include: .next/, src/generated/
     # Exclude: Large unnecessary files
     - mv .dockerignore .dockerignore.tmp
     - echo ".git/" > .dockerignore
