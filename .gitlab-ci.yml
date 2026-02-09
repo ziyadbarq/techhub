@@ -1,26 +1,3 @@
-# GitLab CI/CD Pipeline for TechHub
-# Next.js 16 + Prisma 7 + PostgreSQL + Redis
-# Kubernetes deployment via GitOps (ArgoCD) on OCI + GCP clouds
-#
-# ====================
-# AUTOMATED WORKFLOW
-# ====================
-#
-# Branch-based automation:
-#   • dev branch  → build_only (validates + builds Docker image, NO deployment)
-#   • main branch → build_and_deploy (validates + builds + deploys to production)
-#
-# Manual triggers (GitLab UI):
-#   • Still available for custom builds/deployments
-#   • Select cloud (OCI/GCP) and operation type (build_only/build_and_deploy)
-#
-# Performance optimizations:
-#   • Intelligent caching based on package-lock.json
-#   • node_modules, .npm, and .next/cache shared across jobs
-#   • Typical speedup: 2-3x faster builds after first run
-#
-# ====================
-
 variables:
   type:
     description: "Select your desired operation"
