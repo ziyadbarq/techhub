@@ -473,26 +473,13 @@ build-and-push-oci-to-argo:
 
 build-and-push-gcp-to-argo:
   timeout: 20m
-  image: $DEV_GCP_IMAGE
+  image: $DEV_GCP_IMAGE #google/cloud-sdk:slim
   stage: build_and_deploy
   variables:
     DOCKER_CONFIG: "/kaniko/.docker"
-  cache:
-    # Reuse cache from validate stage for faster builds
-    key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .next/cache/
-    policy: pull
   rules:
-    # Automatic: main branch → build_and_deploy (GCP)
-    - if: '$CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-      when: always
-    # Manual: Web UI with build_and_deploy selected
-    - if: '$CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy" && $type != "build_only"'
+    - if: '$CLOUD =="gcp" && $CI_PIPELINE_SOURCE == "web" && $type =="build_and_deploy" && $type !="build_only"'
+    - if: '$CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE != "web"'
       when: always
     - when: never
   tags:
@@ -500,74 +487,59 @@ build-and-push-gcp-to-argo:
   environment:
     name: $DEV_ENV
   before_script:
+    # Increase inotify watchers to avoid ENOSPC
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
     - echo fs.inotify.max_user_instances=512 | tee -a /etc/sysctl.conf
     - sysctl -p
   script:
-    # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+    - cp deployment-configs/dockerfiles/nodejs-gcp-Dockerfile-optimize .
+    - cp deployment-configs/dockerfiles/nodejs-entrypoint.sh .
     - cp /.npmrc .
 
-    # Install dependencies and build
+     # Install dependencies and build
     - npm ci --prefer-offline --cache $NPM_CACHE_DIR
     - npm run db:generate
     - npm run build
 
-    # Generate image tag
+
     - version=`jq -r '.version' package.json`
     - commit_id=`git rev-parse --short=6 HEAD`
-    - mkdir -p package
-    - cp -r /package/. package/ || echo "No shared packages to copy"
-
-    # Build and push with Kaniko
+    - mkdir package
+    - cp -r /package/. package/
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
-    - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - |
       /kaniko/executor \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
-
-    - echo "${FULL_IMAGE_NAME}"
-
-    # Update ArgoCD values.yaml (GitOps)
+    
+    - echo "deploy image with job-id ${CI_JOB_ID}" 
     - export IMAGE_NAME="${FULL_IMAGE_NAME}"
     - export NPM_MIGRATION="${npm_migration}"
     - ORIGINAL_DIR=$(pwd)
-    - cd deployment-configs && git checkout main
-    - git config pull.rebase false
-    - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-
-    # Update image name and migration flag in values.yaml
-    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - cat manifests/${PROJECT}/${DEV_GCP_VALUES}
-
-    # Commit and push to trigger ArgoCD sync
+    - echo "$ORIGINAL_DIR"
+    - git clone --depth 1 http://${GITLAB_UN_VAL}:${GITLAB_TOKEN_VAL}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd.git
+    - cd values-yaml-npd
+    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" ${PROJECT}/${DEV_GCP_VALUES}
+    - cat ${PROJECT}/${DEV_GCP_VALUES}
     - git config --global user.email "sdev@barq.com"
     - git config --global user.name ${GITLAB_UN}
-    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git"
-    - git add manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
+    - git remote set-url origin "http://${GITLAB_UN_VAL}:${GITLAB_TOKEN_VAL}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd.git" && git remote -v
+    - git add ${PROJECT}/${DEV_GCP_VALUES}    
+    - git commit -m "Update image tag for ${PROJECT}"
     - git push origin -o ci.skip HEAD:main
-
-    - echo "---->>> SUCCESSFULLY PUSHED TO DEV (GCP) <<<----"
+    - echo "---->>>SUCCESSFULLY PUSHED TO DEV<<<<<-------"
     - cd $ORIGINAL_DIR
-
-    # Export image for promotion jobs
     - echo "FULL_IMAGE_NAME=${FULL_IMAGE_NAME}" > build_info.env
     - echo "IMAGE_FOR_UAT=${FULL_IMAGE_NAME}" >> build_info.env
+    - echo "Image exported:${FULL_IMAGE_NAME}"
   artifacts:
     reports:
       dotenv: build_info.env
     paths:
       - build_info.env
-    expire_in: 1 week
-  dependencies:
-    - validate
-  needs:
-    - job: validate
-      artifacts: false
+    expire_in: 1 week  
 
 # ====================
 # Stage 4: Image Promotion (Template)
