@@ -68,6 +68,7 @@ RUN mkdir -p local/logs local/uploads && \
 USER nextjs
 
 # Expose port
+ENV HOST=0.0.0.0
 EXPOSE 3000
 
 # Health check
