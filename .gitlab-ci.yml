@@ -91,6 +91,9 @@ variables:
   # GCP Variables
   DEV_CNTNR_GCP_REG_IMG_PREFIX: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo"
   DEV_GCP_LAB_TAG: globalnodegcp
+  DEV_OCI_LAB_TAG: globalnodeoci
+  DEV_CNTNR_OCI_REG_IMG_PREFIX: jed.ocir.io/axbp9ow0rohq
+  DEV_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
   DEV_GCP_VALUES: values-gcpdev.yaml
   DEV_GCP_IMAGE: me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/gitlab-runner-node-22-alpine:latest
 
@@ -277,6 +280,97 @@ build-gcp:
         --cache-ttl=168h \
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
+        --build-arg ENCRYPTION_KEY="${ENCRYPTION_KEY}" \
+        --context $CI_PROJECT_DIR \
+        --dockerfile Dockerfile \
+        --destination ${FULL_IMAGE_NAME}
+
+    # Restore original .dockerignore
+    - mv .dockerignore.tmp .dockerignore
+
+    - echo "${FULL_IMAGE_NAME}"
+  after_script: *build_metrics_after_script
+  artifacts:
+    paths:
+      - build-size-gcp.txt
+    expire_in: 7 days
+  needs:
+    - job: validate
+      artifacts: false
+      optional: true
+
+
+build-oci:
+  timeout: 30m # Increased from 20m to accommodate cold builds
+  image: $DEV_OCI_IMAGE
+  stage: build_only
+  variables:
+    DOCKER_CONFIG: "/kaniko/.docker"
+    BUILD_METRICS_LABEL: "OCI"
+    BUILD_METRICS_FILE: "build-size-gcp.txt"
+  cache:
+    # Reuse cache from validate stage for faster builds
+    <<: *build_cache
+  rules:
+    # Automatic: dev branch → build_only (GCP)
+    - if: '$CI_COMMIT_BRANCH == $DEV_BRANCH && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    # Manual: Web UI with build_only selected
+    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_only"'
+      when: always
+    - when: never
+  tags:
+    - $DEV_OCI_LAB_TAG
+  environment:
+    name: $DEV_ENV
+  before_script:
+    # Set inotify file watch limit for Next.js/Turbopack
+    # Note: max_user_instances defaults to 128 which is sufficient for Turbopack parallelism
+    # Removed: max_user_instances=512 (was limiting parallelism)
+    # Removed: sysctl -p (auto-applied in containers, adds 9s overhead)
+    - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
+    # Ensure ENCRYPTION_KEY is always set (hardcoded fallback to guarantee builds succeed)
+    - export ENCRYPTION_KEY="${ENCRYPTION_KEY:-0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc}"
+  script:
+    # Clone deployment-configs for Dockerfile
+    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+    - cp /.npmrc .
+
+    # Install dependencies and build on runner (fast - native filesystem)
+    # Using build:fast since type-check already ran in validate stage
+    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
+    - npm run db:generate
+    - npm run build:fast
+
+    # Generate image tag
+    - version=`jq -r '.version' package.json`
+    - commit_id=`git rev-parse --short=6 HEAD`
+    - mkdir -p package
+    - cp -r /package/. package/ || echo "No shared packages to copy"
+
+    # Temporarily modify .dockerignore to include build artifacts
+    # Include: .next/, src/generated/
+    # Exclude: Large unnecessary files (logs, tests, docs, etc)
+    - mv .dockerignore .dockerignore.tmp
+    - echo ".git/" > .dockerignore
+    - echo ".npm/" >> .dockerignore
+    - echo ".husky/" >> .dockerignore
+    - echo "coverage/" >> .dockerignore
+    - echo "docs/" >> .dockerignore
+    - echo "roadmap/" >> .dockerignore
+    - echo "*.md" >> .dockerignore
+    - echo ".vscode/" >> .dockerignore
+    - echo ".idea/" >> .dockerignore
+
+    # Build with Kaniko (using pre-built artifacts from runner)
+    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
+    - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+    - |
+      /kaniko/executor \
+        --cache=true \
+        --cache-ttl=168h \
+        --snapshot-mode=redo \
+        --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
         --build-arg ENCRYPTION_KEY="${ENCRYPTION_KEY}" \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
