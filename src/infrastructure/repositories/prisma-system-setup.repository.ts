@@ -204,6 +204,39 @@ export class PrismaSystemSetupRepository implements ISystemSetupRepository {
     return count;
   }
 
+  async getSeedStatus(): Promise<{
+    organizationUnits: number;
+    locations: number;
+    vendors: number;
+    featureFlags: number;
+    services: number;
+  }> {
+    const timer = this.logger.startTimer();
+    const safeCount = (p: Promise<number>) => p.then((n) => n).catch(() => 0);
+    const [organizationUnits, locations, vendors, featureFlags, services] =
+      await Promise.all([
+        safeCount(this.prisma.organizationUnit.count()),
+        safeCount(this.prisma.location.count()),
+        safeCount(this.prisma.vendor.count()),
+        safeCount(this.prisma.featureFlag.count()),
+        safeCount(this.prisma.service.count()),
+      ]);
+    this.logger.timed("getSeedStatus", "Seed status counts fetched", timer(), {
+      organizationUnits,
+      locations,
+      vendors,
+      featureFlags,
+      services,
+    });
+    return {
+      organizationUnits,
+      locations,
+      vendors,
+      featureFlags,
+      services,
+    };
+  }
+
   async getDatabaseSize(): Promise<number | null> {
     const timer = this.logger.startTimer();
     try {

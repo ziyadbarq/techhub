@@ -6,7 +6,7 @@ Complete reference for all build steps executed in the GitLab CI/CD pipeline fol
 
 **Repository**: http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub
 **Pipeline Duration**: ~15-20 minutes (with cache) | ~25-30 minutes (cold start)
-**Target Platforms**: OCI Cloud (main branch) | GCP Cloud (develop branch)
+**Target Platforms**: OCI Cloud (main branch) | GCP Cloud (dev branch)
 **Deployment Method**: GitOps via ArgoCD (CI updates values.yaml, ArgoCD deploys)
 
 ## Pipeline Stages
@@ -16,7 +16,7 @@ Complete reference for all build steps executed in the GitLab CI/CD pipeline fol
 **Purpose**: Validate code quality through type-checking, linting, and unit tests
 
 **Job**: `validate`
-**Runs on**: All commits to `main` and `develop` branches, web triggers
+**Runs on**: All commits to `main` and `dev` branches, web triggers
 **Runner**: `ocinode18` (OCI runner)
 **Image**: `gitlab-runner-node-18-alpine`
 
@@ -193,7 +193,7 @@ git push origin -o ci.skip HEAD:main
 
 **Job**: `build-and-push-gcp-to-argo`
 **Trigger**:
-- Automatic: Push to `develop` branch
+- Automatic: Push to `dev` branch
 - Manual: Web trigger with `type=build_and_deploy` and `CLOUD=gcp`
 
 **Process**: Same GitOps workflow as OCI but with GCP-specific configuration:
@@ -302,7 +302,7 @@ git push origin -o ci.skip HEAD:main
 **Project Configuration**:
 - `PROJECT`: `techhub`
 - `AUTOMATIC_TRIGGER_BRANCH`: `main`
-- `DEV_BRANCH`: `develop`
+- `DEV_BRANCH`: `dev`
 
 **OCI Configuration**:
 - `DEV_CNTNR_OCI_REG_IMG_PREFIX`: `jed.ocir.io/axbp9ow0rohq`
@@ -379,7 +379,7 @@ Managed in backend-configs repository:
               │  ├─ Update values-dev.yaml
               │  └─ ArgoCD syncs to K8s
               │
-              └─ build-and-push-gcp-to-argo (develop branch)
+              └─ build-and-push-gcp-to-argo (dev branch)
                  ├─ Build with Kaniko
                  ├─ Push to GCP registry
                  ├─ Update values-gcpdev.yaml
@@ -425,12 +425,12 @@ Managed in backend-configs repository:
 | Branch | Cloud | Registry | Environment | Namespace | Deployment Trigger |
 |--------|-------|----------|-------------|-----------|-------------------|
 | `main` | OCI | OCI Registry | Production | `istio-dev` | Automatic (build-and-push-oci-to-argo) |
-| `develop` | GCP | GCP Artifact Registry | Development | `horizontal-services` | Automatic (build-and-push-gcp-to-argo) |
+| `dev` | GCP | GCP Artifact Registry | Development | `horizontal-services` | Automatic (build-and-push-gcp-to-argo) |
 | Feature branches | - | - | - | - | Validation only |
 
 **Notes**:
 - `main` branch: Production-ready code, automatically builds and updates ArgoCD
-- `develop` branch: Development code, automatically builds and updates ArgoCD
+- `dev` branch: Development code, automatically builds and updates ArgoCD
 - Feature branches: Run validation only (no builds or deployments)
 
 ---

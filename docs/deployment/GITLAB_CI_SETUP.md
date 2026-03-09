@@ -2,6 +2,8 @@
 
 Complete setup instructions for the TechHub GitLab CI/CD pipeline using GitOps with ArgoCD deployment to Kubernetes.
 
+Note: parts of this guide describe the historical GitOps setup. For the currently verified live GCP dev Argo CD application wiring, see [ARGOCD_TECHHUB_APPLICATION.md](./ARGOCD_TECHHUB_APPLICATION.md).
+
 **Related Documentation**:
 - [GitLab CI Cache Setup](GITLAB_CI_CACHE_SETUP.md) - Cache configuration for 2-3x build speedup
 - [CI Optimization Summary](../../CI_OPTIMIZATION_SUMMARY.md) - Caching, branch automation, error detection
@@ -83,8 +85,9 @@ Navigate to your GitLab project:
 
 #### Variable Settings Explained
 
-- **Protected**: Only available in protected branches (`main`, `develop`)
-  - Use for deployment credentials
+- **Protected**: Only available in protected branches
+  - Use only for variables that should not be available on unprotected branches
+  - Current `dev` branch workflows may require some build variables to remain unprotected
 - **Masked**: Hidden in job logs (shows `[masked]` instead of value)
   - Use for all sensitive values (tokens, passwords)
 
@@ -318,8 +321,8 @@ The pipeline is already configured in `.gitlab-ci.yml` and will run automaticall
 |-------|-------|--------|
 | Push to `main` | `validate` | Run type-check, lint, tests |
 | Push to `main` | `build_and_deploy` | Build image → Update values-dev.yaml → ArgoCD deploys |
-| Push to `develop` | `validate` | Run validation |
-| Push to `develop` | `build_and_deploy` | Build image → Update values-gcpdev.yaml → ArgoCD deploys |
+| Push to `dev` | `validate` | Run validation |
+| Push to `dev` | `build_and_deploy` | Build image → Update values-gcpdev.yaml → ArgoCD deploys |
 | Web trigger (manual) | `build_only` | Build image only (no deployment) |
 | Web trigger (manual) | `build_and_deploy` | Build + deploy to selected cloud |
 | Manual job | `image-promotion` | Promote image to UAT/Test/Perf |
@@ -372,14 +375,14 @@ git push origin test/pipeline-validation
 - Type-check, lint, and tests pass
 - No build or deployment occurs
 
-### 3. Test Automatic Deployment (Develop)
+### 3. Test Automatic Deployment (Dev)
 
-Push to `develop` branch:
+Push to `dev` branch:
 
 ```bash
-git checkout develop
+git checkout dev
 git merge test/pipeline-validation
-git push origin develop
+git push origin dev
 ```
 
 **Expected**:

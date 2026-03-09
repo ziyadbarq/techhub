@@ -50,6 +50,17 @@ export interface ISystemSetupRepository {
   getPermissionCount(): Promise<number>;
 
   /**
+   * Get high-level seed status counts for foundational data
+   */
+  getSeedStatus(): Promise<{
+    organizationUnits: number;
+    locations: number;
+    vendors: number;
+    featureFlags: number;
+    services: number;
+  }>;
+
+  /**
    * Get database size in bytes
    */
   getDatabaseSize(): Promise<number | null>;

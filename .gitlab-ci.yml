@@ -267,7 +267,6 @@ build-gcp:
         --cache-ttl=168h \
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
-        --build-arg ENCRYPTION_KEY="${ENCRYPTION_KEY}" \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -357,7 +356,6 @@ build-oci:
         --cache-ttl=168h \
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
-        --build-arg ENCRYPTION_KEY="${ENCRYPTION_KEY}" \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -466,7 +464,6 @@ build-and-push-gcp-to-argo:
         --cache-ttl=168h \
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
-        --build-arg ENCRYPTION_KEY="${ENCRYPTION_KEY}" \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}

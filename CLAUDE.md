@@ -75,8 +75,8 @@ docker compose logs app -f              # Follow app logs
 # Automatic deployment to OCI production (main branch)
 # Push to main → builds image → updates values-dev.yaml → ArgoCD syncs
 
-# Automatic deployment to GCP dev (develop branch)
-# Push to develop → builds image → updates values-gcpdev.yaml → ArgoCD syncs
+# Automatic deployment to GCP dev (dev branch)
+# Push to dev → builds image → updates values-gcpdev.yaml → ArgoCD syncs
 
 # Manual build only (no deployment)
 # GitLab UI > CI/CD > Pipelines > Run pipeline > set type=build_only
@@ -91,15 +91,17 @@ kubectl get pods -n horizontal-services -l app=techhub    # GCP development
 
 **Pipeline Stages**: Validate (type-check, lint, tests) → Build & Deploy (Kaniko, GitOps) → Image Promotion (manual)
 
-**GitOps Workflow**: CI updates values.yaml in deployment-configs repo → ArgoCD monitors repo → Automatically syncs to K8s
+**GitOps Workflow**: CI updates deployment values in the GitOps repo → ArgoCD monitors the configured sources → Automatically syncs to K8s
+
+**Verified GCP Dev ArgoCD App**: `techhub` in project `horizontal-services` is a multi-source Argo CD application targeting namespace `horizontal-services`, using Helm chart `barq` revision `1.1.2` plus `$values/techhub/values-gcpdev.yaml`. Runtime env injection, including `CONFIG_SERVER_URL`, is present in the live pod. See [docs/deployment/ARGOCD_TECHHUB_APPLICATION.md](docs/deployment/ARGOCD_TECHHUB_APPLICATION.md).
 
 **Deployment Targets**:
 - OCI Cloud: `istio-dev` namespace (production, auto-deploy from main)
-- GCP Cloud: `horizontal-services` namespace (development, auto-deploy from develop)
+- GCP Cloud: `horizontal-services` namespace (development, auto-deploy from dev)
 
 **UI-Selectable Variables**: type (build_only/build_and_deploy), CLOUD (oci/gcp), npm_migration (true/false)
 
-See **[docs/deployment/LOCAL_DOCKER_TESTING.md](docs/deployment/LOCAL_DOCKER_TESTING.md)** for local Docker testing, **[docs/deployment/GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md)** for CI/CD setup, [docs/deployment/BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) for build process, and [docs/deployment/KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) for K8s operations.
+See **[docs/deployment/LOCAL_DOCKER_TESTING.md](docs/deployment/LOCAL_DOCKER_TESTING.md)** for local Docker testing, **[docs/deployment/GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md)** for CI/CD setup, [docs/deployment/BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) for build process, [docs/deployment/KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) for K8s operations, and [docs/deployment/ARGOCD_TECHHUB_APPLICATION.md](docs/deployment/ARGOCD_TECHHUB_APPLICATION.md) for the verified live Argo CD application wiring.
 
 ## Documentation
 
