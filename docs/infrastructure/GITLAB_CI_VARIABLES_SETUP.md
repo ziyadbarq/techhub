@@ -2,9 +2,18 @@
 
 ## Current Status
 
-❌ **Spring Cloud Config Server is NOT YET DEPLOYED**
+The hardcoded credentials have been removed from `.gitlab-ci.yml`.
+Two build-time variables must now be set in **GitLab CI/CD project variables** (Settings > CI/CD > Variables):
 
-For now, you must use direct GitLab CI/CD variables.
+| Variable | Purpose | Protected | Masked |
+|---|---|---|---|
+| `DATABASE_URL` | Prisma validate during build | Optional | Yes |
+| `ENCRYPTION_KEY` | Validate stage check and image build | Optional | Yes |
+
+Runtime variables (REDIS_URL, BETTER_AUTH_*, etc.) are served by Spring Cloud Config.
+`CONFIG_SERVER_URL` must be exposed to the application runtime environment before Spring Cloud Config can load.
+
+---
 
 ## Required Variables (Add Now)
 
@@ -17,9 +26,11 @@ Go to: **GitLab UI > Project > Settings > CI/CD > Variables > Add variable**
 | Variable Name         | Description                          | Example Value                              | Protected | Masked |
 |-----------------------|--------------------------------------|--------------------------------------------|-----------|--------|
 | `DATABASE_URL`        | Dummy PostgreSQL URL (build only)   | `postgresql://dummy:dummy@localhost:5432/dummy` | No    | No |
+| `ENCRYPTION_KEY`      | Required by env validation and image build | `0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef` | No | Yes |
 
 **Why this works:**
 - Prisma `generate` validates URL format but doesn't connect
+- `ENCRYPTION_KEY` is validated for format only during CI
 - TypeScript compilation uses generated types, no connection needed
 - Next.js build bundles code, no database access during build
 
@@ -29,24 +40,25 @@ Go to: **GitLab UI > Project > Settings > CI/CD > Variables > Add variable**
 
 | Variable Name         | Description                          | Example Value                              | Protected | Masked |
 |-----------------------|--------------------------------------|--------------------------------------------|-----------|--------|
-| `DATABASE_URL`        | Real PostgreSQL connection string    | `postgresql://user:pass@host:5432/techhub` | ✅ Yes    | ✅ Yes |
-| `REDIS_URL`           | Redis connection string              | `redis://redis-host:6379`                  | ✅ Yes    | ✅ Yes |
+| `DATABASE_URL`        | Real PostgreSQL connection string    | `postgresql://user:pass@host:5432/techhub` | Optional  | ✅ Yes |
+| `ENCRYPTION_KEY`      | AES-256-GCM key for auth encryption  | `[64-char lowercase hex string]`           | Optional  | ✅ Yes |
+| `REDIS_URL`           | Redis connection string              | `redis://redis-host:6379`                  | Optional  | ✅ Yes |
 | `BETTER_AUTH_URL`     | Application URL                      | `https://techhub.baraq.com`                | No        | No     |
-| `BETTER_AUTH_SECRET`  | Auth secret key (generate random)    | `[64-char random string]`                  | ✅ Yes    | ✅ Yes |
+| `BETTER_AUTH_SECRET`  | Auth secret key (generate random)    | `[64-char random string]`                  | Optional  | ✅ Yes |
 
 ### Authentication Variables
 
 | Variable Name             | Description                    | Example Value                          | Protected | Masked |
 |---------------------------|--------------------------------|----------------------------------------|-----------|--------|
 | `MICROSOFT_CLIENT_ID`     | Azure AD app client ID         | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` | No        | ✅ Yes |
-| `MICROSOFT_CLIENT_SECRET` | Azure AD app client secret     | `[secret value]`                       | ✅ Yes    | ✅ Yes |
+| `MICROSOFT_CLIENT_SECRET` | Azure AD app client secret     | `[secret value]`                       | Optional  | ✅ Yes |
 | `MICROSOFT_TENANT_ID`     | Azure AD tenant ID             | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` | No        | No     |
 
 ### Optional Variables
 
 | Variable Name            | Description                     | Example Value               | Protected | Masked |
 |--------------------------|---------------------------------|-----------------------------|-----------|--------|
-| `OPENAI_API_KEY`         | OpenAI API key (if using AI)    | `sk-...`                    | ✅ Yes    | ✅ Yes |
+| `OPENAI_API_KEY`         | OpenAI API key (if using AI)    | `sk-...`                    | Optional  | ✅ Yes |
 | `LOG_LEVEL`              | Logging level                   | `info` or `debug`           | No        | No     |
 | `NODE_ENV`               | Node environment                | `production`                | No        | No     |
 
@@ -56,18 +68,19 @@ If you have GitLab CLI configured:
 
 ```bash
 # Critical variables
-glab variable create DATABASE_URL --value "postgresql://user:pass@host:5432/techhub" --masked --protected
-glab variable create REDIS_URL --value "redis://redis-host:6379" --masked --protected
+glab variable create DATABASE_URL --value "postgresql://user:pass@host:5432/techhub" --masked
+glab variable create ENCRYPTION_KEY --value "$(openssl rand -hex 32)" --masked
+glab variable create REDIS_URL --value "redis://redis-host:6379" --masked
 glab variable create BETTER_AUTH_URL --value "https://techhub.baraq.com"
-glab variable create BETTER_AUTH_SECRET --value "$(openssl rand -hex 32)" --masked --protected
+glab variable create BETTER_AUTH_SECRET --value "$(openssl rand -hex 32)" --masked
 
 # Auth variables
 glab variable create MICROSOFT_CLIENT_ID --value "your-client-id" --masked
-glab variable create MICROSOFT_CLIENT_SECRET --value "your-client-secret" --masked --protected
+glab variable create MICROSOFT_CLIENT_SECRET --value "your-client-secret" --masked
 glab variable create MICROSOFT_TENANT_ID --value "your-tenant-id"
 
 # Optional
-glab variable create OPENAI_API_KEY --value "sk-your-key" --masked --protected
+glab variable create OPENAI_API_KEY --value "sk-your-key" --masked
 glab variable create LOG_LEVEL --value "info"
 glab variable create NODE_ENV --value "production"
 ```
@@ -84,7 +97,7 @@ openssl rand -hex 32
 After adding variables, trigger a pipeline and check for:
 
 ```
-✅ Created .env with DATABASE_URL from GitLab CI variables
+✅ Critical environment variables are set
 ```
 
 If you see this error instead:
@@ -98,10 +111,11 @@ Then `DATABASE_URL` is missing from GitLab CI/CD variables.
 
 Once Spring Cloud Config Server is deployed:
 
-1. **Add CONFIG_SERVER_URL variable:**
+1. **Make `CONFIG_SERVER_URL` available to the running app container**
    ```bash
    glab variable create CONFIG_SERVER_URL --value "http://config-server.baraq.com:8888"
    ```
+   This only helps if your deployment wiring passes the variable through to the pod.
 
 2. **Keep existing variables as fallback** (hybrid approach)
 
@@ -138,11 +152,12 @@ psql "postgresql://username:password@hostname:5432/database_name"
 
 ### Variables not picked up in pipeline
 
-**Cause:** Variables might be protected and branch is not protected
+**Cause:** Variable name mismatch, masked value rejected by GitLab, or the variable was added at the wrong scope
 
-**Fix:** Either:
-- Make variables non-protected (if not sensitive)
-- Protect the branch (Settings > Repository > Protected branches)
+**Fix:**
+- Confirm the variable exists on the project used by this pipeline
+- For the `dev` branch, keep required build variables non-protected
+- Re-run the pipeline after saving the variable
 
 ## See Also
 

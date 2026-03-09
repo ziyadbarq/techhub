@@ -65,28 +65,18 @@ variables:
   NPM_CONFIG_LOGLEVEL: "warn"
 
   # ============================================================================
-  # Environment Configuration (hardcoded for container deployment)
-  # ⚠️ WARNING: Hardcoded credentials - consider moving to GitLab CI/CD Variables
-  # ============================================================================
+  # Build-time variables — stored in GitLab CI/CD project settings, NOT here.
+  # Go to: Settings > CI/CD > Variables
   #
-  # CRITICAL VARIABLES ONLY
-  # Non-critical variables have sensible defaults in the application:
-  # - LOG_LEVEL defaults based on NODE_ENV (see src/infrastructure/config/env.ts)
-  # - BETTER_AUTH_URL defaults to baseURL in better-auth.ts
-  # - NODE_ENV defaults to "production"
-  # - AUTH_DEBUG_LOGS, PRISMA_VERBOSE_LOGS are optional
+  #   DATABASE_URL   — CI database connection string (masked; protected only if branch policy allows it)
+  #                    Required for: npx prisma validate in the validate stage
+  #   ENCRYPTION_KEY — 64 hex chars AES-256-GCM key (masked; protected only if branch policy allows it)
+  #                    Required for: validate stage check
   #
-  # If runtime issues occur, add variables individually rather than all at once.
+  # Runtime variables (DATABASE_URL, REDIS_URL, BETTER_AUTH_*, etc.) are loaded
+  # from Spring Cloud Config Server at pod startup via instrumentation.ts.
+  # See: docs/infrastructure/SPRING_CLOUD_CONFIG.md
   # ============================================================================
-
-  # Database (REQUIRED for Prisma schema validation during build)
-  DATABASE_URL: "postgresql://techhub:YG%3C2KH%60r%29I%2CkHjMO@172.17.19.3:5432/techhub"
-
-  # Encryption (REQUIRED for OAuth token encryption)
-  ENCRYPTION_KEY: "0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc"
-
-  # Logging (OPTIONAL - defaults based on NODE_ENV)
-  LOG_LEVEL: "info"
 
   # GCP Variables
   DEV_CNTNR_GCP_REG_IMG_PREFIX: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo"
@@ -151,8 +141,6 @@ validate:
     policy: pull-push
   before_script:
     - cp /.npmrc .
-    # Ensure ENCRYPTION_KEY is always set (hardcoded fallback)
-    - export ENCRYPTION_KEY="${ENCRYPTION_KEY:-0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc}"
     - echo "📦 Installing dependencies..."
     # Enable pipefail when available to catch npm ci failures (prevents tee from masking errors)
     - set -o pipefail 2>/dev/null || true
@@ -238,8 +226,7 @@ build-gcp:
     # Removed: max_user_instances=512 (was limiting parallelism)
     # Removed: sysctl -p (auto-applied in containers, adds 9s overhead)
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
-    # Ensure ENCRYPTION_KEY is always set (hardcoded fallback to guarantee builds succeed)
-    - export ENCRYPTION_KEY="${ENCRYPTION_KEY:-0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc}"
+    # ENCRYPTION_KEY must be set in GitLab CI/CD project variables (Settings > CI/CD > Variables)
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
@@ -329,8 +316,7 @@ build-oci:
     # Removed: max_user_instances=512 (was limiting parallelism)
     # Removed: sysctl -p (auto-applied in containers, adds 9s overhead)
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
-    # Ensure ENCRYPTION_KEY is always set (hardcoded fallback to guarantee builds succeed)
-    - export ENCRYPTION_KEY="${ENCRYPTION_KEY:-0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc}"
+    # ENCRYPTION_KEY must be set in GitLab CI/CD project variables (Settings > CI/CD > Variables)
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
@@ -421,8 +407,7 @@ build-and-push-gcp-to-argo:
     # Removed: max_user_instances=512 (was limiting parallelism)
     # Removed: sysctl -p (auto-applied in containers, adds 9s overhead)
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
-    # Ensure ENCRYPTION_KEY is always set (hardcoded fallback to guarantee builds succeed)
-    - export ENCRYPTION_KEY="${ENCRYPTION_KEY:-0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc}"
+    # ENCRYPTION_KEY must be set in GitLab CI/CD project variables (Settings > CI/CD > Variables)
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
