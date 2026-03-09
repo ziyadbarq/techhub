@@ -69,6 +69,7 @@ USER nextjs
 
 # Expose port
 ENV HOST=0.0.0.0
+ENV HOSTNAME=0.0.0.0
 EXPOSE 3000
 
 # Health check
