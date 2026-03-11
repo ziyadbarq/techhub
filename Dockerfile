@@ -29,6 +29,13 @@ COPY src/generated/prisma ./src/generated/prisma
 COPY public ./public
 COPY package.json ./package.json
 
+# Migration & seed tooling (prisma CLI, tsx, schema, migrations, seed scripts)
+COPY node_modules ./node_modules
+COPY src/infrastructure/database/prisma ./src/infrastructure/database/prisma
+COPY prisma.config.ts ./prisma.config.ts
+COPY tsconfig.json ./tsconfig.json
+COPY scripts ./scripts
+
 # ====================
 # Stage 2: Runtime
 # ====================
@@ -59,6 +66,13 @@ COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
 
 # Copy package.json
 COPY --from=builder /app/package.json ./package.json
+
+# Migration & seed tooling (used by Helm pre-upgrade Job and manual pod exec)
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/src/infrastructure/database/prisma ./src/infrastructure/database/prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/scripts ./scripts
 
 # Create directories for logs and uploads
 RUN mkdir -p local/logs local/uploads && \
