@@ -103,7 +103,7 @@ stages:
 # ====================
 # CRITICAL: This stage MUST run before builds to catch issues early
 
-validate:
+.validate:
   image: $DEV_OCI_IMAGE
   stage: validate
   tags:
