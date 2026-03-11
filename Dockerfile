@@ -8,7 +8,8 @@
 # ====================
 # Build Arguments
 # ====================
-ARG BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo
+ARG BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq
+
 
 # ====================
 # Stage 1: Builder (Pre-built Artifacts from CI Runner)
