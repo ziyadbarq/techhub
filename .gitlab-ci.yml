@@ -425,9 +425,29 @@ build-and-push-gcp-to-argo:
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
+    # Compute image name before Kaniko (needed for both ArgoCD update and Kaniko push)
+    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
+    - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+    - export IMAGE_NAME="${FULL_IMAGE_NAME}"
+    - export NPM_MIGRATION="${npm_migration}"
+
+    # Update ArgoCD values.yaml BEFORE Kaniko (Kaniko destroys the filesystem, git/yq won't exist after)
+    - cd deployment-configs && git checkout main
+    - git config pull.rebase false
+    - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
+    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_GCP_VALUES}
+    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_GCP_VALUES}
+    - cat manifests/${PROJECT}/${DEV_GCP_VALUES}
+    - git config --global user.email "sdev@barq.com"
+    - git config --global user.name ${GITLAB_UN}
+    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git"
+    - git add manifests/${PROJECT}/${DEV_GCP_VALUES}
+    - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
+    - git push origin -o ci.skip HEAD:main
+    - echo "---->>> SUCCESSFULLY PUSHED TO DEV (GCP) <<<----"
+    - cd $CI_PROJECT_DIR
+
     # Temporarily modify .dockerignore to include build artifacts
-    # Include: .next/, src/generated/
-    # Exclude: Large unnecessary files
     - mv .dockerignore .dockerignore.tmp
     - echo ".git/" > .dockerignore
     - echo ".npm/" >> .dockerignore
@@ -439,9 +459,7 @@ build-and-push-gcp-to-argo:
     - echo ".vscode/" >> .dockerignore
     - echo ".idea/" >> .dockerignore
 
-    # Build and push with Kaniko (using pre-built artifacts from runner)
-    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
-    - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+    # Build and push with Kaniko (WARNING: destroys filesystem -- no git/yq after this point)
     - |
       /kaniko/executor \
         --cache=true \
@@ -453,36 +471,9 @@ build-and-push-gcp-to-argo:
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
 
-    # Restore original .dockerignore
-    - mv .dockerignore.tmp .dockerignore
-
     - echo "${FULL_IMAGE_NAME}"
 
-    # Update ArgoCD values.yaml (GitOps)
-    - export IMAGE_NAME="${FULL_IMAGE_NAME}"
-    - export NPM_MIGRATION="${npm_migration}"
-    - ORIGINAL_DIR=$(pwd)
-    - cd deployment-configs && git checkout main
-    - git config pull.rebase false
-    - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-
-    # Update image name and migration flag in values.yaml
-    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - cat manifests/${PROJECT}/${DEV_GCP_VALUES}
-
-    # Commit and push to trigger ArgoCD sync
-    - git config --global user.email "sdev@barq.com"
-    - git config --global user.name ${GITLAB_UN}
-    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git"
-    - git add manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
-    - git push origin -o ci.skip HEAD:main
-
-    - echo "---->>> SUCCESSFULLY PUSHED TO DEV (GCP) <<<----"
-    - cd $ORIGINAL_DIR
-
-    # Export image for promotion jobs
+    # Export image for promotion jobs (only shell builtins -- no external commands available)
     - echo "FULL_IMAGE_NAME=${FULL_IMAGE_NAME}" > build_info.env
     - echo "IMAGE_FOR_UAT=${FULL_IMAGE_NAME}" >> build_info.env
   artifacts:
