@@ -1,62 +1,51 @@
 # Multi-stage Dockerfile for TechHub (Next.js 16)
-# Optimized for production deployment on Kubernetes
+# Optimized for CI builds with pre-built artifacts
+# Runner performs: npm ci + db:generate + build:fast before Docker build
+#
+# Prisma note: engineType = "client" uses WASM engine (no native binaries).
+# All Prisma files live in src/generated/prisma — copied explicitly below.
 
 # ====================
-# Stage 1: Dependencies
+# Build Arguments
 # ====================
-FROM node:20-alpine AS deps
+ARG BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo
 
-# Install system dependencies for node-gyp
-RUN apk add --no-cache libc6-compat python3 make g++
+# ====================
+# Stage 1: Builder (Pre-built Artifacts from CI Runner)
+# ====================
+# All artifacts are built on runner (faster native filesystem)
+# This stage just packages them into the image
+FROM ${BASE_REGISTRY}/node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json package-lock.json ./
+# Copy pre-built Next.js output
+COPY .next ./.next
 
-# Install dependencies (production + dev for build)
-RUN npm ci --include=dev
+# Copy Prisma TypeScript types (not included in standalone)
+COPY src/generated/prisma ./src/generated/prisma
 
-# ====================
-# Stage 2: Builder
-# ====================
-FROM node:20-alpine AS builder
+# Copy static assets
+COPY public ./public
+COPY package.json ./package.json
 
-WORKDIR /app
-
-# Copy dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-
-# Copy application source
-COPY . .
-
-# Generate Prisma client
-RUN npx prisma generate
-
-# Build arguments
-ARG NODE_ENV=production
-ARG NEXT_PUBLIC_APP_VERSION
-ENV NODE_ENV=${NODE_ENV}
-ENV NEXT_PUBLIC_APP_VERSION=${NEXT_PUBLIC_APP_VERSION}
-
-# Mock DATABASE_URL for build (Prisma client initialization)
-# Actual DATABASE_URL will be provided at runtime via K8s secrets
-ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
-ENV REDIS_URL="redis://localhost:6379"
-
-# Build Next.js application
-RUN npm run build:fast
+# Migration & seed tooling (prisma CLI, tsx, source code for seed imports)
+COPY node_modules ./node_modules
+COPY src ./src
+COPY prisma.config.ts ./prisma.config.ts
+COPY tsconfig.json ./tsconfig.json
+COPY scripts ./scripts
 
 # ====================
-# Stage 3: Runner
+# Stage 2: Runtime
 # ====================
-FROM node:20-alpine AS runner
+ARG BASE_REGISTRY
+FROM ${BASE_REGISTRY}/node:22-alpine AS runner
 
 # Install system dependencies
-RUN apk add --no-cache \
-    libc6-compat \
-    curl \
-    postgresql-client
+# NOTE: Use http mirrors to avoid local TLS MITM issues
+RUN sed -i 's/https/http/g' /etc/apk/repositories && \
+    apk add --no-cache libc6-compat curl postgresql-client
 
 WORKDIR /app
 
@@ -67,15 +56,23 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Set environment to production
 ENV NODE_ENV=production
 
-# Copy necessary files from builder
-COPY --from=builder /app/public ./public
+# Copy Next.js standalone server and static files
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/public ./public
+
+# Prisma WASM client (engineType = "client") — not traced into standalone, explicit copy required
 COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
 
-# Copy package.json for runtime dependencies check
+# Copy package.json
 COPY --from=builder /app/package.json ./package.json
+
+# Migration & seed tooling (used by Helm pre-upgrade Job and manual pod exec)
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/scripts ./scripts
 
 # Create directories for logs and uploads
 RUN mkdir -p local/logs local/uploads && \
@@ -85,13 +82,14 @@ RUN mkdir -p local/logs local/uploads && \
 USER nextjs
 
 # Expose port
+ENV HOST=0.0.0.0
+ENV HOSTNAME=0.0.0.0
 EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:3000/api/health || exit 1
 
-ENV HOST=0.0.0.0
-
 # Start application
 CMD ["node", "server.js"]
+
