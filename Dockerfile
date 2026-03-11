@@ -29,9 +29,9 @@ COPY src/generated/prisma ./src/generated/prisma
 COPY public ./public
 COPY package.json ./package.json
 
-# Migration & seed tooling (prisma CLI, tsx, schema, migrations, seed scripts)
+# Migration & seed tooling (prisma CLI, tsx, source code for seed imports)
 COPY node_modules ./node_modules
-COPY src/infrastructure/database/prisma ./src/infrastructure/database/prisma
+COPY src ./src
 COPY prisma.config.ts ./prisma.config.ts
 COPY tsconfig.json ./tsconfig.json
 COPY scripts ./scripts
@@ -69,7 +69,7 @@ COPY --from=builder /app/package.json ./package.json
 
 # Migration & seed tooling (used by Helm pre-upgrade Job and manual pod exec)
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/src/infrastructure/database/prisma ./src/infrastructure/database/prisma
+COPY --from=builder /app/src ./src
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/scripts ./scripts
