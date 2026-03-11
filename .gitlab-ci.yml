@@ -432,16 +432,16 @@ build-and-push-gcp-to-argo:
     - export NPM_MIGRATION="${npm_migration}"
 
     # Update ArgoCD values.yaml BEFORE Kaniko (Kaniko destroys the filesystem, git/yq won't exist after)
-    - cd deployment-configs && git checkout main
-    - git config pull.rebase false
-    - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - cat manifests/${PROJECT}/${DEV_GCP_VALUES}
+    # GCP deployments use values-yaml-npd repo (ArgoCD watches this, not deployment-configs)
+    - git clone --depth 1 http://${GITLAB_UN_VAL}:${GITLAB_TOKEN_VAL}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd.git
+    - cd values-yaml-npd
+    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" ${PROJECT}/${DEV_GCP_VALUES}
+    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" ${PROJECT}/${DEV_GCP_VALUES}
+    - cat ${PROJECT}/${DEV_GCP_VALUES}
     - git config --global user.email "sdev@barq.com"
     - git config --global user.name ${GITLAB_UN}
-    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git"
-    - git add manifests/${PROJECT}/${DEV_GCP_VALUES}
+    - git remote set-url origin "http://${GITLAB_UN_VAL}:${GITLAB_TOKEN_VAL}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd.git"
+    - git add ${PROJECT}/${DEV_GCP_VALUES}
     - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
     - git push origin -o ci.skip HEAD:main
     - echo "---->>> SUCCESSFULLY PUSHED TO DEV (GCP) <<<----"
