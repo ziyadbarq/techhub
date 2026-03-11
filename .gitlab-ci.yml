@@ -485,6 +485,7 @@ build-and-push-gcp-to-argo:
     - mkdir package
     - cp -r /package/. package/
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
+    - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - |
       /kaniko/executor \
         --context $CI_PROJECT_DIR \
