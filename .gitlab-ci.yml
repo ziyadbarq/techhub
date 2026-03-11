@@ -80,12 +80,12 @@ variables:
 
   # GCP Variables
   DEV_CNTNR_GCP_REG_IMG_PREFIX: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo"
-  DEV_GCP_LAB_TAG: globalnodegcp
+  DEV_GCP_LAB_TAG: globalnodeoci
   DEV_OCI_LAB_TAG: globalnodeoci
   DEV_CNTNR_OCI_REG_IMG_PREFIX: jed.ocir.io/axbp9ow0rohq
   DEV_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
   DEV_GCP_VALUES: values-gcpdev.yaml
-  DEV_GCP_IMAGE: me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/gitlab-runner-node-22-alpine:latest
+  DEV_GCP_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
 
   # UAT GCP VARIABLES
   UAT_CNTNR_GCP_REG_IMG_PREFIX: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo"
