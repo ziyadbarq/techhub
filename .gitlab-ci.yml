@@ -251,8 +251,8 @@ build-oci:
     paths:
       - build-size-oci.txt
     expire_in: 7 days
-  dependencies:
-    - validate
+  # dependencies:
+  #   - validate
   needs:
     - job: validate
       artifacts: false
@@ -338,8 +338,8 @@ build-gcp:
     paths:
       - build-size-gcp.txt
     expire_in: 7 days
-  dependencies:
-    - validate
+  # dependencies:
+  #   - validate
   needs:
     - job: validate
       artifacts: false
@@ -438,8 +438,8 @@ build-and-push-oci-to-argo:
     paths:
       - build_info.env
     expire_in: 1 week
-  dependencies:
-    - validate
+  # dependencies:
+  #   - validate
   needs:
     - job: validate
       artifacts: false
