@@ -393,18 +393,6 @@ build-and-push-oci-to-argo:
     - commit_id=`git rev-parse --short=6 HEAD`
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
-
-    # Build and push with Kaniko
-    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
-    - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
-    - |
-      /kaniko/executor \
-        --context $CI_PROJECT_DIR \
-        --dockerfile Dockerfile \
-        --destination ${FULL_IMAGE_NAME}
-
-    - echo "${FULL_IMAGE_NAME}"
-
     # Update ArgoCD values.yaml (GitOps)
     - export IMAGE_NAME="${FULL_IMAGE_NAME}"
     - export NPM_MIGRATION="${npm_migration}"
@@ -427,6 +415,16 @@ build-and-push-oci-to-argo:
     - git push origin -o ci.skip HEAD:main
 
     - echo "---->>> SUCCESSFULLY PUSHED TO DEV (OCI) <<<----"
+    # Build and push with Kaniko
+    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
+    - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+    - |
+      /kaniko/executor \
+        --context $CI_PROJECT_DIR \
+        --dockerfile Dockerfile \
+        --destination ${FULL_IMAGE_NAME}
+
+    - echo "${FULL_IMAGE_NAME}"
     - cd $ORIGINAL_DIR
 
     # Export image for promotion jobs
@@ -484,14 +482,6 @@ build-and-push-gcp-to-argo:
     - commit_id=`git rev-parse --short=6 HEAD`
     - mkdir package
     - cp -r /package/. package/
-    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
-    - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
-    - |
-      /kaniko/executor \
-        --context $CI_PROJECT_DIR \
-        --dockerfile Dockerfile \
-        --destination ${FULL_IMAGE_NAME}
-    
     - echo "deploy image with job-id ${CI_JOB_ID}" 
     - export IMAGE_NAME="${FULL_IMAGE_NAME}"
     - export NPM_MIGRATION="${npm_migration}"
@@ -508,6 +498,14 @@ build-and-push-gcp-to-argo:
     - git commit -m "Update image tag for ${PROJECT}"
     - git push origin -o ci.skip HEAD:main
     - echo "---->>>SUCCESSFULLY PUSHED TO DEV<<<<<-------"
+    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
+    - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+    - |
+      /kaniko/executor \
+        --context $CI_PROJECT_DIR \
+        --dockerfile Dockerfile \
+        --destination ${FULL_IMAGE_NAME}
+    
     - cd $ORIGINAL_DIR
     - echo "FULL_IMAGE_NAME=${FULL_IMAGE_NAME}" > build_info.env
     - echo "IMAGE_FOR_UAT=${FULL_IMAGE_NAME}" >> build_info.env
