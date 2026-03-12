@@ -6,9 +6,6 @@
 # AUTOMATED WORKFLOW
 # ====================
 #
-# Branch-based automation:
-#   - main branch -> automatic GCP build_and_deploy
-#
 # Manual triggers (GitLab UI):
 #   - build_only for OCI or GCP
 #   - build_and_deploy for OCI or GCP
@@ -41,7 +38,6 @@ variables:
       - "false"
 
   PROJECT: "techhub"
-  AUTOMATIC_TRIGGER_BRANCH: main
   DEV_ENV: dev
   UAT_ENV: uat
   TEST_ENV: test
@@ -57,6 +53,7 @@ variables:
   NPM_CONFIG_FUND: "false"
   NPM_CONFIG_PROGRESS: "false"
   NPM_CONFIG_LOGLEVEL: "warn"
+  NPM_CI_FLAGS: "--prefer-offline --cache $NPM_CACHE_DIR --legacy-peer-deps"
 
   # CI variables such as DATABASE_URL, ENCRYPTION_KEY, BETTER_AUTH_URL,
   # CONFIG_SERVER_URL, and Git credentials must be set in GitLab CI/CD settings.
@@ -97,6 +94,12 @@ stages:
   - build_only
   - build_and_deploy
   - image-promotion
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: always
+    - when: never
 
 .build_cache: &build_cache
   key:
@@ -139,7 +142,7 @@ build-gcp:
   script:
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
-    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
+    - npm ci $NPM_CI_FLAGS
     - npm run db:generate
     - npm run build:fast
     - version=`jq -r '.version' package.json`
@@ -198,7 +201,7 @@ build-oci:
   script:
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
-    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
+    - npm ci $NPM_CI_FLAGS
     - npm run db:generate
     - npm run build:fast
     - version=`jq -r '.version' package.json`
@@ -244,8 +247,6 @@ build-and-push-gcp-to-argo:
   cache:
     <<: *build_cache
   rules:
-    - if: '$CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-      when: always
     - if: '$CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
       when: always
     - when: never
@@ -260,7 +261,7 @@ build-and-push-gcp-to-argo:
   script:
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
-    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
+    - npm ci $NPM_CI_FLAGS
     - npm run db:generate
     - npm run build:fast
     - version=`jq -r '.version' package.json`
@@ -334,7 +335,7 @@ build-and-push-oci-to-argo:
   script:
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
-    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
+    - npm ci $NPM_CI_FLAGS
     - npm run db:generate
     - npm run build:fast
     - version=`jq -r '.version' package.json`
