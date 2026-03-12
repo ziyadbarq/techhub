@@ -342,29 +342,8 @@ build-and-push-oci-to-argo:
     - commit_id=`git rev-parse --short=6 HEAD`
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
-    - mv .dockerignore .dockerignore.tmp
-    - echo ".git/" > .dockerignore
-    - echo ".npm/" >> .dockerignore
-    - echo ".husky/" >> .dockerignore
-    - echo "coverage/" >> .dockerignore
-    - echo "docs/" >> .dockerignore
-    - echo "roadmap/" >> .dockerignore
-    - echo "*.md" >> .dockerignore
-    - echo ".vscode/" >> .dockerignore
-    - echo ".idea/" >> .dockerignore
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
     - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
-    - |
-      /kaniko/executor \
-        --cache=true \
-        --cache-ttl=168h \
-        --snapshot-mode=redo \
-        --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
-        --context $CI_PROJECT_DIR \
-        --dockerfile Dockerfile \
-        --destination ${FULL_IMAGE_NAME}
-    - mv .dockerignore.tmp .dockerignore
-    - echo "${FULL_IMAGE_NAME}"
     - export IMAGE_NAME="${FULL_IMAGE_NAME}"
     - export NPM_MIGRATION="${npm_migration}"
     - ORIGINAL_DIR=$(pwd)
@@ -381,6 +360,27 @@ build-and-push-oci-to-argo:
     - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
     - git push origin -o ci.skip HEAD:main
     - cd $ORIGINAL_DIR
+    - mv .dockerignore .dockerignore.tmp
+    - echo ".git/" > .dockerignore
+    - echo ".npm/" >> .dockerignore
+    - echo ".husky/" >> .dockerignore
+    - echo "coverage/" >> .dockerignore
+    - echo "docs/" >> .dockerignore
+    - echo "roadmap/" >> .dockerignore
+    - echo "*.md" >> .dockerignore
+    - echo ".vscode/" >> .dockerignore
+    - echo ".idea/" >> .dockerignore
+    - |
+      /kaniko/executor \
+        --cache=true \
+        --cache-ttl=168h \
+        --snapshot-mode=redo \
+        --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
+        --context $CI_PROJECT_DIR \
+        --dockerfile Dockerfile \
+        --destination ${FULL_IMAGE_NAME}
+    - mv .dockerignore.tmp .dockerignore
+    - echo "${FULL_IMAGE_NAME}"
     - echo "FULL_IMAGE_NAME=${FULL_IMAGE_NAME}" > build_info.env
     - echo "IMAGE_FOR_UAT=${FULL_IMAGE_NAME}" >> build_info.env
   artifacts:
@@ -433,40 +433,6 @@ promote-to-uat-oci:
   variables:
     VALUES_FILE: $UAT_OCI_VALUES
     TARGET_ENV: "UAT (OCI)"
-  rules:
-    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
-      when: manual
-    - when: never
-  dependencies:
-    - build-and-push-oci-to-argo
-
-promote-to-test-oci:
-  <<: *promote_to_base
-  image: $TEST_OCI_IMAGE
-  tags:
-    - $TEST_OCI_LAB_TAG
-  environment:
-    name: test
-  variables:
-    VALUES_FILE: $TEST_OCI_VALUES
-    TARGET_ENV: "TEST (OCI)"
-  rules:
-    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
-      when: manual
-    - when: never
-  dependencies:
-    - build-and-push-oci-to-argo
-
-promote-to-perf-oci:
-  <<: *promote_to_base
-  image: $PERF_OCI_IMAGE
-  tags:
-    - $PERF_OCI_LAB_TAG
-  environment:
-    name: perf
-  variables:
-    VALUES_FILE: $PERF_OCI_VALUES
-    TARGET_ENV: "PERF (OCI)"
   rules:
     - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
       when: manual
