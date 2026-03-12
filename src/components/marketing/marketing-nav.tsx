@@ -59,7 +59,7 @@ export function MarketingNav() {
             asChild
             className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
           >
-            <Link href="/dashboard">Enter</Link>
+            <Link href="/login">Enter</Link>
           </Button>
         </div>
       </div>

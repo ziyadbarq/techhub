@@ -1,5 +1,6 @@
 # Lightweight Dockerfile for Local Docker Testing
-# Packages pre-built artifacts from host machine
+# Packages pre-built artifacts from host machine while preserving the
+# production startup path used by the main Docker image.
 #
 # Workflow:
 #   1. Build on host: npm run build:fast
@@ -11,11 +12,10 @@
 ARG BASE_REGISTRY=docker.io/library
 FROM ${BASE_REGISTRY}/node:22-alpine AS runner
 
-# Install minimal system dependencies and Prisma CLI for migrations
+# Install minimal system dependencies
 # NOTE: Use http mirrors to avoid local TLS MITM issues when fetching APKINDEX
 RUN sed -i 's/https/http/g' /etc/apk/repositories && \
-    apk add --no-cache libc6-compat && \
-    npm install -g prisma@7.3.0 tsx@4.19.2 dotenv@16.4.7
+    apk add --no-cache libc6-compat curl postgresql-client
 
 WORKDIR /app
 
@@ -23,8 +23,11 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Set production environment
-ENV NODE_ENV=production
+# Install dependencies inside the image so the local Docker repro
+# does not need to send host node_modules in the build context.
+COPY --chown=nextjs:nodejs ./package.json ./package.json
+COPY --chown=nextjs:nodejs ./package-lock.json ./package-lock.json
+RUN HUSKY=0 npm ci --include=dev --legacy-peer-deps
 
 # Copy pre-built artifacts from host machine
 # These are created by running: npm run build:fast
@@ -32,10 +35,17 @@ COPY --chown=nextjs:nodejs ./public ./public
 COPY --chown=nextjs:nodejs ./.next/standalone ./
 COPY --chown=nextjs:nodejs ./.next/static ./.next/static
 COPY --chown=nextjs:nodejs ./src/generated/prisma ./src/generated/prisma
+COPY --chown=nextjs:nodejs ./docker-start.mjs ./docker-start.mjs
+COPY --chown=nextjs:nodejs ./src ./src
+COPY --chown=nextjs:nodejs ./scripts ./scripts
+COPY --chown=nextjs:nodejs ./tsconfig.json ./tsconfig.json
 
 # Copy Prisma configuration and schema for migrations
 COPY --chown=nextjs:nodejs ./prisma.config.ts ./prisma.config.ts
 COPY --chown=nextjs:nodejs ./src/infrastructure/database/prisma/schema ./src/infrastructure/database/prisma/schema
+
+# Set production environment after dependencies are installed.
+ENV NODE_ENV=production
 
 # Create directories for logs and uploads
 RUN mkdir -p local/logs local/uploads && \
@@ -51,5 +61,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
     CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# Start application
-CMD ["node", "server.js"]
+# Start application using the same config-loader entrypoint as the main image
+CMD ["node", "docker-start.mjs"]

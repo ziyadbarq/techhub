@@ -3,7 +3,7 @@
 # We need to include .next/ but exclude everything else
 
 # ====================
-# Dependencies (not needed - standalone includes runtime deps)
+# Dependencies
 # ====================
 node_modules/
 .npm/

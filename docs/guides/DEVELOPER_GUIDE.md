@@ -125,17 +125,15 @@ const repository = new PrismaTaskRepository(prisma, logger);
 
 ### 3. Access Sessions via getSession()
 
-Server routes/layouts must call `src/lib/auth/session.ts`. **Do not** import Better Auth "server" helpers directly; the session utility wraps `/api/auth/get-session` + cookie handling.
+Server routes/layouts must call `src/lib/auth/session.ts`. **Do not** call the better-auth API or HTTP endpoints directly in components.
 
 ```typescript
 // ✅ Correct
 import { getSession } from "@/lib/auth/session";
 const session = await getSession();
-
-// ❌ Wrong
-import { auth } from "@/lib/auth/better-auth";
-const session = await auth.api.getSession();
 ```
+
+`session.ts` calls `getAuth().api.getSession()` directly in-process (no HTTP loopback). This is important for Docker compatibility — the previous loopback fetch pattern (`fetch("http://localhost:3000/api/auth/get-session")`) fails inside containers because the loopback address isn't reachable during server-side rendering.
 
 ### 3b. Client-Side Session Access via useSessionContext()
 

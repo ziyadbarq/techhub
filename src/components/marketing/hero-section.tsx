@@ -68,7 +68,7 @@ export function HeroSection() {
               size="lg"
               className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
             >
-              <Link href="/dashboard">
+              <Link href="/login">
                 <LayoutDashboard className="mr-2 h-5 w-5" />
                 Go to Dashboard
               </Link>

@@ -40,7 +40,7 @@ export function MarketingFooter() {
             <ul className="space-y-3 text-sm">
               <li>
                 <Link
-                  href="/dashboard"
+                  href="/login"
                   className="text-muted-foreground hover:text-barq-yellow transition-colors"
                 >
                   Login
@@ -48,7 +48,7 @@ export function MarketingFooter() {
               </li>
               <li>
                 <Link
-                  href="/dashboard"
+                  href="/login"
                   className="text-muted-foreground hover:text-barq-yellow transition-colors"
                 >
                   Dashboard

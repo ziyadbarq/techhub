@@ -26,6 +26,12 @@ The Barq Assets application includes a public marketing homepage and authenticat
 - **Layout**: `src/app/(marketing)/layout.tsx` (minimal layout)
 - **Page**: `src/app/(marketing)/page.tsx`
 
+### Design Principle: Static Links, Proxy-Handled Redirects
+
+Marketing page components use **static links to `/login`** — they do not perform client-side session checks. Authenticated users are handled upstream by the proxy layer (`proxy.ts`), which redirects them to `/dashboard` before the marketing page ever renders.
+
+This keeps the marketing page simple (no async session calls, no loading states, no flash) and avoids the server-to-self HTTP loopback problem that caused Docker crashes.
+
 ### Components
 
 #### 1. Marketing Navigation (`MarketingNav`)
@@ -36,30 +42,13 @@ The Barq Assets application includes a public marketing homepage and authenticat
 
 - Logo (links to `/`)
 - Theme toggle (light/dark mode)
-- Auth-aware "Enter/Dashboard" button
-
-**Auth-Aware Behavior**:
+- "Enter" button → always links to `/login`
 
 ```tsx
-// Checks session on mount
-useEffect(() => {
-  authClient.getSession().then((session) => {
-    setIsLoggedIn(!!session?.data?.user);
-    setIsLoading(false);
-  });
-}, []);
-
-// Conditional rendering
-<Link href={isLoggedIn ? "/dashboard" : "/login"}>
-  {isLoading ? "..." : isLoggedIn ? "Dashboard" : "Enter"}
-</Link>;
+<Link href="/login">Enter</Link>
 ```
 
-**States**:
-
-- **Loading**: Shows "..." while checking session
-- **Logged In**: Shows "Dashboard" button → links to `/dashboard`
-- **Logged Out**: Shows "Enter" button → links to `/login`
+Authenticated users never reach this page — the proxy redirects them to `/dashboard` first.
 
 #### 2. Hero Section (`HeroSection`)
 
@@ -71,28 +60,16 @@ useEffect(() => {
 - Two CTA buttons (primary and secondary)
 - Scroll indicator with animation
 
-**Auth-Aware Primary CTA**:
+**Primary CTA**:
 
 ```tsx
-<Button href={isLoggedIn ? "/dashboard" : "/login"}>
-  {isLoggedIn ? (
-    <LayoutDashboard className="mr-2 h-5 w-5" />
-  ) : (
-    <LogIn className="mr-2 h-5 w-5" />
-  )}
-  {isLoading
-    ? "Loading..."
-    : isLoggedIn
-      ? "Go to Dashboard"
-      : "Login to Dashboard"}
-</Button>
+<Link href="/login">
+  <LayoutDashboard className="mr-2 h-5 w-5" />
+  Go to Dashboard
+</Link>
 ```
 
-**States**:
-
-- **Loading**: Shows "Loading..." with disabled state
-- **Logged In**: Shows "Go to Dashboard" with dashboard icon
-- **Logged Out**: Shows "Login to Dashboard" with login icon
+Always links to `/login`. Logged-in users are redirected to `/dashboard` by the proxy before seeing this button.
 
 #### 3. Marketing Footer (`MarketingFooter`)
 
@@ -100,23 +77,17 @@ useEffect(() => {
 
 **Features**:
 
-- Quick links section
+- Quick links section (Login, Dashboard → both `/login`)
 - Resources section
 - About Barq section
 - Copyright and compliance information
 
-**Auth-Aware Links**:
-
 ```tsx
-// Both "Login" and "Dashboard" links adapt
-<Link href={isLoggedIn ? "/dashboard" : "/login"}>Login</Link>
-<Link href={isLoggedIn ? "/dashboard" : "/login"}>Dashboard</Link>
+<Link href="/login">Login</Link>
+<Link href="/login">Dashboard</Link>
 ```
 
-**Behavior**:
-
-- **Logged In**: Both links go to `/dashboard`
-- **Logged Out**: Both links go to `/login`
+All quick links point to `/login`. The proxy handles authenticated users before they reach the footer.
 
 ---
 
@@ -329,22 +300,16 @@ router.replace("/dashboard"); // Replace instead of push
 ### Flow 1: Unauthenticated User Visits Homepage
 
 1. User navigates to `/`
-2. Marketing nav shows "Enter" button (links to `/login`)
-3. Hero shows "Login to Dashboard" button (links to `/login`)
-4. Footer shows "Login" and "Dashboard" links (both → `/login`)
-5. User clicks any button → redirected to `/login`
+2. Marketing nav shows "Enter" button → `/login`
+3. Hero shows "Go to Dashboard" button → `/login`
+4. Footer shows "Login" and "Dashboard" links → both `/login`
+5. User clicks any button → arrives at login form
 
 ### Flow 2: Authenticated User Visits Homepage
 
 1. User navigates to `/`
-2. **Proxy layer** checks session cookie → redirects to `/dashboard`
-3. User never sees marketing page (instant redirect)
-
-**Fallback** (if proxy doesn't trigger):
-
-1. Marketing nav shows "Dashboard" button (links to `/dashboard`)
-2. Hero shows "Go to Dashboard" button (links to `/dashboard`)
-3. Footer links both go to `/dashboard`
+2. **Proxy layer** (`proxy.ts`) checks session cookie → redirects to `/dashboard`
+3. User never sees marketing page (instant server-side redirect)
 
 ### Flow 3: Unauthenticated User Visits Login Page
 
@@ -373,50 +338,33 @@ router.replace("/dashboard"); // Replace instead of push
 
 ## Best Practices
 
-### 1. Always Check Session Client-Side
+### 1. Keep Marketing Components Static
 
-For auth-aware components:
+Marketing page components (nav, hero, footer) should use **static links to `/login`** — no client-side session checks. The proxy layer handles all authenticated redirects before the page renders. This avoids:
+- Server-to-self HTTP loopback issues in Docker
+- React error boundaries on login/signup pages
+- Flash-of-wrong-content loading states
 
-```typescript
-useEffect(() => {
-  authClient
-    .getSession()
-    .then((session) => setIsLoggedIn(!!session?.data?.user))
-    .catch(() => setIsLoggedIn(false));
-}, []);
-```
+### 2. Use `router.replace()` for Auth Redirects
 
-### 2. Show Loading States
-
-Prevent flash of content:
+For auth/login pages that redirect logged-in users:
 
 ```typescript
-if (isCheckingAuth) {
-  return <LoadingSpinner />;
-}
-```
-
-### 3. Use `router.replace()` for Redirects
-
-Prevent back-button issues:
-
-```typescript
-router.replace("/dashboard"); // ✅ Good
+router.replace("/dashboard"); // ✅ Good — no back-button loop
 router.push("/dashboard"); // ❌ Bad
 ```
 
-### 4. Handle Errors Gracefully
+### 3. Handle Session Errors Gracefully
 
-Always have a fallback:
+In auth pages that check session client-side:
 
 ```typescript
 authClient
   .getSession()
   .then(/* ... */)
   .catch(() => {
-    // Assume not logged in
-    setIsLoggedIn(false);
-    setIsLoading(false);
+    // Assume not logged in, show the form
+    setIsCheckingAuth(false);
   });
 ```
 
@@ -428,55 +376,23 @@ authClient
 
 **Logged-Out User**:
 
-- [ ] Visit `/` → see "Enter" button in nav
-- [ ] Visit `/` → see "Login to Dashboard" in hero
-- [ ] Visit `/` → footer "Login" and "Dashboard" links go to `/login`
-- [ ] Visit `/login` → see login form (no flash)
-- [ ] Visit `/register` → see registration form (no flash)
+- [ ] Visit `/` → see "Enter" button in nav (→ `/login`)
+- [ ] Visit `/` → see "Go to Dashboard" in hero (→ `/login`)
+- [ ] Visit `/` → footer "Login" and "Dashboard" links both go to `/login`
+- [ ] Visit `/login` → see login form
+- [ ] Visit `/register` → see registration form
 
 **Logged-In User**:
 
-- [ ] Visit `/` → redirected to `/dashboard` immediately
+- [ ] Visit `/` → redirected to `/dashboard` immediately (proxy)
 - [ ] Visit `/login` → see loading spinner → redirected to `/dashboard`
 - [ ] Visit `/register` → see loading spinner → redirected to `/dashboard`
-- [ ] Visit `/` (if proxy fails) → see "Dashboard" button in nav
-- [ ] Visit `/` (if proxy fails) → see "Go to Dashboard" in hero
-- [ ] Visit `/` (if proxy fails) → footer links go to `/dashboard`
 
 **Navigation**:
 
 - [ ] Click "Enter" when logged out → go to `/login`
-- [ ] Click "Dashboard" when logged in → go to `/dashboard`
-- [ ] Click "Login to Dashboard" when logged out → go to `/login`
-- [ ] Click "Go to Dashboard" when logged in → go to `/dashboard`
-
-### Automated Testing
-
-Add tests to `AUTH_SECURITY_TESTING_GUIDE.md`:
-
-```typescript
-// Test auth-aware navigation
-describe("Marketing Navigation", () => {
-  it("shows 'Enter' when logged out", async () => {
-    // ... test implementation
-  });
-
-  it("shows 'Dashboard' when logged in", async () => {
-    // ... test implementation
-  });
-});
-
-// Test page redirects
-describe("Login Page", () => {
-  it("redirects logged-in users to dashboard", async () => {
-    // ... test implementation
-  });
-
-  it("shows login form for logged-out users", async () => {
-    // ... test implementation
-  });
-});
-```
+- [ ] Click "Go to Dashboard" when logged out → go to `/login`
+- [ ] Footer "Login"/"Dashboard" links → go to `/login`
 
 ---
 

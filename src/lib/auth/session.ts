@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports -- legacy compatibility shim; see docs/architecture/IMPORT_RULES.md
+import { getAuth } from "@/interface-adapters/auth/better-auth";
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- legacy compatibility shim; see docs/architecture/IMPORT_RULES.md
 import type { Session, User } from "@/interface-adapters/auth/better-auth";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
@@ -20,8 +22,7 @@ const getSessionInternal = cache(
     user: User | null;
   }> => {
     try {
-      // Better Auth v1.3.34+ can auto-detect session from request context
-      // We need to ensure cookies are available in the request context
+      // Fast path: skip auth API call if no session cookie present
       const cookieStore = await cookies();
       const sessionToken = cookieStore.get("better-auth.session_token");
 
@@ -32,38 +33,12 @@ const getSessionInternal = cache(
         };
       }
 
-      const cookieHeader = cookieStore
-        .getAll()
-        .map(({ name, value }) => `${name}=${value}`)
-        .join("; ");
-
-      const baseUrl =
-        process.env.BETTER_AUTH_URL ||
-        process.env.NEXT_PUBLIC_APP_URL ||
-        "http://localhost:3000";
-
-      const response = await fetch(`${baseUrl}/api/auth/get-session`, {
-        headers: {
-          cookie: cookieHeader,
-        },
-        cache: "no-store",
+      // Direct in-process call — no HTTP loopback needed.
+      // Using fetch to localhost fails inside Docker containers (AggregateError).
+      const requestHeaders = await headers();
+      const result = await getAuth().api.getSession({
+        headers: requestHeaders,
       });
-
-      if (!response.ok) {
-        console.error("Failed to fetch session from Better Auth:", {
-          status: response.status,
-          statusText: response.statusText,
-        });
-        return {
-          session: null,
-          user: null,
-        };
-      }
-
-      const result = (await response.json()) as {
-        session: Session | null;
-        user: User | null;
-      } | null;
 
       if (!result?.session || !result?.user) {
         return {
@@ -73,8 +48,8 @@ const getSessionInternal = cache(
       }
 
       return {
-        session: result.session,
-        user: result.user,
+        session: result.session as unknown as Session,
+        user: result.user as User,
       };
     } catch (error) {
       console.error("Error getting session:", error);

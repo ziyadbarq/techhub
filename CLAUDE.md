@@ -51,10 +51,10 @@ npx prisma studio     # Visual DB editor
 # See docs/guides/PRISMA_GUIDE.md for migrations, schema, and troubleshooting
 
 # Local Docker Testing
-./scripts/dev/docker-local.sh           # Fast: Build on host + package in Docker (~32s)
+npm run docker:local        # Fast: build:fast + docker compose up --build -d (~32s)
+npm run docker:local:logs   # Follow app logs
+npm run docker:local:down   # Stop fast build containers
 docker compose up --build               # Full: Complete production build in Docker (~20-30min)
-docker compose -f docker-compose.local.yml down  # Stop fast build containers
-docker compose logs app -f              # Follow app logs
 # See docs/deployment/LOCAL_DOCKER_TESTING.md for setup and troubleshooting
 
 # Admin Tools & Scripts

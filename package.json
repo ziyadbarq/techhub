@@ -75,6 +75,9 @@
     "pm2:reload": "pm2 reload ecosystem.config.cjs --env production",
     "pm2:logs": "pm2 logs",
     "pm2:status": "pm2 status",
+    "docker:local": "npm run build:fast && docker compose -f docker-compose.local.yml up --build -d",
+    "docker:local:logs": "docker compose -f docker-compose.local.yml logs app -f",
+    "docker:local:down": "docker compose -f docker-compose.local.yml down",
     "setup": "npm install && npm run db:migrate && npm run db:seed",
     "prepare": "husky"
   },
@@ -164,6 +167,7 @@
     "react-dom": "^19.2.0",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.66.1",
+    "react-is": "^19.2.4",
     "recharts": "^3.4.1",
     "reflect-metadata": "^0.2.2",
     "rehype-autolink-headings": "^7.1.0",

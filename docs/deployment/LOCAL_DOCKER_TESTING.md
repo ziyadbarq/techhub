@@ -44,14 +44,14 @@ Local Docker testing allows you to:
 The fast approach builds on your native macOS (fast) and packages in Docker (fast):
 
 ```bash
-# One command does everything:
-# 1. Builds app on host (~7s)
-# 2. Packages in Docker (~25s)
-# 3. Starts all services
-./scripts/dev/docker-local.sh
+# npm script (recommended shortcut):
+npm run docker:local          # build:fast + docker compose up --build -d
+npm run docker:local:logs     # follow app logs
+npm run docker:local:down     # stop containers
 
-# Or use the helper script in detached mode
-./scripts/dev/docker-local.sh -d
+# Or use the helper script directly:
+./scripts/dev/docker-local.sh
+./scripts/dev/docker-local.sh -d   # detached mode
 ```
 
 **Total time: ~32 seconds** 🚀
@@ -175,10 +175,17 @@ The `docker-compose.yml` uses `.env.docker` for configuration. Key variables:
 BETTER_AUTH_SECRET=your-secret-here    # Generate with: openssl rand -base64 32
 BETTER_AUTH_URL=http://localhost:3000
 
+# Trusted origins (needed when accessing from multiple URLs)
+# Default in docker-compose.local.yml: http://localhost:3000,http://172.17.17.251:3000
+# Add your machine's network IP if accessing Docker from a different host/port
+TRUSTED_ORIGINS=http://localhost:3000,http://192.168.1.x:3000
+
 # Optional
 OPENAI_API_KEY=sk-...                  # Only needed for AI features
 LOG_LEVEL=info                         # debug, info, warn, error
 ```
+
+**`TRUSTED_ORIGINS`**: Controls which origins better-auth accepts auth requests from. Required when your browser accesses the app from a URL different from `BETTER_AUTH_URL` (e.g., a network IP or a different port). Without it, auth requests return `403 INVALID_ORIGIN`.
 
 ### Default Configuration
 
@@ -273,6 +280,35 @@ docker compose exec postgres psql -U techhub -c "SELECT COUNT(*) FROM \"Person\"
 ```
 
 ## Troubleshooting
+
+### Issue: Docker build fails with npm peer dependency errors
+
+**Cause**: `better-auth@1.4.4` declares `peerOptional next@"^14||^15"` but the project uses Next.js 16. npm strict mode rejects this.
+
+**Solution**: `Dockerfile.local` uses `--legacy-peer-deps` flag to bypass this:
+```dockerfile
+RUN HUSKY=0 npm ci --include=dev --legacy-peer-deps
+```
+This is already configured — no action needed unless you see it missing after a Dockerfile edit.
+
+### Issue: `react-is` or other packages missing after install with `--legacy-peer-deps`
+
+**Cause**: `--legacy-peer-deps` can drop transitive dependencies that rely on peer resolution (e.g., `recharts` → `react-is`).
+
+**Solution**: Explicitly reinstall the missing package:
+```bash
+npm install react-is --legacy-peer-deps
+```
+Then rebuild Docker: `npm run docker:local`
+
+### Issue: `403 INVALID_ORIGIN` on auth requests
+
+**Cause**: better-auth rejects requests from an origin not listed in `TRUSTED_ORIGINS`.
+
+**Solution**: Add the origin to `TRUSTED_ORIGINS` in `docker-compose.local.yml`:
+```yaml
+TRUSTED_ORIGINS: http://localhost:3000,http://YOUR_IP:3000
+```
 
 ### Issue: Build fails with "bash: not found"
 
