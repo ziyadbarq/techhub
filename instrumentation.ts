@@ -7,9 +7,15 @@
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation
  */
 export async function register() {
-  // Only run in Node.js runtime (skip Edge runtime and build phases)
+  console.log(
+    `[instrumentation] register() called | NEXT_RUNTIME=${process.env.NEXT_RUNTIME}`,
+  );
+
   if (process.env.NEXT_RUNTIME === "nodejs") {
-    // Import cloud config initialization (runs top-level await to load config)
-    await import("./src/infrastructure/config/cloud-config-init");
+    try {
+      await import("./src/infrastructure/config/cloud-config-init");
+    } catch (error) {
+      console.error("[instrumentation] FAILED to load cloud-config-init:", error);
+    }
   }
 }
