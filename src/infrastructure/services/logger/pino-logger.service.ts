@@ -104,18 +104,16 @@ export class PinoLoggerService implements ILoggerService {
       },
     });
 
-    // Log initialization only in development mode
-    if (isDevelopment) {
-      this.logger.debug(
-        {
-          logLevel: logLevel,
-          logLevelSource: env.LOG_LEVEL ? "env" : "default",
-          nodeEnv: env.NODE_ENV,
-          prettyPrint: isDevelopment,
-        },
-        "Logger initialized",
-      );
-    }
+    // Always log initialization so we see logs in K8s/production (single info line)
+    this.logger.info(
+      {
+        logLevel,
+        logLevelSource: env.LOG_LEVEL ? "env" : "default",
+        nodeEnv: env.NODE_ENV,
+        prettyPrint: isDevelopment,
+      },
+      "Logger initialized",
+    );
   }
 
   /**

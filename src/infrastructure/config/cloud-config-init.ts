@@ -24,17 +24,18 @@ import { loadCloudConfig } from "./cloud-config-loader";
  *
  * Priority:
  * 1. SPRING_PROFILE (explicit override)
- * 2. NODE_ENV mapping (production → prod, development/test → dev)
+ * 2. ENVIRONMENT_NAME (from values, e.g. gcpdev → loads techhub-gcpdev.properties)
+ * 3. NODE_ENV mapping (production → prod, development/test → dev)
  *
- * @returns Spring profile name (dev, uat, prod)
+ * @returns Spring profile name (dev, gcpdev, uat, prod, etc.)
  */
 function getSpringProfile(): string {
-  // Explicit override via SPRING_PROFILE env var
   if (process.env.SPRING_PROFILE) {
     return process.env.SPRING_PROFILE;
   }
-
-  // Map NODE_ENV to Spring profile
+  if (process.env.ENVIRONMENT_NAME) {
+    return process.env.ENVIRONMENT_NAME;
+  }
   switch (process.env.NODE_ENV) {
     case "production":
       return "prod";
@@ -154,3 +155,11 @@ async function initializeCloudConfig(): Promise<void> {
 // Auto-execute initialization using top-level await
 // This blocks the instrumentation hook until config is loaded
 await initializeCloudConfig();
+
+// Unconditional startup banner so we always see something in K8s/logs
+// Uses process.stdout so it is not buffered and appears even if logging is misconfigured
+const logLevel = process.env.LOG_LEVEL ?? (process.env.NODE_ENV === "production" ? "info" : "debug");
+const configSource = process.env.CONFIG_SERVER_URL ? "config-server" : "local";
+process.stdout.write(
+  `[TechHub] Server starting | NODE_ENV=${process.env.NODE_ENV ?? "undefined"} | LOG_LEVEL=${logLevel} | config=${configSource}\n`,
+);
