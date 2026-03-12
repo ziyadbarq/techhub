@@ -2,12 +2,10 @@
  * Next.js Instrumentation Hook
  *
  * Runs once at server startup (Node.js runtime only).
- * Used to load configuration from Spring Cloud Config Server before application initialization.
+ * Loads cloud config then bootstraps the DI container so Pino is live immediately.
  *
  * NOTE: This file MUST be in src/ (not project root) for Next.js standalone builds.
  * See: https://github.com/vercel/next.js/issues/81050
- *
- * @see https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation
  */
 export async function register() {
   console.log(
@@ -17,8 +15,12 @@ export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     try {
       await import("./infrastructure/config/cloud-config-init");
+      console.log("[instrumentation] cloud-config loaded, initializing DI container...");
+      const { initContainer } = await import("./di/container");
+      await initContainer();
+      console.log("[instrumentation] DI container ready, Pino logger active");
     } catch (error) {
-      console.error("[instrumentation] FAILED to load cloud-config-init:", error);
+      console.error("[instrumentation] startup failed:", error);
     }
   }
 }
