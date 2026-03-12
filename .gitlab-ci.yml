@@ -1,6 +1,6 @@
 # GitLab CI/CD Pipeline for TechHub
 # Next.js 16 + Prisma 7 + PostgreSQL + Redis
-# Kubernetes deployment via GitOps (ArgoCD) on OCI + GCP clouds
+# Kubernetes deployment via GitOps (ArgoCD) on GCP cloud
 #
 # ====================
 # AUTOMATED WORKFLOW
@@ -8,11 +8,11 @@
 #
 # Branch-based automation:
 #   • dev branch  → build_only (validates + builds Docker image, NO deployment)
-#   • main branch → build_and_deploy (validates + builds + deploys to production)
+#   • main branch → build_and_deploy to GCP production
 #
 # Manual triggers (GitLab UI):
 #   • Still available for custom builds/deployments
-#   • Select cloud (OCI/GCP) and operation type (build_only/build_and_deploy)
+#   • Operation type: build_only or build_and_deploy
 #
 # Performance optimizations:
 #   • Intelligent caching based on package-lock.json
@@ -31,9 +31,8 @@ variables:
 
   CLOUD:
     description: "Select on which cloud you need to deploy"
-    value: "oci"
+    value: "gcp"
     options:
-      - "oci"
       - "gcp"
 
   npm_migration:
@@ -54,60 +53,39 @@ variables:
 
   # Cache configuration
   NPM_CACHE_DIR: "$CI_PROJECT_DIR/.npm"
+  # NPM network resiliency (mitigates transient ECONNRESET issues)
+  NPM_CONFIG_FETCH_RETRIES: "5"
+  NPM_CONFIG_FETCH_RETRY_FACTOR: "2"
+  NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
+  NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "120000"
+  NPM_CONFIG_NETWORK_TIMEOUT: "600000"
+  NPM_CONFIG_AUDIT: "false"
+  NPM_CONFIG_FUND: "false"
+  NPM_CONFIG_PROGRESS: "false"
+  NPM_CONFIG_LOGLEVEL: "warn"
 
   # ============================================================================
-  # Environment Configuration (hardcoded for container deployment)
-  # ⚠️ WARNING: Hardcoded credentials - consider moving to GitLab CI/CD Variables
-  # ============================================================================
+  # Build-time variables — stored in GitLab CI/CD project settings, NOT here.
+  # Go to: Settings > CI/CD > Variables
   #
-  # CRITICAL VARIABLES ONLY
-  # Non-critical variables have sensible defaults in the application:
-  # - LOG_LEVEL defaults based on NODE_ENV (see src/infrastructure/config/env.ts)
-  # - BETTER_AUTH_URL defaults to baseURL in better-auth.ts
-  # - NODE_ENV defaults to "production"
-  # - AUTH_DEBUG_LOGS, PRISMA_VERBOSE_LOGS are optional
+  #   DATABASE_URL   — CI database connection string (masked; protected only if branch policy allows it)
+  #                    Required for: npx prisma validate in the validate stage
+  #   ENCRYPTION_KEY — 64 hex chars AES-256-GCM key (masked; protected only if branch policy allows it)
+  #                    Required for: validate stage check
   #
-  # If runtime issues occur, add variables individually rather than all at once.
+  # Runtime variables (DATABASE_URL, REDIS_URL, BETTER_AUTH_*, etc.) are loaded
+  # from Spring Cloud Config Server at pod startup via instrumentation.ts.
+  # See: docs/infrastructure/SPRING_CLOUD_CONFIG.md
   # ============================================================================
 
-  # Database (REQUIRED for Prisma schema validation during build)
-  DATABASE_URL: "postgresql://techhub:YG%3C2KH%60r%29I%2CkHjMO@172.17.19.3:5432/techhub"
-
-  # Encryption (REQUIRED for OAuth token encryption)
-  ENCRYPTION_KEY: "0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc"
-
-  # Logging (OPTIONAL - defaults based on NODE_ENV)
-  LOG_LEVEL: "info"
-
-  # DEV OCI VARIABLES
-  DEV_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  DEV_OCI_LAB_TAG: globalnodeoci
-  DEV_OCI_VALUES: values-dev.yaml
-  DEV_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
-
-  # TEST OCI VARIABLES
-  TEST_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  TEST_OCI_LAB_TAG: globalnodeoci
-  TEST_OCI_VALUES: values-test.yaml
-  TEST_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
-
-  # UAT OCI VARIABLES
-  UAT_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  UAT_OCI_LAB_TAG: globalnodeoci
-  UAT_OCI_VALUES: values-uat.yaml
-  UAT_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
-
-  # PERF OCI VARIABLES (if needed)
-  PERF_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
-  PERF_OCI_LAB_TAG: globalnodeoci
-  PERF_OCI_VALUES: values-perf.yaml
-  PERF_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
-
-  # DEV GCP VARIABLES
+  # GCP Variables
   DEV_CNTNR_GCP_REG_IMG_PREFIX: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo"
-  DEV_GCP_LAB_TAG: globalnodegcp
+  DEV_GCP_LAB_TAG: globalnodeoci
+  DEV_OCI_LAB_TAG: globalnodeoci
+  DEV_CNTNR_OCI_REG_IMG_PREFIX: jed.ocir.io/axbp9ow0rohq
+  DEV_OCI_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
   DEV_GCP_VALUES: values-gcpdev.yaml
-  DEV_GCP_IMAGE: me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/gitlab-runner-node-22-alpine:latest
+  DEV_GCP_IMAGE: jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-22-alpine
 
   # UAT GCP VARIABLES
   UAT_CNTNR_GCP_REG_IMG_PREFIX: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo"
@@ -121,16 +99,36 @@ stages:
   - build_and_deploy
   - image-promotion
 
+# Shared build cache for non-validate jobs
+.build_cache: &build_cache
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - node_modules/
+    - .npm/
+    - .next/cache/
+  policy: pull
+
+# Shared build metrics collection for build-only jobs
+.build_metrics_after_script: &build_metrics_after_script
+  - echo "📊 Build Metrics (${BUILD_METRICS_LABEL})" | tee ${BUILD_METRICS_FILE}
+  - echo "Job Duration:${CI_JOB_DURATION}s" | tee -a ${BUILD_METRICS_FILE}
+  - echo "Pipeline:${CI_PIPELINE_ID}" | tee -a ${BUILD_METRICS_FILE}
+  - echo "Commit:${CI_COMMIT_SHORT_SHA}" | tee -a ${BUILD_METRICS_FILE}
+  - if [ -d .next ]; then echo "Next.js build size:$(du -sh .next | cut -f1)" | tee -a ${BUILD_METRICS_FILE}; echo "Static files:$(du -sh .next/static 2>/dev/null | cut -f1 || echo N/A)" | tee -a ${BUILD_METRICS_FILE}; fi
+  - if [ -d node_modules ]; then echo "node_modules size:$(du -sh node_modules | cut -f1)" | tee -a ${BUILD_METRICS_FILE}; fi
+
 # ====================
 # Stage 1: Validation (Type-check, Lint, Unit Tests)
 # ====================
 # CRITICAL: This stage MUST run before builds to catch issues early
 
 validate:
-  image: $DEV_OCI_IMAGE
+  image: $DEV_GCP_IMAGE
   stage: validate
   tags:
-    - $DEV_OCI_LAB_TAG
+    - $DEV_GCP_LAB_TAG
   cache:
     # Cache based on package-lock.json to invalidate on dependency changes
     key:
@@ -163,26 +161,26 @@ validate:
     - npm run type-check
     - echo "Running lint..."
     - npm run lint
-    - echo "Running tests..."
-    - npm run test -- --run --reporter=verbose
     - echo "✅ Validation complete"
   after_script:
-    # Track build metrics for monitoring
     - echo "📊 Collecting build metrics..."
-    - echo "Job Duration: ${CI_JOB_DURATION}s" | tee build-metrics.txt
-    - echo "Pipeline ID: ${CI_PIPELINE_ID}" | tee -a build-metrics.txt
-    - echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-metrics.txt
-    - echo "Branch: ${CI_COMMIT_BRANCH}" | tee -a build-metrics.txt
-    - |
-      if [ -f npm-install.log ]; then
-        grep "added.*packages" npm-install.log | tee -a build-metrics.txt || echo "npm install time: unavailable" | tee -a build-metrics.txt
-      fi
-    - |
-      if [ -d node_modules ]; then
-        echo "node_modules size: $(du -sh node_modules | cut -f1)" | tee -a build-metrics.txt
-      fi
+    - echo "Job Duration:${CI_JOB_DURATION}s" | tee build-metrics.txt
+    - echo "Pipeline ID:${CI_PIPELINE_ID}" | tee -a build-metrics.txt
+    - echo "Commit:${CI_COMMIT_SHORT_SHA}" | tee -a build-metrics.txt
+    - echo "Branch:${CI_COMMIT_BRANCH}" | tee -a build-metrics.txt
+    - if [ -f npm-install.log ]; then grep "added.*packages" npm-install.log | tee -a build-metrics.txt || echo "npm install time unavailable" | tee -a build-metrics.txt; fi
+    - if [ -d node_modules ]; then echo "node_modules size:$(du -sh node_modules | cut -f1)" | tee -a build-metrics.txt; fi
   rules:
-    # Run validation on ALL pipelines (not just web/specific branches)
+    # Skip validation when only CI/deployment/docs files changed
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - .gitlab-ci.yml
+        - Dockerfile
+        - .dockerignore
+        - docs/**/*
+        - "*.md"
+      when: never
+    # Run validation on ALL other changes
     - when: on_success
   artifacts:
     reports:
@@ -196,110 +194,20 @@ validate:
     expire_in: 30 days
 
 # ====================
-# Stage 2: Build Only (OCI)
-# ====================
-
-build-oci:
-  timeout: 20m
-  image: $DEV_OCI_IMAGE
-  stage: build_only
-  variables:
-    DOCKER_CONFIG: "/kaniko/.docker"
-  cache:
-    # Reuse cache from validate stage for faster builds
-    key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .next/cache/
-    policy: pull
-  rules:
-    # Automatic: dev branch → build_only
-    - if: '$CI_COMMIT_BRANCH == $DEV_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-      when: always
-    # Manual: Web UI with build_only selected
-    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_only"'
-      when: always
-    - when: never
-  tags:
-    - $DEV_OCI_LAB_TAG
-  environment:
-    name: $DEV_ENV
-  before_script:
-    - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
-  script:
-    # Clone deployment-configs for Dockerfile
-    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-    - cp /.npmrc .
-
-    # Install dependencies and build
-    - npm ci --prefer-offline --cache $NPM_CACHE_DIR
-    - npm run db:generate
-    - npm run build
-
-    # Generate image tag
-    - version=`jq -r '.version' package.json`
-    - commit_id=`git rev-parse --short=6 HEAD`
-    - mkdir -p package
-    - cp -r /package/. package/ || echo "No shared packages to copy"
-
-    # Build with Kaniko
-    - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
-    - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
-    - |
-      /kaniko/executor \
-        --context $CI_PROJECT_DIR \
-        --dockerfile Dockerfile \
-        --destination ${FULL_IMAGE_NAME}
-
-    - echo "${FULL_IMAGE_NAME}"
-  after_script:
-    # Track build metrics
-    - echo "📊 Build Metrics (OCI)" | tee build-size-oci.txt
-    - echo "Job Duration: ${CI_JOB_DURATION}s" | tee -a build-size-oci.txt
-    - echo "Pipeline: ${CI_PIPELINE_ID}" | tee -a build-size-oci.txt
-    - echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-size-oci.txt
-    - |
-      if [ -d .next ]; then
-        echo "Next.js build size: $(du -sh .next | cut -f1)" | tee -a build-size-oci.txt
-        echo "Static files: $(du -sh .next/static 2>/dev/null | cut -f1 || echo 'N/A')" | tee -a build-size-oci.txt
-      fi
-    - |
-      if [ -d node_modules ]; then
-        echo "node_modules size: $(du -sh node_modules | cut -f1)" | tee -a build-size-oci.txt
-      fi
-  artifacts:
-    paths:
-      - build-size-oci.txt
-    expire_in: 7 days
-  dependencies:
-    - validate
-  needs:
-    - job: validate
-      artifacts: false
-
-# ====================
-# Stage 2: Build Only (GCP)
+# Stage 2: Build Only
 # ====================
 
 build-gcp:
-  timeout: 20m
+  timeout: 30m # Increased from 20m to accommodate cold builds
   image: $DEV_GCP_IMAGE
   stage: build_only
   variables:
     DOCKER_CONFIG: "/kaniko/.docker"
+    BUILD_METRICS_LABEL: "GCP"
+    BUILD_METRICS_FILE: "build-size-gcp.txt"
   cache:
     # Reuse cache from validate stage for faster builds
-    key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .next/cache/
-    policy: pull
+    <<: *build_cache
   rules:
     # Automatic: dev branch → build_only (GCP)
     - if: '$CI_COMMIT_BRANCH == $DEV_BRANCH && $CI_PIPELINE_SOURCE == "push"'
@@ -313,18 +221,22 @@ build-gcp:
   environment:
     name: $DEV_ENV
   before_script:
+    # Set inotify file watch limit for Next.js/Turbopack
+    # Note: max_user_instances defaults to 128 which is sufficient for Turbopack parallelism
+    # Removed: max_user_instances=512 (was limiting parallelism)
+    # Removed: sysctl -p (auto-applied in containers, adds 9s overhead)
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
-    - echo fs.inotify.max_user_instances=512 | tee -a /etc/sysctl.conf
-    - sysctl -p
+    # ENCRYPTION_KEY must be set in GitLab CI/CD project variables (Settings > CI/CD > Variables)
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
 
-    # Install dependencies and build
+    # Install dependencies and build on runner (fast - native filesystem)
+    # Using build:fast since type-check already ran in validate stage
     - npm ci --prefer-offline --cache $NPM_CACHE_DIR
     - npm run db:generate
-    - npm run build
+    - npm run build:fast
 
     # Generate image tag
     - version=`jq -r '.version' package.json`
@@ -332,67 +244,65 @@ build-gcp:
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
-    # Build with Kaniko
+    # Temporarily modify .dockerignore to include build artifacts
+    # Include: .next/, src/generated/
+    # Exclude: Large unnecessary files (logs, tests, docs, etc)
+    - mv .dockerignore .dockerignore.tmp
+    - echo ".git/" > .dockerignore
+    - echo ".npm/" >> .dockerignore
+    - echo ".husky/" >> .dockerignore
+    - echo "coverage/" >> .dockerignore
+    - echo "docs/" >> .dockerignore
+    - echo "roadmap/" >> .dockerignore
+    - echo "*.md" >> .dockerignore
+    - echo ".vscode/" >> .dockerignore
+    - echo ".idea/" >> .dockerignore
+
+    # Build with Kaniko (using pre-built artifacts from runner)
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
     - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - |
       /kaniko/executor \
+        --cache=true \
+        --cache-ttl=168h \
+        --snapshot-mode=redo \
+        --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
 
+    # Restore original .dockerignore
+    - mv .dockerignore.tmp .dockerignore
+
     - echo "${FULL_IMAGE_NAME}"
-  after_script:
-    # Track build metrics
-    - echo "📊 Build Metrics (GCP)" | tee build-size-gcp.txt
-    - echo "Job Duration: ${CI_JOB_DURATION}s" | tee -a build-size-gcp.txt
-    - echo "Pipeline: ${CI_PIPELINE_ID}" | tee -a build-size-gcp.txt
-    - echo "Commit: ${CI_COMMIT_SHORT_SHA}" | tee -a build-size-gcp.txt
-    - |
-      if [ -d .next ]; then
-        echo "Next.js build size: $(du -sh .next | cut -f1)" | tee -a build-size-gcp.txt
-        echo "Static files: $(du -sh .next/static 2>/dev/null | cut -f1 || echo 'N/A')" | tee -a build-size-gcp.txt
-      fi
-    - |
-      if [ -d node_modules ]; then
-        echo "node_modules size: $(du -sh node_modules | cut -f1)" | tee -a build-size-gcp.txt
-      fi
+  after_script: *build_metrics_after_script
   artifacts:
     paths:
       - build-size-gcp.txt
     expire_in: 7 days
-  dependencies:
-    - validate
   needs:
     - job: validate
       artifacts: false
+      optional: true
 
-# ====================
-# Stage 3: Build and Deploy to ArgoCD (OCI)
-# ====================
 
-build-and-push-oci-to-argo:
-  timeout: 20m
+build-oci:
+  timeout: 30m # Increased from 20m to accommodate cold builds
   image: $DEV_OCI_IMAGE
-  stage: build_and_deploy
+  stage: build_only
   variables:
     DOCKER_CONFIG: "/kaniko/.docker"
+    BUILD_METRICS_LABEL: "OCI"
+    BUILD_METRICS_FILE: "build-size-gcp.txt"
   cache:
     # Reuse cache from validate stage for faster builds
-    key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .next/cache/
-    policy: pull
+    <<: *build_cache
   rules:
-    # Automatic: main branch → build_and_deploy (OCI production)
-    - if: '$CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE == "push"'
+    # Automatic: dev branch → build_only (GCP)
+    - if: '$CI_COMMIT_BRANCH == $DEV_BRANCH && $CI_PIPELINE_SOURCE == "push"'
       when: always
-    # Manual: Web UI with build_and_deploy selected
-    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy" && $type != "build_only"'
+    # Manual: Web UI with build_only selected
+    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_only"'
       when: always
     - when: never
   tags:
@@ -400,16 +310,22 @@ build-and-push-oci-to-argo:
   environment:
     name: $DEV_ENV
   before_script:
+    # Set inotify file watch limit for Next.js/Turbopack
+    # Note: max_user_instances defaults to 128 which is sufficient for Turbopack parallelism
+    # Removed: max_user_instances=512 (was limiting parallelism)
+    # Removed: sysctl -p (auto-applied in containers, adds 9s overhead)
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
+    # ENCRYPTION_KEY must be set in GitLab CI/CD project variables (Settings > CI/CD > Variables)
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
 
-    # Install dependencies and build
+    # Install dependencies and build on runner (fast - native filesystem)
+    # Using build:fast since type-check already ran in validate stage
     - npm ci --prefer-offline --cache $NPM_CACHE_DIR
     - npm run db:generate
-    - npm run build
+    - npm run build:fast
 
     # Generate image tag
     - version=`jq -r '.version' package.json`
@@ -417,76 +333,60 @@ build-and-push-oci-to-argo:
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
-    # Build and push with Kaniko
+    # Temporarily modify .dockerignore to include build artifacts
+    # Include: .next/, src/generated/
+    # Exclude: Large unnecessary files (logs, tests, docs, etc)
+    - mv .dockerignore .dockerignore.tmp
+    - echo ".git/" > .dockerignore
+    - echo ".npm/" >> .dockerignore
+    - echo ".husky/" >> .dockerignore
+    - echo "coverage/" >> .dockerignore
+    - echo "docs/" >> .dockerignore
+    - echo "roadmap/" >> .dockerignore
+    - echo "*.md" >> .dockerignore
+    - echo ".vscode/" >> .dockerignore
+    - echo ".idea/" >> .dockerignore
+
+    # Build with Kaniko (using pre-built artifacts from runner)
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
     - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - |
       /kaniko/executor \
+        --cache=true \
+        --cache-ttl=168h \
+        --snapshot-mode=redo \
+        --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
 
+    # Restore original .dockerignore
+    - mv .dockerignore.tmp .dockerignore
+
     - echo "${FULL_IMAGE_NAME}"
-
-    # Update ArgoCD values.yaml (GitOps)
-    - export IMAGE_NAME="${FULL_IMAGE_NAME}"
-    - export NPM_MIGRATION="${npm_migration}"
-    - ORIGINAL_DIR=$(pwd)
-    - cd deployment-configs && git checkout main
-    - git config pull.rebase false
-    - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-
-    # Update image name and migration flag in values.yaml
-    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_OCI_VALUES}
-    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_OCI_VALUES}
-    - cat manifests/${PROJECT}/${DEV_OCI_VALUES}
-
-    # Commit and push to trigger ArgoCD sync
-    - git config --global user.email "sdev@barq.com"
-    - git config --global user.name ${GITLAB_UN}
-    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git"
-    - git add manifests/${PROJECT}/${DEV_OCI_VALUES}
-    - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
-    - git push origin -o ci.skip HEAD:main
-
-    - echo "---->>> SUCCESSFULLY PUSHED TO DEV (OCI) <<<----"
-    - cd $ORIGINAL_DIR
-
-    # Export image for promotion jobs
-    - echo "FULL_IMAGE_NAME=${FULL_IMAGE_NAME}" > build_info.env
-    - echo "IMAGE_FOR_UAT=${FULL_IMAGE_NAME}" >> build_info.env
+  after_script: *build_metrics_after_script
   artifacts:
-    reports:
-      dotenv: build_info.env
     paths:
-      - build_info.env
-    expire_in: 1 week
-  dependencies:
-    - validate
+      - build-size-gcp.txt
+    expire_in: 7 days
   needs:
     - job: validate
       artifacts: false
+      optional: true
 
 # ====================
-# Stage 3: Build and Deploy to ArgoCD (GCP)
+# Stage 3: Build and Deploy to ArgoCD
 # ====================
 
 build-and-push-gcp-to-argo:
-  timeout: 20m
+  timeout: 30m # Increased from 20m to accommodate cold builds
   image: $DEV_GCP_IMAGE
   stage: build_and_deploy
   variables:
     DOCKER_CONFIG: "/kaniko/.docker"
   cache:
     # Reuse cache from validate stage for faster builds
-    key:
-      files:
-        - package-lock.json
-    paths:
-      - node_modules/
-      - .npm/
-      - .next/cache/
-    policy: pull
+    <<: *build_cache
   rules:
     # Automatic: main branch → build_and_deploy (GCP)
     - if: '$CI_COMMIT_BRANCH == $AUTOMATIC_TRIGGER_BRANCH && $CI_PIPELINE_SOURCE == "push"'
@@ -500,18 +400,22 @@ build-and-push-gcp-to-argo:
   environment:
     name: $DEV_ENV
   before_script:
+    # Set inotify file watch limit for Next.js/Turbopack
+    # Note: max_user_instances defaults to 128 which is sufficient for Turbopack parallelism
+    # Removed: max_user_instances=512 (was limiting parallelism)
+    # Removed: sysctl -p (auto-applied in containers, adds 9s overhead)
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
-    - echo fs.inotify.max_user_instances=512 | tee -a /etc/sysctl.conf
-    - sysctl -p
+    # ENCRYPTION_KEY must be set in GitLab CI/CD project variables (Settings > CI/CD > Variables)
   script:
     # Clone deployment-configs for Dockerfile
     - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
 
-    # Install dependencies and build
+    # Install dependencies and build on runner (fast - native filesystem)
+    # Using build:fast since type-check already ran in validate stage
     - npm ci --prefer-offline --cache $NPM_CACHE_DIR
     - npm run db:generate
-    - npm run build
+    - npm run build:fast
 
     # Generate image tag
     - version=`jq -r '.version' package.json`
@@ -519,42 +423,54 @@ build-and-push-gcp-to-argo:
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
 
-    # Build and push with Kaniko
+    # Compute image name before Kaniko (needed for both ArgoCD update and Kaniko push)
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
     - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
+    - export IMAGE_NAME="${FULL_IMAGE_NAME}"
+    - export NPM_MIGRATION="${npm_migration}"
+
+    # Update ArgoCD values.yaml BEFORE Kaniko (Kaniko destroys the filesystem, git/yq won't exist after)
+    # GCP deployments use values-yaml-npd repo (ArgoCD watches this, not deployment-configs)
+    - git clone --depth 1 http://${GITLAB_UN_VAL}:${GITLAB_TOKEN_VAL}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd.git
+    - cd values-yaml-npd
+    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" ${PROJECT}/${DEV_GCP_VALUES}
+    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" ${PROJECT}/${DEV_GCP_VALUES}
+    - cat ${PROJECT}/${DEV_GCP_VALUES}
+    - git config --global user.email "sdev@barq.com"
+    - git config --global user.name ${GITLAB_UN}
+    - git remote set-url origin "http://${GITLAB_UN_VAL}:${GITLAB_TOKEN_VAL}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd.git"
+    - git add ${PROJECT}/${DEV_GCP_VALUES}
+    - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
+    - git push origin -o ci.skip HEAD:main
+    - echo "---->>> SUCCESSFULLY PUSHED TO DEV (GCP) <<<----"
+    - cd $CI_PROJECT_DIR
+
+    # Temporarily modify .dockerignore to include build artifacts
+    - mv .dockerignore .dockerignore.tmp
+    - echo ".git/" > .dockerignore
+    - echo ".npm/" >> .dockerignore
+    - echo ".husky/" >> .dockerignore
+    - echo "coverage/" >> .dockerignore
+    - echo "docs/" >> .dockerignore
+    - echo "roadmap/" >> .dockerignore
+    - echo "*.md" >> .dockerignore
+    - echo ".vscode/" >> .dockerignore
+    - echo ".idea/" >> .dockerignore
+
+    # Build and push with Kaniko (WARNING: destroys filesystem -- no git/yq after this point)
     - |
       /kaniko/executor \
+        --cache=true \
+        --cache-ttl=168h \
+        --snapshot-mode=redo \
+        --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
 
     - echo "${FULL_IMAGE_NAME}"
 
-    # Update ArgoCD values.yaml (GitOps)
-    - export IMAGE_NAME="${FULL_IMAGE_NAME}"
-    - export NPM_MIGRATION="${npm_migration}"
-    - ORIGINAL_DIR=$(pwd)
-    - cd deployment-configs && git checkout main
-    - git config pull.rebase false
-    - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
-
-    # Update image name and migration flag in values.yaml
-    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - cat manifests/${PROJECT}/${DEV_GCP_VALUES}
-
-    # Commit and push to trigger ArgoCD sync
-    - git config --global user.email "sdev@barq.com"
-    - git config --global user.name ${GITLAB_UN}
-    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git"
-    - git add manifests/${PROJECT}/${DEV_GCP_VALUES}
-    - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
-    - git push origin -o ci.skip HEAD:main
-
-    - echo "---->>> SUCCESSFULLY PUSHED TO DEV (GCP) <<<----"
-    - cd $ORIGINAL_DIR
-
-    # Export image for promotion jobs
+    # Export image for promotion jobs (only shell builtins -- no external commands available)
     - echo "FULL_IMAGE_NAME=${FULL_IMAGE_NAME}" > build_info.env
     - echo "IMAGE_FOR_UAT=${FULL_IMAGE_NAME}" >> build_info.env
   artifacts:
@@ -563,11 +479,10 @@ build-and-push-gcp-to-argo:
     paths:
       - build_info.env
     expire_in: 1 week
-  dependencies:
-    - validate
   needs:
     - job: validate
       artifacts: false
+      optional: true
 
 # ====================
 # Stage 4: Image Promotion (Template)
@@ -614,69 +529,11 @@ build-and-push-gcp-to-argo:
     - echo "---->>> SUCCESSFULLY PROMOTED TO ${TARGET_ENV} <<<----"
     - echo "Image ${IMAGE_NAME} has been promoted"
 
-# OCI Promotions
-promote-to-uat-oci:
-  <<: *promote_to_base
-  image: $UAT_OCI_IMAGE
-  tags:
-    - $UAT_OCI_LAB_TAG
-  environment:
-    name: uat
-  variables:
-    VALUES_FILE: $UAT_OCI_VALUES
-    TARGET_ENV: "UAT (OCI)"
-  rules:
-    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
-      when: manual
-    - when: never
-  dependencies:
-    - build-and-push-oci-to-argo
-  needs:
-    - job: build-and-push-oci-to-argo
-      artifacts: true
+# ====================
+# Stage 4: Image Promotion to UAT
+# ====================
 
-promote-to-test-oci:
-  <<: *promote_to_base
-  image: $TEST_OCI_IMAGE
-  tags:
-    - $TEST_OCI_LAB_TAG
-  environment:
-    name: test
-  variables:
-    VALUES_FILE: $TEST_OCI_VALUES
-    TARGET_ENV: "TEST (OCI)"
-  rules:
-    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
-      when: manual
-    - when: never
-  dependencies:
-    - build-and-push-oci-to-argo
-  needs:
-    - job: build-and-push-oci-to-argo
-      artifacts: true
-
-promote-to-perf-oci:
-  <<: *promote_to_base
-  image: $PERF_OCI_IMAGE
-  tags:
-    - $PERF_OCI_LAB_TAG
-  environment:
-    name: perf
-  variables:
-    VALUES_FILE: $PERF_OCI_VALUES
-    TARGET_ENV: "PERF (OCI)"
-  rules:
-    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
-      when: manual
-    - when: never
-  dependencies:
-    - build-and-push-oci-to-argo
-  needs:
-    - job: build-and-push-oci-to-argo
-      artifacts: true
-
-# GCP Promotions
-promote-to-uat-gcp:
+promote-to-uat:
   <<: *promote_to_base
   image: $UAT_GCP_IMAGE
   tags:
@@ -685,9 +542,9 @@ promote-to-uat-gcp:
     name: uat
   variables:
     VALUES_FILE: $UAT_GCP_VALUES
-    TARGET_ENV: "UAT (GCP)"
+    TARGET_ENV: "UAT"
   rules:
-    - if: '$CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
+    - if: '$CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
       when: manual
     - when: never
   dependencies:

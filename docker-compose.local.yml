@@ -1,0 +1,115 @@
+# Docker Compose for Local Testing with Pre-Built Artifacts
+# This configuration uses Dockerfile.local which packages pre-built artifacts
+# from your host machine instead of building inside Docker.
+#
+# WORKFLOW:
+#   1. Build on host (fast):
+#      npm run build:fast
+#
+#   2. Package and run in Docker (fast):
+#      docker compose -f docker-compose.local.yml up --build
+#
+# ADVANTAGES:
+#   - Build on macOS native filesystem (fast)
+#   - Docker just packages artifacts (fast)
+#   - Matches GitLab CI approach
+#   - Total time: ~5 minutes instead of 30+ minutes
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: techhub-postgres-local
+    environment:
+      POSTGRES_DB: techhub
+      POSTGRES_USER: techhub
+      POSTGRES_PASSWORD: techhub_local_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U techhub"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: techhub-redis-local
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application (using pre-built artifacts)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.local  # Uses lightweight Dockerfile
+      args:
+        BASE_REGISTRY: docker.io/library
+    container_name: techhub-app-local
+    # Lower resource limits since we're just running, not building
+    mem_limit: 2g
+    cpus: 2.0
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env.docker
+    environment:
+      # Database connection
+      DATABASE_URL: postgresql://techhub:techhub_local_password@postgres:5432/techhub
+
+      # Redis connection
+      REDIS_URL: redis://redis:6379
+
+      # Node environment
+      NODE_ENV: production
+
+      # Better Auth
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-change-me-in-production}
+      BETTER_AUTH_URL: http://localhost:3000
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+
+      # OpenAI (use dummy value if not provided)
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-sk-dummy-key-for-local-testing}
+
+      # Encryption key for OAuth tokens (required)
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+
+    # Run migrations and seed on startup
+    command: >
+      sh -c "
+        echo '🔄 Running database migrations...' &&
+        npx prisma migrate deploy &&
+        echo '🌱 Seeding database (if empty)...' &&
+        npm run db:seed || true &&
+        echo '🚀 Starting application...' &&
+        node server.js
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    name: techhub-postgres-local
+  redis_data:
+    name: techhub-redis-local

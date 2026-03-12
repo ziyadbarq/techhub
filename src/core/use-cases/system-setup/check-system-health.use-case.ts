@@ -6,8 +6,6 @@
 import { injectable, inject, optional } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
-import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
-import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
 import type { ILoggerService } from "@/core/services";
 import type { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
@@ -21,10 +19,6 @@ export class CheckSystemHealthUseCase {
   constructor(
     @inject(DI_TOKENS.ISystemSetupRepository)
     private readonly systemSetupRepository: ISystemSetupRepository,
-    @inject(DI_TOKENS.IRoleRepository)
-    private readonly roleRepository: IRoleRepository,
-    @inject(DI_TOKENS.IPermissionRepository)
-    private readonly permissionRepository: IPermissionRepository,
     @inject(DI_TOKENS.IJobQueueService)
     private readonly jobQueueService: IJobQueueService,
     @inject(DI_TOKENS.ILoggerService)
@@ -107,19 +101,22 @@ export class CheckSystemHealthUseCase {
       }
     }
 
-    // Check RBAC data
-    let rolesCount = 0;
-    let permissionsCount = 0;
+    // Check seed status using foundational/config records
+    let seedStatus = {
+      organizationUnits: 0,
+      locations: 0,
+      vendors: 0,
+      featureFlags: 0,
+      services: 0,
+    };
     try {
-      const roles = await this.roleRepository.findAll();
-      const permissions = await this.permissionRepository.findAll();
-      rolesCount = roles.length;
-      permissionsCount = permissions.length;
+      seedStatus = await this.systemSetupRepository.getSeedStatus();
     } catch (_error) {
-      // Ignore RBAC check errors - database may not be seeded yet
-      rolesCount = 0;
-      permissionsCount = 0;
+      // Ignore seed status errors - runtime health should still be reported
     }
+
+    const seedingInitialized =
+      seedStatus.featureFlags > 0 && seedStatus.organizationUnits > 0;
 
     // Check worker status (maintenance queue)
     let maintenanceWorkerActive = false;
@@ -216,16 +213,22 @@ export class CheckSystemHealthUseCase {
     // Overall health (includes worker for monitoring/alerts)
     const overall = coreServicesHealthy && maintenanceWorkerActive;
 
+    const integrationsHealthy =
+      (!msGraphSSOConfigured || msGraphSSOConnected) &&
+      (!intuneConfigured || intuneConnected) &&
+      (!emailConfigured || emailConnected);
+
     this.logger.debug("System health check summary", {
       databaseConnected,
       redisConnected,
       environmentValid,
       migrationsApplied,
       pendingMigrationsCount,
-      rolesCount,
-      permissionsCount,
+      seedingInitialized,
+      seedStatus,
       maintenanceWorkerActive,
       coreServicesHealthy,
+      integrationsHealthy,
       overall,
     });
 
@@ -254,9 +257,13 @@ export class CheckSystemHealthUseCase {
           ? "All migrations applied"
           : `${pendingMigrationsCount} pending migrations`,
       },
-      rbac: {
-        roles: rolesCount,
-        permissions: permissionsCount,
+      seeding: {
+        initialized: seedingInitialized,
+        organizationUnits: seedStatus.organizationUnits,
+        locations: seedStatus.locations,
+        vendors: seedStatus.vendors,
+        featureFlags: seedStatus.featureFlags,
+        services: seedStatus.services,
       },
       worker: {
         active: maintenanceWorkerActive,
@@ -278,7 +285,7 @@ export class CheckSystemHealthUseCase {
             ? "Connected"
             : msGraphSSOError
               ? `Connection failed: ${msGraphSSOError}`
-              : "Not connected",
+              : "Configured, but the Graph connectivity check did not succeed",
         responseTimeMs: msGraphSSOResponseTime,
       },
       intune: {
@@ -291,7 +298,7 @@ export class CheckSystemHealthUseCase {
             ? "Connected"
             : intuneError
               ? `Connection failed: ${intuneError}`
-              : "Not connected",
+              : "Configured, but the Intune connectivity check did not succeed",
         responseTimeMs: intuneResponseTime,
       },
       email: {
@@ -309,6 +316,7 @@ export class CheckSystemHealthUseCase {
       },
       overall,
       coreServicesHealthy,
+      integrationsHealthy,
     };
   }
 }

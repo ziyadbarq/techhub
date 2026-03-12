@@ -1,64 +1,65 @@
 /**
  * Cloud Config Loader
  *
- * Loads configuration from Spring Cloud Config Server with retry logic,
- * timeout handling, and graceful fallback.
+ * Loads configuration from Spring Cloud Config Server using plain fetch().
+ * No external dependencies -- just calls the config server REST API directly.
+ *
+ * Spring Cloud Config REST API:
+ *   GET /{application}/{profile}
+ *   Returns JSON with propertySources[].source containing key-value pairs.
+ *
+ * This is the same API that all Spring Boot apps use via their built-in client.
  */
 
-import { load, type Config } from "cloud-config-client";
 import type {
   CloudConfigLoaderOptions,
   CloudConfigLoaderResult,
 } from "./cloud-config.types";
 
-/**
- * Sleep utility for retry backoff
- */
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
- * Converts Config object to flat key-value pairs in environment variable format
- *
- * Uses the Config.toObject() method which properly handles property sources
- * and returns all resolved properties as a flat object.
- *
- * Example output: { "database.url": "postgres://...", "redis.url": "redis://..." }
+ * Spring Cloud Config Server response shape
  */
-function flattenConfig(configData: Config): Record<string, string> {
-  // Use Config.toObject() to get all resolved properties
-  const properties = configData.toObject();
-
-  // Convert dot notation to environment variable format
-  // e.g., "database.url" -> "DATABASE_URL"
-  const envFormatted: Record<string, string> = {};
-
-  for (const [key, value] of Object.entries(properties)) {
-    // Keep original key if already uppercase with underscores (e.g., DATABASE_URL)
-    if (key === key.toUpperCase() && key.includes("_")) {
-      envFormatted[key] = String(value);
-    } else {
-      // Convert dot notation to uppercase with underscores
-      const envKey = key.replace(/\./g, "_").toUpperCase();
-      envFormatted[envKey] = String(value);
-    }
-  }
-
-  return envFormatted;
+interface SpringConfigResponse {
+  name: string;
+  profiles: string[];
+  label: string | null;
+  version: string | null;
+  propertySources: Array<{
+    name: string;
+    source: Record<string, unknown>;
+  }>;
 }
 
 /**
- * Loads configuration from Spring Cloud Config Server
- *
- * Features:
- * - Retry logic with exponential backoff (3 attempts by default)
- * - Configurable timeout per attempt (5s by default)
- * - Graceful fallback (returns empty config instead of throwing)
- * - Structured error logging
- *
- * @param options Configuration options
- * @returns Promise resolving to config result (never throws)
+ * Extract flat key-value env vars from Spring Cloud Config response.
+ * Property sources are ordered by priority (first = highest),
+ * so later sources don't override earlier ones.
+ */
+function extractProperties(
+  response: SpringConfigResponse,
+): Record<string, string> {
+  const result: Record<string, string> = {};
+
+  // Reverse so highest-priority source wins (first source in array = highest priority)
+  const sources = [...response.propertySources].reverse();
+  for (const ps of sources) {
+    for (const [key, value] of Object.entries(ps.source)) {
+      if (value !== null && value !== undefined) {
+        result[key] = String(value);
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Loads configuration from Spring Cloud Config Server.
+ * Uses Node.js built-in fetch() -- no npm dependencies needed.
  */
 export async function loadCloudConfig(
   options: CloudConfigLoaderOptions,
@@ -69,30 +70,33 @@ export async function loadCloudConfig(
   const loadedAt = new Date().toISOString();
   let lastError: Error | null = null;
 
-  // Log config load attempt
-  console.log(
-    `🔧 Loading config from Spring Cloud Config Server: ${endpoint}/${name}/${profile}`,
-  );
+  // Spring Cloud Config REST API: GET /{application}/{profile}
+  const url = `${endpoint.replace(/\/+$/, "")}/${name}/${profile}`;
 
-  // Retry loop with exponential backoff
+  console.log(`🔧 Loading config: GET ${url}`);
+
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       console.log(`   Attempt ${attempt}/${retries}...`);
 
-      // Load config from Spring Cloud Config Server
-      const configData = await load({
-        endpoint,
-        name,
-        profiles,
-        // @ts-expect-error - cloud-config-client types don't include timeout, but it's supported
-        timeout,
-      });
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeout);
 
-      // Convert Spring format to flat key-value
-      const config = flattenConfig(configData);
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: { Accept: "application/json" },
+      });
+      clearTimeout(timer);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = (await response.json()) as SpringConfigResponse;
+      const config = extractProperties(data);
 
       console.log(
-        `✅ Config loaded successfully from config server (${Object.keys(config).length} keys)`,
+        `✅ Config loaded: ${Object.keys(config).length} keys from ${data.propertySources.length} source(s)`,
       );
 
       return {
@@ -108,12 +112,10 @@ export async function loadCloudConfig(
       };
     } catch (error) {
       lastError = error as Error;
-
       console.warn(
         `   ⚠️  Attempt ${attempt}/${retries} failed: ${lastError.message}`,
       );
 
-      // Wait before retry (exponential backoff: 100ms, 200ms, 400ms)
       if (attempt < retries) {
         const backoffMs = 100 * Math.pow(2, attempt - 1);
         console.log(`   ⏳ Retrying in ${backoffMs}ms...`);
@@ -122,9 +124,8 @@ export async function loadCloudConfig(
     }
   }
 
-  // All retries failed - return fallback result
   console.error(
-    `❌ Failed to load config from server after ${retries} attempts. Using local .env fallback.`,
+    `❌ Failed to load config after ${retries} attempts. Using local fallback.`,
   );
   console.error(`   Last error: ${lastError?.message}`);
 

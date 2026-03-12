@@ -191,9 +191,11 @@ npm run dev  # Should use .env.local only
 
 ### Current Status
 
-**⚠️ Spring Cloud Config is NOT YET ACTIVE in CI/CD pipeline**
+The CI/CD pipeline no longer has hardcoded credentials in `.gitlab-ci.yml`.
+Build-time variables (`DATABASE_URL`, `ENCRYPTION_KEY`) are now in GitLab CI/CD project variables.
 
-The application code supports Spring Cloud Config (via `instrumentation.ts`), but the CI/CD pipeline currently uses direct GitLab CI/CD variables. This is intentional to allow gradual migration.
+To activate Spring Cloud Config at runtime, `CONFIG_SERVER_URL` must be present in the
+application container environment for each environment (see Part 3 of the migration steps below).
 
 ### Migration Path
 
@@ -279,13 +281,10 @@ CONFIG_SERVER_URL=http://config-server.baraq.com:8888
    curl http://config-server.baraq.com:8888/actuator/health
    ```
 
-4. **Add CONFIG_SERVER_URL to GitLab CI/CD**
-   - Go to GitLab UI > Project > Settings > CI/CD > Variables
-   - Add variable:
-     - Name: `CONFIG_SERVER_URL`
-     - Value: `http://config-server.baraq.com:8888`
-     - Protected: Yes (optional)
-     - Masked: No
+4. **Expose `CONFIG_SERVER_URL` to the application runtime**
+   - Add `CONFIG_SERVER_URL=http://config-server.baraq.com:8888` wherever your deployment injects runtime environment variables
+   - This may be GitLab-driven, Helm/values-driven, or another Kubernetes mechanism depending on your DevOps setup
+   - Verify the variable is actually present inside the running pod before relying on config server loading
 
 5. **Gradual Migration**
    - Keep direct variables alongside `CONFIG_SERVER_URL` initially
@@ -310,7 +309,7 @@ CONFIG_SERVER_URL=http://config-server.baraq.com:8888
 | Branch      | NODE_ENV   | Spring Profile |
 |-------------|------------|----------------|
 | main        | production | prod           |
-| develop     | development| dev            |
+| dev         | development| dev            |
 | feature/*   | development| dev            |
 
 Override with `SPRING_PROFILE` GitLab CI variable if needed.
@@ -323,7 +322,7 @@ This means neither direct variables nor config server provided `DATABASE_URL`.
 
 **Solutions:**
 1. Add `DATABASE_URL` directly to GitLab CI/CD variables (quick fix)
-2. Set up config server and add `CONFIG_SERVER_URL` to GitLab variables
+2. Set up config server and ensure `CONFIG_SERVER_URL` reaches the runtime container
 3. Verify config server is reachable from GitLab runners
 4. Check config server logs for errors
 

@@ -25,14 +25,14 @@ Day-to-day operations guide for TechHub deployments on Kubernetes (OCI and GCP c
 # GitLab UI: CI/CD > Pipelines
 
 # Deployments via GitOps (ArgoCD):
-# - Pipeline updates values.yaml in deployment-configs repo
+# - Pipeline updates deployment values in the GitOps repo
 # - ArgoCD automatically syncs changes to Kubernetes
 
 # Automatic deployment (main branch → OCI production)
 # Push to main branch - builds image, updates values-dev.yaml, ArgoCD deploys
 
-# Automatic deployment (develop branch → GCP development)
-# Push to develop branch - builds image, updates values-gcpdev.yaml, ArgoCD deploys
+# Automatic deployment (dev branch → GCP development)
+# Push to dev branch - builds image, updates values-gcpdev.yaml, ArgoCD deploys
 
 # Manual operations:
 # - Build only: CI/CD > Pipelines > Run pipeline > set type=build_only
@@ -216,7 +216,7 @@ kubectl get hpa techhub -n istio-dev --watch
 ### Via GitLab CI (Recommended)
 
 **Automatic Method**:
-1. Push code to `main` or `develop` branch
+1. Push code to `main` or `dev` branch
 2. Pipeline builds new Docker image
 3. Trigger manual deployment (OCI) or automatic (GCP)
 4. Helm performs rolling update

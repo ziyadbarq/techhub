@@ -26,9 +26,13 @@ export interface SystemHealthCheckDto {
     error?: string;
     message?: string;
   };
-  rbac: {
-    roles: number;
-    permissions: number;
+  seeding: {
+    initialized: boolean;
+    organizationUnits: number;
+    locations: number;
+    vendors: number;
+    featureFlags: number;
+    services: number;
   };
   worker: {
     active: boolean;
@@ -59,6 +63,7 @@ export interface SystemHealthCheckDto {
   };
   overall: boolean; // ALL services including worker (for monitoring/alerts)
   coreServicesHealthy: boolean; // Core services only: DB + Redis + Env + Migrations (for deployment gates)
+  integrationsHealthy: boolean; // Optional integrations only: Graph, Intune, Email
 }
 
 export interface MigrationStatusDto {

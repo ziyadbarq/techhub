@@ -6,15 +6,17 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  // Standalone output for Docker deployment
   output: "standalone",
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   typescript: {
-    // Type checking enabled for production-ready builds
-    // Can be disabled with SKIP_TYPE_CHECK=true for faster builds
     ignoreBuildErrors: process.env.SKIP_TYPE_CHECK === "true",
   },
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
+  cacheMaxMemorySize: 0,
   experimental: {
     serverActions: {
       bodySizeLimit: "10mb",

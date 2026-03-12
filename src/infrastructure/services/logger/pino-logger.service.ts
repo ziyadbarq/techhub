@@ -22,49 +22,29 @@ import type {
   PerformanceTimer,
   AuditLogEntry,
 } from "@/core/services";
-import { env } from "@/infrastructure/config/env";
 import { serializeError } from "./error-serializer";
 import { calculateTiming, formatTimingMessage } from "./timing-utils";
 import { getRequestContext } from "@/lib/request-context";
 
-/**
- * Pino-based implementation of ILoggerService
- *
- * Uses Pino for high-performance structured logging with:
- * - Pretty printing in development mode
- * - JSON format in production
- * - Automatic timestamp and hostname
- * - Support for nested objects and arrays
- * - Performance timing and monitoring
- * - Audit logging support
- * - Enhanced error serialization
- * - Automatic request context injection (requestId, userId, path, method)
- */
 @injectable()
 export class PinoLoggerService implements ILoggerService {
   private readonly logger: Logger;
 
   constructor() {
-    // Configure Pino based on environment
-    const isDevelopment = env.NODE_ENV === "development";
-
-    // Safe fallback for LOG_LEVEL during build (when env validation is skipped)
-    // Pattern: env.LOG_LEVEL → environment-based default → hard default
-    // Use || instead of ?? to catch empty strings
-    const logLevel = env.LOG_LEVEL || (isDevelopment ? "debug" : "info");
+    const nodeEnv = process.env.NODE_ENV || "production";
+    const isDevelopment = nodeEnv === "development";
+    const logLevel =
+      process.env.LOG_LEVEL || (isDevelopment ? "debug" : "info");
 
     this.logger = pino({
-      // Set log level with safe fallback
       level: logLevel,
 
-      // Add base context to all logs
       base: {
         pid: process.pid,
         hostname: process.env.HOSTNAME || "unknown",
-        env: env.NODE_ENV,
+        env: nodeEnv,
       },
 
-      // Pretty print in development, JSON in production
       transport: isDevelopment
         ? {
             target: "pino-pretty",
@@ -78,10 +58,8 @@ export class PinoLoggerService implements ILoggerService {
           }
         : undefined,
 
-      // Format timestamps as ISO 8601
       timestamp: pino.stdTimeFunctions.isoTime,
 
-      // Redact sensitive fields (add more as needed)
       redact: {
         paths: [
           "password",
@@ -97,25 +75,21 @@ export class PinoLoggerService implements ILoggerService {
         remove: true,
       },
 
-      // Serialize errors with enhanced serializer
       serializers: {
         error: (error: Error) => serializeError(error),
         err: (error: Error) => serializeError(error),
       },
     });
 
-    // Log initialization only in development mode
-    if (isDevelopment) {
-      this.logger.debug(
-        {
-          logLevel: logLevel,
-          logLevelSource: env.LOG_LEVEL ? "env" : "default",
-          nodeEnv: env.NODE_ENV,
-          prettyPrint: isDevelopment,
-        },
-        "Logger initialized",
-      );
-    }
+    this.logger.info(
+      {
+        logLevel,
+        logLevelSource: process.env.LOG_LEVEL ? "env" : "default",
+        nodeEnv,
+        prettyPrint: isDevelopment,
+      },
+      "Logger initialized",
+    );
   }
 
   /**
