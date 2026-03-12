@@ -26,9 +26,10 @@ COPY .next ./.next
 # Copy Prisma TypeScript types (not included in standalone)
 COPY src/generated/prisma ./src/generated/prisma
 
-# Copy static assets
+# Copy static assets and startup script
 COPY public ./public
 COPY package.json ./package.json
+COPY docker-start.mjs ./docker-start.mjs
 
 # Migration & seed tooling (prisma CLI, tsx, source code for seed imports)
 COPY node_modules ./node_modules
@@ -65,8 +66,9 @@ COPY --from=builder /app/public ./public
 # Prisma WASM client (engineType = "client") — not traced into standalone, explicit copy required
 COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
 
-# Copy package.json
+# Copy package.json and startup script
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/docker-start.mjs ./docker-start.mjs
 
 # Migration & seed tooling (used by Helm pre-upgrade Job and manual pod exec)
 COPY --from=builder /app/node_modules ./node_modules
@@ -91,5 +93,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:3000/api/health || exit 1
 
-# Start application
-CMD ["node", "server.js"]
+# Start application (docker-start.mjs loads config from Spring Cloud Config Server, then starts server.js)
+CMD ["node", "docker-start.mjs"]
