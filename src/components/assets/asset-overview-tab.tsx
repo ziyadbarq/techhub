@@ -36,6 +36,8 @@ export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
       return;
     }
 
+    let active = true;
+
     async function fetchConversion() {
       // Only convert if we have a purchase cost and currency that's not SAR
       if (!asset.purchaseCost || !asset.currency || asset.currency === "SAR") {
@@ -49,7 +51,7 @@ export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
           fromCurrency: asset.currency,
         });
 
-        if (result.success && result.data) {
+        if (active && result.success && result.data) {
           setCurrencyConversion({
             sarAmount: result.data.convertedAmount,
             exchangeRate: result.data.exchangeRate,
@@ -59,11 +61,17 @@ export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
         // Silently fail - just won't show conversion
         console.error("Failed to fetch currency conversion:", error);
       } finally {
-        setIsLoadingConversion(false);
+        if (active) {
+          setIsLoadingConversion(false);
+        }
       }
     }
 
     fetchConversion();
+
+    return () => {
+      active = false;
+    };
   }, [asset.purchaseCost, asset.currency]);
 
   return (

@@ -11,6 +11,7 @@ import {
   RefreshCw,
   ServerCog,
   ShieldCheck,
+  Tag,
   Wifi,
   XCircle,
 } from "lucide-react";
@@ -715,6 +716,46 @@ export function SystemHealthPage() {
                   This `/health` page is the human-readable view layered on top
                   of that API.
                 </p>
+              </CardContent>
+            </Card>
+
+            <Card className="flex flex-col self-start">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Tag className="text-foreground h-5 w-5" />
+                  Deployed Build
+                </CardTitle>
+                <CardDescription>
+                  Version metadata baked into the running image by CI.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {data?.buildInfo ? (
+                  <dl className="space-y-3 text-sm">
+                    {(
+                      [
+                        ["Version", data.buildInfo.version],
+                        ["Git Commit", data.buildInfo.gitCommit],
+                        ["Image Tag", data.buildInfo.imageTag],
+                        ["Build Date", data.buildInfo.buildDate],
+                      ] as [string, string][]
+                    ).map(([label, value]) => (
+                      <div
+                        key={label}
+                        className="border-border/70 bg-muted/35 flex items-center justify-between gap-3 rounded-xl border px-4 py-3"
+                      >
+                        <dt className="text-muted-foreground shrink-0">
+                          {label}
+                        </dt>
+                        <dd className="text-right font-mono text-xs break-all">
+                          {value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : (
+                  <p className="text-muted-foreground text-sm">Loading…</p>
+                )}
               </CardContent>
             </Card>
           </div>

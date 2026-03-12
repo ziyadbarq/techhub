@@ -40,6 +40,12 @@ npm run db:seed:dev    # dev preset (full demo data)
 # Development
 npm run validate # Type-check + lint + test
 
+# Versioning (always use npm version — updates package.json + package-lock.json + git tag)
+npm version patch   # bug fixes:   1.0.0 → 1.0.1
+npm version minor   # new features: 1.0.0 → 1.1.0
+npm version major   # breaking:     1.0.0 → 2.0.0
+# Then push: git push origin main --tags && git push gitlab main --tags
+
 # Build & Deploy
 npm run build         # Production build (type-check + lint + build)
 npm run build:fast    # Fast build (skips TypeScript)
@@ -227,6 +233,7 @@ For specialized features, see dedicated guides:
 5. **Validate early** - DTOs (Zod) at boundaries, entities for business rules
 6. **Use structured logging** - Inject `ILoggerService`, never `console.log`
 7. **Before committing** - Run `npm run validate` (type-check + lint + test)
+8. **Versioning** - Proactively bump `package.json` version using `npm version patch/minor/major` when completing bug fixes, new features, or breaking changes. Never manually edit the version field. Push tags to both remotes.
 
 ## Adding New Features - Quick Checklist
 
@@ -287,11 +294,13 @@ Keep messages concise with relevant context.
 
 **Workflow**: Always commit locally first, then push to both remotes. Pushing to `gitlab` remote triggers CI/CD pipeline.
 
+**IMPORTANT for Claude**: Never attempt `git push gitlab` — requires Barq VPN which blocks Claude Code. Only commit locally; user handles all pushes manually.
+
 ```bash
 # Check commit status (ahead/behind remotes)
 git status
 
-# Push to both remotes
+# Push to both remotes (user runs manually; gitlab requires Barq VPN)
 git push origin main    # Backup to GitHub
 git push gitlab main    # Trigger CI/CD pipeline on GitLab
 

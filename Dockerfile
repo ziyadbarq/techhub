@@ -9,6 +9,10 @@
 # Build Arguments
 # ====================
 ARG BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq
+ARG GIT_COMMIT=unknown
+ARG APP_VERSION=dev
+ARG BUILD_DATE=unknown
+ARG IMAGE_TAG=local
 
 
 # ====================
@@ -57,6 +61,16 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 # Set environment to production
 ENV NODE_ENV=production
+
+# Build metadata (injected by CI via --build-arg; defaults to "unknown"/"dev" for local builds)
+ARG GIT_COMMIT
+ARG APP_VERSION
+ARG BUILD_DATE
+ARG IMAGE_TAG
+ENV GIT_COMMIT=$GIT_COMMIT \
+    APP_VERSION=$APP_VERSION \
+    BUILD_DATE=$BUILD_DATE \
+    IMAGE_TAG=$IMAGE_TAG
 
 # Copy Next.js standalone server and static files
 COPY --from=builder /app/.next/standalone ./

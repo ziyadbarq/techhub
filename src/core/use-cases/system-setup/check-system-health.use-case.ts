@@ -31,6 +31,15 @@ export class CheckSystemHealthUseCase {
     private readonly emailService: IEmailService | null,
   ) {}
 
+  private getBuildInfo() {
+    return {
+      version: process.env.APP_VERSION ?? "dev",
+      gitCommit: process.env.GIT_COMMIT ?? "local",
+      buildDate: process.env.BUILD_DATE ?? "unknown",
+      imageTag: process.env.IMAGE_TAG ?? "local",
+    };
+  }
+
   @LogExecution("system.health.check")
   async execute(): Promise<SystemHealthCheckDto> {
     this.logger.debug("System health check started");
@@ -66,7 +75,7 @@ export class CheckSystemHealthUseCase {
     const requiredEnvVars = [
       "DATABASE_URL",
       "REDIS_URL",
-      "AUTH_SECRET", // Changed from BETTER_AUTH_SECRET
+      "BETTER_AUTH_SECRET",
       "BETTER_AUTH_URL",
     ];
     const missingEnvVars: string[] = requiredEnvVars.filter(
@@ -314,6 +323,7 @@ export class CheckSystemHealthUseCase {
               : "Not connected",
         responseTimeMs: emailResponseTime,
       },
+      buildInfo: this.getBuildInfo(),
       overall,
       coreServicesHealthy,
       integrationsHealthy,

@@ -61,6 +61,12 @@ export interface SystemHealthCheckDto {
     message?: string;
     responseTimeMs?: number;
   };
+  buildInfo: {
+    version: string;
+    gitCommit: string;
+    buildDate: string;
+    imageTag: string;
+  };
   overall: boolean; // ALL services including worker (for monitoring/alerts)
   coreServicesHealthy: boolean; // Core services only: DB + Redis + Env + Migrations (for deployment gates)
   integrationsHealthy: boolean; // Optional integrations only: Graph, Intune, Email

@@ -167,6 +167,10 @@ build-gcp:
         --cache-ttl=168h \
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
+        --build-arg GIT_COMMIT=${commit_id} \
+        --build-arg APP_VERSION=${version} \
+        --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+        --build-arg IMAGE_TAG=${IMAGE_TAG} \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -226,6 +230,10 @@ build-oci:
         --cache-ttl=168h \
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
+        --build-arg GIT_COMMIT=${commit_id} \
+        --build-arg APP_VERSION=${version} \
+        --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+        --build-arg IMAGE_TAG=${IMAGE_TAG} \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -276,6 +284,10 @@ build-and-push-gcp-to-argo:
     - cd values-yaml-npd
     - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" ${PROJECT}/${DEV_GCP_VALUES}
     - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" ${PROJECT}/${DEV_GCP_VALUES}
+    - export COMMIT_ID="${commit_id}" APP_VER="${version}" ITAG="${IMAGE_TAG}"
+    - yq e -i '(.deployment.env[] | select(.name == "GIT_COMMIT")).value = strenv(COMMIT_ID)' ${PROJECT}/${DEV_GCP_VALUES}
+    - yq e -i '(.deployment.env[] | select(.name == "APP_VERSION")).value = strenv(APP_VER)' ${PROJECT}/${DEV_GCP_VALUES}
+    - yq e -i '(.deployment.env[] | select(.name == "IMAGE_TAG")).value = strenv(ITAG)' ${PROJECT}/${DEV_GCP_VALUES}
     - cat ${PROJECT}/${DEV_GCP_VALUES}
     - git config --global user.email "sdev@barq.com"
     - git config --global user.name ${GITLAB_UN}
@@ -300,6 +312,10 @@ build-and-push-gcp-to-argo:
         --cache-ttl=168h \
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
+        --build-arg GIT_COMMIT=${commit_id} \
+        --build-arg APP_VERSION=${version} \
+        --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+        --build-arg IMAGE_TAG=${IMAGE_TAG} \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -352,6 +368,10 @@ build-and-push-oci-to-argo:
     - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_OCI_VALUES}
     - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_OCI_VALUES}
+    - export COMMIT_ID="${commit_id}" APP_VER="${version}" ITAG="${IMAGE_TAG}"
+    - yq e -i '(.deployment.env[] | select(.name == "GIT_COMMIT")).value = strenv(COMMIT_ID)' manifests/${PROJECT}/${DEV_OCI_VALUES}
+    - yq e -i '(.deployment.env[] | select(.name == "APP_VERSION")).value = strenv(APP_VER)' manifests/${PROJECT}/${DEV_OCI_VALUES}
+    - yq e -i '(.deployment.env[] | select(.name == "IMAGE_TAG")).value = strenv(ITAG)' manifests/${PROJECT}/${DEV_OCI_VALUES}
     - cat manifests/${PROJECT}/${DEV_OCI_VALUES}
     - git config --global user.email "sdev@barq.com"
     - git config --global user.name ${GITLAB_UN}
@@ -376,6 +396,10 @@ build-and-push-oci-to-argo:
         --cache-ttl=168h \
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
+        --build-arg GIT_COMMIT=${commit_id} \
+        --build-arg APP_VERSION=${version} \
+        --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+        --build-arg IMAGE_TAG=${IMAGE_TAG} \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -415,6 +439,12 @@ build-and-push-oci-to-argo:
     - export NPM_MIGRATION="${npm_migration}"
     - yq e -i ".deployment.imageName = strenv(FULL_IMAGE_NAME)" manifests/${PROJECT}/${VALUES_FILE}
     - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${VALUES_FILE}
+    - export PROMOTE_ITAG="${FULL_IMAGE_NAME##*:}"
+    - export PROMOTE_VER=$(echo "$PROMOTE_ITAG" | cut -d'-' -f1)
+    - export PROMOTE_COMMIT=$(echo "$PROMOTE_ITAG" | cut -d'-' -f2)
+    - yq e -i '(.deployment.env[] | select(.name == "GIT_COMMIT")).value = strenv(PROMOTE_COMMIT)' manifests/${PROJECT}/${VALUES_FILE}
+    - yq e -i '(.deployment.env[] | select(.name == "APP_VERSION")).value = strenv(PROMOTE_VER)' manifests/${PROJECT}/${VALUES_FILE}
+    - yq e -i '(.deployment.env[] | select(.name == "IMAGE_TAG")).value = strenv(PROMOTE_ITAG)' manifests/${PROJECT}/${VALUES_FILE}
     - cat manifests/${PROJECT}/${VALUES_FILE}
     - git config --global user.email "sdev@barq.com"
     - git config --global user.name ${GITLAB_UN}
