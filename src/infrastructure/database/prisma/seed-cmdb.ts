@@ -56,6 +56,14 @@ const RELATIONSHIP_TYPES = [
       "Indicates that one CI uses another as a service or resource (non-critical dependency).",
   },
   {
+    name: "Contains",
+    code: "CONTAINS",
+    direction: "UNIDIRECTIONAL" as const,
+    isImpacting: true,
+    description:
+      "Indicates that one CI contains another CI as a component or child resource.",
+  },
+  {
     name: "Routes To",
     code: "ROUTES_TO",
     direction: "UNIDIRECTIONAL" as const,

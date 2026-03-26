@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.0.1
- * Query Engine version: f09f2815f091dbba658cdcd2264306d88bb5bda6
+ * Prisma Client JS version: 7.2.0
+ * Query Engine version: 0c8ef2ce45c83248ab3df073180d5eda9e8be7a3
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.0.1",
-  engine: "f09f2815f091dbba658cdcd2264306d88bb5bda6"
+  client: "7.2.0",
+  engine: "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3"
 }
 
 /**
@@ -407,6 +407,7 @@ export const ModelName = {
   RelationshipType: 'RelationshipType',
   RelationshipTypeScope: 'RelationshipTypeScope',
   CIRelationship: 'CIRelationship',
+  OciSyncLog: 'OciSyncLog',
   ContractType: 'ContractType',
   Contract: 'Contract',
   ContractLinkedObject: 'ContractLinkedObject',
@@ -482,7 +483,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
+    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2185,6 +2186,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CIRelationshipCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CIRelationshipCountAggregateOutputType> | number
+        }
+      }
+    }
+    OciSyncLog: {
+      payload: Prisma.$OciSyncLogPayload<ExtArgs>
+      fields: Prisma.OciSyncLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OciSyncLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OciSyncLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload>
+        }
+        findFirst: {
+          args: Prisma.OciSyncLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OciSyncLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload>
+        }
+        findMany: {
+          args: Prisma.OciSyncLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload>[]
+        }
+        create: {
+          args: Prisma.OciSyncLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload>
+        }
+        createMany: {
+          args: Prisma.OciSyncLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OciSyncLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload>[]
+        }
+        delete: {
+          args: Prisma.OciSyncLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload>
+        }
+        update: {
+          args: Prisma.OciSyncLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.OciSyncLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OciSyncLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OciSyncLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.OciSyncLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OciSyncLogPayload>
+        }
+        aggregate: {
+          args: Prisma.OciSyncLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOciSyncLog>
+        }
+        groupBy: {
+          args: Prisma.OciSyncLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OciSyncLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OciSyncLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OciSyncLogCountAggregateOutputType> | number
         }
       }
     }
@@ -7092,6 +7167,31 @@ export const CIRelationshipScalarFieldEnum = {
 export type CIRelationshipScalarFieldEnum = (typeof CIRelationshipScalarFieldEnum)[keyof typeof CIRelationshipScalarFieldEnum]
 
 
+export const OciSyncLogScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  serviceTypes: 'serviceTypes',
+  tenancyId: 'tenancyId',
+  regions: 'regions',
+  resourcesProcessed: 'resourcesProcessed',
+  resourcesCreated: 'resourcesCreated',
+  resourcesUpdated: 'resourcesUpdated',
+  resourcesRetired: 'resourcesRetired',
+  resourcesUnchanged: 'resourcesUnchanged',
+  compartmentsCreated: 'compartmentsCreated',
+  relationshipsCreated: 'relationshipsCreated',
+  errorsCount: 'errorsCount',
+  errors: 'errors',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationMs: 'durationMs',
+  triggeredBy: 'triggeredBy',
+  isDryRun: 'isDryRun'
+} as const
+
+export type OciSyncLogScalarFieldEnum = (typeof OciSyncLogScalarFieldEnum)[keyof typeof OciSyncLogScalarFieldEnum]
+
+
 export const ContractTypeScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -8569,6 +8669,20 @@ export type ListEnumRelationshipDirectionEnumFieldRefInput<$PrismaModel> = Field
 
 
 /**
+ * Reference to a field of type 'OciSyncStatus'
+ */
+export type EnumOciSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OciSyncStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'OciSyncStatus[]'
+ */
+export type ListEnumOciSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OciSyncStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'DisposalTypeEnum'
  */
 export type EnumDisposalTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisposalTypeEnum'>
@@ -9190,7 +9304,7 @@ export type PrismaClientOptions = ({
    *  { emit: 'stdout', level: 'error' }
    * 
    * ```
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/logging#the-log-option).
+   * Read more in our [docs](https://pris.ly/d/logging).
    */
   log?: (LogLevel | LogDefinition)[]
   /**
@@ -9218,6 +9332,22 @@ export type PrismaClientOptions = ({
    * ```
    */
   omit?: GlobalOmitConfig
+  /**
+   * SQL commenter plugins that add metadata to SQL queries as comments.
+   * Comments follow the sqlcommenter format: https://google.github.io/sqlcommenter/
+   * 
+   * @example
+   * ```
+   * const prisma = new PrismaClient({
+   *   adapter,
+   *   comments: [
+   *     traceContext(),
+   *     queryInsights(),
+   *   ],
+   * })
+   * ```
+   */
+  comments?: runtime.SqlCommenterPlugin[]
 }
 export type GlobalOmitConfig = {
   assetCategory?: Prisma.AssetCategoryOmit
@@ -9243,6 +9373,7 @@ export type GlobalOmitConfig = {
   relationshipType?: Prisma.RelationshipTypeOmit
   relationshipTypeScope?: Prisma.RelationshipTypeScopeOmit
   cIRelationship?: Prisma.CIRelationshipOmit
+  ociSyncLog?: Prisma.OciSyncLogOmit
   contractType?: Prisma.ContractTypeOmit
   contract?: Prisma.ContractOmit
   contractLinkedObject?: Prisma.ContractLinkedObjectOmit

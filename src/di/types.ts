@@ -1045,6 +1045,20 @@ export const DI_TOKENS = {
   ),
 
   // ==========================================
+  // OCI Sync Module Tokens
+  // ==========================================
+
+  // OCI Sync: Services
+  IOciWebhookService: Symbol.for("IOciWebhookService"),
+
+  // OCI Sync: Repositories
+  IOciSyncLogRepository: Symbol.for("IOciSyncLogRepository"),
+
+  // OCI Sync: Use Cases
+  SyncOciResourcesUseCase: Symbol.for("SyncOciResourcesUseCase"),
+  GetOciSyncLogsUseCase: Symbol.for("GetOciSyncLogsUseCase"),
+
+  // ==========================================
   // Query Layer Tokens
   // ==========================================
 

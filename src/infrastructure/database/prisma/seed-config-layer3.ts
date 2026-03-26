@@ -1415,6 +1415,11 @@ export const RELATIONSHIP_TYPE_SCOPE_DATA = [
   {
     relationshipCode: "CONTAINS",
     fromClassCode: "CLOUD_COMPARTMENT",
+    toClassCode: "LOAD_BALANCER",
+  },
+  {
+    relationshipCode: "CONTAINS",
+    fromClassCode: "CLOUD_COMPARTMENT",
     toClassCode: "BLOCK_STORAGE",
   },
 

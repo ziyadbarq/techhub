@@ -643,6 +643,22 @@ const BASE_PERMISSIONS: PermissionDefinition[] = [
     displayName: "View Intune Sync Logs",
     description: "View Intune sync operation logs",
   }),
+
+  // ==========================================
+  // OCI Cloud Sync
+  // ==========================================
+  createPermission("oci-sync", "view", {
+    displayName: "View OCI Sync",
+    description: "View OCI Cloud Sync dashboard and status",
+  }),
+  createPermission("oci-sync", "trigger", {
+    displayName: "Trigger OCI Sync",
+    description: "Trigger manual OCI cloud resource synchronization",
+  }),
+  createPermission("oci-sync-logs", "view", {
+    displayName: "View OCI Sync Logs",
+    description: "View OCI sync operation history and logs",
+  }),
 ] as const;
 
 const definedPermissionNames = new Set(

@@ -122,6 +122,16 @@ export const BackupStage = {
 export type BackupStage = (typeof BackupStage)[keyof typeof BackupStage]
 
 
+export const OciSyncStatus = {
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  PARTIAL: 'PARTIAL'
+} as const
+
+export type OciSyncStatus = (typeof OciSyncStatus)[keyof typeof OciSyncStatus]
+
+
 export const EnvironmentEnum = {
   PROD: 'PROD',
   UAT: 'UAT',

@@ -33,6 +33,7 @@ export const MAINTENANCE_JOBS = {
   WARRANTY_EXPIRATION_CHECK: "warranty-expiration-check",
   USER_SYNC_FROM_GRAPH: "user-sync-from-graph",
   INTUNE_DEVICE_SYNC: "intune-device-sync",
+  OCI_RESOURCE_SYNC: "oci-resource-sync",
   DATABASE_BACKUP: "database-backup",
   DATABASE_RESTORE: "database-restore",
 } as const;

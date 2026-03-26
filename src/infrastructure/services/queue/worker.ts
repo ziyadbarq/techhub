@@ -35,6 +35,7 @@ import {
   handleSendReservationReminders,
   handleUserSyncFromGraph,
   handleIntuneDeviceSync,
+  handleOciResourceSync,
 } from "./handlers";
 import {
   handleDatabaseBackup,
@@ -64,6 +65,10 @@ async function initializeDependencies(): Promise<void> {
   // Load Intune module for device sync jobs
   await loadHeavyModule("intune");
   log.info("initializeDependencies", "Intune module loaded");
+
+  // Load OCI Sync module for cloud resource sync jobs
+  await loadHeavyModule("oci-sync");
+  log.info("initializeDependencies", "OCI Sync module loaded");
 
   // Load other heavy modules as needed
   // await loadHeavyModule("service");
@@ -164,6 +169,12 @@ function createMaintenanceWorker(): BaseWorker {
   worker.registerHandler(
     MAINTENANCE_JOBS.INTUNE_DEVICE_SYNC,
     handleIntuneDeviceSync,
+  );
+
+  // Register OCI cloud resource sync handler
+  worker.registerHandler(
+    MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
+    handleOciResourceSync,
   );
 
   // Register database backup/restore handlers

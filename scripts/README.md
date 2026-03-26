@@ -79,9 +79,10 @@ scripts/
 | **import-service-cis.ts** | Import service-to-CI relationships | `npx tsx scripts/imports/import-service-cis.ts` |
 | **import-service-ownership.ts** | Import service ownership | `npx tsx scripts/imports/import-service-ownership.ts` |
 | **import-service-bia.ts** | Import business impact analysis | `npx tsx scripts/imports/import-service-bia.ts` |
-| **download-oci-data.ts** | Download OCI inventory from n8n webhook | `npm run download:oci` |
+| **download-oci-data.ts** | Download OCI inventory from n8n webhook, archive previous snapshot, write manifest | `npm run download:oci` |
+| **compare-oci-data.ts** | Compare local OCI snapshot files with OCI-backed CIs in the app DB | `npm run compare:oci` |
 
-**Note:** All import scripts support `--dry-run` mode. Most source from `local/barq-data/`, except `download-oci-data.ts` which downloads to `local/oci-data/`.
+**Note:** All import scripts support `--dry-run` mode. Most source from `local/barq-data/`. OCI snapshot tooling uses `local/oci-data/` by default and supports `OCI_LOCAL_DATA_DIR`, `OCI_LOCAL_DATA_ARCHIVE_DIR`, and `OCI_SYNC_SOURCE=local` for dev/test replay.
 
 ### User Management
 

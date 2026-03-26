@@ -15,6 +15,7 @@ import {
 import type {
   CleanupOldTasksJobData,
   IntuneSyncJobData,
+  OciSyncJobData,
 } from "@/core/domain/jobs/job-data.types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
@@ -151,6 +152,33 @@ export async function setupScheduledJobs(
     pattern: "0 3 * * *",
     timezone: "UTC",
     jobName: MAINTENANCE_JOBS.INTUNE_DEVICE_SYNC,
+  });
+
+  // ==========================================
+  // OCI Cloud Resource Sync
+  // ==========================================
+
+  // Sync OCI cloud resources daily at 4:00 AM UTC (1 hour after Intune)
+  // Fetches from n8n webhook, upserts CMDB Configuration Items
+  const ociSyncJobData: OciSyncJobData = {
+    dryRun: false,
+    createdAt: Date.now(),
+  };
+
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
+    ociSyncJobData,
+    {
+      pattern: "0 4 * * *", // Every day at 4:00 AM UTC
+      tz: "UTC",
+    },
+  );
+
+  logger.info("OCI resource sync job scheduled", {
+    pattern: "0 4 * * *",
+    timezone: "UTC",
+    jobName: MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
   });
 
   // ==========================================

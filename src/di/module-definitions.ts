@@ -36,6 +36,7 @@ import { bindGovernanceDependencies } from "./modules/governance.module";
 import { bindAttachmentsDependencies } from "./modules/attachments.module";
 import { bindServiceDependencies } from "./modules/service.module";
 import { bindIntuneDependencies } from "./modules/intune.module";
+import { bindOciSyncDependencies } from "./modules/oci-sync.module";
 import { loadDisposalModule } from "./modules/disposal.module";
 import { loadAssetKitsModule } from "./modules/asset-kits.module";
 import { loadReservationsModule } from "./modules/reservations.module";
@@ -416,6 +417,19 @@ export const INTUNE_MODULE: DIModule = {
   healthCheck: createIntuneHealthCheck(),
 };
 
+export const OCI_SYNC_MODULE: DIModule = {
+  name: "oci-sync",
+  displayName: "OCI Cloud Sync",
+  tier: ModuleTier.HEAVY,
+  description: "Oracle Cloud Infrastructure resource sync via n8n webhook",
+  featureFlag: "OCI_SYNC",
+  dependencies: ["logger", "database", "foundation", "cmdb"],
+  isLoaded: false,
+  bindFunction: (container: Container) => {
+    bindOciSyncDependencies(container);
+  },
+};
+
 export const SERVICE_MODULE: DIModule = {
   name: "service",
   displayName: "Service Management",
@@ -508,6 +522,7 @@ export const ALL_MODULES: DIModule[] = [
   // HEAVY tier (lazy loaded)
   MICROSOFT_GRAPH_MODULE,
   INTUNE_MODULE,
+  OCI_SYNC_MODULE,
   SERVICE_MODULE,
   LICENSES_MODULE,
 ];

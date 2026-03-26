@@ -13,6 +13,7 @@ export { handleCompleteExpiredReservations } from "./complete-expired-reservatio
 export { handleSendReservationReminders } from "./send-reservation-reminders.handler";
 export { handleUserSyncFromGraph } from "./user-sync-from-graph.handler";
 export { handleIntuneDeviceSync } from "./intune-device-sync.handler";
+export { handleOciResourceSync } from "./oci-resource-sync.handler";
 export {
   handleDatabaseBackup,
   handleDatabaseRestore,
