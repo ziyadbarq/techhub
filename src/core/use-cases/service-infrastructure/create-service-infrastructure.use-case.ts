@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceInfrastructureRepository } from "@/core/repositories/service-infrastructure.repository.interface";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
+import type { ILoggerService } from "@/core/services";
 import { ServiceInfrastructure } from "@/core/domain/entities/service-infrastructure.entity";
 import type { ServiceLocation } from "@/generated/prisma";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { LogExecution } from "@/lib/decorators";
 
 export interface CreateServiceInfrastructureRequest {
   serviceId: string;
@@ -35,8 +33,12 @@ export class CreateServiceInfrastructureUseCase {
 
     @inject(DI_TOKENS.IIdGenerator)
     private readonly idGenerator: IIdGenerator,
+
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("serviceInfrastructure.create")
   async execute(
     request: CreateServiceInfrastructureRequest,
   ): Promise<ServiceInfrastructure> {
@@ -64,9 +66,6 @@ export class CreateServiceInfrastructureUseCase {
       this.idGenerator,
     );
 
-    return this.infrastructureRepository.create(
-      infrastructure,
-      this.idGenerator,
-    );
+    return this.infrastructureRepository.create(infrastructure);
   }
 }

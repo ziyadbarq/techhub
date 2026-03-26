@@ -1,14 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitRepository } from "@/core/repositories/asset-kit.repository.interface";
-import type {
-  AssetKit,
-  KitType,
-} from "@/core/domain/entities/asset-kit.entity";
+import { AssetKit } from "@/core/domain/entities/asset-kit.entity";
+import type { KitType } from "@/core/domain/entities/asset-kit.entity";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
@@ -55,6 +49,6 @@ export class CreateAssetKitUseCase {
       this.idGenerator,
     );
 
-    return this.assetKitRepository.create(kit, this.idGenerator);
+    return this.assetKitRepository.create(kit);
   }
 }

@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
+import type { ILoggerService } from "@/core/services";
 import { Service } from "@/core/domain/entities/service.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type {
@@ -14,6 +11,7 @@ import type {
   BusinessImpactLevel,
   CriticalityLevel,
 } from "@/generated/prisma";
+import { LogExecution } from "@/lib/decorators";
 
 export interface CreateServiceRequest {
   name: string;
@@ -36,25 +34,6 @@ export interface CreateServiceRequest {
   complianceNotes?: string;
   metadata?: Record<string, unknown>;
   createdBy?: string;
-
-  // SLA Fields
-  slaResponseTimeP50?: number;
-  slaResponseTimeP95?: number;
-  slaResponseTimeP99?: number;
-  slaResolutionTimeCritical?: number;
-  slaResolutionTimeHigh?: number;
-  slaResolutionTimeMedium?: number;
-  slaUptimePercentage?: number;
-  slaErrorRateThreshold?: number;
-  slaSupportTier?: string;
-  slaContactEmail?: string;
-  slaEscalationPath?: string;
-
-  // Health Monitoring Fields
-  healthCheckUrl?: string;
-  healthCheckInterval?: number;
-  healthCheckTimeout?: number;
-  healthCheckEnabled?: boolean;
 }
 
 @injectable()
@@ -65,8 +44,12 @@ export class CreateServiceUseCase {
 
     @inject(DI_TOKENS.IIdGenerator)
     private readonly idGenerator: IIdGenerator,
+
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("service.create")
   async execute(request: CreateServiceRequest): Promise<Service> {
     // Check if service name already exists
     const nameExists = await this.serviceRepository.existsByName(request.name);
@@ -96,29 +79,10 @@ export class CreateServiceUseCase {
         complianceNotes: request.complianceNotes,
         metadata: request.metadata,
         createdBy: request.createdBy,
-
-        // SLA Fields
-        slaResponseTimeP50: request.slaResponseTimeP50,
-        slaResponseTimeP95: request.slaResponseTimeP95,
-        slaResponseTimeP99: request.slaResponseTimeP99,
-        slaResolutionTimeCritical: request.slaResolutionTimeCritical,
-        slaResolutionTimeHigh: request.slaResolutionTimeHigh,
-        slaResolutionTimeMedium: request.slaResolutionTimeMedium,
-        slaUptimePercentage: request.slaUptimePercentage,
-        slaErrorRateThreshold: request.slaErrorRateThreshold,
-        slaSupportTier: request.slaSupportTier,
-        slaContactEmail: request.slaContactEmail,
-        slaEscalationPath: request.slaEscalationPath,
-
-        // Health Monitoring Fields
-        healthCheckUrl: request.healthCheckUrl,
-        healthCheckInterval: request.healthCheckInterval,
-        healthCheckTimeout: request.healthCheckTimeout,
-        healthCheckEnabled: request.healthCheckEnabled,
       },
       this.idGenerator,
     );
 
-    return this.serviceRepository.create(service, this.idGenerator);
+    return this.serviceRepository.create(service);
   }
 }

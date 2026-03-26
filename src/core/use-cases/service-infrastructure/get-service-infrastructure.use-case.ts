@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceInfrastructureRepository } from "@/core/repositories/service-infrastructure.repository.interface";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
+import type { ILoggerService } from "@/core/services";
 import type { ServiceInfrastructure } from "@/core/domain/entities/service-infrastructure.entity";
+import { LogExecution } from "@/lib/decorators";
 
 export interface GetServiceInfrastructureRequest {
   serviceId: string;
@@ -19,8 +17,12 @@ export class GetServiceInfrastructureUseCase {
     private readonly infrastructureRepository: IServiceInfrastructureRepository,
     @inject(DI_TOKENS.IServiceRepository)
     private readonly serviceRepository: IServiceRepository,
+
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("serviceInfrastructure.get")
   async execute(
     request: GetServiceInfrastructureRequest,
   ): Promise<ServiceInfrastructure[]> {

@@ -80,12 +80,13 @@ export function CheckoutForm({
     resolver: zodResolver(CreateKitCheckoutDTO),
     defaultValues: {
       kitId: "",
-      assignedToPersonId: undefined,
-      assignedToOrgUnitId: undefined,
-      checkoutDate: new Date(),
+      assigneeType: "PERSON" as const,
+      assigneeId: "",
+      checkedOutById: "",
       expectedReturnDate: new Date(),
-      purpose: "",
+      note: "",
       assetIds: [],
+      kitItemIds: [],
     },
   });
 
@@ -167,23 +168,18 @@ export function CheckoutForm({
               )}
             />
 
-            {/* Person */}
+            {/* Assignee */}
             <FormField
               control={form.control}
-              name="assignedToPersonId"
+              name="assigneeId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Person</FormLabel>
                   <FormControl>
                     <SearchableSelect
-                      options={[
-                        { value: "__none__", label: "No Person" },
-                        ...personOptions,
-                      ]}
-                      value={field.value ?? "__none__"}
-                      onValueChange={(value) =>
-                        field.onChange(value === "__none__" ? undefined : value)
-                      }
+                      options={personOptions}
+                      value={field.value}
+                      onValueChange={field.onChange}
                       placeholder="Select a person"
                       searchPlaceholder="Search persons..."
                       disabled={loading}

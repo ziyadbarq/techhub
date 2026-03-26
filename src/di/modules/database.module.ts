@@ -28,13 +28,9 @@ import { prisma as singletonPrisma } from "@/infrastructure/database/prisma/clie
 // } from "@/infrastructure/database/prisma/logging-middleware";
 
 // Repository interfaces from core layer
-import type { IPromptBlockRepository } from "../../core/repositories/prompt-block.repository.interface";
-import type { IPromptCompositionRepository } from "../../core/repositories/prompt-composition.repository.interface";
 import type { ITaskRepository } from "../../core/repositories/task.repository.interface";
 
 // Repository implementations from infrastructure layer
-import { PrismaPromptBlockRepository } from "../../infrastructure/repositories/prisma-prompt-block.repository";
-import { PrismaPromptCompositionRepository } from "../../infrastructure/repositories/prisma-prompt-composition.repository";
 import { PrismaTaskRepository } from "../../infrastructure/repositories/prisma-task.repository";
 
 // Auth service for Better Auth
@@ -91,20 +87,6 @@ export function bindDatabaseDependencies(container: Container): void {
   // ==========================================
   // Bind Repository Implementations
   // ==========================================
-
-  // Bind IPromptBlockRepository to PrismaPromptBlockRepository
-  // Manages atomic prompt blocks for AI system
-  container
-    .bind<IPromptBlockRepository>(DI_TOKENS.IPromptBlockRepository)
-    .to(PrismaPromptBlockRepository)
-    .inSingletonScope();
-
-  // Bind IPromptCompositionRepository to PrismaPromptCompositionRepository
-  // Manages prompt compositions for AI system
-  container
-    .bind<IPromptCompositionRepository>(DI_TOKENS.IPromptCompositionRepository)
-    .to(PrismaPromptCompositionRepository)
-    .inSingletonScope();
 
   // Bind ITaskRepository to PrismaTaskRepository
   // Example CRUD repository demonstrating the architecture

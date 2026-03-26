@@ -333,8 +333,8 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     label: "Reports",
     icon: FileText,
     description: "Asset management reports",
-    requiredPermissions: ["ASSETS_VIEW"],
-    visibleInNav: false, // Hidden until implemented
+    requiredPermissions: ["DASHBOARD_ANALYTICS"],
+    visibleInNav: true,
     navGroup: "main",
     navOrder: 5,
   },

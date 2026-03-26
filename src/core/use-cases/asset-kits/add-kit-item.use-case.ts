@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitItemRepository } from "@/core/repositories/asset-kit-item.repository.interface";
-import type { AssetKitItem } from "@/core/domain/entities/asset-kit-item.entity";
+import { AssetKitItem } from "@/core/domain/entities/asset-kit-item.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface AddKitItemRequest {
@@ -13,7 +9,7 @@ export interface AddKitItemRequest {
   assetCategoryId: string;
   quantity: number;
   isRequired?: boolean;
-  notes?: string;
+  note?: string;
 }
 
 @injectable()
@@ -29,15 +25,15 @@ export class AddKitItemUseCase {
   async execute(request: AddKitItemRequest): Promise<AssetKitItem> {
     const kitItem = AssetKitItem.create(
       {
-        kitId: request.kitId,
+        assetKitId: request.kitId,
         assetCategoryId: request.assetCategoryId,
         quantity: request.quantity,
         isRequired: request.isRequired ?? true,
-        notes: request.notes,
+        note: request.note,
       },
       this.idGenerator,
     );
 
-    return this.kitItemRepository.create(kitItem, this.idGenerator);
+    return this.kitItemRepository.create(kitItem);
   }
 }

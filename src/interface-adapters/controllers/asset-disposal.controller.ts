@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 /**
  * Asset Disposal Controller
  */
@@ -100,6 +96,9 @@ export async function createAssetDisposalAction(
 
     const validated = CreateAssetDisposalDTO.parse(data);
     const currentUserId = await getCurrentUserId();
+    if (!currentUserId) {
+      throw new Error("User must be authenticated to create a disposal");
+    }
 
     const container = getContainer();
     const useCase = container.get<CreateAssetDisposalUseCase>(

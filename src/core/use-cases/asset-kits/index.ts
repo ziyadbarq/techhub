@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 // Asset Kit Management Use Cases
 export * from "./create-asset-kit.use-case";
 export * from "./get-asset-kit.use-case";

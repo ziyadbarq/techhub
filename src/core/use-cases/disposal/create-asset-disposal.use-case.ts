@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
@@ -56,6 +52,6 @@ export class CreateAssetDisposalUseCase {
     // TODO: Create DisposalApproval records for each approverId
 
     // Persist to database
-    return this.assetDisposalRepository.create(disposal, this.idGenerator);
+    return this.assetDisposalRepository.create(disposal);
   }
 }

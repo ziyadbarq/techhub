@@ -25,18 +25,6 @@ export const DI_TOKENS = {
   // ==========================================
 
   /**
-   * Token for IPromptBlockRepository
-   * Manages CRUD operations for atomic prompt blocks
-   */
-  IPromptBlockRepository: Symbol.for("IPromptBlockRepository"),
-
-  /**
-   * Token for IPromptCompositionRepository
-   * Manages CRUD operations for prompt compositions
-   */
-  IPromptCompositionRepository: Symbol.for("IPromptCompositionRepository"),
-
-  /**
    * Token for ITaskRepository
    * Manages CRUD operations for task entities (example CRUD)
    */
@@ -146,24 +134,6 @@ export const DI_TOKENS = {
    * Provides structured logging throughout the application
    */
   ILoggerService: Symbol.for("ILoggerService"),
-
-  /**
-   * Token for IAIContentGeneratorService
-   * Handles AI-powered content generation using OpenAI models
-   */
-  IAIContentGeneratorService: Symbol.for("IAIContentGeneratorService"),
-
-  /**
-   * Token for IAIPromptManagerService
-   * Manages AI prompt templates and extended caching (24-hour)
-   */
-  IAIPromptManagerService: Symbol.for("IAIPromptManagerService"),
-
-  /**
-   * Token for IAIDebugTraceService
-   * Provides debug tracing for AI operations (when AI_DEBUG_MODE=true)
-   */
-  IAIDebugTraceService: Symbol.for("IAIDebugTraceService"),
 
   /**
    * Token for IFileStorageService

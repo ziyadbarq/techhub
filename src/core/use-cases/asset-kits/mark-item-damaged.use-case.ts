@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitCheckoutItemRepository } from "@/core/repositories/asset-kit-checkout-item.repository.interface";
@@ -38,9 +34,11 @@ export class MarkItemDamagedUseCase {
     const updatedItem = await this.checkoutItemRepository.update(item);
 
     // Update checkout to partial return if not already
-    const checkout = await this.kitCheckoutRepository.findById(item.checkoutId);
+    const checkout = await this.kitCheckoutRepository.findById(
+      item.kitCheckoutId,
+    );
     if (checkout && checkout.status === "CHECKED_OUT") {
-      checkout.partialReturn(new Date());
+      checkout.markPartiallyReturned();
       await this.kitCheckoutRepository.update(checkout);
     }
 

@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import type { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.entity";
 import type { AssetKitCheckoutItem } from "@/core/domain/entities/asset-kit-checkout-item.entity";
 import type {
@@ -21,14 +17,15 @@ export class AssetKitCheckoutPresenter {
   ): AssetKitCheckoutDTO {
     return {
       id: checkout.id,
-      kitId: checkout.kitId,
-      assignedToPersonId: checkout.assignedToPersonId,
-      assignedToOrgUnitId: checkout.assignedToOrgUnitId,
+      assetKitId: checkout.assetKitId,
+      assigneeType: checkout.assigneeType,
+      assigneeId: checkout.assigneeId,
       checkoutDate: checkout.checkoutDate,
       expectedReturnDate: checkout.expectedReturnDate,
       actualReturnDate: checkout.actualReturnDate,
-      purpose: checkout.purpose,
       status: checkout.status,
+      checkedOutById: checkout.checkedOutById,
+      note: checkout.note,
       createdAt: checkout.createdAt,
       updatedAt: checkout.updatedAt,
       // Display fields
@@ -51,12 +48,15 @@ export class AssetKitCheckoutItemPresenter {
   static toDTO(item: AssetKitCheckoutItem): AssetKitCheckoutItemDTO {
     return {
       id: item.id,
-      checkoutId: item.checkoutId,
+      kitCheckoutId: item.kitCheckoutId,
       assetId: item.assetId,
+      kitItemId: item.kitItemId,
       checkoutDate: item.checkoutDate,
       returnDate: item.returnDate,
-      conditionAtReturn: item.conditionAtReturn,
       status: item.status,
+      conditionAtCheckout: item.conditionAtCheckout,
+      conditionAtReturn: item.conditionAtReturn,
+      note: item.note,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
     };

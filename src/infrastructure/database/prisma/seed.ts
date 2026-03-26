@@ -18,7 +18,6 @@
  */
 
 import { prisma } from "./client.js";
-import { seedPrompts } from "./seed-prompts.js";
 import { seedRBAC } from "./seed-rbac.js";
 import { seedFeatureFlags } from "./seed-features.js";
 import { seedFoundation, seedDemoPersons } from "./seed-foundation.js";
@@ -203,15 +202,8 @@ async function main() {
       console.log("");
     }
 
-    // 13. Seed AI Prompts & Tasks (demo/dev data)
+    // 13. Seed Example Tasks (demo/dev data)
     if (shouldSeed(SeedModule.AI_PROMPTS_TASKS)) {
-      logSection("AI Prompt Templates");
-      logStep("🤖", "Seeding AI prompt templates...");
-      await seedPrompts(prisma);
-      logSuccess("AI prompt templates seeded");
-      seeded.push("AI prompt templates");
-      console.log("");
-
       logSection("Example Tasks");
       logStep("📝", "Creating example tasks...");
       const taskCount = await seedExampleTasks(prisma);

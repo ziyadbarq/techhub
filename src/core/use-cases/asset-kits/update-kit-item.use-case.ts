@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitItemRepository } from "@/core/repositories/asset-kit-item.repository.interface";
@@ -11,7 +7,7 @@ export interface UpdateKitItemRequest {
   itemId: string;
   quantity?: number;
   isRequired?: boolean;
-  notes?: string;
+  note?: string;
 }
 
 @injectable()
@@ -32,11 +28,15 @@ export class UpdateKitItemUseCase {
     }
 
     if (request.isRequired !== undefined) {
-      item.setRequired(request.isRequired);
+      if (request.isRequired) {
+        item.markAsRequired();
+      } else {
+        item.markAsOptional();
+      }
     }
 
-    if (request.notes !== undefined) {
-      item.updateNotes(request.notes);
+    if (request.note !== undefined) {
+      item.updateNote(request.note);
     }
 
     return this.kitItemRepository.update(item);

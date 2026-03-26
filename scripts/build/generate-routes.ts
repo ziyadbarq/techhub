@@ -49,7 +49,6 @@ function generateFileHeader(sourceFile: string): string {
  */
 
 /* eslint-disable */
-// @ts-nocheck
 `;
 }
 

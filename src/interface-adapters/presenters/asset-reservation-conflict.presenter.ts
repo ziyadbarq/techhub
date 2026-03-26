@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import type { AssetReservationConflict } from "@/core/domain/entities/asset-reservation-conflict.entity";
 import type { AssetReservationConflictDTO } from "../dtos/generated/asset-reservation-conflict.dto";
 

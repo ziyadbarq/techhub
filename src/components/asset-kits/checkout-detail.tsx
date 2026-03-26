@@ -52,14 +52,18 @@ export function CheckoutDetail({ checkout, onClose }: CheckoutDetailProps) {
             <div className="grid gap-3 text-sm">
               <div className="grid grid-cols-3 gap-2">
                 <span className="text-muted-foreground">Kit ID:</span>
-                <span className="col-span-2 font-mono">{checkout.kitId}</span>
+                <span className="col-span-2 font-mono">
+                  {checkout.assetKitId}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <span className="text-muted-foreground">Assignee Type:</span>
+                <span className="col-span-2">{checkout.assigneeType}</span>
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <span className="text-muted-foreground">Assigned To:</span>
                 <span className="col-span-2 font-mono">
-                  {checkout.assignedToPersonId ||
-                    checkout.assignedToOrgUnitId ||
-                    "N/A"}
+                  {checkout.personName || checkout.assigneeId}
                 </span>
               </div>
               <div className="grid grid-cols-3 gap-2">

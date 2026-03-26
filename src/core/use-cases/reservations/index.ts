@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 // Reservation Management Use Cases
 export * from "./create-reservation.use-case";
 export * from "./get-reservation.use-case";

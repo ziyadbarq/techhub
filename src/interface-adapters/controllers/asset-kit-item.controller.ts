@@ -46,7 +46,7 @@ export async function addKitItemAction(
       assetCategoryId: validated.assetCategoryId,
       quantity: validated.quantity,
       isRequired: validated.isRequired,
-      notes: validated.notes,
+      note: validated.note,
     });
 
     revalidatePath("/asset-kits");
@@ -83,7 +83,7 @@ export async function updateKitItemAction(
       itemId,
       quantity: validated.quantity,
       isRequired: validated.isRequired,
-      notes: validated.notes,
+      note: validated.note,
     });
 
     revalidatePath("/asset-kits");

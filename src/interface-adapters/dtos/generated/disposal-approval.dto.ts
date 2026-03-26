@@ -17,10 +17,9 @@ export const DisposalApprovalDTO = z.object({
   id: z.string().min(24).max(25),
   disposalId: z.string().min(24).max(25),
   approverId: z.string().min(24).max(25),
-  approvalLevel: z.number(),
   status: z.string(),
-  reviewedAt: z.date().nullable(),
-  comments: z.string().nullable(),
+  decisionAt: z.date().nullable(),
+  comment: z.string().nullable(),
   createdAt: z.date(),
 });
 

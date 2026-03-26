@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 // Asset Disposal Use Cases
 export * from "./create-asset-disposal.use-case";
 export * from "./get-asset-disposal.use-case";

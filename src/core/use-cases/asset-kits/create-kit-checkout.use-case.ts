@@ -1,24 +1,22 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
 import type { IAssetKitItemRepository } from "@/core/repositories/asset-kit-item.repository.interface";
 import type { IAssetKitCheckoutItemRepository } from "@/core/repositories/asset-kit-checkout-item.repository.interface";
-import type { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.entity";
+import { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.entity";
+import type { AssigneeType } from "@/core/domain/entities/asset-kit-checkout.entity";
 import { AssetKitCheckoutItem } from "@/core/domain/entities/asset-kit-checkout-item.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
 export interface CreateKitCheckoutRequest {
   kitId: string;
-  assignedToPersonId?: string;
-  assignedToOrgUnitId?: string;
-  checkoutDate: Date;
-  expectedReturnDate: Date;
-  purpose?: string;
+  assigneeType: AssigneeType;
+  assigneeId: string;
+  checkedOutById: string;
+  expectedReturnDate?: Date;
+  note?: string;
   assetIds: string[];
+  kitItemIds: string[];
 }
 
 @injectable()
@@ -56,32 +54,29 @@ export class CreateKitCheckoutUseCase {
     // Create checkout
     const checkout = AssetKitCheckout.create(
       {
-        kitId: request.kitId,
-        assignedToPersonId: request.assignedToPersonId,
-        assignedToOrgUnitId: request.assignedToOrgUnitId,
-        checkoutDate: request.checkoutDate,
+        assetKitId: request.kitId,
+        assigneeType: request.assigneeType,
+        assigneeId: request.assigneeId,
+        checkedOutById: request.checkedOutById,
         expectedReturnDate: request.expectedReturnDate,
-        purpose: request.purpose,
+        note: request.note,
       },
       this.idGenerator,
     );
 
-    const createdCheckout = await this.kitCheckoutRepository.create(
-      checkout,
-      this.idGenerator,
-    );
+    const createdCheckout = await this.kitCheckoutRepository.create(checkout);
 
     // Create checkout items for each asset
-    for (const assetId of request.assetIds) {
+    for (let i = 0; i < request.assetIds.length; i++) {
       const checkoutItem = AssetKitCheckoutItem.create(
         {
-          checkoutId: createdCheckout.id,
-          assetId,
-          checkoutDate: request.checkoutDate,
+          kitCheckoutId: createdCheckout.id,
+          assetId: request.assetIds[i],
+          kitItemId: request.kitItemIds[i],
         },
         this.idGenerator,
       );
-      await this.checkoutItemRepository.create(checkoutItem, this.idGenerator);
+      await this.checkoutItemRepository.create(checkoutItem);
     }
 
     return createdCheckout;

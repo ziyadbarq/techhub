@@ -1,17 +1,14 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
 import type { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.entity";
+import type { KitCheckoutStatus } from "@/core/domain/entities/asset-kit-checkout.entity";
 
 export interface ListKitCheckoutsRequest {
   kitId?: string;
-  assignedToPersonId?: string;
-  assignedToOrgUnitId?: string;
-  status?: "CHECKED_OUT" | "PARTIALLY_RETURNED" | "RETURNED";
+  assigneeId?: string;
+  assigneeType?: "PERSON" | "ORG_UNIT" | "LOCATION";
+  status?: KitCheckoutStatus;
   overdueOnly?: boolean;
 }
 
@@ -36,15 +33,10 @@ export class ListKitCheckoutsUseCase {
       checkouts = await this.kitCheckoutRepository.findOverdue();
     } else if (request.kitId) {
       checkouts = await this.kitCheckoutRepository.findByKitId(request.kitId);
-    } else if (request.assignedToPersonId) {
+    } else if (request.assigneeId && request.assigneeType) {
       checkouts = await this.kitCheckoutRepository.findByAssignee(
-        request.assignedToPersonId,
-        "person",
-      );
-    } else if (request.assignedToOrgUnitId) {
-      checkouts = await this.kitCheckoutRepository.findByAssignee(
-        request.assignedToOrgUnitId,
-        "orgunit",
+        request.assigneeType,
+        request.assigneeId,
       );
     } else {
       checkouts = await this.kitCheckoutRepository.findAll();

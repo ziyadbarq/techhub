@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
@@ -9,7 +5,8 @@ import type { AssetDisposal } from "@/core/domain/entities/asset-disposal.entity
 
 export interface ApproveDisposalRequest {
   disposalId: string;
-  approvedById: string;
+  approverId: string;
+  comments?: string;
 }
 
 @injectable()
@@ -29,7 +26,7 @@ export class ApproveDisposalUseCase {
     }
 
     // Approve disposal (entity validates state)
-    disposal.approve(request.approvedById);
+    disposal.approve(request.approverId);
 
     // Persist changes
     return this.assetDisposalRepository.update(disposal);

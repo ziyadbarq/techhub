@@ -129,12 +129,13 @@ export async function createKitCheckoutAction(
 
     const checkout = await useCase.execute({
       kitId: validated.kitId,
-      assignedToPersonId: validated.assignedToPersonId,
-      assignedToOrgUnitId: validated.assignedToOrgUnitId,
-      checkoutDate: validated.checkoutDate,
+      assigneeType: validated.assigneeType,
+      assigneeId: validated.assigneeId,
+      checkedOutById: validated.checkedOutById,
       expectedReturnDate: validated.expectedReturnDate,
-      purpose: validated.purpose,
+      note: validated.note,
       assetIds: validated.assetIds,
+      kitItemIds: validated.kitItemIds,
     });
 
     revalidatePath("/asset-kits/checkouts");
@@ -225,7 +226,7 @@ export async function returnKitCheckoutAction(
 
     const checkout = await useCase.execute({
       checkoutId: validated.checkoutId,
-      returnDate: validated.returnDate,
+      conditionAtReturn: validated.conditionAtReturn,
     });
 
     revalidatePath("/asset-kits/checkouts");
@@ -325,7 +326,6 @@ export async function markItemLostAction(
 
     await useCase.execute({
       checkoutItemId: validated.checkoutItemId,
-      notes: validated.notes,
     });
 
     revalidatePath("/asset-kits/checkouts");
