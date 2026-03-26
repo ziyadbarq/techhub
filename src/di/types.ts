@@ -542,6 +542,17 @@ export const DI_TOKENS = {
   GetCMDBHealthMetricsUseCase: Symbol.for("GetCMDBHealthMetricsUseCase"),
   DetectStaleCIsUseCase: Symbol.for("DetectStaleCIsUseCase"),
 
+  // Reports Use Cases
+  GetLicenseComplianceReportUseCase: Symbol.for(
+    "GetLicenseComplianceReportUseCase",
+  ),
+  GetContractExpirationReportUseCase: Symbol.for(
+    "GetContractExpirationReportUseCase",
+  ),
+  GetOciResourceInventoryReportUseCase: Symbol.for(
+    "GetOciResourceInventoryReportUseCase",
+  ),
+
   // CMDB: CI Relationship Use Cases
   CreateCIRelationshipUseCase: Symbol.for("CreateCIRelationshipUseCase"),
   GetCIRelationshipUseCase: Symbol.for("GetCIRelationshipUseCase"),

@@ -156,12 +156,36 @@ export async function setupScheduledJobs(
   });
 
   // ==========================================
-  // OCI Cloud Resource Sync
+  // OCI Cloud Resource Sync (Tiered Strategy)
   // ==========================================
 
-  // Sync OCI cloud resources daily at 4:00 AM UTC (1 hour after Intune)
-  // Fetches from n8n webhook, upserts CMDB Configuration Items
-  const ociSyncJobData: OciSyncJobData = {
+  // Tier 1: Critical resources every 30 minutes
+  // Compute, load balancers, and databases — production infrastructure
+  const ociCriticalSyncJobData: OciSyncJobData = {
+    serviceKeys: ["compute", "lb", "nlb", "dbsystems"],
+    dryRun: false,
+    createdAt: Date.now(),
+  };
+
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    MAINTENANCE_JOBS.OCI_CRITICAL_SYNC,
+    ociCriticalSyncJobData,
+    {
+      pattern: "*/30 * * * *", // Every 30 minutes
+      tz: "UTC",
+    },
+  );
+
+  logger.info("OCI critical resource sync job scheduled", {
+    pattern: "*/30 * * * *",
+    timezone: "UTC",
+    jobName: MAINTENANCE_JOBS.OCI_CRITICAL_SYNC,
+    serviceKeys: ociCriticalSyncJobData.serviceKeys,
+  });
+
+  // Tier 2: Full sync daily at 4:00 AM UTC (all resource types)
+  const ociFullSyncJobData: OciSyncJobData = {
     dryRun: false,
     createdAt: Date.now(),
   };
@@ -169,14 +193,14 @@ export async function setupScheduledJobs(
   await jobQueueService.scheduleJob(
     QUEUE_NAMES.MAINTENANCE,
     MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
-    ociSyncJobData,
+    ociFullSyncJobData,
     {
       pattern: "0 4 * * *", // Every day at 4:00 AM UTC
       tz: "UTC",
     },
   );
 
-  logger.info("OCI resource sync job scheduled", {
+  logger.info("OCI full resource sync job scheduled", {
     pattern: "0 4 * * *",
     timezone: "UTC",
     jobName: MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,

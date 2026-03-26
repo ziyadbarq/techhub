@@ -66,6 +66,9 @@ import { UpdateEntitlementAddonUseCase } from "@/core/use-cases/license-entitlem
 import { ListEntitlementAddonsUseCase } from "@/core/use-cases/license-entitlement-addon/list-entitlement-addons.use-case";
 import { CalculateEntitlementTotalCostUseCase } from "@/core/use-cases/license-entitlement-addon/calculate-entitlement-total-cost.use-case";
 
+// Report Use Cases
+import { GetLicenseComplianceReportUseCase } from "@/core/use-cases/reports/get-license-compliance-report.use-case";
+
 const diLogger = logger.scope("DI:LicensesModule");
 
 export function bindLicensesDependencies(container: Container): void {
@@ -289,5 +292,13 @@ export function bindLicensesDependencies(container: Container): void {
       DI_TOKENS.CalculateEntitlementTotalCostUseCase,
     )
     .to(CalculateEntitlementTotalCostUseCase)
+    .inTransientScope();
+
+  // Report Use Cases
+  container
+    .bind<GetLicenseComplianceReportUseCase>(
+      DI_TOKENS.GetLicenseComplianceReportUseCase,
+    )
+    .to(GetLicenseComplianceReportUseCase)
     .inTransientScope();
 }

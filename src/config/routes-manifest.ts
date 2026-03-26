@@ -790,6 +790,17 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     navOrder: 3,
   },
   {
+    path: "/configuration-items/topology",
+    label: "CI Topology Map",
+    icon: Network,
+    description: "Interactive topology of CI relationships and dependencies",
+    requiredPermissions: ["CONFIGURATION_ITEMS_VIEW"],
+    featureFlag: "CMDB",
+    visibleInNav: true,
+    navGroup: "services-cmdb",
+    navOrder: 4,
+  },
+  {
     path: "/ci-classes",
     label: "CI Classes",
     icon: Binary,
@@ -798,7 +809,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     featureFlag: "CMDB",
     visibleInNav: true,
     navGroup: "services-cmdb",
-    navOrder: 4,
+    navOrder: 5,
   },
   {
     path: "/ci-relationships",
@@ -809,7 +820,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     featureFlag: "CMDB",
     visibleInNav: true,
     navGroup: "services-cmdb",
-    navOrder: 5,
+    navOrder: 6,
   },
   {
     path: "/relationship-types",
@@ -820,7 +831,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     featureFlag: "CMDB",
     visibleInNav: true,
     navGroup: "services-cmdb",
-    navOrder: 6,
+    navOrder: 7,
   },
 
   // ============================================================================

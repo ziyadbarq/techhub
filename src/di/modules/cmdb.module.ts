@@ -69,6 +69,9 @@ import { AnalyzeUpstreamDependenciesUseCase } from "@/core/use-cases/cmdb/impact
 import { GetCMDBHealthMetricsUseCase } from "@/core/use-cases/cmdb/data-quality/get-cmdb-health-metrics.use-case";
 import { DetectStaleCIsUseCase } from "@/core/use-cases/cmdb/data-quality/detect-stale-cis.use-case";
 
+// Report Use Cases
+import { GetOciResourceInventoryReportUseCase } from "@/core/use-cases/reports/get-oci-resource-inventory-report.use-case";
+
 // Use Cases - CI Relationships
 import { CreateCIRelationshipUseCase } from "@/core/use-cases/cmdb/ci-relationship/create-ci-relationship.use-case";
 import { GetCIRelationshipUseCase } from "@/core/use-cases/cmdb/ci-relationship/get-ci-relationship.use-case";
@@ -301,5 +304,13 @@ export function bindCMDBDependencies(container: Container): void {
   container
     .bind<DeleteCIRelationshipUseCase>(DI_TOKENS.DeleteCIRelationshipUseCase)
     .to(DeleteCIRelationshipUseCase)
+    .inTransientScope();
+
+  // Report Use Cases
+  container
+    .bind<GetOciResourceInventoryReportUseCase>(
+      DI_TOKENS.GetOciResourceInventoryReportUseCase,
+    )
+    .to(GetOciResourceInventoryReportUseCase)
     .inTransientScope();
 }

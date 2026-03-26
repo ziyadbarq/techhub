@@ -172,7 +172,11 @@ function createMaintenanceWorker(): BaseWorker {
     handleIntuneDeviceSync,
   );
 
-  // Register OCI cloud resource sync handler
+  // Register OCI cloud resource sync handlers (tiered strategy)
+  worker.registerHandler(
+    MAINTENANCE_JOBS.OCI_CRITICAL_SYNC,
+    handleOciResourceSync,
+  );
   worker.registerHandler(
     MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
     handleOciResourceSync,
