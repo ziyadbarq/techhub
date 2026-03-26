@@ -980,6 +980,17 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     navOrder: 3,
   },
   {
+    path: "/admin/cmdb-health",
+    label: "CMDB Health",
+    icon: Activity,
+    description: "CMDB data quality health metrics dashboard",
+    requiredPermissions: ["CONFIGURATION_ITEMS_VIEW"],
+    featureFlag: "CMDB",
+    visibleInNav: true,
+    navGroup: "system",
+    navOrder: 4,
+  },
+  {
     path: "/admin/assignment-conflicts",
     label: "Assignment Conflicts",
     icon: AlertCircle,
@@ -989,7 +1000,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     featureFlag: "INTUNE",
     visibleInNav: true,
     navGroup: "system",
-    navOrder: 4,
+    navOrder: 5,
   },
 
   // ============================================================================

@@ -241,6 +241,21 @@ export interface IntuneSyncJobData extends BaseJobData {
 }
 
 // ========================================
+// CMDB Data Quality Jobs
+// ========================================
+
+/**
+ * Data for stale CI detection job
+ */
+export interface DetectStaleCIsJobData extends BaseJobData {
+  /**
+   * Number of days without update before a CI is considered stale
+   * @default 90
+   */
+  thresholdDays: number;
+}
+
+// ========================================
 // OCI Cloud Sync Jobs
 // ========================================
 

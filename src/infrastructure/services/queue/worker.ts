@@ -36,6 +36,7 @@ import {
   handleUserSyncFromGraph,
   handleIntuneDeviceSync,
   handleOciResourceSync,
+  handleDetectStaleCIs,
 } from "./handlers";
 import {
   handleDatabaseBackup,
@@ -175,6 +176,12 @@ function createMaintenanceWorker(): BaseWorker {
   worker.registerHandler(
     MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
     handleOciResourceSync,
+  );
+
+  // Register stale CI detection handler
+  worker.registerHandler(
+    MAINTENANCE_JOBS.DETECT_STALE_CIS,
+    handleDetectStaleCIs,
   );
 
   // Register database backup/restore handlers

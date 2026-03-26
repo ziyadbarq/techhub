@@ -18,3 +18,4 @@ export {
   handleDatabaseBackup,
   handleDatabaseRestore,
 } from "./database-backup.handler";
+export { handleDetectStaleCIs } from "./detect-stale-cis.handler";

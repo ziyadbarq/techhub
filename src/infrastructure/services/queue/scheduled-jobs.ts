@@ -16,6 +16,7 @@ import type {
   CleanupOldTasksJobData,
   IntuneSyncJobData,
   OciSyncJobData,
+  DetectStaleCIsJobData,
 } from "@/core/domain/jobs/job-data.types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
@@ -179,6 +180,33 @@ export async function setupScheduledJobs(
     pattern: "0 4 * * *",
     timezone: "UTC",
     jobName: MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
+  });
+
+  // ==========================================
+  // Stale CI Detection - Daily at 5:00 AM UTC
+  // ==========================================
+
+  // Detect configuration items not updated within threshold period
+  // Flags stale records for verification campaigns
+  const detectStaleCIsJobData: DetectStaleCIsJobData = {
+    thresholdDays: 90,
+    createdAt: Date.now(),
+  };
+
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    MAINTENANCE_JOBS.DETECT_STALE_CIS,
+    detectStaleCIsJobData,
+    {
+      pattern: "0 5 * * *", // Every day at 5:00 AM UTC
+      tz: "UTC",
+    },
+  );
+
+  logger.info("Stale CI detection job scheduled", {
+    pattern: "0 5 * * *",
+    timezone: "UTC",
+    jobName: MAINTENANCE_JOBS.DETECT_STALE_CIS,
   });
 
   // ==========================================

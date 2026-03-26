@@ -36,6 +36,7 @@ export const MAINTENANCE_JOBS = {
   OCI_RESOURCE_SYNC: "oci-resource-sync",
   DATABASE_BACKUP: "database-backup",
   DATABASE_RESTORE: "database-restore",
+  DETECT_STALE_CIS: "detect-stale-cis",
 } as const;
 
 /**

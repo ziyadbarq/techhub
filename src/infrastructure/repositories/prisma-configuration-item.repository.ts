@@ -12,7 +12,9 @@ import { DI_TOKENS } from "@/di/types";
 import type {
   CIDeletionContext,
   CIDeletionDependencies,
+  FindStaleOptions,
   IConfigurationItemRepository,
+  StaleCIRawRecord,
 } from "@/core/repositories/configuration-item.repository.interface";
 import {
   ConfigurationItem,
@@ -375,6 +377,63 @@ export class PrismaConfigurationItemRepository implements IConfigurationItemRepo
         where: { id: ciId },
       });
     });
+  }
+
+  async findStale(options: FindStaleOptions): Promise<StaleCIRawRecord[]> {
+    const where: Record<string, unknown> = {
+      updatedAt: { lt: options.thresholdDate },
+      deletedAt: null,
+    };
+
+    if (options.environmentFilter) {
+      where.environment = options.environmentFilter;
+    }
+
+    if (options.criticalityFilter) {
+      where.criticality = options.criticalityFilter;
+    }
+
+    const staleCIs = await this.prisma.configurationItem.findMany({
+      where,
+      include: {
+        ciClass: {
+          select: { name: true },
+        },
+      },
+      orderBy: { updatedAt: "asc" },
+    });
+
+    return staleCIs.map((ci) => ({
+      id: ci.id,
+      name: ci.name,
+      ciKey: ci.ciKey,
+      ciClassId: ci.ciClassId,
+      ciClassName: ci.ciClass.name,
+      criticality: ci.criticality,
+      environment: ci.environment,
+      updatedAt: ci.updatedAt,
+      primaryOwnerPersonId: ci.primaryOwnerPersonId,
+      primaryOwnerOrgUnitId: ci.primaryOwnerOrgUnitId,
+    }));
+  }
+
+  async countActive(filters?: {
+    environmentFilter?: string;
+    criticalityFilter?: string;
+  }): Promise<number> {
+    const where: Record<string, unknown> = {
+      deletedAt: null,
+    };
+
+    if (filters?.environmentFilter) {
+      where.environment = filters.environmentFilter;
+    }
+
+    if (filters?.criticalityFilter) {
+      where.criticality = filters.criticalityFilter;
+    }
+
+    return this.prisma.configurationItem.count({ where });
   }
 
   /**

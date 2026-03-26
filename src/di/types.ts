@@ -90,6 +90,7 @@ export const DI_TOKENS = {
   IRelationshipTypeScopeRepository: Symbol.for(
     "IRelationshipTypeScopeRepository",
   ),
+  ICMDBHealthRepository: Symbol.for("ICMDBHealthRepository"),
 
   // Contracts Repositories
   IContractTypeRepository: Symbol.for("IContractTypeRepository"),
@@ -530,6 +531,16 @@ export const DI_TOKENS = {
   DeleteCIWithConfirmationUseCase: Symbol.for(
     "DeleteCIWithConfirmationUseCase",
   ),
+
+  // CMDB: Impact Analysis Use Cases
+  AnalyzeCIImpactUseCase: Symbol.for("AnalyzeCIImpactUseCase"),
+  AnalyzeUpstreamDependenciesUseCase: Symbol.for(
+    "AnalyzeUpstreamDependenciesUseCase",
+  ),
+
+  // CMDB: Data Quality Use Cases
+  GetCMDBHealthMetricsUseCase: Symbol.for("GetCMDBHealthMetricsUseCase"),
+  DetectStaleCIsUseCase: Symbol.for("DetectStaleCIsUseCase"),
 
   // CMDB: CI Relationship Use Cases
   CreateCIRelationshipUseCase: Symbol.for("CreateCIRelationshipUseCase"),
