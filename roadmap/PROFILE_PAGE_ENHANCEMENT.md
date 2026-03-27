@@ -1,11 +1,15 @@
 # Profile Page Enhancement - Combined Refreshed Plan
 
+**Status**: Partially Complete
+**Priority**: Medium
+**Last Updated**: 2026-03-27
+
 ## Executive Summary
 
 This plan delivers **Two-Factor Authentication (2FA)** and **database-backed user preferences** for the Profile/Settings pages. The Person Details page is **fully implemented** and excluded from this scope.
 
 **Priorities:**
-1. **HIGH**: Database-backed UserPreferences + 2FA implementation (TOTP)
+1. **HIGH**: ~~Database-backed UserPreferences~~ ✅ DONE + 2FA implementation (TOTP)
 2. **MEDIUM**: Photo upload functionality + Roles/Permissions display
 3. **LOW**: Session management + Activity log (future)
 
@@ -13,14 +17,15 @@ This plan delivers **Two-Factor Authentication (2FA)** and **database-backed use
 
 ### ✅ Already Implemented
 - Profile page (`/profile`) - User + Person merged view, My Assets summary
-- Settings page (`/settings`) - Profile form, preferences (Redis-backed), notification toggles
+- Settings page (`/settings`) - Profile form, preferences, notification toggles
 - Person Details page (`/persons/[id]`) - Fully complete with all 6 tabs
 - Better Auth v1.3.34 - Microsoft OAuth SSO + Email/Password auth
-- Preferences in Redis (ephemeral, not persistent)
+- **UserPreferences entity** — domain entity, repository interface, Prisma implementation, DI module all done
+- **Use cases** — `GetUserPreferencesUseCase`, `UpdateUserPreferencesUseCase` implemented
+- **Controller** — preferences server actions wired to database
 
-### ❌ Missing Features
-- UserPreferences database table (currently Redis)
-- Two-Factor Authentication (TOTP)
+### ❌ Remaining Features
+- Two-Factor Authentication (TOTP) — design complete, implementation pending
 - Photo upload (only URL input works)
 - Roles & Permissions display on profile
 - Session management UI

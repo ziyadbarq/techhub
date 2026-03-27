@@ -9,7 +9,14 @@ Move scheduled job configuration from hardcoded worker code to a database-backed
 - **8 scheduled jobs** across 3 queues (tasks, email, maintenance) defined in `src/infrastructure/services/queue/scheduled-jobs.ts`
 - Cron patterns, timeouts, and job data are **hardcoded** — changes require a code deployment
 - No per-job enable/disable — only full queue pause/resume is available
-- Worker dashboard (`/admin/workers`) is **read-only monitoring** with pause/resume and manual trigger
+- ✅ Worker dashboard (`/admin/workers`) — **read-only monitoring implemented** (March 2026):
+  - Real-time queue metrics, worker health indicators
+  - Pause/resume controls per queue
+  - Scheduled jobs table with cron patterns, next run times, manual trigger
+  - Recent failures table with expandable error details
+  - Auto-refresh every 30 seconds
+  - Server-side permission gating (`SETTINGS_MANAGE`)
+- **Remaining**: Database-driven scheduling (Phases 1-5 below)
 
 ## Proposed Architecture
 
