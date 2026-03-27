@@ -19,6 +19,7 @@ export interface UpdateLicenseProductRequest {
   metricType?: LicenseMetricType;
   description?: string | null;
   lifecycleModelId?: string | null;
+  attributes?: Record<string, unknown> | null;
 }
 
 @injectable()
@@ -90,6 +91,9 @@ export class UpdateLicenseProductUseCase {
     }
     if (request.lifecycleModelId !== undefined) {
       licenseProduct.lifecycleModelId = request.lifecycleModelId;
+    }
+    if (request.attributes !== undefined) {
+      licenseProduct.attributes = request.attributes;
     }
 
     return await this.licenseProductRepository.update(licenseProduct);

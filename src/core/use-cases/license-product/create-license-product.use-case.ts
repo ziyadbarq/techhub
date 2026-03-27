@@ -18,6 +18,7 @@ export interface CreateLicenseProductRequest {
   metricType: LicenseMetricType;
   description?: string | null;
   lifecycleModelId?: string | null;
+  attributes?: Record<string, unknown> | null;
 }
 
 @injectable()
@@ -70,6 +71,7 @@ export class CreateLicenseProductUseCase {
         metricType: request.metricType,
         description: request.description,
         lifecycleModelId: request.lifecycleModelId,
+        attributes: request.attributes,
       },
       this.idGenerator,
     );

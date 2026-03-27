@@ -6,10 +6,11 @@
 
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
-import type {
-  $Enums,
-  PrismaClient,
-  LicenseProduct as PrismaLicenseProduct,
+import {
+  Prisma,
+  type $Enums,
+  type PrismaClient,
+  type LicenseProduct as PrismaLicenseProduct,
 } from "@/generated/prisma/server";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
 import {
@@ -19,9 +20,7 @@ import {
 import type { ILoggerService } from "@/core/services";
 
 @injectable()
-export class PrismaLicenseProductRepository
-  implements ILicenseProductRepository
-{
+export class PrismaLicenseProductRepository implements ILicenseProductRepository {
   constructor(
     @inject(DI_TOKENS.PrismaClient) private prisma: PrismaClient,
     @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService,
@@ -39,6 +38,9 @@ export class PrismaLicenseProductRepository
         metricType: this.toPrismaMetricType(licenseProduct.metricType),
         description: licenseProduct.description,
         lifecycleModelId: licenseProduct.lifecycleModelId,
+        attributes:
+          (licenseProduct.attributes as Prisma.InputJsonValue) ??
+          Prisma.JsonNull,
         createdAt: licenseProduct.createdAt,
         updatedAt: licenseProduct.updatedAt,
       },
@@ -137,6 +139,9 @@ export class PrismaLicenseProductRepository
         metricType: this.toPrismaMetricType(licenseProduct.metricType),
         description: licenseProduct.description,
         lifecycleModelId: licenseProduct.lifecycleModelId,
+        attributes:
+          (licenseProduct.attributes as Prisma.InputJsonValue) ??
+          Prisma.JsonNull,
         updatedAt: new Date(),
       },
     });
@@ -186,6 +191,7 @@ export class PrismaLicenseProductRepository
       metricType: this.toDomainMetricType(data.metricType),
       description: data.description,
       lifecycleModelId: data.lifecycleModelId,
+      attributes: (data.attributes as Record<string, unknown>) ?? null,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });

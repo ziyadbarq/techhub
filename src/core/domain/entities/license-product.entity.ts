@@ -21,6 +21,7 @@ export interface CreateLicenseProductProps {
   metricType: LicenseMetricType;
   description?: string | null;
   lifecycleModelId?: string | null;
+  attributes?: Record<string, unknown> | null;
 }
 
 export interface LicenseProductProps extends CreateLicenseProductProps {
@@ -93,6 +94,14 @@ export class LicenseProduct {
     this.props.lifecycleModelId = value;
   }
 
+  get attributes(): Record<string, unknown> | null {
+    return this.props.attributes ?? null;
+  }
+
+  set attributes(value: Record<string, unknown> | null) {
+    this.props.attributes = value;
+  }
+
   get createdAt(): Date {
     return this.props.createdAt;
   }
@@ -142,6 +151,7 @@ export class LicenseProduct {
       metricType: props.metricType,
       description: props.description?.trim() || null,
       lifecycleModelId: props.lifecycleModelId || null,
+      attributes: props.attributes ?? null,
       createdAt: now,
       updatedAt: now,
     });

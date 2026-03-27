@@ -37,6 +37,9 @@ import {
   handleIntuneDeviceSync,
   handleOciResourceSync,
   handleDetectStaleCIs,
+  handleDatabaseCleanup,
+  handleDataExport,
+  handleHealthCheck,
 } from "./handlers";
 import {
   handleDatabaseBackup,
@@ -198,18 +201,17 @@ function createMaintenanceWorker(): BaseWorker {
     handleDatabaseRestore,
   );
 
-  /**
-   * TODO: Register additional maintenance job handlers
-   *
-   * Implementation steps:
-   * 1. Implement handlers in src/infrastructure/services/queue/handlers/
-   *    - handleDatabaseCleanup.handler.ts - Clean up old records, optimize tables
-   *    - handleDataExport.handler.ts - Export data for backups or reporting
-   * 2. Import handlers and register them here:
-   *    worker.registerHandler(MAINTENANCE_JOBS.DATABASE_CLEANUP, handleDatabaseCleanup);
-   *    worker.registerHandler(MAINTENANCE_JOBS.DATA_EXPORT, handleDataExport);
-   * 3. Schedule recurring jobs via BullMQ scheduleJob() for daily/weekly maintenance
-   */
+  // Register database cleanup handler (old completed tasks)
+  worker.registerHandler(
+    MAINTENANCE_JOBS.DATABASE_CLEANUP,
+    handleDatabaseCleanup,
+  );
+
+  // Register data export handler (CSV/JSON)
+  worker.registerHandler(MAINTENANCE_JOBS.DATA_EXPORT, handleDataExport);
+
+  // Register infrastructure health check handler
+  worker.registerHandler(MAINTENANCE_JOBS.HEALTH_CHECK, handleHealthCheck);
 
   return worker;
 }

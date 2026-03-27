@@ -31,6 +31,7 @@ export const CreateLicenseProductSchema = z.object({
     .optional()
     .nullable(),
   lifecycleModelId: z.string().min(24).max(25).optional().nullable(),
+  attributes: z.record(z.string(), z.unknown()).optional().nullable(),
 });
 
 // Update LicenseProduct DTO
@@ -61,6 +62,7 @@ export const UpdateLicenseProductSchema = z.object({
     .optional()
     .nullable(),
   lifecycleModelId: z.string().min(24).max(25).optional().nullable(),
+  attributes: z.record(z.string(), z.unknown()).optional().nullable(),
 });
 
 // Type exports

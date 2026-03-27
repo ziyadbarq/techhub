@@ -14,6 +14,7 @@ import type { Task, TaskStatus } from "../domain/entities/task.entity";
  */
 export interface TaskFilterOptions {
   status?: TaskStatus;
+  limit?: number;
 }
 
 /**
@@ -69,4 +70,13 @@ export interface ITaskRepository {
    * @returns Promise of count object with counts per status
    */
   countByStatus(): Promise<Record<TaskStatus, number>>;
+
+  /**
+   * Delete completed tasks older than the given date
+   *
+   * @param cutoffDate - Delete completed tasks older than this date
+   * @param batchSize - Maximum number of tasks to delete in one call
+   * @returns Promise of number of deleted tasks
+   */
+  deleteOldCompleted(cutoffDate: Date, batchSize: number): Promise<number>;
 }

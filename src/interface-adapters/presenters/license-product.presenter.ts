@@ -16,6 +16,7 @@ export interface LicenseProductDTO {
   metricType: LicenseMetricType;
   description: string | null;
   lifecycleModelId: string | null;
+  attributes: Record<string, unknown> | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,6 +31,7 @@ export class LicenseProductPresenter {
       metricType: licenseProduct.metricType,
       description: licenseProduct.description,
       lifecycleModelId: licenseProduct.lifecycleModelId,
+      attributes: licenseProduct.attributes,
       createdAt: licenseProduct.createdAt,
       updatedAt: licenseProduct.updatedAt,
     };

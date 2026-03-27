@@ -14,6 +14,7 @@ import {
 } from "@/core/domain/jobs/job-names";
 import type {
   CleanupOldTasksJobData,
+  HealthCheckJobData,
   IntuneSyncJobData,
   OciSyncJobData,
   DetectStaleCIsJobData,
@@ -233,9 +234,37 @@ export async function setupScheduledJobs(
     jobName: MAINTENANCE_JOBS.DETECT_STALE_CIS,
   });
 
+  // Note: DATABASE_CLEANUP handler is registered but not scheduled.
+  // The daily CLEANUP_OLD_TASKS (tasks queue, 2 AM) already handles completed
+  // task deletion. DATABASE_CLEANUP can be triggered on-demand from admin UI
+  // for broader cleanup (audit logs, old exports, etc.) once expanded.
+
   // ==========================================
-  // Add more scheduled jobs here
+  // Health Check - Every 5 minutes
   // ==========================================
+
+  // Verify database and Redis connectivity proactively
+  const healthCheckJobData: HealthCheckJobData = {
+    checks: ["database", "redis"],
+    notifyOnFailure: true,
+    createdAt: Date.now(),
+  };
+
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    MAINTENANCE_JOBS.HEALTH_CHECK,
+    healthCheckJobData,
+    {
+      pattern: "*/5 * * * *", // Every 5 minutes
+      tz: "UTC",
+    },
+  );
+
+  logger.info("Health check job scheduled", {
+    pattern: "*/5 * * * *",
+    timezone: "UTC",
+    jobName: MAINTENANCE_JOBS.HEALTH_CHECK,
+  });
 
   logger.info("All scheduled jobs configured successfully");
 }

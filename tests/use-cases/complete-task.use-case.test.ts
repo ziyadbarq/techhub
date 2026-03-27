@@ -58,6 +58,13 @@ class MockTaskRepository implements ITaskRepository {
     return counts;
   }
 
+  async deleteOldCompleted(
+    _cutoffDate: Date,
+    _batchSize: number,
+  ): Promise<number> {
+    return 0;
+  }
+
   // Test helper
   addTask(task: Task): void {
     this.tasks.set(task.id, task);
