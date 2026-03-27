@@ -93,6 +93,7 @@ variables:
 stages:
   - build_only
   - build_and_deploy
+  - release_metadata
   - image-promotion
 
 workflow:
@@ -145,7 +146,10 @@ build-gcp:
     - npm ci $NPM_CI_FLAGS
     - npm run db:generate
     - npm run build:fast
-    - version=`jq -r '.version' package.json`
+    - git fetch --tags --force
+    - git fetch --unshallow || true
+    - eval "$(node scripts/release/compute-version.mjs --format=env)"
+    - version="${APP_VERSION}"
     - commit_id=`git rev-parse --short=6 HEAD`
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
@@ -168,9 +172,14 @@ build-gcp:
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
         --build-arg GIT_COMMIT=${commit_id} \
+        --build-arg GIT_COMMIT_FULL=${CI_COMMIT_SHA} \
+        --build-arg GIT_REF=${CI_COMMIT_REF_NAME} \
         --build-arg APP_VERSION=${version} \
         --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
         --build-arg IMAGE_TAG=${IMAGE_TAG} \
+        --build-arg PIPELINE_ID=${CI_PIPELINE_ID} \
+        --build-arg PIPELINE_URL=${CI_PIPELINE_URL} \
+        --build-arg PROJECT_URL=${CI_PROJECT_URL} \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -208,7 +217,10 @@ build-oci:
     - npm ci $NPM_CI_FLAGS
     - npm run db:generate
     - npm run build:fast
-    - version=`jq -r '.version' package.json`
+    - git fetch --tags --force
+    - git fetch --unshallow || true
+    - eval "$(node scripts/release/compute-version.mjs --format=env)"
+    - version="${APP_VERSION}"
     - commit_id=`git rev-parse --short=6 HEAD`
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
@@ -231,9 +243,14 @@ build-oci:
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
         --build-arg GIT_COMMIT=${commit_id} \
+        --build-arg GIT_COMMIT_FULL=${CI_COMMIT_SHA} \
+        --build-arg GIT_REF=${CI_COMMIT_REF_NAME} \
         --build-arg APP_VERSION=${version} \
         --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
         --build-arg IMAGE_TAG=${IMAGE_TAG} \
+        --build-arg PIPELINE_ID=${CI_PIPELINE_ID} \
+        --build-arg PIPELINE_URL=${CI_PIPELINE_URL} \
+        --build-arg PROJECT_URL=${CI_PROJECT_URL} \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -272,7 +289,10 @@ build-and-push-gcp-to-argo:
     - npm ci $NPM_CI_FLAGS
     - npm run db:generate
     - npm run build:fast
-    - version=`jq -r '.version' package.json`
+    - git fetch --tags --force
+    - git fetch --unshallow || true
+    - eval "$(node scripts/release/compute-version.mjs --format=env)"
+    - version="${APP_VERSION}"
     - commit_id=`git rev-parse --short=6 HEAD`
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
@@ -313,9 +333,14 @@ build-and-push-gcp-to-argo:
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo \
         --build-arg GIT_COMMIT=${commit_id} \
+        --build-arg GIT_COMMIT_FULL=${CI_COMMIT_SHA} \
+        --build-arg GIT_REF=${CI_COMMIT_REF_NAME} \
         --build-arg APP_VERSION=${version} \
         --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
         --build-arg IMAGE_TAG=${IMAGE_TAG} \
+        --build-arg PIPELINE_ID=${CI_PIPELINE_ID} \
+        --build-arg PIPELINE_URL=${CI_PIPELINE_URL} \
+        --build-arg PROJECT_URL=${CI_PROJECT_URL} \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -354,7 +379,10 @@ build-and-push-oci-to-argo:
     - npm ci $NPM_CI_FLAGS
     - npm run db:generate
     - npm run build:fast
-    - version=`jq -r '.version' package.json`
+    - git fetch --tags --force
+    - git fetch --unshallow || true
+    - eval "$(node scripts/release/compute-version.mjs --format=env)"
+    - version="${APP_VERSION}"
     - commit_id=`git rev-parse --short=6 HEAD`
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
@@ -397,9 +425,14 @@ build-and-push-oci-to-argo:
         --snapshot-mode=redo \
         --build-arg BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq \
         --build-arg GIT_COMMIT=${commit_id} \
+        --build-arg GIT_COMMIT_FULL=${CI_COMMIT_SHA} \
+        --build-arg GIT_REF=${CI_COMMIT_REF_NAME} \
         --build-arg APP_VERSION=${version} \
         --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
         --build-arg IMAGE_TAG=${IMAGE_TAG} \
+        --build-arg PIPELINE_ID=${CI_PIPELINE_ID} \
+        --build-arg PIPELINE_URL=${CI_PIPELINE_URL} \
+        --build-arg PROJECT_URL=${CI_PROJECT_URL} \
         --context $CI_PROJECT_DIR \
         --dockerfile Dockerfile \
         --destination ${FULL_IMAGE_NAME}
@@ -413,6 +446,52 @@ build-and-push-oci-to-argo:
     paths:
       - build_info.env
     expire_in: 1 week
+
+.tag_main_release: &tag_main_release
+  stage: release_metadata
+  script:
+    - git fetch --tags --force
+    - git fetch --unshallow || true
+    - eval "$(node scripts/release/compute-version.mjs --format=env)"
+    - |
+      if [ "$RELEASE_NEEDED" != "true" ]; then
+        echo "No new semantic version required for this commit range."
+        exit 0
+      fi
+    - |
+      if git rev-parse "refs/tags/v${APP_VERSION}" >/dev/null 2>&1; then
+        echo "Tag v${APP_VERSION} already exists."
+        exit 0
+      fi
+    - git config --global user.email "sdev@barq.com"
+    - git config --global user.name ${GITLAB_UN}
+    - git remote set-url origin "http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub.git"
+    - git tag -a "v${APP_VERSION}" -m "Release v${APP_VERSION}"
+    - git push origin "v${APP_VERSION}"
+
+tag-main-release-gcp:
+  <<: *tag_main_release
+  image: $DEV_GCP_IMAGE
+  tags:
+    - $DEV_GCP_LAB_TAG
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
+      when: on_success
+    - when: never
+  dependencies:
+    - build-and-push-gcp-to-argo
+
+tag-main-release-oci:
+  <<: *tag_main_release
+  image: $DEV_OCI_IMAGE
+  tags:
+    - $DEV_OCI_LAB_TAG
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web" && $type == "build_and_deploy"'
+      when: on_success
+    - when: never
+  dependencies:
+    - build-and-push-oci-to-argo
 
 .promote_to_base: &promote_to_base
   stage: image-promotion

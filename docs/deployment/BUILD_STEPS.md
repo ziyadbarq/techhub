@@ -21,6 +21,7 @@ Complete reference for all build steps executed in the GitLab CI/CD pipeline fol
 **Image**: `gitlab-runner-node-18-alpine`
 
 **Commands**:
+
 ```bash
 # Copy .npmrc for private registry access
 cp /.npmrc .
@@ -38,15 +39,18 @@ npm run test -- --run --reporter=verbose  # Vitest unit tests
 ```
 
 **Outputs**:
+
 - Code coverage report (Cobertura format)
 - Coverage artifacts (30-day retention)
 
 **Caching**:
+
 - Cache key: `validate-${CI_COMMIT_REF_SLUG}`
 - Cached paths: `node_modules/`, `.npm/`
 - Policy: `pull-push` (read and update cache)
 
 **Duration**:
+
 - With cache: ~2 minutes
 - Without cache: ~3 minutes
 
@@ -62,11 +66,13 @@ npm run test -- --run --reporter=verbose  # Vitest unit tests
 **Timeout**: 20 minutes
 
 **Dockerfile Source**:
+
 - Cloned from deployment-configs repo
 - Uses: `dockerfiles/nodejs-Dockerfile-optimize`
 - Entrypoint: `dockerfiles/nodejs-entrypoint.sh`
 
 **Build Process**:
+
 ```bash
 # Clone deployment-configs for standardized Dockerfile
 git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
@@ -81,8 +87,11 @@ npm run db:generate
 # Build Next.js application
 npm run build
 
-# Generate image tag: {version}-{commit_id}-{CI_JOB_ID}
-version=`jq -r '.version' package.json`
+# Generate release version from tags + conventional commits
+git fetch --tags --force
+git fetch --unshallow || true
+eval "$(node scripts/release/compute-version.mjs --format=env)"
+version="${APP_VERSION}"
 commit_id=`git rev-parse --short=6 HEAD`
 export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
 export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
@@ -95,10 +104,13 @@ export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
 ```
 
 **Image Tag Format**: `{version}-{commit_id}-{CI_JOB_ID}`
+
 - Example: `1.0.0-a3f5c2-123456`
-- version: from package.json
+- version: CI-calculated semver from release tags plus conventional commits
 - commit_id: short Git commit hash (6 chars)
 - CI_JOB_ID: GitLab job ID for traceability
+
+**Build Metadata**: CI also bakes `APP_VERSION`, `GIT_COMMIT`, `GIT_COMMIT_FULL`, `GIT_REF`, `BUILD_DATE`, `IMAGE_TAG`, `PIPELINE_ID`, `PIPELINE_URL`, and `PROJECT_URL` into the runtime image. The `/health` page reads those values directly from the running container.
 
 **Registry**: `jed.ocir.io/axbp9ow0rohq/techhub`
 
@@ -116,9 +128,11 @@ export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
 **Timeout**: 20 minutes
 
 **Dockerfile Source**:
+
 - Uses: `dockerfiles/nodejs-gcp-Dockerfile-optimize` (GCP-optimized variant)
 
 **Process**: Same as OCI build but with GCP-specific configuration:
+
 - Registry: `me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/techhub`
 - Additional sysctl tuning for GCP runners
 
@@ -132,6 +146,7 @@ export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
 
 **Job**: `build-and-push-oci-to-argo`
 **Trigger**:
+
 - Automatic: Push to `main` branch
 - Manual: Web trigger with `type=build_and_deploy` and `CLOUD=oci`
 
@@ -139,6 +154,7 @@ export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
 **Timeout**: 20 minutes
 
 **GitOps Workflow**:
+
 ```bash
 # 1. Build Docker image with Kaniko (same as Stage 2a)
 /kaniko/executor \
@@ -174,10 +190,12 @@ git push origin -o ci.skip HEAD:main
 ```
 
 **Key Concepts**:
+
 - **GitOps**: CI only updates configuration (values.yaml), ArgoCD handles deployment
 - **ArgoCD**: Monitors deployment-configs repo and automatically syncs changes to Kubernetes
 - **Separation of Concerns**: Build pipeline doesn't need kubectl/helm access
 - **Prisma Migrations**: Controlled via `npm_migration` UI variable → sets `jobs.migrate.enabled` in values.yaml
+- **Release Tagging**: Successful `main` deployments create the next `vX.Y.Z` Git tag automatically, using the CI-calculated version
 
 **Values File**: `manifests/techhub/values-dev.yaml`
 **Namespace**: `istio-dev`
@@ -193,10 +211,12 @@ git push origin -o ci.skip HEAD:main
 
 **Job**: `build-and-push-gcp-to-argo`
 **Trigger**:
+
 - Automatic: Push to `dev` branch
 - Manual: Web trigger with `type=build_and_deploy` and `CLOUD=gcp`
 
 **Process**: Same GitOps workflow as OCI but with GCP-specific configuration:
+
 - Values file: `manifests/techhub/values-gcpdev.yaml`
 - Namespace: `horizontal-services`
 - Registry: GCP Artifact Registry
@@ -211,6 +231,7 @@ git push origin -o ci.skip HEAD:main
 **Purpose**: Promote existing dev images to higher environments without rebuilding
 
 **Jobs**:
+
 - `promote-to-uat-oci` - Promote to UAT (OCI)
 - `promote-to-test-oci` - Promote to TEST (OCI)
 - `promote-to-perf-oci` - Promote to PERF (OCI)
@@ -220,6 +241,7 @@ git push origin -o ci.skip HEAD:main
 **Input**: Image tag from previous stage (e.g., `1.0.0-a3f5c2-123456`)
 
 **Process**:
+
 ```bash
 # No rebuild - just update values.yaml for target environment
 yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${TARGET_VALUES}
@@ -228,6 +250,7 @@ git push origin -o ci.skip HEAD:main
 ```
 
 **Benefits**:
+
 - Same image promotes through environments (immutable)
 - No rebuilds = faster, safer deployments
 - Reduces drift between environments
@@ -246,6 +269,7 @@ git push origin -o ci.skip HEAD:main
 **Output Mode**: Next.js standalone (enabled in `next.config.ts`)
 
 **Image Contents**:
+
 - Node.js runtime
 - Next.js standalone server
 - `.next/standalone/` - Self-contained server
@@ -257,6 +281,7 @@ git push origin -o ci.skip HEAD:main
 **Image Size**: ~250-350MB (Alpine-based)
 
 **Image Layers**:
+
 1. System dependencies (Alpine packages)
 2. Node.js dependencies (npm ci)
 3. Prisma client generation
@@ -270,11 +295,13 @@ git push origin -o ci.skip HEAD:main
 **Example**: `1.0.0-a3f5c2-123456`
 
 **Components**:
+
 - **version**: From `package.json` (e.g., `1.0.0`)
 - **commit_id**: Git short SHA (6 chars, e.g., `a3f5c2`)
 - **CI_JOB_ID**: GitLab job ID (e.g., `123456`)
 
 **Benefits**:
+
 - Traceability: Links image to specific code version and CI job
 - Immutability: Same image promoted through environments
 - Debugging: Easy to identify exact build
@@ -286,31 +313,37 @@ git push origin -o ci.skip HEAD:main
 ### UI-Selectable Variables (GitLab Web Interface)
 
 **type**: Operation mode
+
 - `build_only` - Build image without deployment
 - `build_and_deploy` - Build + update ArgoCD values
 
 **CLOUD**: Target cloud platform
+
 - `oci` - Oracle Cloud Infrastructure
 - `gcp` - Google Cloud Platform
 
 **npm_migration**: Prisma migration flag
+
 - `true` - Enable migrations (sets `jobs.migrate.enabled=true` in values.yaml)
 - `false` - Skip migrations (default)
 
 ### Pipeline Variables (Configured in .gitlab-ci.yml)
 
 **Project Configuration**:
+
 - `PROJECT`: `techhub`
 - `AUTOMATIC_TRIGGER_BRANCH`: `main`
 - `DEV_BRANCH`: `dev`
 
 **OCI Configuration**:
+
 - `DEV_CNTNR_OCI_REG_IMG_PREFIX`: `jed.ocir.io/axbp9ow0rohq`
 - `DEV_OCI_LAB_TAG`: `ocinode18`
 - `DEV_OCI_VALUES`: `values-dev.yaml`
 - `DEV_OCI_IMAGE`: `jed.ocir.io/axbp9ow0rohq/gitlab-runner-node-18-alpine`
 
 **GCP Configuration**:
+
 - `DEV_CNTNR_GCP_REG_IMG_PREFIX`: `me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo`
 - `DEV_GCP_LAB_TAG`: `globalnodegcp`
 - `DEV_GCP_VALUES`: `values-gcpdev.yaml`
@@ -319,16 +352,19 @@ git push origin -o ci.skip HEAD:main
 ### GitLab CI/CD Secrets (Set by DevOps)
 
 **Required Variables**:
+
 - `GITLAB_UN` - GitLab username for cloning deployment-configs
 - `GITLAB_TOKEN` - GitLab access token
 
 **Optional Variables** (if using notifications):
+
 - `PUSHOVER_API_TOKEN` - Pushover app token
 - `PUSHOVER_USER_KEY` - Pushover user key
 
 ### Runtime Variables (Kubernetes Secrets/ConfigMaps)
 
 Managed in backend-configs repository:
+
 - `DATABASE_URL` - PostgreSQL connection (GCP Cloud SQL)
 - `REDIS_URL` - Redis connection (GCP Memorystore)
 - `ENCRYPTION_KEY` - AES-256-GCM encryption key
@@ -405,14 +441,15 @@ Managed in backend-configs repository:
 
 ## Total Pipeline Duration
 
-| Stage | Job | Duration (Cached) | Duration (Cold) |
-|-------|-----|-------------------|-----------------|
-| Validate | validate | 2 min | 3 min |
-| Build Only | build-oci / build-gcp | 8 min | 10 min |
-| Build & Deploy | build-and-push-*-to-argo | 10 min | 12 min |
-| Promotion | promote-to-* | 1 min | 1 min |
+| Stage          | Job                       | Duration (Cached) | Duration (Cold) |
+| -------------- | ------------------------- | ----------------- | --------------- |
+| Validate       | validate                  | 2 min             | 3 min           |
+| Build Only     | build-oci / build-gcp     | 8 min             | 10 min          |
+| Build & Deploy | build-and-push-\*-to-argo | 10 min            | 12 min          |
+| Promotion      | promote-to-\*             | 1 min             | 1 min           |
 
 **Typical Workflows**:
+
 - **Development (auto-deploy)**: validate (2m) + build-and-push-gcp (10m) = **~12 minutes**
 - **Production (manual trigger)**: validate (2m) + build-and-push-oci (10m) = **~12 minutes**
 - **Manual build only**: validate (2m) + build-oci/gcp (8m) = **~10 minutes**
@@ -422,13 +459,14 @@ Managed in backend-configs repository:
 
 ## Branch Strategy
 
-| Branch | Cloud | Registry | Environment | Namespace | Deployment Trigger |
-|--------|-------|----------|-------------|-----------|-------------------|
-| `main` | OCI | OCI Registry | Production | `istio-dev` | Automatic (build-and-push-oci-to-argo) |
-| `dev` | GCP | GCP Artifact Registry | Development | `horizontal-services` | Automatic (build-and-push-gcp-to-argo) |
-| Feature branches | - | - | - | - | Validation only |
+| Branch           | Cloud | Registry              | Environment | Namespace             | Deployment Trigger                     |
+| ---------------- | ----- | --------------------- | ----------- | --------------------- | -------------------------------------- |
+| `main`           | OCI   | OCI Registry          | Production  | `istio-dev`           | Automatic (build-and-push-oci-to-argo) |
+| `dev`            | GCP   | GCP Artifact Registry | Development | `horizontal-services` | Automatic (build-and-push-gcp-to-argo) |
+| Feature branches | -     | -                     | -           | -                     | Validation only                        |
 
 **Notes**:
+
 - `main` branch: Production-ready code, automatically builds and updates ArgoCD
 - `dev` branch: Development code, automatically builds and updates ArgoCD
 - Feature branches: Run validation only (no builds or deployments)
@@ -438,21 +476,25 @@ Managed in backend-configs repository:
 ## Key Technologies
 
 ### Kaniko
+
 **Purpose**: Daemonless Docker image builder for Kubernetes
 **Why**: Works in GitLab runners without Docker daemon, more secure
 **Command**: `/kaniko/executor --context $CI_PROJECT_DIR --dockerfile Dockerfile-build --destination {image}`
 
 ### yq
+
 **Purpose**: YAML processor for updating values.yaml
 **Why**: Programmatic updates to Helm values files
 **Command**: `yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" values.yaml`
 
 ### ArgoCD
+
 **Purpose**: GitOps continuous delivery for Kubernetes
 **Why**: Declarative, automated, auditable deployments
 **How**: Monitors deployment-configs repo, syncs changes to K8s clusters
 
 ### Next.js Standalone Output
+
 **Purpose**: Self-contained server output for Docker
 **Why**: Smaller images, faster builds, production-optimized
 **Config**: `output: "standalone"` in `next.config.ts`
@@ -462,6 +504,7 @@ Managed in backend-configs repository:
 ## Comparison: Old vs New Pipeline
 
 ### Old Pipeline (SSH-based)
+
 - Direct kubectl/helm commands in CI
 - Pipeline needs K8s credentials
 - No promotion workflow
@@ -469,6 +512,7 @@ Managed in backend-configs repository:
 - Docker build with daemon
 
 ### New Pipeline (GitOps)
+
 - CI updates values.yaml, ArgoCD deploys
 - Pipeline only needs Git access
 - Immutable image promotion

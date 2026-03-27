@@ -64,8 +64,13 @@ export interface SystemHealthCheckDto {
   buildInfo: {
     version: string;
     gitCommit: string;
+    gitCommitFull: string;
+    gitRef: string;
     buildDate: string;
     imageTag: string;
+    pipelineId: string;
+    pipelineUrl?: string;
+    projectUrl?: string;
   };
   overall: boolean; // ALL services including worker (for monitoring/alerts)
   coreServicesHealthy: boolean; // Core services only: DB + Redis + Env + Migrations (for deployment gates)

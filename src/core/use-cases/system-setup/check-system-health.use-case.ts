@@ -32,11 +32,19 @@ export class CheckSystemHealthUseCase {
   ) {}
 
   private getBuildInfo() {
+    const projectUrl = process.env.PROJECT_URL || undefined;
+    const gitCommitFull = process.env.GIT_COMMIT_FULL ?? process.env.GIT_COMMIT;
+
     return {
       version: process.env.APP_VERSION ?? "dev",
       gitCommit: process.env.GIT_COMMIT ?? "local",
+      gitCommitFull: gitCommitFull ?? "local",
+      gitRef: process.env.GIT_REF ?? "local",
       buildDate: process.env.BUILD_DATE ?? "unknown",
       imageTag: process.env.IMAGE_TAG ?? "local",
+      pipelineId: process.env.PIPELINE_ID ?? "local",
+      pipelineUrl: process.env.PIPELINE_URL || undefined,
+      projectUrl,
     };
   }
 

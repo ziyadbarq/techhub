@@ -35,6 +35,7 @@ Developer-facing documentation for building with the assets app:
 
 - [Developer Guide](./guides/DEVELOPER_GUIDE.md) - Comprehensive development guide and best practices
 - [GitLab CLI on macOS](./guides/GITLAB_CLI_MACBOOK.md) - Install, authenticate, and use `glab` against the internal GitLab instance from a Barq MacBook
+- [Versioning And Releases](./guides/VERSIONING_AND_RELEASES.md) - Conventional commit enforcement, CI-calculated semver, bootstrap tagging, and deployed build metadata
 - [Refactoring Patterns](./guides/REFACTORING_PATTERNS.md) - Proven refactoring patterns for maintaining clean, maintainable code (component, configuration, logic, and module extraction)
 
 ### Data Migration & Initial Setup

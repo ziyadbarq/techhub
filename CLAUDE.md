@@ -40,11 +40,10 @@ npm run db:seed:dev    # dev preset (full demo data)
 # Development
 npm run validate # Type-check + lint + test
 
-# Versioning (always use npm version — updates package.json + package-lock.json + git tag)
-npm version patch   # bug fixes:   1.0.0 → 1.0.1
-npm version minor   # new features: 1.0.0 → 1.1.0
-npm version major   # breaking:     1.0.0 → 2.0.0
-# Then push: git push origin main --tags && git push gitlab main --tags
+# Versioning (CI-calculated from conventional commits + release tags)
+npm run version:preview      # Preview the release version CI will calculate
+npm run version:preview:json # Machine-readable preview
+# Do not run `npm version` for routine app releases; see VERSIONING_AND_RELEASES.md
 
 # Build & Deploy
 npm run build         # Production build (type-check + lint + build)
@@ -102,6 +101,7 @@ kubectl get pods -n horizontal-services -l app=techhub    # GCP development
 **Verified GCP Dev ArgoCD App**: `techhub` in project `horizontal-services` is a multi-source Argo CD application targeting namespace `horizontal-services`, using Helm chart `barq` revision `1.1.2` plus `$values/techhub/values-gcpdev.yaml`. Runtime env injection, including `CONFIG_SERVER_URL`, is present in the live pod. See [docs/deployment/ARGOCD_TECHHUB_APPLICATION.md](docs/deployment/ARGOCD_TECHHUB_APPLICATION.md).
 
 **Deployment Targets**:
+
 - OCI Cloud: `istio-dev` namespace (production, auto-deploy from main)
 - GCP Cloud: `horizontal-services` namespace (development, auto-deploy from dev)
 
@@ -127,6 +127,7 @@ See **[docs/README.md](docs/README.md)** for full documentation index (Architect
 ### Framework Patterns (ALWAYS Follow)
 
 **Prisma**:
+
 - Default `@/generated/prisma` is browser-safe (types + enums), use anywhere
 - Server code needing `PrismaClient`: `import from "@/generated/prisma/server"`
 - Use singleton from `@/infrastructure/database/prisma/client` (NOT new instances)
@@ -136,6 +137,7 @@ See **[docs/README.md](docs/README.md)** for full documentation index (Architect
 **Prisma Migrations**: Edit `.prisma` files → `npx prisma migrate dev --name change_name` → `npm run db:generate`. NEVER create migrations manually, use `db push`, or `migrate resolve --applied`. See [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md).
 
 **Next.js 16 Async APIs**:
+
 - ALWAYS await: `params`, `searchParams`, `cookies()`, `headers()`, `draftMode()`
 - Server: `const params = await props.params;` | Client: `useParams()` (no await)
 - Set `dynamic = "force-dynamic"` for pages using auth/session
@@ -143,22 +145,26 @@ See **[docs/README.md](docs/README.md)** for full documentation index (Architect
 - See [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md)
 
 **Type Safety & UI**:
+
 - Use `import type` for type-only imports (ESLint enforced)
 - Use Sonner toast: `toast.success("Message")` (NOT shadcn useToast)
 - Add `"use no memo";` directive to TanStack Table components
 - Use centralized utilities: `formatDate()`, `getStatusBadgeClasses()`
 
 **Client-Side Session**:
+
 - In dashboard: use `useSessionContext()` from `@/contexts/session-context`
 - Outside dashboard: use `authClient.getSession()` in useEffect
 
 **Client-Side Permissions & Feature Flags**:
+
 - Use `usePermissions()` hook - delegates to `PermissionsProvider` context
 - Use `useIsFeatureEnabled("FLAG")` hook - delegates to `FeatureFlagsProvider` context
 
 ### Security Patterns (ALWAYS Enforce)
 
 **Route Protection** (CRITICAL):
+
 - ALL protected routes MUST have server-side `requirePermission()` - client checks can be bypassed
 - Pattern: Server component checks permissions → returns client component
 - Add `export const dynamic = "force-dynamic"` to protected pages
@@ -167,10 +173,12 @@ See **[docs/README.md](docs/README.md)** for full documentation index (Architect
 - Cross-module data: gate each fetch by feature flag + permission to avoid leaking presence
 
 **Permission Checking**:
+
 - Check permissions at server action layer: `await requirePermission(PERMISSIONS.ENTITY_VIEW);`
 - 269 permissions in 14 groups - see [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md)
 
 **Feature Flags** (Order Matters):
+
 - Check feature flag FIRST: `await requireFeature("MODULE")`
 - Then permission check SECOND: `await requirePermission(PERMISSIONS.X_VIEW)`
 
@@ -181,26 +189,31 @@ See **[docs/README.md](docs/README.md)** for full documentation index (Architect
 ### Architecture Patterns (ALWAYS Follow)
 
 **Logging** (CRITICAL):
+
 - NEVER use `console.log` - inject DI logger: `@inject(DI_TOKENS.ILoggerService)`
 - Use `@LogExecution('operation.name')` decorator on use case execute() methods
 - Request context (requestId, userId, path) auto-included; sensitive data auto-redacted
 
 **Database Seeding**:
+
 - Fully idempotent: Never wipes data, safe to run repeatedly
 - Config in `seed-config.ts`, factories in `seed-factories/`. See [DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md)
 
 **Barrel Exports**:
+
 - CRITICAL: Create `index.ts` in use case modules (pre-commit fails without them)
 - See [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature"
 
 **Better Auth**: Use repository layer for user creation (NOT Better Auth API). SSO requires pre-existing active Person record.
 
 **Dependency Injection**:
+
 - Three-tier modular system: CORE (14 modules), DASHBOARD (11 modules), HEAVY (4 modules, lazy loaded)
 - Resolve dependencies: `getContainer().get(DI_TOKENS.ServiceName)`, never use `new`
 - See [DI_MODULARIZATION.md](docs/architecture/DI_MODULARIZATION.md)
 
 **ID Generation**:
+
 - CUID2-based centralized service via DI: `IIdGenerator` interface, `CuidIdGeneratorService` implementation
 - Entities: `Entity.create(props, idGenerator)` for code-generated IDs
 - DTOs: Validate internal IDs with `z.string().min(24).max(25)` (CUID2), external system IDs with `z.string().uuid()` (Azure AD)
@@ -209,6 +222,7 @@ See **[docs/README.md](docs/README.md)** for full documentation index (Architect
 ### Feature-Specific Patterns
 
 For specialized features, see dedicated guides:
+
 - **Multi-Currency**: [MULTI_CURRENCY_GUIDE.md](docs/features/MULTI_CURRENCY_GUIDE.md) - SAR base, dual display with `<CurrencyDisplay>`
 - **Custom Fields**: [CUSTOM_FIELDS_COMPLETION.md](roadmap/CUSTOM_FIELDS_COMPLETION.md) - `useCategoryFields()`, Asset.attributes JSON
 - **Data Import**: [UNIVERSAL_ASSETS_IMPORTER.md](docs/features/UNIVERSAL_ASSETS_IMPORTER.md) - Prefixed columns, auto-entity creation
@@ -233,13 +247,14 @@ For specialized features, see dedicated guides:
 5. **Validate early** - DTOs (Zod) at boundaries, entities for business rules
 6. **Use structured logging** - Inject `ILoggerService`, never `console.log`
 7. **Before committing** - Run `npm run validate` (type-check + lint + test)
-8. **Versioning** - Proactively bump `package.json` version using `npm version patch/minor/major` when completing bug fixes, new features, or breaking changes. Never manually edit the version field. Push tags to both remotes.
+8. **Versioning** - Use conventional commit messages. CI calculates semver from release tags plus commit history and creates the next tag on successful `main` deployments. Use `npm run version:preview` to inspect the computed version. See [VERSIONING_AND_RELEASES.md](docs/guides/VERSIONING_AND_RELEASES.md).
 
 ## Adding New Features - Quick Checklist
 
 When adding a new feature, follow these steps in order:
 
 ### 1. Architecture Setup
+
 - [ ] Add Prisma model to appropriate `prisma/schema/*.prisma` file
 - [ ] Run `npx prisma migrate dev --name feature_name && npm run db:generate`
 - [ ] Create entity in `src/core/domain/entities/`
@@ -248,10 +263,12 @@ When adding a new feature, follow these steps in order:
 - [ ] **CRITICAL**: Create barrel export (`index.ts`) in use case folder
 
 ### 2. DI & Controllers
+
 - [ ] Register in DI container (`container.ts`)
 - [ ] Create controller with server actions (`{feature}.controller.ts`)
 
 ### 3. Security (Defense in Depth)
+
 - [ ] Define permissions in `permission-key.ts` + add to seed
 - [ ] **Feature flag FIRST**: `await requireFeature("MODULE")`
 - [ ] **Permission SECOND**: `await requirePermission(PERMISSIONS.X_VIEW)`
@@ -261,6 +278,7 @@ When adding a new feature, follow these steps in order:
 - [ ] Test with viewer account to verify access denial
 
 ### 4. Logging & Validation
+
 - [ ] Use `@LogExecution('feature.operation')` decorator on use cases
 - [ ] Inject `ILoggerService` via DI (never `console.log`)
 - [ ] Run `npm run validate` before committing
@@ -270,6 +288,7 @@ See [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New F
 ## Developer Notifications
 
 Send push notifications via `mcp__pushover-mcp__send` tool for:
+
 - **New features**: Completing significant new functionality
 - **Refactoring**: Major code restructuring or architecture changes
 - **Debugging**: Resolving complex bugs after extended investigation
@@ -282,6 +301,7 @@ Keep messages concise with relevant context.
 **Platform**: macOS only (PostgreSQL and Redis run natively via Homebrew). **Docker NOT used**.
 
 **Environment Variables**: Copy `.env.example` to `.env.local`
+
 - Required: `DATABASE_URL`, `REDIS_URL`, `OPENAI_API_KEY`
 - Debug: `PRISMA_VERBOSE_LOGS=true`, `AUTH_DEBUG_LOGS=true`, `LOG_LEVEL=debug`
 - Config Server (optional): `CONFIG_SERVER_URL`, `SPRING_PROFILE` - See instrumentation.ts for Spring Cloud Config integration
@@ -289,6 +309,7 @@ Keep messages concise with relevant context.
 ## Git Workflow
 
 **Dual Remote Setup**: Repository uses two remotes for backup and CI/CD
+
 - `origin` → GitHub (https://github.com/azzuwayed/barq-assets.git) - Backup repository
 - `gitlab` → GitLab (git@gitlab.dev.baraq.com.internal:baraq-engineering/webdev/techhub.git) - CI/CD trigger
 

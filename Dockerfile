@@ -10,9 +10,14 @@
 # ====================
 ARG BASE_REGISTRY=jed.ocir.io/axbp9ow0rohq
 ARG GIT_COMMIT=unknown
+ARG GIT_COMMIT_FULL=unknown
+ARG GIT_REF=local
 ARG APP_VERSION=dev
 ARG BUILD_DATE=unknown
 ARG IMAGE_TAG=local
+ARG PIPELINE_ID=local
+ARG PIPELINE_URL=
+ARG PROJECT_URL=
 
 
 # ====================
@@ -64,13 +69,23 @@ ENV NODE_ENV=production
 
 # Build metadata (injected by CI via --build-arg; defaults to "unknown"/"dev" for local builds)
 ARG GIT_COMMIT
+ARG GIT_COMMIT_FULL
+ARG GIT_REF
 ARG APP_VERSION
 ARG BUILD_DATE
 ARG IMAGE_TAG
+ARG PIPELINE_ID
+ARG PIPELINE_URL
+ARG PROJECT_URL
 ENV GIT_COMMIT=$GIT_COMMIT \
+    GIT_COMMIT_FULL=$GIT_COMMIT_FULL \
+    GIT_REF=$GIT_REF \
     APP_VERSION=$APP_VERSION \
     BUILD_DATE=$BUILD_DATE \
-    IMAGE_TAG=$IMAGE_TAG
+    IMAGE_TAG=$IMAGE_TAG \
+    PIPELINE_ID=$PIPELINE_ID \
+    PIPELINE_URL=$PIPELINE_URL \
+    PROJECT_URL=$PROJECT_URL
 
 # Copy Next.js standalone server and static files
 COPY --from=builder /app/.next/standalone ./
