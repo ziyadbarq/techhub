@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,6 +9,8 @@ import { authClient } from "@/lib/auth/client";
 import { loginSchema, type LoginInput } from "@/lib/auth/validation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -25,6 +27,8 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const emailRef = useRef<HTMLInputElement>(null);
 
   // Get the redirect path from query params, default to dashboard
   const redirectTo = searchParams.get("from") || "/dashboard";
@@ -37,6 +41,11 @@ export function LoginForm() {
     },
   });
 
+  // Auto-focus email field on mount
+  useEffect(() => {
+    emailRef.current?.focus();
+  }, []);
+
   const onSubmit = async (data: LoginInput) => {
     try {
       setError(null);
@@ -46,6 +55,7 @@ export function LoginForm() {
         email: data.email,
         password: data.password,
         callbackURL: redirectTo,
+        rememberMe,
       });
 
       if (response.error) {
@@ -85,9 +95,10 @@ export function LoginForm() {
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  autoComplete="email"
+                  autoComplete="username"
                   disabled={isLoading}
                   {...field}
+                  ref={emailRef}
                 />
               </FormControl>
               <FormMessage />
@@ -102,8 +113,7 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
+                <PasswordInput
                   placeholder="••••••••"
                   autoComplete="current-password"
                   disabled={isLoading}
@@ -115,19 +125,37 @@ export function LoginForm() {
           )}
         />
 
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="remember-me"
+              checked={rememberMe}
+              onCheckedChange={(checked) => setRememberMe(checked === true)}
+              disabled={isLoading}
+            />
+            <label
+              htmlFor="remember-me"
+              className="text-muted-foreground cursor-pointer text-sm select-none"
+            >
+              Remember me
+            </label>
+          </div>
+
+          <Link
+            href="/forgot-password"
+            className="text-barq-yellow hover:text-barq-yellow/80 text-sm font-medium underline-offset-4 hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
+
         {process.env.NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION !== "false" && (
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center">
             <Link
               href="/register"
               className="text-barq-yellow hover:text-barq-yellow/80 text-sm font-medium underline-offset-4 hover:underline"
             >
               Need an account?
-            </Link>
-            <Link
-              href="/forgot-password"
-              className="text-barq-yellow hover:text-barq-yellow/80 text-sm font-medium underline-offset-4 hover:underline"
-            >
-              Forgot password?
             </Link>
           </div>
         )}

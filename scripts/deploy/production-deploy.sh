@@ -632,7 +632,7 @@ stage_migrations() {
 
     # Run migrations using prisma migrate deploy
     # This is the production-safe migration command (no schema changes, only applies pending migrations)
-    if ! run_command "Database migrations" npx dotenv -e .env.local -- prisma migrate deploy; then
+    if ! run_command "Database migrations" npx prisma migrate deploy; then
         log_error "Database migrations failed"
         log "CRITICAL: Deployment halted before PM2 reload. Old code still running."
         log "To rollback database: bash scripts/deploy/db-backup.sh restore"
@@ -676,7 +676,7 @@ try {
 }
 EOF
 
-    if cd "$ROOT_DIR" && npx dotenv -e .env.local -- node .cache-clear-temp.mjs >> "$DEPLOY_LOG" 2>&1; then
+    if cd "$ROOT_DIR" && node .cache-clear-temp.mjs >> "$DEPLOY_LOG" 2>&1; then
         log_success "Redis cache cleared"
     else
         log_warning "Redis cache clear failed (non-critical, continuing)"
@@ -686,7 +686,7 @@ EOF
 
     # Always run production seeder (idempotent)
     log "Running database seeding (production preset)..."
-    if ! run_command "Database seeding" npx dotenv -e .env.local -- npx tsx src/infrastructure/database/prisma/seed.ts production; then
+    if ! run_command "Database seeding" npx tsx src/infrastructure/database/prisma/seed.ts production; then
         log_warning "Database seeding failed (non-critical, continuing)"
     else
         log_success "Database seeded successfully"

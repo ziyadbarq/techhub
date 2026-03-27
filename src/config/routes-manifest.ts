@@ -1319,6 +1319,7 @@ export const PUBLIC_ROUTES = [
   "/",
   "/login",
   "/register",
+  "/setup",
   "/unauthorized",
   "/api/auth",
   "/api/health",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,7 @@ import {
   type ResetPasswordInput,
 } from "@/lib/auth/validation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   Form,
   FormControl,
@@ -19,7 +19,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import {
   AlertCircle,
@@ -39,6 +38,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ResetPasswordInput>({
     resolver: zodResolver(resetPasswordSchema),
@@ -48,8 +48,10 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     },
   });
 
-  const password = form.watch("password");
-  const isPasswordValid = password && password.length >= 8;
+  // Auto-focus password field on mount
+  useEffect(() => {
+    passwordRef.current?.focus();
+  }, []);
 
   const onSubmit = async (data: ResetPasswordInput) => {
     try {
@@ -124,28 +126,15 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             <FormItem>
               <FormLabel>New Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
+                <PasswordInput
                   placeholder="••••••••"
                   autoComplete="new-password"
                   disabled={isLoading}
+                  showStrength
                   {...field}
+                  ref={passwordRef}
                 />
               </FormControl>
-              <FormDescription className="flex items-center gap-1.5">
-                {isPasswordValid ? (
-                  <>
-                    <CheckCircle2 className="text-success h-3.5 w-3.5" />
-                    <span className="text-success text-xs">
-                      Password meets requirements
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-muted-foreground text-xs">
-                    Minimum 8 characters
-                  </span>
-                )}
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -158,8 +147,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             <FormItem>
               <FormLabel>Confirm New Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
+                <PasswordInput
                   placeholder="••••••••"
                   autoComplete="new-password"
                   disabled={isLoading}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth/client";
+import { EMAIL_VERIFICATION_SUCCESS_PATH } from "@/lib/auth/constants";
 import { Button } from "@/components/ui/button";
 import { Loader2, Mail, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
@@ -37,7 +38,7 @@ export function VerifyEmailButton({
 
       const response = await authClient.sendVerificationEmail({
         email,
-        callbackURL: "/verify-email?verified=true",
+        callbackURL: EMAIL_VERIFICATION_SUCCESS_PATH,
       });
 
       if (response.error) {

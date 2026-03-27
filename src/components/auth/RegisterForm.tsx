@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth/client";
+import { EMAIL_VERIFICATION_SUCCESS_PATH } from "@/lib/auth/constants";
+import { checkSetupStatusAction } from "@/interface-adapters/controllers/setup.controller";
 import { registerSchema, type RegisterInput } from "@/lib/auth/validation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   Form,
   FormControl,
@@ -16,15 +19,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
-import { AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function RegisterForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -36,19 +39,35 @@ export function RegisterForm() {
     },
   });
 
-  const password = form.watch("password");
-  const isPasswordValid = password && password.length >= 8;
+  // Auto-focus name field on mount
+  useEffect(() => {
+    nameRef.current?.focus();
+  }, []);
 
   const onSubmit = async (data: RegisterInput) => {
     try {
       setError(null);
       setIsLoading(true);
 
+      const setupStatus = await checkSetupStatusAction();
+      if (!setupStatus.success) {
+        setError(
+          setupStatus.error ||
+            "Could not verify setup status. Please try again.",
+        );
+        return;
+      }
+
+      if (setupStatus.data.needsSetup) {
+        router.replace("/setup");
+        return;
+      }
+
       const response = await authClient.signUp.email({
         email: data.email,
         password: data.password,
         name: data.name || "",
-        callbackURL: "/dashboard",
+        callbackURL: EMAIL_VERIFICATION_SUCCESS_PATH,
       });
 
       if (response.error) {
@@ -110,6 +129,7 @@ export function RegisterForm() {
                   autoComplete="name"
                   disabled={isLoading}
                   {...field}
+                  ref={nameRef}
                 />
               </FormControl>
               <FormMessage />
@@ -127,7 +147,7 @@ export function RegisterForm() {
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  autoComplete="email"
+                  autoComplete="username"
                   disabled={isLoading}
                   {...field}
                 />
@@ -144,28 +164,14 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
+                <PasswordInput
                   placeholder="••••••••"
                   autoComplete="new-password"
                   disabled={isLoading}
+                  showStrength
                   {...field}
                 />
               </FormControl>
-              <FormDescription className="flex items-center gap-1.5">
-                {isPasswordValid ? (
-                  <>
-                    <CheckCircle2 className="text-success h-3.5 w-3.5" />
-                    <span className="text-success text-xs">
-                      Password meets requirements
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-muted-foreground text-xs">
-                    Minimum 8 characters
-                  </span>
-                )}
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -178,8 +184,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
+                <PasswordInput
                   placeholder="••••••••"
                   autoComplete="new-password"
                   disabled={isLoading}

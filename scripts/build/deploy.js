@@ -240,7 +240,7 @@ function runBuild() {
  */
 function runMigrations() {
   runCommand(
-    "npx dotenv -e .env.local -- prisma migrate deploy",
+    "npx prisma migrate deploy",
     "Applying database migrations"
   );
 }
@@ -277,7 +277,7 @@ async function runSmartSeed() {
       await pool.end();
       log("📊", "Database tables not found, seeding required");
       runCommand(
-        'npx dotenv -e .env.local -- npx tsx src/infrastructure/database/prisma/seed.ts production',
+        'npx tsx src/infrastructure/database/prisma/seed.ts production',
         "Seeding database"
       );
       return;
@@ -293,7 +293,7 @@ async function runSmartSeed() {
     if (isEmpty) {
       log("📊", "Database is empty, seeding required");
       runCommand(
-        'npx dotenv -e .env.local -- npx tsx src/infrastructure/database/prisma/seed.ts production',
+        'npx tsx src/infrastructure/database/prisma/seed.ts production',
         "Seeding database"
       );
     } else {

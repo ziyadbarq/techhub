@@ -7,7 +7,7 @@ import type { PrismaClient } from "@/generated/prisma/client";
 import { decryptTokens, encryptTokens } from "@/lib/auth/encryption";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { createAuthMiddleware } from "better-auth/api";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { lastLoginMethod, twoFactor } from "better-auth/plugins";
 import { nextCookies } from "./plugins/next-cookies";
 
@@ -30,6 +30,8 @@ import { nextCookies } from "./plugins/next-cookies";
 import { PrismaAuthService } from "@/infrastructure/services/auth/prisma-auth.service";
 
 const authDebugEnabled = process.env.AUTH_DEBUG_LOGS === "true";
+const BOOTSTRAP_BYPASS_HEADER = "x-techhub-setup-bootstrap";
+const SYSTEM_ADMIN_ROLE_NAME = "system-administrator";
 
 type AuthLogLevel = "info" | "warn" | "error";
 
@@ -785,6 +787,38 @@ const createAuth = () =>
     // Automatically creates/links Person entity for authenticated users
     // SSO (Microsoft OAuth) requires Person to exist, be active, and not excluded
     hooks: {
+      before: createAuthMiddleware(async (ctx) => {
+        const path = ctx.path || "";
+        const isBootstrapSignUp = path.includes("/sign-up/email");
+        const isSocialSignIn = path.includes("/sign-in/social");
+
+        if (!isBootstrapSignUp && !isSocialSignIn) {
+          return;
+        }
+
+        if (
+          isBootstrapSignUp &&
+          ctx.headers?.get(BOOTSTRAP_BYPASS_HEADER) === "true"
+        ) {
+          return;
+        }
+
+        const hasAssignedAdmin =
+          await getPrismaWithEncryption().userRole.findFirst({
+            where: { role: { name: SYSTEM_ADMIN_ROLE_NAME } },
+            select: { id: true },
+          });
+
+        if (hasAssignedAdmin) {
+          return;
+        }
+
+        throw new APIError("FORBIDDEN", {
+          message: isSocialSignIn
+            ? "Complete initial setup at /setup before using Microsoft sign-in."
+            : "Complete initial setup at /setup before creating the first account.",
+        });
+      }),
       after: createAuthMiddleware(async (ctx) => {
         const path = ctx.path || "";
         const isOAuthCallback = path.includes("/callback/microsoft");

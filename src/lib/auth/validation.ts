@@ -1,6 +1,18 @@
 import { z } from "zod";
 
 /**
+ * Password validation for new passwords (registration, reset).
+ * Hard requirements: 8+ chars, at least one letter and one number.
+ * Strength meter in UI encourages uppercase, symbols, and length >= 12.
+ */
+const newPasswordSchema = z
+  .string()
+  .min(1, "Password is required")
+  .min(8, "Password must be at least 8 characters")
+  .regex(/[a-zA-Z]/, "Password must contain at least one letter")
+  .regex(/\d/, "Password must contain at least one number");
+
+/**
  * Validation schema for user login with email and password
  */
 export const loginSchema = z.object({
@@ -19,10 +31,7 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export const registerSchema = z
   .object({
     email: z.email({ error: "Invalid email address" }),
-    password: z
-      .string()
-      .min(1, "Password is required")
-      .min(8, "Password must be at least 8 characters"),
+    password: newPasswordSchema,
     confirmPassword: z.string().min(1, "Please confirm your password"),
     name: z
       .string()
@@ -50,10 +59,7 @@ export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
  */
 export const resetPasswordSchema = z
   .object({
-    password: z
-      .string()
-      .min(1, "Password is required")
-      .min(8, "Password must be at least 8 characters"),
+    password: newPasswordSchema,
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {

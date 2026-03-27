@@ -350,7 +350,7 @@ async function runDeployment() {
     if (needsSeed) {
       log("📊", "Database is empty, seeding required");
       runCommand(
-        "npx dotenv -e .env.local -- npx tsx src/infrastructure/database/prisma/seed.ts production",
+        "npx tsx src/infrastructure/database/prisma/seed.ts production",
         "Seeding database"
       );
     } else {
