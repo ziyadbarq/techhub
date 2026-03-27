@@ -3,9 +3,10 @@
  */
 
 import { injectable, inject } from "inversify";
-import type {
-  PrismaClient,
-  ConfigurationItem as PrismaConfigurationItem,
+import {
+  Prisma,
+  type PrismaClient,
+  type ConfigurationItem as PrismaConfigurationItem,
 } from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type {
@@ -22,9 +23,7 @@ import { createRepositoryLogger } from "./repository-logger";
 import { toJsonValue, fromJsonValue } from "./prisma-helpers";
 
 @injectable()
-export class PrismaConfigurationItemRepository
-  implements IConfigurationItemRepository
-{
+export class PrismaConfigurationItemRepository implements IConfigurationItemRepository {
   private readonly logger = createRepositoryLogger(
     "ConfigurationItemRepository",
   );
@@ -94,6 +93,27 @@ export class PrismaConfigurationItemRepository
       where: { ciClassId },
       orderBy: { name: "asc" },
     });
+
+    return cis.map((ci) => this.toDomain(ci));
+  }
+
+  async findOciManagedByServiceTypes(
+    serviceTypes: string[],
+  ): Promise<ConfigurationItem[]> {
+    if (serviceTypes.length === 0) {
+      return [];
+    }
+
+    const cis = await this.prisma.$queryRaw<PrismaConfigurationItem[]>(
+      Prisma.sql`
+        SELECT *
+        FROM "configuration_items"
+        WHERE "deletedAt" IS NULL
+          AND attributes IS NOT NULL
+          AND attributes->>'OCI_SERVICE_TYPE' IN (${Prisma.join(serviceTypes)})
+        ORDER BY name ASC
+      `,
+    );
 
     return cis.map((ci) => this.toDomain(ci));
   }

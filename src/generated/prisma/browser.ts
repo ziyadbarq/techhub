@@ -133,6 +133,11 @@ export type RelationshipTypeScope = Prisma.RelationshipTypeScopeModel
  */
 export type CIRelationship = Prisma.CIRelationshipModel
 /**
+ * Model OciSyncLog
+ * 
+ */
+export type OciSyncLog = Prisma.OciSyncLogModel
+/**
  * Model ContractType
  * 
  */

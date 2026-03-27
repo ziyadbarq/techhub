@@ -25,18 +25,16 @@
 
 import { spawn, execSync } from "child_process";
 import { createRequire } from "module";
-import { config as loadEnv } from "dotenv";
 import Redis from "ioredis";
 import pg from "pg";
+import { loadScriptEnv } from "../utils/load-env.js";
 
 const require = createRequire(import.meta.url);
 const fs = require("fs");
 const { Pool } = pg;
 
-// Load environment variables from local files
-loadEnv({ path: ".env.production" });
-loadEnv({ path: ".env.local" });
-loadEnv();
+// Preserve shell env vars, then apply file precedence: .env < .env.production < .env.local
+loadScriptEnv();
 
 const IS_PM2 = Boolean(process.env.pm_id || process.env.PM2_HOME || process.env.PM2_USAGE);
 

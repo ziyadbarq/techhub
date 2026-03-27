@@ -636,6 +636,23 @@ export type EnumRelationshipDirectionEnumWithAggregatesFilter<$PrismaModel = nev
   _max?: Prisma.NestedEnumRelationshipDirectionEnumFilter<$PrismaModel>
 }
 
+export type EnumOciSyncStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.OciSyncStatus | Prisma.EnumOciSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OciSyncStatus[] | Prisma.ListEnumOciSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OciSyncStatus[] | Prisma.ListEnumOciSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOciSyncStatusFilter<$PrismaModel> | $Enums.OciSyncStatus
+}
+
+export type EnumOciSyncStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OciSyncStatus | Prisma.EnumOciSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OciSyncStatus[] | Prisma.ListEnumOciSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OciSyncStatus[] | Prisma.ListEnumOciSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOciSyncStatusWithAggregatesFilter<$PrismaModel> | $Enums.OciSyncStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOciSyncStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOciSyncStatusFilter<$PrismaModel>
+}
+
 export type EnumDisposalTypeEnumFilter<$PrismaModel = never> = {
   equals?: $Enums.DisposalTypeEnum | Prisma.EnumDisposalTypeEnumFieldRefInput<$PrismaModel>
   in?: $Enums.DisposalTypeEnum[] | Prisma.ListEnumDisposalTypeEnumFieldRefInput<$PrismaModel>
@@ -1922,6 +1939,23 @@ export type NestedEnumRelationshipDirectionEnumWithAggregatesFilter<$PrismaModel
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumRelationshipDirectionEnumFilter<$PrismaModel>
   _max?: Prisma.NestedEnumRelationshipDirectionEnumFilter<$PrismaModel>
+}
+
+export type NestedEnumOciSyncStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.OciSyncStatus | Prisma.EnumOciSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OciSyncStatus[] | Prisma.ListEnumOciSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OciSyncStatus[] | Prisma.ListEnumOciSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOciSyncStatusFilter<$PrismaModel> | $Enums.OciSyncStatus
+}
+
+export type NestedEnumOciSyncStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OciSyncStatus | Prisma.EnumOciSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OciSyncStatus[] | Prisma.ListEnumOciSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OciSyncStatus[] | Prisma.ListEnumOciSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOciSyncStatusWithAggregatesFilter<$PrismaModel> | $Enums.OciSyncStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOciSyncStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOciSyncStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumDisposalTypeEnumFilter<$PrismaModel = never> = {

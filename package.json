@@ -35,6 +35,7 @@
     "db:backup": "bash scripts/deploy/db-backup.sh backup",
     "db:restore": "bash scripts/deploy/db-backup.sh restore",
     "download:oci": "dotenv -e .env.local -- tsx scripts/imports/download-oci-data.ts",
+    "compare:oci": "dotenv -e .env.local -- tsx scripts/imports/compare-oci-data.ts",
     "drift:check": "dotenv -e .env.local -- tsx scripts/db/verify-migration-drift.ts",
     "drift:check-warn": "dotenv -e .env.local -- tsx scripts/db/verify-migration-drift.ts --warn-only",
     "drift:fix": "dotenv -e .env.local -- tsx scripts/db/fix-migration-drift.ts",

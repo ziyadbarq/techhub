@@ -74,6 +74,7 @@ export const ModelName = {
   RelationshipType: 'RelationshipType',
   RelationshipTypeScope: 'RelationshipTypeScope',
   CIRelationship: 'CIRelationship',
+  OciSyncLog: 'OciSyncLog',
   ContractType: 'ContractType',
   Contract: 'Contract',
   ContractLinkedObject: 'ContractLinkedObject',
@@ -575,6 +576,31 @@ export const CIRelationshipScalarFieldEnum = {
 } as const
 
 export type CIRelationshipScalarFieldEnum = (typeof CIRelationshipScalarFieldEnum)[keyof typeof CIRelationshipScalarFieldEnum]
+
+
+export const OciSyncLogScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  serviceTypes: 'serviceTypes',
+  tenancyId: 'tenancyId',
+  regions: 'regions',
+  resourcesProcessed: 'resourcesProcessed',
+  resourcesCreated: 'resourcesCreated',
+  resourcesUpdated: 'resourcesUpdated',
+  resourcesRetired: 'resourcesRetired',
+  resourcesUnchanged: 'resourcesUnchanged',
+  compartmentsCreated: 'compartmentsCreated',
+  relationshipsCreated: 'relationshipsCreated',
+  errorsCount: 'errorsCount',
+  errors: 'errors',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationMs: 'durationMs',
+  triggeredBy: 'triggeredBy',
+  isDryRun: 'isDryRun'
+} as const
+
+export type OciSyncLogScalarFieldEnum = (typeof OciSyncLogScalarFieldEnum)[keyof typeof OciSyncLogScalarFieldEnum]
 
 
 export const ContractTypeScalarFieldEnum = {

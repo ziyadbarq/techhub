@@ -389,6 +389,18 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     ],
   },
   {
+    id: "oci-cloud-sync",
+    label: "OCI Cloud Sync",
+    description:
+      "Oracle Cloud Infrastructure resource sync, inventory tracking, and sync logs",
+    icon: "Cloud",
+    permissions: [
+      PERMISSIONS.OCI_SYNC_VIEW,
+      PERMISSIONS.OCI_SYNC_TRIGGER,
+      PERMISSIONS.OCI_SYNC_LOGS_VIEW,
+    ],
+  },
+  {
     id: "attachments",
     label: "Attachments & Documents",
     description:

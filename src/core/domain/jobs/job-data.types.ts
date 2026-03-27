@@ -239,3 +239,28 @@ export interface IntuneSyncJobData extends BaseJobData {
    */
   triggeredBy?: string;
 }
+
+// ========================================
+// OCI Cloud Sync Jobs
+// ========================================
+
+/**
+ * Data for OCI cloud resource sync job
+ */
+export interface OciSyncJobData extends BaseJobData {
+  /**
+   * Which OCI services to sync (default: all 8)
+   */
+  serviceKeys?: string[];
+
+  /**
+   * Preview changes without persisting
+   * @default false
+   */
+  dryRun?: boolean;
+
+  /**
+   * User who triggered the sync (for audit logging)
+   */
+  triggeredBy?: string;
+}

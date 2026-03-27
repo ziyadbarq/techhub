@@ -195,8 +195,58 @@ model CIRelationship {
 }
 
 // ============================================
+// OCI CLOUD SYNC
+// ============================================
+//
+// OciSyncLog tracks sync operations from the n8n webhook.
+// OCI resources are stored as ConfigurationItems (no separate table).
+// ============================================
+
+// Sync operation log for OCI Cloud resource sync
+model OciSyncLog {
+  id     String        @id @default(cuid())
+  status OciSyncStatus @default(IN_PROGRESS)
+
+  // What was synced
+  serviceTypes String[] // e.g. ["compute", "lb", "oke"]
+  tenancyId    String?
+  regions      String[] // e.g. ["me-jeddah-1", "me-riyadh-1"]
+
+  // Statistics
+  resourcesProcessed  Int @default(0)
+  resourcesCreated    Int @default(0)
+  resourcesUpdated    Int @default(0)
+  resourcesRetired    Int @default(0)
+  resourcesUnchanged  Int @default(0)
+  compartmentsCreated Int @default(0)
+  relationshipsCreated Int @default(0)
+  errorsCount         Int @default(0)
+  errors              Json? // Array of error objects
+
+  // Timing
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  durationMs  Int?
+
+  // Trigger info
+  triggeredBy String? // User ID or "system"
+  isDryRun    Boolean @default(false)
+
+  @@index([status])
+  @@index([startedAt])
+  @@map("oci_sync_logs")
+}
+
+// ============================================
 // CMDB ENUMS
 // ============================================
+
+enum OciSyncStatus {
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  PARTIAL
+}
 
 enum EnvironmentEnum {
   PROD

@@ -48,6 +48,7 @@ import {
   Binary,
   HardDrive,
   UserPlus,
+  Cloud,
 } from "lucide-react";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -294,6 +295,17 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     visibleInNav: false,
     isChildRoute: true,
     parentRoute: "/intune/devices",
+  },
+  {
+    path: "/oci-sync",
+    label: "OCI Cloud Sync",
+    icon: Cloud,
+    description: "OCI Cloud Infrastructure resource sync",
+    requiredPermissions: ["OCI_SYNC_VIEW"],
+    featureFlag: "OCI_SYNC",
+    visibleInNav: true,
+    navGroup: "main",
+    navOrder: 3,
   },
   {
     path: "/data-import",

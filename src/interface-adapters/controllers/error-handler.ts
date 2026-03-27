@@ -12,6 +12,7 @@
 
 import { ZodError } from "zod";
 import { isDomainError } from "@/core/domain/errors/domain-errors";
+import { OciWebhookError } from "@/core/domain/errors/oci-webhook.error";
 import type { ActionResponse } from "./types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
@@ -92,6 +93,18 @@ export function handleControllerError<T = unknown>(
     return {
       success: false,
       error: error.message,
+    };
+  }
+
+  if (error instanceof OciWebhookError) {
+    logger.warn("OCI webhook error in controller", {
+      ...context,
+      ...error.toLogContext(),
+    });
+
+    return {
+      success: false,
+      error: error.userMessage,
     };
   }
 

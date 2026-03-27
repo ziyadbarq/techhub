@@ -231,6 +231,15 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     dependsOn: ["FOUNDATION", "ASSETS"],
     defaultEnabled: true,
   },
+  {
+    name: "OCI_SYNC",
+    displayName: "OCI Cloud Sync",
+    description:
+      "Oracle Cloud Infrastructure resource sync via n8n webhook. Automatically imports compute, load balancers, OKE clusters, databases, and object storage as CMDB Configuration Items.",
+    category: "LAYER_3",
+    isSystem: false,
+    dependsOn: ["FOUNDATION", "CMDB"],
+  },
 ];
 
 /**

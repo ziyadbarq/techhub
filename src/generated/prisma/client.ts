@@ -33,7 +33,7 @@ export * from "./enums.ts"
  * const assetCategories = await prisma.assetCategory.findMany()
  * ```
  * 
- * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+ * Read more in our [docs](https://pris.ly/d/client).
  */
 export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
@@ -154,6 +154,11 @@ export type RelationshipTypeScope = Prisma.RelationshipTypeScopeModel
  * 
  */
 export type CIRelationship = Prisma.CIRelationshipModel
+/**
+ * Model OciSyncLog
+ * 
+ */
+export type OciSyncLog = Prisma.OciSyncLogModel
 /**
  * Model ContractType
  * 

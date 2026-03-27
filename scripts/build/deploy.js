@@ -28,19 +28,17 @@
 
 import { execSync } from "child_process";
 import { createRequire } from "module";
-import { config as loadEnv } from "dotenv";
 import Redis from "ioredis";
 import pg from "pg";
+import { loadScriptEnv } from "../utils/load-env.js";
 
 const require = createRequire(import.meta.url);
 const fs = require("fs");
 const path = require("path");
 const { Pool } = pg;
 
-// Load environment variables
-loadEnv({ path: ".env.production" });
-loadEnv({ path: ".env.local" });
-loadEnv();
+// Preserve shell env vars, then apply file precedence: .env < .env.production < .env.local
+loadScriptEnv();
 
 // Parse CLI flags
 const args = process.argv.slice(2);

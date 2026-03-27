@@ -38,6 +38,11 @@ export const SLOW_OPERATION_THRESHOLDS = {
   "api.call.analytics": 10000,
 
   /**
+   * OCI inventory sync fans out to multiple external webhook calls
+   */
+  "oci.resources.sync": 10000,
+
+  /**
    * Default threshold for other operations: 5000ms
    */
   default: 5000,

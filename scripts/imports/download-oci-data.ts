@@ -6,6 +6,8 @@
  *
  * Output:
  * - local/oci-data/*.json (8 service-specific files)
+ * - local/oci-data/manifest.json
+ * - local/oci-data-archive/<timestamp>/* (previous snapshot, archived before overwrite)
  *
  * Environment Variables:
  * - OCI_WEBHOOK_TOKEN (required): Authentication token for n8n webhook
@@ -16,14 +18,34 @@
  *   npx dotenv -e .env.local -- npx tsx scripts/imports/download-oci-data.ts --help
  */
 
-import { writeFileSync, mkdirSync, existsSync } from "fs";
-import { join } from "path";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  renameSync,
+  writeFileSync,
+} from "fs";
 import { Agent } from "undici";
+import type {
+  OciServiceKey,
+  OciWebhookResponse,
+} from "../../src/core/domain/value-objects/oci-resource.types";
+import {
+  countOciResponseResources,
+  getOciLocalDataFilename,
+  OCI_LOCAL_DATA_MANIFEST_FILENAME,
+  resolveOciLocalDataArchiveDir,
+  resolveOciLocalDataDir,
+} from "../../src/infrastructure/services/oci/oci-local-data";
 
 // Constants
 const WEBHOOK_URL = "https://n8n.prod.barq.com/webhook/oci-invent";
-const OUTPUT_DIR = join(process.cwd(), "local", "oci-data");
 const DRY_RUN = process.argv.includes("--dry-run");
+const SKIP_ARCHIVE = process.argv.includes("--skip-archive");
+const OUTPUT_DIR = resolveOciLocalDataDir(getCliOption("--output-dir"));
+const ARCHIVE_DIR = resolveOciLocalDataArchiveDir(
+  getCliOption("--archive-dir"),
+);
 const ALLOW_INSECURE = process.env.OCI_WEBHOOK_INSECURE === "true";
 
 const INSECURE_DISPATCHER = ALLOW_INSECURE
@@ -67,6 +89,34 @@ type FailureFingerprint = {
   hint?: string;
   details?: string;
 };
+
+type SnapshotManifest = {
+  downloadedAt: string;
+  webhookUrl: string;
+  outputDir: string;
+  archivedPreviousSnapshot: boolean;
+  services: Array<{
+    key: OciServiceKey;
+    description: string;
+    filename: string;
+    resourceCount: number;
+    sizeBytes: number;
+  }>;
+};
+
+function getCliOption(flag: string): string | undefined {
+  const index = process.argv.indexOf(flag);
+  if (index === -1) {
+    return undefined;
+  }
+
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) {
+    throw new Error(`Missing value for ${flag}`);
+  }
+
+  return value;
+}
 
 /**
  * Format bytes for human-readable output
@@ -136,7 +186,6 @@ function buildFailureFingerprint(result: DownloadResult): FailureFingerprint {
  */
 async function downloadService(
   serviceKey: string,
-  description: string,
   token: string,
 ): Promise<DownloadResult> {
   try {
@@ -198,13 +247,64 @@ async function downloadService(
  * Save data to a JSON file
  */
 function saveToFile(serviceKey: string, data: unknown): void {
-  const filename = `oci-${serviceKey}.json`;
-  const filepath = join(OUTPUT_DIR, filename);
+  const filename = getOciLocalDataFilename(serviceKey as OciServiceKey);
+  const filepath = `${OUTPUT_DIR}/${filename}`;
 
   if (!DRY_RUN) {
     const json = JSON.stringify(data, null, 2);
     writeFileSync(filepath, json, "utf-8");
   }
+}
+
+function getSnapshotFiles(): string[] {
+  if (!existsSync(OUTPUT_DIR)) {
+    return [];
+  }
+
+  return readdirSync(OUTPUT_DIR).filter(
+    (entry) =>
+      (entry.startsWith("oci-") && entry.endsWith(".json")) ||
+      entry === OCI_LOCAL_DATA_MANIFEST_FILENAME,
+  );
+}
+
+function archiveExistingSnapshot(): boolean {
+  const snapshotFiles = getSnapshotFiles();
+
+  if (snapshotFiles.length === 0 || SKIP_ARCHIVE) {
+    return false;
+  }
+
+  const archiveStamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const archiveTargetDir = `${ARCHIVE_DIR}/${archiveStamp}`;
+
+  if (DRY_RUN) {
+    console.log(
+      `📦 Would archive ${snapshotFiles.length} existing snapshot file(s) to: ${archiveTargetDir}`,
+    );
+    return true;
+  }
+
+  mkdirSync(archiveTargetDir, { recursive: true });
+
+  for (const file of snapshotFiles) {
+    renameSync(`${OUTPUT_DIR}/${file}`, `${archiveTargetDir}/${file}`);
+  }
+
+  console.log(
+    `📦 Archived ${snapshotFiles.length} existing snapshot file(s) to: ${archiveTargetDir}`,
+  );
+
+  return true;
+}
+
+function writeManifest(manifest: SnapshotManifest): void {
+  if (DRY_RUN) {
+    return;
+  }
+
+  const manifestPath = `${OUTPUT_DIR}/${OCI_LOCAL_DATA_MANIFEST_FILENAME}`;
+  writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf-8");
 }
 
 /**
@@ -221,11 +321,16 @@ Usage:
 
 Options:
   --dry-run    Preview downloads without saving files
+  --skip-archive Skip archiving the previous snapshot before overwrite
+  --output-dir <path> Write snapshot files to a custom directory
+  --archive-dir <path> Archive previous snapshots into a custom directory
   --help       Show this help message
 
 Environment Variables:
   OCI_WEBHOOK_TOKEN (required)    Authentication token for n8n webhook
   OCI_WEBHOOK_INSECURE=true       Allow invalid TLS certificates (use with caution)
+  OCI_LOCAL_DATA_DIR              Override local snapshot directory (default: local/oci-data)
+  OCI_LOCAL_DATA_ARCHIVE_DIR      Override snapshot archive directory (default: local/oci-data-archive)
 
 Services Downloaded:
   - compute: All Compute instances (VM/BM)
@@ -237,7 +342,10 @@ Services Downloaded:
   - mysql: OCI MySQL databases
   - dbsystems: Oracle Database DB Systems
 
-Output: local/oci-data/*.json
+Output:
+  local/oci-data/*.json
+  local/oci-data/manifest.json
+  local/oci-data-archive/<timestamp>/*
   `);
 }
 
@@ -264,12 +372,13 @@ async function main(): Promise<void> {
   console.log("🌩️  OCI Inventory Data Download");
   console.log("=".repeat(80));
   console.log(`📂 Output directory: ${OUTPUT_DIR}`);
+  console.log(`🗃️  Archive directory: ${ARCHIVE_DIR}`);
   console.log(`🔐 Token: ${token.substring(0, 10)}...${token.slice(-5)}`);
-  if (ALLOW_INSECURE) {
-    console.log("⚠️  TLS verification disabled (OCI_WEBHOOK_INSECURE=true)");
-  }
   if (DRY_RUN) {
     console.log("⚠️  DRY RUN MODE - Files will not be saved");
+  }
+  if (SKIP_ARCHIVE) {
+    console.log("⚠️  Existing snapshot archival disabled (--skip-archive)");
   }
   console.log("=".repeat(80));
   console.log();
@@ -285,10 +394,22 @@ async function main(): Promise<void> {
     console.log();
   }
 
+  const archivedPreviousSnapshot = archiveExistingSnapshot();
+  if (!DRY_RUN && !existsSync(OUTPUT_DIR)) {
+    mkdirSync(OUTPUT_DIR, { recursive: true });
+  }
+
   // Download each service
   let successCount = 0;
   let failedCount = 0;
   let totalSize = 0;
+  const manifest: SnapshotManifest = {
+    downloadedAt: new Date().toISOString(),
+    webhookUrl: WEBHOOK_URL,
+    outputDir: OUTPUT_DIR,
+    archivedPreviousSnapshot,
+    services: [],
+  };
   const failedServices: FailedService[] = [];
   const failureCounts = new Map<
     string,
@@ -299,15 +420,21 @@ async function main(): Promise<void> {
   for (const service of SERVICES) {
     console.log(`⏳ Downloading ${service.description} (${service.key})...`);
 
-    const result = await downloadService(
-      service.key,
-      service.description,
-      token,
-    );
+    const result = await downloadService(service.key, token);
 
     if (result.success && result.data && result.size !== undefined) {
       console.log(`   ✅ Success - ${formatBytes(result.size)}`);
       saveToFile(service.key, result.data);
+      manifest.services.push({
+        key: service.key as OciServiceKey,
+        description: service.description,
+        filename: getOciLocalDataFilename(service.key as OciServiceKey),
+        resourceCount: countOciResponseResources(
+          result.data as OciWebhookResponse,
+          service.key as OciServiceKey,
+        ),
+        sizeBytes: result.size,
+      });
       successCount++;
       totalSize += result.size;
     } else {
@@ -352,6 +479,11 @@ async function main(): Promise<void> {
   console.log(`❌ Failed: ${failedCount}/${SERVICES.length}`);
   console.log(`📦 Total size: ${formatBytes(totalSize)}`);
   console.log(`📁 Files saved to: ${OUTPUT_DIR}/`);
+  if (!SKIP_ARCHIVE) {
+    console.log(
+      `🗃️  Previous snapshot archived: ${archivedPreviousSnapshot ? "yes" : "no existing snapshot found"}`,
+    );
+  }
 
   if (failedServices.length > 0) {
     console.log("\n⚠️  Failed services:");
@@ -372,6 +504,11 @@ async function main(): Promise<void> {
 
   if (DRY_RUN) {
     console.log("\n⚠️  DRY RUN - No files were actually saved");
+  } else {
+    writeManifest(manifest);
+    console.log(
+      `🧾 Manifest written: ${OUTPUT_DIR}/${OCI_LOCAL_DATA_MANIFEST_FILENAME}`,
+    );
   }
 }
 

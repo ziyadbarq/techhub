@@ -63,6 +63,13 @@ export interface IConfigurationItemRepository {
   findByCiClass(ciClassId: string): Promise<ConfigurationItem[]>;
 
   /**
+   * Find OCI-managed resource CIs by OCI service type.
+   */
+  findOciManagedByServiceTypes(
+    serviceTypes: string[],
+  ): Promise<ConfigurationItem[]>;
+
+  /**
    * Find CIs linked to a specific asset
    */
   findByLinkedAsset(assetId: string): Promise<ConfigurationItem[]>;

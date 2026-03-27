@@ -393,6 +393,11 @@ export const PERMISSIONS = {
 
   // Intune: Sync Logs
   INTUNE_SYNC_LOGS_VIEW: "intune-sync-logs:view",
+
+  // OCI Cloud Sync
+  OCI_SYNC_VIEW: "oci-sync:view",
+  OCI_SYNC_TRIGGER: "oci-sync:trigger",
+  OCI_SYNC_LOGS_VIEW: "oci-sync-logs:view",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
