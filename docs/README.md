@@ -34,6 +34,7 @@ End-user documentation for barq TechHub users:
 Developer-facing documentation for building with the assets app:
 
 - [Developer Guide](./guides/DEVELOPER_GUIDE.md) - Comprehensive development guide and best practices
+- [GitLab CLI on macOS](./guides/GITLAB_CLI_MACBOOK.md) - Install, authenticate, and use `glab` against the internal GitLab instance from a Barq MacBook
 - [Refactoring Patterns](./guides/REFACTORING_PATTERNS.md) - Proven refactoring patterns for maintaining clean, maintainable code (component, configuration, logic, and module extraction)
 
 ### Data Migration & Initial Setup

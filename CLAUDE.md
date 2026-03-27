@@ -294,13 +294,15 @@ Keep messages concise with relevant context.
 
 **Workflow**: Always commit locally first, then push to both remotes. Pushing to `gitlab` remote triggers CI/CD pipeline.
 
-**IMPORTANT for Claude**: Never attempt `git push gitlab` — requires Barq VPN which blocks Claude Code. Only commit locally; user handles all pushes manually.
+**Internal Network Requirement**: GitLab push/API access requires Barq internal network or VPN. In this setup, Codex can access the Barq VPN path, but Claude Code may be blocked. If GitLab is unreachable from the current environment, stop at local commits and let the user handle the push/MR flow manually.
+
+**GitLab CLI on macOS**: See [GITLAB_CLI_MACBOOK.md](docs/guides/GITLAB_CLI_MACBOOK.md) for `glab` install, auth, and merge request workflows on Barq MacBooks.
 
 ```bash
 # Check commit status (ahead/behind remotes)
 git status
 
-# Push to both remotes (user runs manually; gitlab requires Barq VPN)
+# Push to both remotes
 git push origin main    # Backup to GitHub
 git push gitlab main    # Trigger CI/CD pipeline on GitLab
 
