@@ -12,11 +12,11 @@ export interface CreateKitCheckoutRequest {
   kitId: string;
   assigneeType: AssigneeType;
   assigneeId: string;
-  checkedOutById: string;
+  checkedOutById?: string;
   expectedReturnDate?: Date;
   note?: string;
-  assetIds: string[];
-  kitItemIds: string[];
+  assetIds?: string[];
+  kitItemIds?: string[];
 }
 
 @injectable()
@@ -40,15 +40,20 @@ export class CreateKitCheckoutUseCase {
       throw new Error("Cannot checkout empty kit");
     }
 
-    // Validate asset count matches kit requirements
-    const requiredQuantity = kitItems.reduce(
-      (sum, item) => sum + item.quantity,
-      0,
-    );
-    if (request.assetIds.length < requiredQuantity) {
-      throw new Error(
-        `Kit requires ${requiredQuantity} assets, but only ${request.assetIds.length} provided`,
+    const assetIds = request.assetIds ?? [];
+    const kitItemIds = request.kitItemIds ?? [];
+
+    // Only validate asset counts when assets are explicitly provided
+    if (assetIds.length > 0) {
+      const requiredQuantity = kitItems.reduce(
+        (sum, item) => sum + item.quantity,
+        0,
       );
+      if (assetIds.length < requiredQuantity) {
+        throw new Error(
+          `Kit requires ${requiredQuantity} assets, but only ${assetIds.length} provided`,
+        );
+      }
     }
 
     // Create checkout
@@ -57,7 +62,7 @@ export class CreateKitCheckoutUseCase {
         assetKitId: request.kitId,
         assigneeType: request.assigneeType,
         assigneeId: request.assigneeId,
-        checkedOutById: request.checkedOutById,
+        checkedOutById: request.checkedOutById ?? request.assigneeId,
         expectedReturnDate: request.expectedReturnDate,
         note: request.note,
       },
@@ -66,13 +71,13 @@ export class CreateKitCheckoutUseCase {
 
     const createdCheckout = await this.kitCheckoutRepository.create(checkout);
 
-    // Create checkout items for each asset
-    for (let i = 0; i < request.assetIds.length; i++) {
+    // Create checkout items for each asset (when assets are explicitly provided)
+    for (let i = 0; i < assetIds.length; i++) {
       const checkoutItem = AssetKitCheckoutItem.create(
         {
           kitCheckoutId: createdCheckout.id,
-          assetId: request.assetIds[i],
-          kitItemId: request.kitItemIds[i],
+          assetId: assetIds[i],
+          kitItemId: kitItemIds[i] ?? kitItems[i]?.id ?? assetIds[i],
         },
         this.idGenerator,
       );

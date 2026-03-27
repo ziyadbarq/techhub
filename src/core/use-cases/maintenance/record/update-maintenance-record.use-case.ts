@@ -4,6 +4,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IMaintenanceRecordRepository } from "@/core/repositories/maintenance-record.repository.interface";
 import type { MaintenanceRecord } from "@/core/domain/entities/maintenance-record.entity";
@@ -27,9 +28,9 @@ export interface UpdateMaintenanceRecordProps {
 @injectable()
 export class UpdateMaintenanceRecordUseCase {
   constructor(
-    @inject("IMaintenanceRecordRepository")
+    @inject(DI_TOKENS.IMaintenanceRecordRepository)
     private repository: IMaintenanceRecordRepository,
-    @inject("ILoggerService") private logger: ILoggerService,
+    @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService,
   ) {}
 
   async execute(

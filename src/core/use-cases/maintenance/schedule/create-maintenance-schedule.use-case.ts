@@ -16,9 +16,9 @@ import {
 @injectable()
 export class CreateMaintenanceScheduleUseCase {
   constructor(
-    @inject("IMaintenanceScheduleRepository")
+    @inject(DI_TOKENS.IMaintenanceScheduleRepository)
     private repository: IMaintenanceScheduleRepository,
-    @inject("ILoggerService") private logger: ILoggerService,
+    @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService,
 
     @inject(DI_TOKENS.IIdGenerator)
     private readonly idGenerator: IIdGenerator,

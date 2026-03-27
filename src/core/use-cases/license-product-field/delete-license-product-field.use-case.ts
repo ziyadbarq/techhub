@@ -6,8 +6,6 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 
-const TOKENS = DI_TOKENS as Record<string, symbol>;
-
 export interface DeleteLicenseProductFieldRequest {
   id: string;
 }
@@ -15,7 +13,7 @@ export interface DeleteLicenseProductFieldRequest {
 @injectable()
 export class DeleteLicenseProductFieldUseCase {
   constructor(
-    @inject(TOKENS.ILicenseProductFieldRepository)
+    @inject(DI_TOKENS.ILicenseProductFieldRepository)
     private fieldRepository: ILicenseProductFieldRepository,
   ) {}
 

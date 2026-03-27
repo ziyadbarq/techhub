@@ -80,7 +80,7 @@ export default async function DocsLayout({
       {/* Reading progress bar */}
       <ReadingProgress />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-8 lg:px-6">
+      <div className="relative mx-auto px-4 py-8 lg:px-6">
         {/* Subtle background texture */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(94,234,212,0.08),transparent_25%),radial-gradient(circle_at_80%_0%,rgba(94,234,212,0.05),transparent_25%),radial-gradient(circle_at_50%_80%,rgba(251,191,36,0.05),transparent_30%)]" />
 

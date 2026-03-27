@@ -4,6 +4,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IMaintenanceScheduleRepository } from "@/core/repositories/maintenance-schedule.repository.interface";
 import type { MaintenanceSchedule } from "@/core/domain/entities/maintenance-schedule.entity";
@@ -28,9 +29,9 @@ export interface UpdateMaintenanceScheduleProps {
 @injectable()
 export class UpdateMaintenanceScheduleUseCase {
   constructor(
-    @inject("IMaintenanceScheduleRepository")
+    @inject(DI_TOKENS.IMaintenanceScheduleRepository)
     private repository: IMaintenanceScheduleRepository,
-    @inject("ILoggerService") private logger: ILoggerService,
+    @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService,
   ) {}
 
   async execute(

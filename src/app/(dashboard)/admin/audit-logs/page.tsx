@@ -38,7 +38,7 @@ export default async function AuditLogsPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="container mx-auto max-w-7xl px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         {/* Back Button */}
         <Link href="/" className="mb-6 inline-block">
           <Button variant="ghost" className="gap-2">

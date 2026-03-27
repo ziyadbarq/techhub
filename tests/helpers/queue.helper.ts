@@ -9,6 +9,8 @@ import type {
   JobOptions,
   JobStatus,
   RepeatableJobOptions,
+  RepeatableJobInfo,
+  QueueJobSummary,
 } from "@/core/services/job-queue.service.interface";
 import type { JobType } from "bullmq";
 
@@ -173,6 +175,28 @@ export class MockJobQueueService implements IJobQueueService {
     const state = this.jobStates.get(jobId) ?? "wait";
 
     return { id: jobId, state, data: job.data };
+  }
+
+  async getRepeatableJobs(_queueName: string): Promise<RepeatableJobInfo[]> {
+    return [];
+  }
+
+  async getRecentFailedJobs(
+    _queueName: string,
+    _limit?: number,
+  ): Promise<QueueJobSummary[]> {
+    return [];
+  }
+
+  async getRecentCompletedJobs(
+    _queueName: string,
+    _limit?: number,
+  ): Promise<QueueJobSummary[]> {
+    return [];
+  }
+
+  async isQueuePaused(_queueName: string): Promise<boolean> {
+    return false;
   }
 
   async close(): Promise<void> {

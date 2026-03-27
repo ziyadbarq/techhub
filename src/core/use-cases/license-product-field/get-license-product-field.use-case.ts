@@ -7,8 +7,6 @@ import { DI_TOKENS } from "@/di/types";
 import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 import type { LicenseProductField } from "@/core/domain/entities/license-product-field.entity";
 
-const TOKENS = DI_TOKENS as Record<string, symbol>;
-
 export interface GetLicenseProductFieldRequest {
   id: string;
 }
@@ -16,7 +14,7 @@ export interface GetLicenseProductFieldRequest {
 @injectable()
 export class GetLicenseProductFieldUseCase {
   constructor(
-    @inject(TOKENS.ILicenseProductFieldRepository)
+    @inject(DI_TOKENS.ILicenseProductFieldRepository)
     private fieldRepository: ILicenseProductFieldRepository,
   ) {}
 

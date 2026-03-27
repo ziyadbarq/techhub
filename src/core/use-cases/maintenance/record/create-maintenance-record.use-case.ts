@@ -16,9 +16,9 @@ import {
 @injectable()
 export class CreateMaintenanceRecordUseCase {
   constructor(
-    @inject("IMaintenanceRecordRepository")
+    @inject(DI_TOKENS.IMaintenanceRecordRepository)
     private repository: IMaintenanceRecordRepository,
-    @inject("ILoggerService") private logger: ILoggerService,
+    @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService,
 
     @inject(DI_TOKENS.IIdGenerator)
     private readonly idGenerator: IIdGenerator,

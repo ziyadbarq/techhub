@@ -26,19 +26,17 @@ import {
   UpdateTaskUseCase,
   DeleteTaskUseCase,
   CompleteTaskUseCase,
-  ScheduleTaskReminderUseCase,
 } from "../../core/use-cases/task";
 
 // NOTE: Permission use cases imported in rbac.module.ts
+// NOTE: ScheduleTaskReminderUseCase is in queue.module.ts
+// NOTE: BroadcastTaskEventUseCase is in realtime.module.ts
 
 // Audit Log Use Cases
 import {
   ListAuditLogsUseCase,
   CountAuditLogsUseCase,
 } from "../../core/use-cases/audit-log";
-
-// Realtime Use Cases
-import { BroadcastTaskEventUseCase } from "../../core/use-cases/realtime/broadcast-task-event.use-case";
 
 import { logger } from "@/lib/logger";
 
@@ -108,23 +106,8 @@ export function bindUseCaseDependencies(container: Container): void {
     .to(CompleteTaskUseCase)
     .inTransientScope();
 
-  // Bind ScheduleTaskReminderUseCase
-  // Schedules a reminder for a task using job queue
-  container
-    .bind<ScheduleTaskReminderUseCase>(DI_TOKENS.ScheduleTaskReminderUseCase)
-    .to(ScheduleTaskReminderUseCase)
-    .inTransientScope();
-
-  // ==========================================
-  // Realtime Use Cases
-  // ==========================================
-
-  // Bind BroadcastTaskEventUseCase
-  // Broadcasts task events via SSE to connected clients
-  container
-    .bind<BroadcastTaskEventUseCase>(DI_TOKENS.BroadcastTaskEventUseCase)
-    .to(BroadcastTaskEventUseCase)
-    .inTransientScope();
+  // NOTE: ScheduleTaskReminderUseCase is registered in queue.module.ts
+  // NOTE: BroadcastTaskEventUseCase is registered in realtime.module.ts
 
   // ==========================================
   // NOTE: Permission use cases are registered in rbac.module.ts

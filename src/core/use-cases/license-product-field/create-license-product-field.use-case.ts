@@ -10,8 +10,6 @@ import type { IFieldDefinitionRepository } from "@/core/repositories/field-defin
 import { LicenseProductField } from "@/core/domain/entities/license-product-field.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 
-const TOKENS = DI_TOKENS as Record<string, symbol>;
-
 export interface CreateLicenseProductFieldRequest {
   licenseProductId: string;
   fieldDefinitionId: string;
@@ -24,11 +22,11 @@ export interface CreateLicenseProductFieldRequest {
 @injectable()
 export class CreateLicenseProductFieldUseCase {
   constructor(
-    @inject(TOKENS.ILicenseProductFieldRepository)
+    @inject(DI_TOKENS.ILicenseProductFieldRepository)
     private fieldRepository: ILicenseProductFieldRepository,
-    @inject(TOKENS.ILicenseProductRepository)
+    @inject(DI_TOKENS.ILicenseProductRepository)
     private licenseProductRepository: ILicenseProductRepository,
-    @inject(TOKENS.IFieldDefinitionRepository)
+    @inject(DI_TOKENS.IFieldDefinitionRepository)
     private fieldDefinitionRepository: IFieldDefinitionRepository,
 
     @inject(DI_TOKENS.IIdGenerator)

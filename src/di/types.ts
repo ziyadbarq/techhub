@@ -1007,6 +1007,9 @@ export const DI_TOKENS = {
   GetIntuneDeviceUseCase: Symbol.for("GetIntuneDeviceUseCase"),
   ListIntuneDevicesUseCase: Symbol.for("ListIntuneDevicesUseCase"),
   LinkIntuneDeviceToAssetUseCase: Symbol.for("LinkIntuneDeviceToAssetUseCase"),
+  SyncAssetAssignmentFromIntuneDeviceUseCase: Symbol.for(
+    "SyncAssetAssignmentFromIntuneDeviceUseCase",
+  ),
   UnlinkIntuneDeviceFromAssetUseCase: Symbol.for(
     "UnlinkIntuneDeviceFromAssetUseCase",
   ),

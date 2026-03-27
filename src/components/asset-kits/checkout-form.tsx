@@ -82,11 +82,7 @@ export function CheckoutForm({
       kitId: "",
       assigneeType: "PERSON" as const,
       assigneeId: "",
-      checkedOutById: "",
-      expectedReturnDate: new Date(),
       note: "",
-      assetIds: [],
-      kitItemIds: [],
     },
   });
 

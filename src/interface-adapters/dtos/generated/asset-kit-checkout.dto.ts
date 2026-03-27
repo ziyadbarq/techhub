@@ -5,15 +5,11 @@ export const CreateKitCheckoutDTO = z.object({
   kitId: z.string().min(24).max(25),
   assigneeType: z.enum(["PERSON", "ORG_UNIT", "LOCATION"]),
   assigneeId: z.string().min(24).max(25),
-  checkedOutById: z.string().min(24).max(25),
+  checkedOutById: z.string().min(24).max(25).optional(),
   expectedReturnDate: z.coerce.date().optional(),
   note: z.string().optional(),
-  assetIds: z
-    .array(z.string().min(24).max(25))
-    .min(1, "At least one asset is required"),
-  kitItemIds: z
-    .array(z.string().min(24).max(25))
-    .min(1, "At least one kit item is required"),
+  assetIds: z.array(z.string().min(24).max(25)).optional().default([]),
+  kitItemIds: z.array(z.string().min(24).max(25)).optional().default([]),
 });
 
 export const ReturnKitCheckoutDTO = z.object({

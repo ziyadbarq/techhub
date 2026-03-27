@@ -52,7 +52,7 @@ export default async function AnalyticsPage() {
       permission={PERMISSIONS.ROLES_VIEW}
       fallback={
         <div className="bg-background min-h-screen">
-          <div className="container mx-auto max-w-7xl px-4 py-8">
+          <div className="container mx-auto px-4 py-8">
             <div className="border-destructive bg-destructive/10 rounded-lg border p-6 text-center">
               <h1 className="text-destructive mb-2 text-2xl font-bold">
                 Access Denied
@@ -67,7 +67,7 @@ export default async function AnalyticsPage() {
       }
     >
       <div className="bg-background min-h-screen">
-        <div className="container mx-auto max-w-7xl px-4 py-8">
+        <div className="container mx-auto px-4 py-8">
           {/* Page Header */}
           <div className="mb-8">
             <h1 className="mb-2 text-4xl font-bold">

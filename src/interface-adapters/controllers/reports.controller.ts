@@ -3,6 +3,7 @@
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getContainer } from "@/di";
+import { loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { GetLicenseComplianceReportUseCase } from "@/core/use-cases/reports/get-license-compliance-report.use-case";
 import type { GetContractExpirationReportUseCase } from "@/core/use-cases/reports/get-contract-expiration-report.use-case";
@@ -38,6 +39,9 @@ export async function getLicenseComplianceReportAction(): Promise<
 > {
   try {
     await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+    if (!isModuleLoaded("licenses")) {
+      await loadHeavyModule("licenses");
+    }
     const container = getContainer();
     const useCase = container.get<GetLicenseComplianceReportUseCase>(
       DI_TOKENS.GetLicenseComplianceReportUseCase,

@@ -1241,6 +1241,16 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     parentRoute: "/settings",
   },
   {
+    path: "/admin/workers",
+    label: "Worker Status",
+    icon: Activity,
+    description: "Background job queue monitoring and worker status",
+    requiredPermissions: ["SETTINGS_MANAGE"],
+    visibleInNav: true,
+    navGroup: "system",
+    navOrder: 5,
+  },
+  {
     path: "/settings/platform",
     label: "Platform Settings",
     icon: Settings,
