@@ -161,24 +161,21 @@ export class ExecuteScheduledReportUseCase {
         break;
       }
 
-      case "XLSX": {
-        // Fallback to CSV for now - XLSX generation will be added later
-        const xlsxColumns = definition.columns.map((c) => ({
-          key: c.key,
-          label: c.label,
-        }));
-        const xlsxCsv = arrayToCSV(
-          result.rows as Record<
-            string,
-            string | number | boolean | null | undefined
-          >[],
-          xlsxColumns,
-        );
-        attachmentBuffer = Buffer.from(xlsxCsv, "utf-8");
-        attachmentFilename = `${scheduleData.reportId}-${dateStr}.csv`;
-        contentType = "text/csv";
+      default:
+        // Unsupported format — fall back to PDF
+        attachmentBuffer = await this.pdfService.generateReportPdf({
+          title: definition.name,
+          description: definition.description,
+          filters: result.appliedFilters,
+          columns: definition.columns,
+          rows: result.rows,
+          summaryStats: result.summaryStats,
+          generatedAt: result.generatedAt,
+          generatedBy: "Scheduled Report",
+        });
+        attachmentFilename = `${scheduleData.reportId}-${dateStr}.pdf`;
+        contentType = "application/pdf";
         break;
-      }
     }
 
     // Send email to all recipients
@@ -281,6 +278,7 @@ export class ExecuteScheduledReportUseCase {
 </body>
 </html>`.trim();
 
+    let successCount = 0;
     for (const recipient of scheduleData.recipients) {
       try {
         await this.emailService.sendEmail({
@@ -295,6 +293,7 @@ export class ExecuteScheduledReportUseCase {
             },
           ],
         });
+        successCount++;
       } catch (error) {
         this.logger.error(
           "Failed to send scheduled report email",
@@ -307,13 +306,27 @@ export class ExecuteScheduledReportUseCase {
       }
     }
 
-    // Update schedule: mark as sent + compute next send time
+    // Always recompute nextSendAt (checker clears it to claim the job).
     const entity = ReportScheduleEntity.fromPersistence(scheduleData);
     const marked = entity.markSent();
-    await this.repository.update(scheduleId, {
-      lastSentAt: marked.lastSentAt,
-      nextSendAt: marked.nextSendAt,
-    });
+
+    if (successCount > 0) {
+      // At least one delivery succeeded — advance lastSentAt + nextSendAt
+      await this.repository.update(scheduleId, {
+        lastSentAt: marked.lastSentAt,
+        nextSendAt: marked.nextSendAt,
+      });
+    } else {
+      // All deliveries failed — restore nextSendAt for retry on next cycle
+      // but don't update lastSentAt since nothing was actually sent
+      await this.repository.update(scheduleId, {
+        nextSendAt: marked.nextSendAt,
+      });
+      this.logger.warn(
+        "All email deliveries failed, scheduled for next cycle",
+        { scheduleId, recipientCount: scheduleData.recipients.length },
+      );
+    }
 
     this.logger.info("Scheduled report executed", {
       scheduleId,

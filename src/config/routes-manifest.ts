@@ -355,7 +355,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     label: "Report Schedules",
     icon: FileText,
     description: "Manage scheduled report email deliveries",
-    requiredPermissions: ["REPORTS_MANAGE"],
+    requiredPermissions: ["REPORTS_SCHEDULE"],
     featureFlag: "REPORTS",
     visibleInNav: false,
     isChildRoute: true,

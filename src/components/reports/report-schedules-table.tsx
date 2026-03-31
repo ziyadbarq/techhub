@@ -42,10 +42,12 @@ const DAYS_OF_WEEK = [
 
 interface ReportSchedulesTableProps {
   initialSchedules: ReportScheduleProps[];
+  isAdmin?: boolean;
 }
 
 export function ReportSchedulesTable({
   initialSchedules,
+  isAdmin: _isAdmin = false,
 }: ReportSchedulesTableProps) {
   const [schedules, setSchedules] =
     useState<ReportScheduleProps[]>(initialSchedules);

@@ -200,43 +200,103 @@ export class ReportScheduleEntity {
   }
 
   /**
-   * Compute the next send time based on frequency and schedule config.
+   * Compute the next send time based on frequency, schedule config, and timezone.
+   * Uses Intl.DateTimeFormat to resolve the correct UTC offset for the target timezone.
    */
   private computeNextSendAt(): void {
     const now = new Date();
-    const next = new Date(now);
+    const tz = this.props.timezone || "Asia/Riyadh";
 
-    // Set time
-    next.setHours(this.props.hour, this.props.minute, 0, 0);
+    // Get current date components in the target timezone
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).formatToParts(now);
+
+    const get = (type: string) =>
+      Number(parts.find((p) => p.type === type)?.value ?? 0);
+    const tzYear = get("year");
+    const tzMonth = get("month"); // 1-based
+    const tzDay = get("day");
+    const tzHour = get("hour");
+    const tzMinute = get("minute");
+    const tzWeekday = new Date(tzYear, tzMonth - 1, tzDay).getDay();
+
+    // Build the candidate date (in tz calendar)
+    let candidateDay = tzDay;
+    let candidateMonth = tzMonth;
+    const candidateYear = tzYear;
+    const targetHour = this.props.hour;
+    const targetMinute = this.props.minute;
+    const nowInTzMinutes = tzHour * 60 + tzMinute;
+    const targetInMinutes = targetHour * 60 + targetMinute;
 
     switch (this.props.frequency) {
       case "DAILY":
-        // If today's time already passed, schedule for tomorrow
-        if (next <= now) {
-          next.setDate(next.getDate() + 1);
+        if (targetInMinutes <= nowInTzMinutes) {
+          candidateDay++;
         }
         break;
 
       case "WEEKLY": {
-        const targetDay = this.props.dayOfWeek ?? 0;
-        const currentDay = next.getDay();
-        let daysUntil = targetDay - currentDay;
+        const targetWeekday = this.props.dayOfWeek ?? 0;
+        let daysUntil = targetWeekday - tzWeekday;
         if (daysUntil < 0) daysUntil += 7;
-        if (daysUntil === 0 && next <= now) daysUntil = 7;
-        next.setDate(next.getDate() + daysUntil);
+        if (daysUntil === 0 && targetInMinutes <= nowInTzMinutes) daysUntil = 7;
+        candidateDay += daysUntil;
         break;
       }
 
       case "MONTHLY": {
-        const targetDate = this.props.dayOfMonth ?? 1;
-        next.setDate(targetDate);
-        if (next <= now) {
-          next.setMonth(next.getMonth() + 1);
+        candidateDay = this.props.dayOfMonth ?? 1;
+        if (
+          candidateDay < tzDay ||
+          (candidateDay === tzDay && targetInMinutes <= nowInTzMinutes)
+        ) {
+          candidateMonth++;
         }
         break;
       }
     }
 
-    this.props.nextSendAt = next;
+    // Construct a Date string in the target timezone, then convert to UTC
+    // by using the timezone offset from Intl
+    const candidateDate = new Date(
+      candidateYear,
+      candidateMonth - 1,
+      candidateDay,
+    );
+    const isoDateStr = `${candidateDate.getFullYear()}-${String(candidateDate.getMonth() + 1).padStart(2, "0")}-${String(candidateDate.getDate()).padStart(2, "0")}T${String(targetHour).padStart(2, "0")}:${String(targetMinute).padStart(2, "0")}:00`;
+
+    // Use the timezone to resolve to an absolute UTC instant
+    // Create a formatter that gives us the UTC offset
+    const utcFormatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: tz,
+      timeZoneName: "shortOffset",
+    });
+    const offsetPart =
+      utcFormatter
+        .formatToParts(candidateDate)
+        .find((p) => p.type === "timeZoneName")?.value ?? "+03";
+
+    // Parse offset like "GMT+3" or "GMT+5:30" into minutes
+    const offsetMatch = offsetPart.match(/GMT([+-]?)(\d+)(?::(\d+))?/);
+    let offsetMinutes = 0;
+    if (offsetMatch) {
+      const sign = offsetMatch[1] === "-" ? -1 : 1;
+      offsetMinutes =
+        sign * (Number(offsetMatch[2]) * 60 + Number(offsetMatch[3] || 0));
+    }
+
+    // Build UTC timestamp
+    const utcDate = new Date(isoDateStr + "Z");
+    utcDate.setMinutes(utcDate.getMinutes() - offsetMinutes);
+
+    this.props.nextSendAt = utcDate;
   }
 }

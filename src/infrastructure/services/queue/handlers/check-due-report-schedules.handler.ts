@@ -3,6 +3,10 @@
  *
  * Runs every 15 minutes. Queries for active schedules where nextSendAt <= now,
  * then enqueues individual generate-and-send jobs for each due schedule.
+ *
+ * To prevent double-enqueue: nextSendAt is cleared before enqueuing,
+ * so subsequent checker runs won't pick up the same schedule.
+ * The execute use case recomputes nextSendAt after delivery.
  */
 
 import type { Job } from "bullmq";
@@ -40,6 +44,10 @@ export async function handleCheckDueReportSchedules(
   });
 
   for (const schedule of dueSchedules) {
+    // Claim: clear nextSendAt so the next checker run won't pick this up again.
+    // The execute use case will recompute it after successful delivery.
+    await repository.update(schedule.id, { nextSendAt: null });
+
     await jobQueueService.addJob(
       QUEUE_NAMES.MAINTENANCE,
       REPORT_JOBS.GENERATE_AND_SEND,

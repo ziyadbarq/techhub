@@ -103,6 +103,13 @@ export async function generateCiRelationshipOverview(
   const where: Record<string, unknown> = { isActive: true };
   if (filters.relationshipTypeId)
     where.relationshipTypeId = filters.relationshipTypeId;
+  if (filters.ciClassId) {
+    // Filter relationships where either the source or target CI belongs to this class
+    where.OR = [
+      { fromCi: { ciClassId: filters.ciClassId } },
+      { toCi: { ciClassId: filters.ciClassId } },
+    ];
+  }
 
   const relationships = await prisma.cIRelationship.findMany({
     where,

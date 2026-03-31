@@ -41,7 +41,7 @@ export default async function ReportsPage() {
     throw error;
   }
 
-  const canManageSchedules = await hasPermission(PERMISSIONS.REPORTS_MANAGE);
+  const canSchedule = await hasPermission(PERMISSIONS.REPORTS_SCHEDULE);
 
   return (
     <div className="space-y-6">
@@ -53,11 +53,11 @@ export default async function ReportsPage() {
             automated email delivery.
           </p>
         </div>
-        {canManageSchedules && (
+        {canSchedule && (
           <Button variant="outline" asChild>
             <Link href="/reports/schedules">
               <Clock className="mr-2 h-4 w-4" />
-              Manage Schedules
+              My Schedules
             </Link>
           </Button>
         )}

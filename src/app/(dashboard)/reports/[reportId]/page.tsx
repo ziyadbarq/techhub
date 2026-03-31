@@ -10,9 +10,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { requireFeature } from "@/lib/features/server";
+import { isFeatureEnabled, requireFeature } from "@/lib/features/server";
 import { requirePermission } from "@/lib/permissions/server";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 import { getReportDefinition } from "@/core/domain/reports/report-definitions";
@@ -49,6 +50,14 @@ export default async function ReportViewerPage({ params }: PageProps) {
 
   if (!definition) {
     notFound();
+  }
+
+  // Per-report feature flag check: e.g. CMDB reports need CMDB enabled
+  for (const flag of definition.requiredFeatureFlags) {
+    const enabled = await isFeatureEnabled(flag as FeatureFlagKey);
+    if (!enabled) {
+      notFound();
+    }
   }
 
   return (

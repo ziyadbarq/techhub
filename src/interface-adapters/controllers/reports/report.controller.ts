@@ -9,9 +9,10 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "../types";
 import { handleControllerError } from "../error-handler";
-import { requireFeature } from "@/lib/features/server";
+import { isFeatureEnabled, requireFeature } from "@/lib/features/server";
 import { requirePermission } from "@/lib/permissions/server";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { GetReportCatalogUseCase } from "@/core/use-cases/reports/get-report-catalog.use-case";
 import type { GenerateReportDataUseCase } from "@/core/use-cases/reports/generate-report-data.use-case";
@@ -34,6 +35,26 @@ import {
 } from "@/interface-adapters/dtos/reports/report.dto";
 import { arrayToCSV } from "@/lib/csv-export";
 import { getReportDefinition } from "@/core/domain/reports/report-definitions";
+
+/**
+ * Validate that a specific report exists and its required feature flags are enabled.
+ * Call this in any action that accepts a reportId to prevent access to reports
+ * whose module is disabled (e.g. CMDB reports when CMDB flag is off).
+ */
+async function assertReportAccess(reportId: string): Promise<void> {
+  const definition = getReportDefinition(reportId);
+  if (!definition) {
+    throw new Error(`Unknown report: ${reportId}`);
+  }
+  for (const flag of definition.requiredFeatureFlags) {
+    const enabled = await isFeatureEnabled(flag as FeatureFlagKey);
+    if (!enabled) {
+      throw new Error(
+        `Report "${definition.name}" requires the ${flag} feature to be enabled`,
+      );
+    }
+  }
+}
 
 /**
  * Get available report catalog (filtered by enabled feature flags)
@@ -72,6 +93,7 @@ export async function runReportAction(
     await requirePermission(PERMISSIONS.REPORTS_VIEW);
 
     const validated = RunReportDto.parse(input);
+    await assertReportAccess(validated.reportId);
 
     const container = getContainer();
     const useCase = container.get<GenerateReportDataUseCase>(
@@ -104,6 +126,7 @@ export async function exportReportCsvAction(
     await requirePermission(PERMISSIONS.REPORTS_EXPORT);
 
     const validated = ExportReportDto.parse(input);
+    await assertReportAccess(validated.reportId);
     const hiddenSet = new Set(validated.hiddenColumns ?? []);
 
     const container = getContainer();
@@ -154,6 +177,7 @@ export async function exportReportPdfAction(
     await requirePermission(PERMISSIONS.REPORTS_EXPORT);
 
     const validated = ExportReportDto.parse(input);
+    await assertReportAccess(validated.reportId);
     const hiddenSet = new Set(validated.hiddenColumns ?? []);
 
     const session = await getSession();
@@ -241,6 +265,9 @@ export async function createReportScheduleAction(
     await requireFeature(FEATURE_FLAGS.REPORTS);
     await requirePermission(PERMISSIONS.REPORTS_SCHEDULE);
 
+    const data = input as Record<string, unknown>;
+    await assertReportAccess(String(data.reportId ?? ""));
+
     const userId = await getCurrentUserId();
     if (!userId) throw new Error("Not authenticated");
 
@@ -254,7 +281,6 @@ export async function createReportScheduleAction(
     if (!person)
       throw new Error("No linked Person record found for current user");
 
-    const data = input as Record<string, unknown>;
     const useCase = container.get<CreateReportScheduleUseCase>(
       DI_TOKENS.CreateReportScheduleUseCase,
     );

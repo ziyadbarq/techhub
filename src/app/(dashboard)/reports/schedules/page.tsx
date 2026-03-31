@@ -1,8 +1,8 @@
 /**
- * Report Schedules Admin Page
+ * Report Schedules Page
  *
- * View and manage all scheduled report deliveries.
- * Admins can toggle active/inactive and delete schedules.
+ * - REPORTS_MANAGE users see all schedules across all users
+ * - REPORTS_SCHEDULE users see only their own schedules
  */
 
 import type { Metadata } from "next";
@@ -17,11 +17,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { requireFeature } from "@/lib/features/server";
-import { requirePermission } from "@/lib/permissions/server";
+import { requirePermission, hasPermission } from "@/lib/permissions/server";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
-import { listAllReportSchedulesAction } from "@/interface-adapters/controllers/reports/report.controller";
+import {
+  listAllReportSchedulesAction,
+  listMyReportSchedulesAction,
+} from "@/interface-adapters/controllers/reports/report.controller";
 import { ReportSchedulesTable } from "@/components/reports/report-schedules-table";
 
 export const dynamic = "force-dynamic";
@@ -34,13 +37,18 @@ export const metadata: Metadata = {
 export default async function ReportSchedulesPage() {
   try {
     await requireFeature(FEATURE_FLAGS.REPORTS);
-    await requirePermission(PERMISSIONS.REPORTS_MANAGE);
+    // Minimum permission: REPORTS_SCHEDULE (can see own)
+    await requirePermission(PERMISSIONS.REPORTS_SCHEDULE);
   } catch (error) {
     handlePermissionRedirect(error, "/reports/schedules");
     throw error;
   }
 
-  const result = await listAllReportSchedulesAction();
+  const isAdmin = await hasPermission(PERMISSIONS.REPORTS_MANAGE);
+
+  const result = isAdmin
+    ? await listAllReportSchedulesAction()
+    : await listMyReportSchedulesAction();
   const schedules = result.success ? result.data : [];
 
   return (
@@ -57,7 +65,9 @@ export default async function ReportSchedulesPage() {
             Report Schedules
           </h1>
           <p className="text-muted-foreground">
-            Manage automated report email deliveries across all users.
+            {isAdmin
+              ? "Manage automated report email deliveries across all users."
+              : "Manage your scheduled report email deliveries."}
           </p>
         </div>
       </div>
@@ -65,14 +75,17 @@ export default async function ReportSchedulesPage() {
       {/* Schedules Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Schedules</CardTitle>
+          <CardTitle>{isAdmin ? "All Schedules" : "My Schedules"}</CardTitle>
           <CardDescription>
             {schedules.length} schedule{schedules.length !== 1 ? "s" : ""}{" "}
             configured
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ReportSchedulesTable initialSchedules={schedules} />
+          <ReportSchedulesTable
+            initialSchedules={schedules}
+            isAdmin={isAdmin}
+          />
         </CardContent>
       </Card>
     </div>
