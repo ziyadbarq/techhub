@@ -295,6 +295,7 @@ export function ReportScheduleDialog(props: ReportScheduleDialogProps) {
               <SelectContent>
                 <SelectItem value="PDF">PDF</SelectItem>
                 <SelectItem value="CSV">CSV</SelectItem>
+                <SelectItem value="XLSX">Excel</SelectItem>
               </SelectContent>
             </Select>
           </div>

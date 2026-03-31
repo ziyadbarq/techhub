@@ -15,9 +15,11 @@ import {
   exportReportPdfAction,
 } from "@/interface-adapters/controllers/reports/report.controller";
 import { downloadCSV } from "@/lib/csv-export";
+import { exportToXLSX } from "@/lib/xlsx-export";
 import { formatDateISO } from "@/lib/utils/date-format";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { ReportColumnDefinition } from "@/core/domain/reports/report-types";
 
 interface ReportExportToolbarProps {
   reportId: string;
@@ -27,6 +29,10 @@ interface ReportExportToolbarProps {
   sortKey: string | null;
   sortAsc: boolean;
   hasData: boolean;
+  /** Sorted rows for client-side XLSX export */
+  rows: Record<string, unknown>[];
+  /** Visible columns for client-side XLSX export */
+  visibleColumns: ReportColumnDefinition[];
 }
 
 export function ReportExportToolbar({
@@ -37,6 +43,8 @@ export function ReportExportToolbar({
   sortKey,
   sortAsc,
   hasData,
+  rows,
+  visibleColumns,
 }: ReportExportToolbarProps) {
   const { hasPermission } = usePermissions();
   const canExport = hasPermission(PERMISSIONS.REPORTS_EXPORT);
@@ -95,6 +103,28 @@ export function ReportExportToolbar({
     }
   };
 
+  const handleExportXlsx = () => {
+    try {
+      // Build rows with column labels as keys for clean headers
+      const xlsxData = rows.map((row) => {
+        const mapped: Record<string, unknown> = {};
+        for (const col of visibleColumns) {
+          mapped[col.label] = row[col.key] ?? "";
+        }
+        return mapped;
+      });
+
+      exportToXLSX(xlsxData, {
+        filename: `${reportId}-${formatDateISO(new Date())}`,
+        sheetName: "Report",
+        columnWidths: visibleColumns.map(() => 18),
+      });
+      toast.success("Report exported as Excel");
+    } catch {
+      toast.error("Failed to export Excel");
+    }
+  };
+
   return (
     <div className="flex items-center gap-2">
       <Button
@@ -105,6 +135,15 @@ export function ReportExportToolbar({
       >
         <Download className="mr-1 h-4 w-4" />
         CSV
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleExportXlsx}
+        disabled={!hasData}
+      >
+        <Download className="mr-1 h-4 w-4" />
+        Excel
       </Button>
       <Button
         variant="outline"

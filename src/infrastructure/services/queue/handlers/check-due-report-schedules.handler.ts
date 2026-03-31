@@ -4,9 +4,8 @@
  * Runs every 15 minutes. Queries for active schedules where nextSendAt <= now,
  * then enqueues individual generate-and-send jobs for each due schedule.
  *
- * To prevent double-enqueue: nextSendAt is cleared before enqueuing,
- * so subsequent checker runs won't pick up the same schedule.
- * The execute use case recomputes nextSendAt after delivery.
+ * Claim pattern: nextSendAt is cleared before enqueuing to prevent double-pickup.
+ * If enqueue fails, nextSendAt is restored so the schedule isn't orphaned.
  */
 
 import type { Job } from "bullmq";
@@ -44,22 +43,35 @@ export async function handleCheckDueReportSchedules(
   });
 
   for (const schedule of dueSchedules) {
-    // Claim: clear nextSendAt so the next checker run won't pick this up again.
-    // The execute use case will recompute it after successful delivery.
+    const savedNextSendAt = schedule.nextSendAt;
+
+    // Claim: clear nextSendAt so the next checker run won't pick this up again
     await repository.update(schedule.id, { nextSendAt: null });
 
-    await jobQueueService.addJob(
-      QUEUE_NAMES.MAINTENANCE,
-      REPORT_JOBS.GENERATE_AND_SEND,
-      {
-        scheduleId: schedule.id,
-        createdAt: Date.now(),
-      },
-    );
+    try {
+      await jobQueueService.addJob(
+        QUEUE_NAMES.MAINTENANCE,
+        REPORT_JOBS.GENERATE_AND_SEND,
+        {
+          scheduleId: schedule.id,
+          createdAt: Date.now(),
+        },
+      );
 
-    logger.info("Enqueued report generation job", {
-      scheduleId: schedule.id,
-      reportId: schedule.reportId,
-    });
+      logger.info("Enqueued report generation job", {
+        scheduleId: schedule.id,
+        reportId: schedule.reportId,
+      });
+    } catch (error) {
+      // Enqueue failed — restore nextSendAt so the schedule isn't orphaned
+      logger.error(
+        "Failed to enqueue report job, restoring nextSendAt",
+        error instanceof Error ? error : undefined,
+        { scheduleId: schedule.id },
+      );
+      await repository.update(schedule.id, {
+        nextSendAt: savedNextSendAt,
+      });
+    }
   }
 }

@@ -173,20 +173,91 @@ export class ReportScheduleEntity {
     return { ...this.props };
   }
 
-  activate(): ReportScheduleEntity {
-    return new ReportScheduleEntity({
-      ...this.props,
-      isActive: true,
-      updatedAt: new Date(),
-    });
+  /**
+   * Check if a person is the owner of this schedule.
+   */
+  isOwnedBy(personId: string): boolean {
+    return this.props.createdById === personId;
   }
 
-  deactivate(): ReportScheduleEntity {
-    return new ReportScheduleEntity({
+  /**
+   * Update schedule fields with validation and nextSendAt recomputation.
+   */
+  applyUpdate(changes: {
+    name?: string;
+    frequency?: "DAILY" | "WEEKLY" | "MONTHLY";
+    dayOfWeek?: number | null;
+    dayOfMonth?: number | null;
+    hour?: number;
+    recipients?: string[];
+    format?: "PDF" | "CSV" | "XLSX";
+  }): ReportScheduleEntity {
+    const frequency = changes.frequency ?? this.props.frequency;
+
+    // Validate frequency-specific fields
+    const dayOfWeek =
+      changes.dayOfWeek !== undefined
+        ? changes.dayOfWeek
+        : this.props.dayOfWeek;
+    const dayOfMonth =
+      changes.dayOfMonth !== undefined
+        ? changes.dayOfMonth
+        : this.props.dayOfMonth;
+
+    if (
+      frequency === "WEEKLY" &&
+      (dayOfWeek == null || dayOfWeek < 0 || dayOfWeek > 6)
+    ) {
+      throw new Error("dayOfWeek (0-6) is required for WEEKLY frequency");
+    }
+    if (
+      frequency === "MONTHLY" &&
+      (dayOfMonth == null || dayOfMonth < 1 || dayOfMonth > 28)
+    ) {
+      throw new Error("dayOfMonth (1-28) is required for MONTHLY frequency");
+    }
+
+    // Validate recipients if provided
+    if (changes.recipients) {
+      if (changes.recipients.length === 0) {
+        throw new Error("At least one recipient is required");
+      }
+      if (changes.recipients.length > MAX_RECIPIENTS) {
+        throw new Error(`Maximum ${MAX_RECIPIENTS} recipients allowed`);
+      }
+      for (const email of changes.recipients) {
+        if (!EMAIL_REGEX.test(email)) {
+          throw new Error(`Invalid email address: ${email}`);
+        }
+      }
+    }
+
+    const entity = new ReportScheduleEntity({
       ...this.props,
-      isActive: false,
+      name: changes.name ?? this.props.name,
+      frequency,
+      dayOfWeek: frequency === "WEEKLY" ? (dayOfWeek ?? null) : null,
+      dayOfMonth: frequency === "MONTHLY" ? (dayOfMonth ?? null) : null,
+      hour: changes.hour ?? this.props.hour,
+      recipients: changes.recipients ?? this.props.recipients,
+      format: changes.format ?? this.props.format,
       updatedAt: new Date(),
     });
+    entity.computeNextSendAt();
+    return entity;
+  }
+
+  toggle(): ReportScheduleEntity {
+    const entity = new ReportScheduleEntity({
+      ...this.props,
+      isActive: !this.props.isActive,
+      updatedAt: new Date(),
+    });
+    // Recompute nextSendAt when reactivating
+    if (entity.props.isActive) {
+      entity.computeNextSendAt();
+    }
+    return entity;
   }
 
   markSent(): ReportScheduleEntity {

@@ -253,6 +253,8 @@ export function ReportViewer({ definition }: ReportViewerProps) {
                     sortKey={sortKey}
                     sortAsc={sortAsc}
                     hasData={result.rows.length > 0}
+                    rows={sortedRows}
+                    visibleColumns={visibleColumns}
                   />
                   <ReportScheduleDialog
                     reportId={definition.id}

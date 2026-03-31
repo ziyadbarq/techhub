@@ -36,6 +36,7 @@ import type {
   ReportResult,
 } from "@/core/domain/reports/report-types";
 import { arrayToCSV } from "@/lib/csv-export";
+import * as XLSX from "xlsx";
 
 const REPORT_GENERATORS: Record<
   string,
@@ -73,22 +74,16 @@ export class ExecuteScheduledReportUseCase {
   async execute(scheduleId: string): Promise<void> {
     const scheduleData = await this.repository.findById(scheduleId);
     if (!scheduleData) {
-      this.logger.warn("Schedule not found, skipping", { scheduleId });
-      return;
+      throw new Error(`Schedule not found: ${scheduleId}`);
     }
 
     if (!scheduleData.isActive) {
-      this.logger.info("Schedule is inactive, skipping", { scheduleId });
-      return;
+      throw new Error("Schedule is inactive");
     }
 
     const definition = getReportDefinition(scheduleData.reportId);
     if (!definition) {
-      this.logger.warn("Report definition not found, skipping", {
-        scheduleId,
-        reportId: scheduleData.reportId,
-      });
-      return;
+      throw new Error(`Report definition not found: ${scheduleData.reportId}`);
     }
 
     // Check if required feature flags are still enabled
@@ -161,21 +156,28 @@ export class ExecuteScheduledReportUseCase {
         break;
       }
 
-      default:
-        // Unsupported format — fall back to PDF
-        attachmentBuffer = await this.pdfService.generateReportPdf({
-          title: definition.name,
-          description: definition.description,
-          filters: result.appliedFilters,
-          columns: definition.columns,
-          rows: result.rows,
-          summaryStats: result.summaryStats,
-          generatedAt: result.generatedAt,
-          generatedBy: "Scheduled Report",
+      case "XLSX": {
+        // Build rows with column labels as keys
+        const xlsxRows = result.rows.map((row) => {
+          const mapped: Record<string, unknown> = {};
+          for (const col of definition.columns) {
+            mapped[col.label] = row[col.key] ?? "";
+          }
+          return mapped;
         });
-        attachmentFilename = `${scheduleData.reportId}-${dateStr}.pdf`;
-        contentType = "application/pdf";
+        const worksheet = XLSX.utils.json_to_sheet(xlsxRows);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+        const xlsxBuffer = XLSX.write(workbook, {
+          bookType: "xlsx",
+          type: "buffer",
+        }) as Buffer;
+        attachmentBuffer = xlsxBuffer;
+        attachmentFilename = `${scheduleData.reportId}-${dateStr}.xlsx`;
+        contentType =
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         break;
+      }
     }
 
     // Send email to all recipients

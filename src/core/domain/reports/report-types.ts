@@ -54,6 +54,19 @@ export interface ReportFilterOption {
 }
 
 /**
+ * Sources for dynamically loaded filter options.
+ * Each maps to a database entity that provides {id, name} pairs.
+ */
+export type FilterOptionsSource =
+  | "assetCategories"
+  | "lifecycleStates"
+  | "departments"
+  | "stockLocations"
+  | "vendors"
+  | "ciClasses"
+  | "relationshipTypes";
+
+/**
  * A filter definition for a report
  */
 export interface ReportFilterDefinition {
@@ -63,8 +76,10 @@ export interface ReportFilterDefinition {
   label: string;
   /** Type of filter control */
   type: ReportFilterType;
-  /** For select/multi-select: static options (if empty, loaded dynamically) */
+  /** For select/multi-select: static options */
   options?: ReportFilterOption[];
+  /** For select without static options: load from this DB source */
+  optionsSource?: FilterOptionsSource;
   /** Whether this filter is required */
   required?: boolean;
   /** Default value */

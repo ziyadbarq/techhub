@@ -23,7 +23,11 @@ import type {
   ReportDefinition,
   ReportResult,
 } from "@/core/domain/reports/report-types";
-import type { ReportScheduleProps } from "@/core/domain/entities/report-schedule.entity";
+import {
+  ReportScheduleEntity,
+  type ReportScheduleProps,
+} from "@/core/domain/entities/report-schedule.entity";
+import { hasPermission } from "@/lib/permissions/server";
 import type { IReportScheduleRepository } from "@/core/repositories/report-schedule.repository.interface";
 import type { IReportPdfService } from "@/core/services/report-pdf.service.interface";
 import type { ExecuteScheduledReportUseCase } from "@/core/use-cases/reports/execute-scheduled-report.use-case";
@@ -35,6 +39,11 @@ import {
 } from "@/interface-adapters/dtos/reports/report.dto";
 import { arrayToCSV } from "@/lib/csv-export";
 import { getReportDefinition } from "@/core/domain/reports/report-definitions";
+import type {
+  ReportFilterOption,
+  FilterOptionsSource,
+} from "@/core/domain/reports/report-types";
+import { prisma } from "@/infrastructure/database/prisma/client";
 
 /**
  * Validate that a specific report exists and its required feature flags are enabled.
@@ -408,14 +417,15 @@ export async function listAllReportSchedulesAction(): Promise<
 }
 
 /**
- * Toggle a report schedule active/inactive
+ * Toggle a report schedule active/inactive.
+ * REPORTS_SCHEDULE users can toggle their own; REPORTS_MANAGE can toggle any.
  */
 export async function toggleReportScheduleAction(
   scheduleId: string,
 ): Promise<ActionResponse<ReportScheduleProps>> {
   try {
     await requireFeature(FEATURE_FLAGS.REPORTS);
-    await requirePermission(PERMISSIONS.REPORTS_MANAGE);
+    await requirePermission(PERMISSIONS.REPORTS_SCHEDULE);
 
     const container = getContainer();
     const repository = container.get<IReportScheduleRepository>(
@@ -425,9 +435,14 @@ export async function toggleReportScheduleAction(
     const existing = await repository.findById(scheduleId);
     if (!existing) throw new Error("Schedule not found");
 
-    const updated = await repository.update(scheduleId, {
-      isActive: !existing.isActive,
-    });
+    await assertScheduleOwnership(existing, container);
+
+    const entity = ReportScheduleEntity.fromPersistence(existing);
+    const toggled = entity.toggle();
+    const updated = await repository.update(
+      scheduleId,
+      toggled.toPlainObject(),
+    );
 
     return { success: true, data: updated };
   } catch (error) {
@@ -440,7 +455,9 @@ export async function toggleReportScheduleAction(
 }
 
 /**
- * Update a report schedule
+ * Update a report schedule.
+ * REPORTS_SCHEDULE users can update their own; REPORTS_MANAGE can update any.
+ * Routes through domain entity for validation and nextSendAt recomputation.
  */
 export async function updateReportScheduleAction(
   scheduleId: string,
@@ -460,25 +477,16 @@ export async function updateReportScheduleAction(
     const existing = await repository.findById(scheduleId);
     if (!existing) throw new Error("Schedule not found");
 
-    const frequency = data.frequency
-      ? (String(data.frequency) as "DAILY" | "WEEKLY" | "MONTHLY")
-      : existing.frequency;
+    await assertScheduleOwnership(existing, container);
 
-    const updated = await repository.update(scheduleId, {
+    const entity = ReportScheduleEntity.fromPersistence(existing);
+    const changed = entity.applyUpdate({
       name: data.name != null ? String(data.name) : undefined,
-      frequency,
-      dayOfWeek:
-        frequency === "WEEKLY" && data.dayOfWeek != null
-          ? Number(data.dayOfWeek)
-          : frequency !== "WEEKLY"
-            ? null
-            : undefined,
-      dayOfMonth:
-        frequency === "MONTHLY" && data.dayOfMonth != null
-          ? Number(data.dayOfMonth)
-          : frequency !== "MONTHLY"
-            ? null
-            : undefined,
+      frequency: data.frequency
+        ? (String(data.frequency) as "DAILY" | "WEEKLY" | "MONTHLY")
+        : undefined,
+      dayOfWeek: data.dayOfWeek != null ? Number(data.dayOfWeek) : undefined,
+      dayOfMonth: data.dayOfMonth != null ? Number(data.dayOfMonth) : undefined,
       hour: data.hour != null ? Number(data.hour) : undefined,
       format: data.format
         ? (String(data.format) as "PDF" | "CSV" | "XLSX")
@@ -487,6 +495,10 @@ export async function updateReportScheduleAction(
         ? data.recipients.map(String)
         : undefined,
     });
+    const updated = await repository.update(
+      scheduleId,
+      changed.toPlainObject(),
+    );
 
     return { success: true, data: updated };
   } catch (error) {
@@ -524,9 +536,142 @@ export async function triggerReportScheduleAction(
   }
 }
 
+/**
+ * Load dynamic filter options from the database
+ */
+export async function getFilterOptionsAction(
+  source: FilterOptionsSource,
+): Promise<ActionResponse<ReportFilterOption[]>> {
+  try {
+    await requireFeature(FEATURE_FLAGS.REPORTS);
+    await requirePermission(PERMISSIONS.REPORTS_VIEW);
+
+    // Gate by underlying module feature flag
+    const SOURCE_FEATURE_MAP: Partial<
+      Record<FilterOptionsSource, FeatureFlagKey>
+    > = {
+      assetCategories: "ASSETS",
+      lifecycleStates: "FOUNDATION",
+      departments: "FOUNDATION",
+      stockLocations: "ASSETS",
+      vendors: "FOUNDATION",
+      ciClasses: "CMDB",
+      relationshipTypes: "CMDB",
+    };
+    const requiredFlag = SOURCE_FEATURE_MAP[source];
+    if (requiredFlag) {
+      const flagEnabled = await isFeatureEnabled(requiredFlag);
+      if (!flagEnabled) {
+        return { success: true, data: [] };
+      }
+    }
+
+    let options: ReportFilterOption[];
+
+    switch (source) {
+      case "assetCategories": {
+        const rows = await prisma.assetCategory.findMany({
+          where: { deletedAt: null },
+          select: { id: true, name: true },
+          orderBy: { name: "asc" },
+        });
+        options = rows.map((r) => ({ value: r.id, label: r.name }));
+        break;
+      }
+      case "lifecycleStates": {
+        const rows = await prisma.lifecycleState.findMany({
+          select: { id: true, name: true },
+          orderBy: { name: "asc" },
+        });
+        options = rows.map((r) => ({ value: r.id, label: r.name }));
+        break;
+      }
+      case "departments": {
+        const rows = await prisma.organizationUnit.findMany({
+          where: { deletedAt: null },
+          select: { id: true, name: true },
+          orderBy: { name: "asc" },
+        });
+        options = rows.map((r) => ({ value: r.id, label: r.name }));
+        break;
+      }
+      case "stockLocations": {
+        const rows = await prisma.stockLocation.findMany({
+          select: { id: true, name: true },
+          orderBy: { name: "asc" },
+        });
+        options = rows.map((r) => ({ value: r.id, label: r.name }));
+        break;
+      }
+      case "vendors": {
+        const rows = await prisma.vendor.findMany({
+          where: { deletedAt: null },
+          select: { id: true, name: true },
+          orderBy: { name: "asc" },
+        });
+        options = rows.map((r) => ({ value: r.id, label: r.name }));
+        break;
+      }
+      case "ciClasses": {
+        const rows = await prisma.cIClass.findMany({
+          where: { deletedAt: null },
+          select: { id: true, name: true },
+          orderBy: { name: "asc" },
+        });
+        options = rows.map((r) => ({ value: r.id, label: r.name }));
+        break;
+      }
+      case "relationshipTypes": {
+        const rows = await prisma.relationshipType.findMany({
+          select: { id: true, name: true },
+          orderBy: { name: "asc" },
+        });
+        options = rows.map((r) => ({ value: r.id, label: r.name }));
+        break;
+      }
+      default:
+        options = [];
+    }
+
+    return { success: true, data: options };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getFilterOptionsAction" },
+      "Failed to load filter options",
+    );
+  }
+}
+
 // ============================================================================
 // Helpers
 // ============================================================================
+
+/**
+ * Enforce schedule ownership: REPORTS_MANAGE can access any schedule,
+ * REPORTS_SCHEDULE can only access their own.
+ */
+async function assertScheduleOwnership(
+  schedule: ReportScheduleProps,
+  container: ReturnType<typeof getContainer>,
+): Promise<void> {
+  const isAdmin = await hasPermission(PERMISSIONS.REPORTS_MANAGE);
+  if (isAdmin) return;
+
+  const userId = await getCurrentUserId();
+  if (!userId) throw new Error("Not authenticated");
+
+  const personRepository = container.get<IPersonRepository>(
+    DI_TOKENS.IPersonRepository,
+  );
+  const person = await personRepository.findByUserId(userId);
+  if (!person) throw new Error("No linked Person record");
+
+  const entity = ReportScheduleEntity.fromPersistence(schedule);
+  if (!entity.isOwnedBy(person.id)) {
+    throw new Error("You do not have permission to modify this schedule");
+  }
+}
 
 /**
  * Sort report rows by a column key, matching the UI sort order.
