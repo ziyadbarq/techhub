@@ -452,6 +452,7 @@ export const ModelName = {
   UserRole: 'UserRole',
   AuditLog: 'AuditLog',
   CodeSequence: 'CodeSequence',
+  ReportSchedule: 'ReportSchedule',
   AssetReservation: 'AssetReservation',
   AssetReservationConflict: 'AssetReservationConflict',
   BusinessProcess: 'BusinessProcess',
@@ -483,7 +484,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
+    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "reportSchedule" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -5519,6 +5520,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ReportSchedule: {
+      payload: Prisma.$ReportSchedulePayload<ExtArgs>
+      fields: Prisma.ReportScheduleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReportScheduleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReportScheduleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload>
+        }
+        findFirst: {
+          args: Prisma.ReportScheduleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReportScheduleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload>
+        }
+        findMany: {
+          args: Prisma.ReportScheduleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload>[]
+        }
+        create: {
+          args: Prisma.ReportScheduleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload>
+        }
+        createMany: {
+          args: Prisma.ReportScheduleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReportScheduleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload>[]
+        }
+        delete: {
+          args: Prisma.ReportScheduleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload>
+        }
+        update: {
+          args: Prisma.ReportScheduleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload>
+        }
+        deleteMany: {
+          args: Prisma.ReportScheduleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReportScheduleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReportScheduleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload>[]
+        }
+        upsert: {
+          args: Prisma.ReportScheduleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportSchedulePayload>
+        }
+        aggregate: {
+          args: Prisma.ReportScheduleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReportSchedule>
+        }
+        groupBy: {
+          args: Prisma.ReportScheduleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReportScheduleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReportScheduleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReportScheduleCountAggregateOutputType> | number
+        }
+      }
+    }
     AssetReservation: {
       payload: Prisma.$AssetReservationPayload<ExtArgs>
       fields: Prisma.AssetReservationFieldRefs
@@ -8022,6 +8097,30 @@ export const CodeSequenceScalarFieldEnum = {
 export type CodeSequenceScalarFieldEnum = (typeof CodeSequenceScalarFieldEnum)[keyof typeof CodeSequenceScalarFieldEnum]
 
 
+export const ReportScheduleScalarFieldEnum = {
+  id: 'id',
+  reportId: 'reportId',
+  name: 'name',
+  frequency: 'frequency',
+  dayOfWeek: 'dayOfWeek',
+  dayOfMonth: 'dayOfMonth',
+  hour: 'hour',
+  minute: 'minute',
+  timezone: 'timezone',
+  recipients: 'recipients',
+  filters: 'filters',
+  format: 'format',
+  isActive: 'isActive',
+  lastSentAt: 'lastSentAt',
+  nextSendAt: 'nextSendAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReportScheduleScalarFieldEnum = (typeof ReportScheduleScalarFieldEnum)[keyof typeof ReportScheduleScalarFieldEnum]
+
+
 export const AssetReservationScalarFieldEnum = {
   id: 'id',
   assetId: 'assetId',
@@ -8991,6 +9090,34 @@ export type ListEnumMaintenanceStatusEnumFieldRefInput<$PrismaModel> = FieldRefI
 
 
 /**
+ * Reference to a field of type 'ReportFrequency'
+ */
+export type EnumReportFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportFrequency'>
+    
+
+
+/**
+ * Reference to a field of type 'ReportFrequency[]'
+ */
+export type ListEnumReportFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportFrequency[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ReportExportFormat'
+ */
+export type EnumReportExportFormatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportExportFormat'>
+    
+
+
+/**
+ * Reference to a field of type 'ReportExportFormat[]'
+ */
+export type ListEnumReportExportFormatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportExportFormat[]'>
+    
+
+
+/**
  * Reference to a field of type 'AssetReservationStatusEnum'
  */
 export type EnumAssetReservationStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssetReservationStatusEnum'>
@@ -9418,6 +9545,7 @@ export type GlobalOmitConfig = {
   userRole?: Prisma.UserRoleOmit
   auditLog?: Prisma.AuditLogOmit
   codeSequence?: Prisma.CodeSequenceOmit
+  reportSchedule?: Prisma.ReportScheduleOmit
   assetReservation?: Prisma.AssetReservationOmit
   assetReservationConflict?: Prisma.AssetReservationConflictOmit
   businessProcess?: Prisma.BusinessProcessOmit

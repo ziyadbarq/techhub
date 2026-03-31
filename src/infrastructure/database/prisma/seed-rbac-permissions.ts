@@ -659,6 +659,27 @@ const BASE_PERMISSIONS: PermissionDefinition[] = [
     displayName: "View OCI Sync Logs",
     description: "View OCI sync operation history and logs",
   }),
+
+  // ==========================================
+  // Reports
+  // ==========================================
+
+  createPermission("reports", "view", {
+    displayName: "View Reports",
+    description: "View and run pre-defined reports",
+  }),
+  createPermission("reports", "export", {
+    displayName: "Export Reports",
+    description: "Export reports to PDF, CSV, or Excel",
+  }),
+  createPermission("reports", "schedule", {
+    displayName: "Schedule Reports",
+    description: "Create and manage scheduled report email deliveries",
+  }),
+  createPermission("reports", "manage", {
+    displayName: "Manage Reports",
+    description: "Full reports management including deleting schedules",
+  }),
 ] as const;
 
 const definedPermissionNames = new Set(

@@ -342,6 +342,24 @@ export const LicenseMetricTypeEnum = {
 export type LicenseMetricTypeEnum = (typeof LicenseMetricTypeEnum)[keyof typeof LicenseMetricTypeEnum]
 
 
+export const ReportFrequency = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY'
+} as const
+
+export type ReportFrequency = (typeof ReportFrequency)[keyof typeof ReportFrequency]
+
+
+export const ReportExportFormat = {
+  PDF: 'PDF',
+  CSV: 'CSV',
+  XLSX: 'XLSX'
+} as const
+
+export type ReportExportFormat = (typeof ReportExportFormat)[keyof typeof ReportExportFormat]
+
+
 export const AssetReservationStatusEnum = {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',

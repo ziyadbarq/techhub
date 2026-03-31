@@ -240,6 +240,15 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     isSystem: false,
     dependsOn: ["FOUNDATION", "CMDB"],
   },
+  {
+    name: "REPORTS",
+    displayName: "Reports & Analytics",
+    description:
+      "Advanced reporting with PDF export, scheduled email delivery, and cross-module analytics for Assets and CMDB.",
+    category: "LAYER_3",
+    isSystem: false,
+    dependsOn: ["FOUNDATION"],
+  },
 ];
 
 /**

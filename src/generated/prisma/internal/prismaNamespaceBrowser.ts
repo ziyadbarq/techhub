@@ -119,6 +119,7 @@ export const ModelName = {
   UserRole: 'UserRole',
   AuditLog: 'AuditLog',
   CodeSequence: 'CodeSequence',
+  ReportSchedule: 'ReportSchedule',
   AssetReservation: 'AssetReservation',
   AssetReservationConflict: 'AssetReservationConflict',
   BusinessProcess: 'BusinessProcess',
@@ -1431,6 +1432,30 @@ export const CodeSequenceScalarFieldEnum = {
 } as const
 
 export type CodeSequenceScalarFieldEnum = (typeof CodeSequenceScalarFieldEnum)[keyof typeof CodeSequenceScalarFieldEnum]
+
+
+export const ReportScheduleScalarFieldEnum = {
+  id: 'id',
+  reportId: 'reportId',
+  name: 'name',
+  frequency: 'frequency',
+  dayOfWeek: 'dayOfWeek',
+  dayOfMonth: 'dayOfMonth',
+  hour: 'hour',
+  minute: 'minute',
+  timezone: 'timezone',
+  recipients: 'recipients',
+  filters: 'filters',
+  format: 'format',
+  isActive: 'isActive',
+  lastSentAt: 'lastSentAt',
+  nextSendAt: 'nextSendAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReportScheduleScalarFieldEnum = (typeof ReportScheduleScalarFieldEnum)[keyof typeof ReportScheduleScalarFieldEnum]
 
 
 export const AssetReservationScalarFieldEnum = {

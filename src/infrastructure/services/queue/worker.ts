@@ -24,6 +24,7 @@ import {
   TASK_JOBS,
   MAINTENANCE_JOBS,
   RESERVATION_JOBS,
+  REPORT_JOBS,
 } from "@/core/domain/jobs/job-names";
 import {
   handleTaskCompletedNotification,
@@ -41,6 +42,8 @@ import {
   handleDatabaseBackup,
   handleDatabaseRestore,
 } from "./handlers/database-backup.handler";
+import { handleCheckDueReportSchedules } from "./handlers/check-due-report-schedules.handler";
+import { handleGenerateAndSendReport } from "./handlers/generate-and-send-report.handler";
 
 /**
  * Worker instances
@@ -185,6 +188,16 @@ function createMaintenanceWorker(): BaseWorker {
   worker.registerHandler(
     MAINTENANCE_JOBS.DATABASE_RESTORE,
     handleDatabaseRestore,
+  );
+
+  // Register report schedule handlers
+  worker.registerHandler(
+    REPORT_JOBS.CHECK_DUE_SCHEDULES,
+    handleCheckDueReportSchedules,
+  );
+  worker.registerHandler(
+    REPORT_JOBS.GENERATE_AND_SEND,
+    handleGenerateAndSendReport,
   );
 
   /**

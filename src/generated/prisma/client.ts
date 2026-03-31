@@ -380,6 +380,11 @@ export type AuditLog = Prisma.AuditLogModel
  */
 export type CodeSequence = Prisma.CodeSequenceModel
 /**
+ * Model ReportSchedule
+ * 
+ */
+export type ReportSchedule = Prisma.ReportScheduleModel
+/**
  * Model AssetReservation
  * 
  */

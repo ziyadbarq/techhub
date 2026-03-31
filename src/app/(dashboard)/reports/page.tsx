@@ -1,142 +1,71 @@
 /**
  * Reports Hub Page
+ *
+ * Displays a catalog of available reports grouped by category.
+ * Reports are filtered based on enabled feature flags.
  */
 
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AssetsNearingEOLReport } from "@/components/reports/assets-nearing-eol-report";
-import { UnassignedAssetsReport } from "@/components/reports/unassigned-assets-report";
-import { AssetsByDepartmentReport } from "@/components/reports/assets-by-department-report";
-import { AssetValueByCategoryReport } from "@/components/reports/asset-value-by-category-report";
-import { requirePermission } from "@/lib/permissions/server";
+import Link from "next/link";
+import { Clock, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { requireFeature } from "@/lib/features/server";
+import { requirePermission, hasPermission } from "@/lib/permissions/server";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { ReportCatalog } from "@/components/reports/report-catalog";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Asset Reports",
-  description: "Standard asset management reports and analytics",
+  title: "Reports",
+  description: "Reports & analytics with PDF export and scheduled delivery",
 };
 
-function ReportSkeleton() {
+function CatalogSkeleton() {
   return (
-    <Card>
-      <CardHeader>
-        <div className="bg-muted h-6 w-48 animate-pulse rounded" />
-        <div className="bg-muted h-4 w-64 animate-pulse rounded" />
-      </CardHeader>
-      <CardContent>
-        <div className="bg-muted h-64 animate-pulse rounded" />
-      </CardContent>
-    </Card>
+    <div className="flex h-64 items-center justify-center">
+      <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+    </div>
   );
 }
 
 export default async function ReportsPage() {
-  // Server-side permission check
   try {
-    await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+    await requireFeature(FEATURE_FLAGS.REPORTS);
+    await requirePermission(PERMISSIONS.REPORTS_VIEW);
   } catch (error) {
     handlePermissionRedirect(error, "/reports");
     throw error;
   }
 
+  const canManageSchedules = await hasPermission(PERMISSIONS.REPORTS_MANAGE);
+
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Asset Reports</h1>
-        <p className="text-muted-foreground">
-          Standard reports for asset management and analytics
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Reports</h1>
+          <p className="text-muted-foreground">
+            Run pre-defined reports, export to PDF/CSV/Excel, and schedule
+            automated email delivery.
+          </p>
+        </div>
+        {canManageSchedules && (
+          <Button variant="outline" asChild>
+            <Link href="/reports/schedules">
+              <Clock className="mr-2 h-4 w-4" />
+              Manage Schedules
+            </Link>
+          </Button>
+        )}
       </div>
 
-      {/* Reports Tabs */}
-      <Tabs defaultValue="eol" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="eol">End of Life</TabsTrigger>
-          <TabsTrigger value="unassigned">Unassigned</TabsTrigger>
-          <TabsTrigger value="department">By Department</TabsTrigger>
-          <TabsTrigger value="value">Value by Category</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="eol" className="mt-6">
-          <Suspense fallback={<ReportSkeleton />}>
-            <AssetsNearingEOLReport />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="unassigned" className="mt-6">
-          <Suspense fallback={<ReportSkeleton />}>
-            <UnassignedAssetsReport />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="department" className="mt-6">
-          <Suspense fallback={<ReportSkeleton />}>
-            <AssetsByDepartmentReport />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="value" className="mt-6">
-          <Suspense fallback={<ReportSkeleton />}>
-            <AssetValueByCategoryReport />
-          </Suspense>
-        </TabsContent>
-      </Tabs>
-
-      {/* Report Descriptions */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">End of Life Report</CardTitle>
-            <CardDescription>
-              Assets nearing depreciation completion or already fully
-              depreciated
-            </CardDescription>
-          </CardHeader>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Unassigned Assets</CardTitle>
-            <CardDescription>
-              Assets in stock not currently assigned to any person or department
-            </CardDescription>
-          </CardHeader>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Department Report</CardTitle>
-            <CardDescription>
-              Asset distribution and total value by department or organizational
-              unit
-            </CardDescription>
-          </CardHeader>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
-              Value by Category Report
-            </CardTitle>
-            <CardDescription>
-              Total and average asset value breakdown by category with
-              percentage distribution
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
+      <Suspense fallback={<CatalogSkeleton />}>
+        <ReportCatalog />
+      </Suspense>
     </div>
   );
 }

@@ -63,6 +63,7 @@ export const FEATURE_ROUTES: Record<string, string[]> = {
   ASSET_DISPOSALS: ["/asset-disposals"],
   ASSET_KITS: ["/asset-kits"],
   ASSET_RESERVATIONS: ["/asset-reservations"],
+  REPORTS: ["/reports"],
 };
 
 /**
@@ -87,6 +88,7 @@ export const FEATURE_DEPENDENCIES: Record<string, string[]> = {
   ASSET_DISPOSALS: ["ASSETS"],
   ASSET_KITS: ["ASSETS"],
   ASSET_RESERVATIONS: ["ASSETS"],
+  REPORTS: ["FOUNDATION"],
 };
 
 /**

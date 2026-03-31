@@ -398,6 +398,12 @@ export const PERMISSIONS = {
   OCI_SYNC_VIEW: "oci-sync:view",
   OCI_SYNC_TRIGGER: "oci-sync:trigger",
   OCI_SYNC_LOGS_VIEW: "oci-sync-logs:view",
+
+  // Reports
+  REPORTS_VIEW: "reports:view",
+  REPORTS_EXPORT: "reports:export",
+  REPORTS_SCHEDULE: "reports:schedule",
+  REPORTS_MANAGE: "reports:manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

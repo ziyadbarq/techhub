@@ -1054,6 +1054,40 @@ export type EnumMaintenanceStatusEnumWithAggregatesFilter<$PrismaModel = never> 
   _max?: Prisma.NestedEnumMaintenanceStatusEnumFilter<$PrismaModel>
 }
 
+export type EnumReportFrequencyFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReportFrequency | Prisma.EnumReportFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.ReportFrequency[] | Prisma.ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ReportFrequency[] | Prisma.ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumReportFrequencyFilter<$PrismaModel> | $Enums.ReportFrequency
+}
+
+export type EnumReportExportFormatFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReportExportFormat | Prisma.EnumReportExportFormatFieldRefInput<$PrismaModel>
+  in?: $Enums.ReportExportFormat[] | Prisma.ListEnumReportExportFormatFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ReportExportFormat[] | Prisma.ListEnumReportExportFormatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumReportExportFormatFilter<$PrismaModel> | $Enums.ReportExportFormat
+}
+
+export type EnumReportFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReportFrequency | Prisma.EnumReportFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.ReportFrequency[] | Prisma.ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ReportFrequency[] | Prisma.ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumReportFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.ReportFrequency
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumReportFrequencyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumReportFrequencyFilter<$PrismaModel>
+}
+
+export type EnumReportExportFormatWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReportExportFormat | Prisma.EnumReportExportFormatFieldRefInput<$PrismaModel>
+  in?: $Enums.ReportExportFormat[] | Prisma.ListEnumReportExportFormatFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ReportExportFormat[] | Prisma.ListEnumReportExportFormatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumReportExportFormatWithAggregatesFilter<$PrismaModel> | $Enums.ReportExportFormat
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumReportExportFormatFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumReportExportFormatFilter<$PrismaModel>
+}
+
 export type EnumAssetReservationStatusEnumFilter<$PrismaModel = never> = {
   equals?: $Enums.AssetReservationStatusEnum | Prisma.EnumAssetReservationStatusEnumFieldRefInput<$PrismaModel>
   in?: $Enums.AssetReservationStatusEnum[] | Prisma.ListEnumAssetReservationStatusEnumFieldRefInput<$PrismaModel>
@@ -2357,6 +2391,40 @@ export type NestedEnumMaintenanceStatusEnumWithAggregatesFilter<$PrismaModel = n
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumMaintenanceStatusEnumFilter<$PrismaModel>
   _max?: Prisma.NestedEnumMaintenanceStatusEnumFilter<$PrismaModel>
+}
+
+export type NestedEnumReportFrequencyFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReportFrequency | Prisma.EnumReportFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.ReportFrequency[] | Prisma.ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ReportFrequency[] | Prisma.ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumReportFrequencyFilter<$PrismaModel> | $Enums.ReportFrequency
+}
+
+export type NestedEnumReportExportFormatFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReportExportFormat | Prisma.EnumReportExportFormatFieldRefInput<$PrismaModel>
+  in?: $Enums.ReportExportFormat[] | Prisma.ListEnumReportExportFormatFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ReportExportFormat[] | Prisma.ListEnumReportExportFormatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumReportExportFormatFilter<$PrismaModel> | $Enums.ReportExportFormat
+}
+
+export type NestedEnumReportFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReportFrequency | Prisma.EnumReportFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.ReportFrequency[] | Prisma.ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ReportFrequency[] | Prisma.ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumReportFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.ReportFrequency
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumReportFrequencyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumReportFrequencyFilter<$PrismaModel>
+}
+
+export type NestedEnumReportExportFormatWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReportExportFormat | Prisma.EnumReportExportFormatFieldRefInput<$PrismaModel>
+  in?: $Enums.ReportExportFormat[] | Prisma.ListEnumReportExportFormatFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ReportExportFormat[] | Prisma.ListEnumReportExportFormatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumReportExportFormatWithAggregatesFilter<$PrismaModel> | $Enums.ReportExportFormat
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumReportExportFormatFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumReportExportFormatFilter<$PrismaModel>
 }
 
 export type NestedEnumAssetReservationStatusEnumFilter<$PrismaModel = never> = {

@@ -46,6 +46,7 @@ import { bindCSVServiceDependencies } from "./modules/csv.module";
 import { bindRealtimeDependencies } from "./modules/realtime.module";
 import { bindQueueDependencies } from "./modules/queue.module";
 import { bindEmailDependencies } from "./modules/email.module";
+import { bindReportsDependencies } from "./modules/reports.module";
 
 // Import health check utilities
 import { createMicrosoftGraphHealthCheck } from "./health-checks/microsoft-graph.health";
@@ -379,6 +380,20 @@ export const SEARCH_MODULE: DIModule = {
   },
 };
 
+export const REPORTS_MODULE: DIModule = {
+  name: "reports",
+  displayName: "Reports & Analytics",
+  tier: ModuleTier.DASHBOARD,
+  description:
+    "Pre-defined reports with PDF export and scheduled email delivery",
+  featureFlag: "REPORTS",
+  dependencies: ["logger", "database", "foundation"],
+  isLoaded: false,
+  bindFunction: (container: Container) => {
+    bindReportsDependencies(container);
+  },
+};
+
 /**
  * HEAVY TIER MODULES
  * Lazy loaded on demand - external APIs and heavy dependencies
@@ -517,6 +532,7 @@ export const ALL_MODULES: DIModule[] = [
   ASSET_KITS_MODULE,
   RESERVATIONS_MODULE,
   SEARCH_MODULE,
+  REPORTS_MODULE,
   USE_CASES_MODULE,
 
   // HEAVY tier (lazy loaded)

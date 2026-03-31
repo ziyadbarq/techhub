@@ -1059,6 +1059,26 @@ export const DI_TOKENS = {
   GetOciSyncLogsUseCase: Symbol.for("GetOciSyncLogsUseCase"),
 
   // ==========================================
+  // Reports Tokens
+  // ==========================================
+
+  // Reports: Services
+  IReportPdfService: Symbol.for("IReportPdfService"),
+
+  // Reports: Repositories
+  IReportScheduleRepository: Symbol.for("IReportScheduleRepository"),
+
+  // Reports: Use Cases
+  GetReportCatalogUseCase: Symbol.for("GetReportCatalogUseCase"),
+  GenerateReportDataUseCase: Symbol.for("GenerateReportDataUseCase"),
+  GenerateReportPdfUseCase: Symbol.for("GenerateReportPdfUseCase"),
+  CreateReportScheduleUseCase: Symbol.for("CreateReportScheduleUseCase"),
+  ListReportSchedulesUseCase: Symbol.for("ListReportSchedulesUseCase"),
+  UpdateReportScheduleUseCase: Symbol.for("UpdateReportScheduleUseCase"),
+  DeleteReportScheduleUseCase: Symbol.for("DeleteReportScheduleUseCase"),
+  ExecuteScheduledReportUseCase: Symbol.for("ExecuteScheduledReportUseCase"),
+
+  // ==========================================
   // Query Layer Tokens
   // ==========================================
 
