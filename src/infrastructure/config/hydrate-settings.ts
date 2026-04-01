@@ -27,14 +27,16 @@ const RESTART_REQUIRED_ENV_VARS = new Map(
 );
 
 /**
- * Timestamp of the last successful hydration. Settings with `updatedAt`
- * before this time have already been applied to process.env and do not
- * need another restart.
+ * Key in process.env where we store the hydration timestamp as an ISO string.
+ * Using process.env avoids module-identity issues where dynamic import() in
+ * instrumentation.ts and static import in ConfigService resolve to different
+ * module instances (each with its own `let` variable).
  */
-let lastHydrationTimestamp: Date | null = null;
+const HYDRATION_TS_KEY = "__SETTINGS_HYDRATION_TS";
 
 export function getLastHydrationTimestamp(): Date | null {
-  return lastHydrationTimestamp;
+  const raw = process.env[HYDRATION_TS_KEY];
+  return raw ? new Date(raw) : null;
 }
 
 export async function hydrateSettingsIntoEnv(): Promise<number> {
@@ -83,7 +85,7 @@ export async function hydrateSettingsIntoEnv(): Promise<number> {
       hydrated++;
     }
 
-    lastHydrationTimestamp = new Date();
+    process.env[HYDRATION_TS_KEY] = new Date().toISOString();
 
     if (hydrated > 0) {
       console.log(
