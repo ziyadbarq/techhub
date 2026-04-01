@@ -343,6 +343,14 @@ export const DI_TOKENS = {
   CheckFeatureEnabledUseCase: Symbol.for("CheckFeatureEnabledUseCase"),
   IFeatureFlagAuditService: Symbol.for("IFeatureFlagAuditService"),
 
+  // System Settings
+  ISystemSettingRepository: Symbol.for("ISystemSettingRepository"),
+  IConfigService: Symbol.for("IConfigService"),
+  ListSettingsUseCase: Symbol.for("ListSettingsUseCase"),
+  GetSettingUseCase: Symbol.for("GetSettingUseCase"),
+  UpdateSettingUseCase: Symbol.for("UpdateSettingUseCase"),
+  UpdateSettingsBulkUseCase: Symbol.for("UpdateSettingsBulkUseCase"),
+
   // RBAC Analytics Use Cases
   GetRoleUsageStatsUseCase: Symbol.for("GetRoleUsageStatsUseCase"),
   GetPermissionUsageStatsUseCase: Symbol.for("GetPermissionUsageStatsUseCase"),

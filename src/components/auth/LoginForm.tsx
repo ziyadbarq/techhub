@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useClientSetting } from "@/hooks/use-client-settings";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -29,6 +30,10 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
+  const emailRegSetting = useClientSetting(
+    "NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION",
+  );
+  const isEmailRegistrationEnabled = emailRegSetting !== "false";
 
   // Get the redirect path from query params, default to dashboard
   const redirectTo = searchParams.get("from") || "/dashboard";
@@ -149,7 +154,7 @@ export function LoginForm() {
           </Link>
         </div>
 
-        {process.env.NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION !== "false" && (
+        {isEmailRegistrationEnabled && (
           <div className="flex items-center justify-center">
             <Link
               href="/register"

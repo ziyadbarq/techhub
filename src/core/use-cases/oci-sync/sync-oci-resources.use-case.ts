@@ -29,6 +29,7 @@ import type { IRelationshipTypeRepository } from "@/core/repositories/relationsh
 import type { IOciSyncLogRepository } from "@/core/repositories/oci-sync-log.repository.interface";
 import type { ILifecycleStateRepository } from "@/core/repositories/lifecycle-state.repository.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import type { IConfigService } from "@/core/services/config.service.interface";
 import { ConfigurationItem } from "@/core/domain/entities/configuration-item.entity";
 import { CIRelationship } from "@/core/domain/entities/ci-relationship.entity";
 import { LogExecution } from "@/lib/decorators";
@@ -88,6 +89,8 @@ export class SyncOciResourcesUseCase {
     private readonly lifecycleStateRepository: ILifecycleStateRepository,
     @inject(DI_TOKENS.IIdGenerator)
     private readonly idGenerator: IIdGenerator,
+    @inject(DI_TOKENS.IConfigService)
+    private readonly configService: IConfigService,
   ) {}
 
   @LogExecution("oci.resources.sync")
@@ -322,7 +325,9 @@ export class SyncOciResourcesUseCase {
     }
 
     const allowRetirementForLocalSource =
-      process.env.OCI_LOCAL_SOURCE_RETIRE_MISSING === "true";
+      (await this.configService.getBoolean(
+        "OCI_LOCAL_SOURCE_RETIRE_MISSING",
+      )) === true;
     const shouldRetireMissingResources =
       successfulServiceKeys.size > 0 &&
       (webhookBatch.source.mode === "webhook" || allowRetirementForLocalSource);

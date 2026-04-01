@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { useClientSetting } from "@/hooks/use-client-settings";
 import { BRANDING, getCopyrightWithTagline } from "@/config/branding";
 import { authClient } from "@/lib/auth/client";
 import { checkSetupStatusAction } from "@/interface-adapters/controllers/setup.controller";
@@ -28,6 +29,14 @@ export default function RegisterPageClient() {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isMicrosoftLoading, setIsMicrosoftLoading] = useState(false);
   const router = useRouter();
+
+  // Authentication method controls (DB override → build-time env fallback)
+  const emailRegSetting = useClientSetting(
+    "NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION",
+  );
+  const msAuthSetting = useClientSetting("NEXT_PUBLIC_ENABLE_MS_AUTH");
+  const isEmailRegistrationEnabled = emailRegSetting !== "false";
+  const isMSAuthEnabled = msAuthSetting !== "false";
 
   useEffect(() => {
     setMounted(true);
@@ -62,11 +71,6 @@ export default function RegisterPageClient() {
       </div>
     );
   }
-
-  // Authentication method controls via environment variables
-  const isEmailRegistrationEnabled =
-    process.env.NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION !== "false";
-  const isMSAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_MS_AUTH !== "false";
 
   const handleMicrosoftLogin = async () => {
     try {

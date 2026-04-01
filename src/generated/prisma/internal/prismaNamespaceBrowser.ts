@@ -135,7 +135,8 @@ export const ModelName = {
   PromptComposition: 'PromptComposition',
   PromptCompositionBlock: 'PromptCompositionBlock',
   FeatureFlag: 'FeatureFlag',
-  FeatureFlagAuditLog: 'FeatureFlagAuditLog'
+  FeatureFlagAuditLog: 'FeatureFlagAuditLog',
+  SystemSetting: 'SystemSetting'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1761,6 +1762,20 @@ export const FeatureFlagAuditLogScalarFieldEnum = {
 } as const
 
 export type FeatureFlagAuditLogScalarFieldEnum = (typeof FeatureFlagAuditLogScalarFieldEnum)[keyof typeof FeatureFlagAuditLogScalarFieldEnum]
+
+
+export const SystemSettingScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  isEncrypted: 'isEncrypted',
+  updatedBy: 'updatedBy',
+  updatedByEmail: 'updatedByEmail',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type SystemSettingScalarFieldEnum = (typeof SystemSettingScalarFieldEnum)[keyof typeof SystemSettingScalarFieldEnum]
 
 
 export const SortOrder = {

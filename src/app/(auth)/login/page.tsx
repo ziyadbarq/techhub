@@ -13,6 +13,7 @@ import { Shield, Lock, ShieldCheck, FileCheck, Moon, Sun } from "lucide-react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { Separator } from "@/components/ui/separator";
 import { Suspense, useEffect, useState } from "react";
+import { useClientSetting } from "@/hooks/use-client-settings";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { BRANDING, getCopyrightWithTagline } from "@/config/branding";
@@ -23,6 +24,10 @@ export default function LoginPage() {
   const [mounted, setMounted] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const router = useRouter();
+
+  // Authentication method controls (DB override → build-time env fallback)
+  const msAuthSetting = useClientSetting("NEXT_PUBLIC_ENABLE_MS_AUTH");
+  const isMSAuthEnabled = msAuthSetting !== "false";
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -58,9 +63,6 @@ export default function LoginPage() {
       </div>
     );
   }
-
-  // Authentication method controls via environment variables
-  const isMSAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_MS_AUTH !== "false";
 
   const handleMicrosoftLogin = async () => {
     await authClient.signIn.social({

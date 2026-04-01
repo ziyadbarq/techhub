@@ -8,6 +8,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
 import type { ILoggerService } from "@/core/services";
+import type { IConfigService } from "@/core/services/config.service.interface";
 import type { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
 import type { IEmailService } from "@/core/services/email.service.interface";
 import type { SystemHealthCheckDto } from "@/core/dtos/system-setup.dto";
@@ -29,6 +30,8 @@ export class CheckSystemHealthUseCase {
     @inject(DI_TOKENS.IEmailService)
     @optional()
     private readonly emailService: IEmailService | null,
+    @inject(DI_TOKENS.IConfigService)
+    private readonly configService: IConfigService,
   ) {}
 
   private getBuildInfo() {
@@ -159,41 +162,40 @@ export class CheckSystemHealthUseCase {
         error instanceof Error ? error.message : "Unknown worker error";
     }
 
-    // Check MS Graph SSO connection
+    // Check Microsoft SSO connection (Better Auth uses MICROSOFT_* credentials)
     let msGraphSSOConfigured = false;
     let msGraphSSOConnected = false;
     let msGraphSSOError: string | undefined;
     let msGraphSSOResponseTime: number | undefined;
     try {
-      // Check if credentials are configured
-      const hasCredentials = !!(
-        process.env.AZURE_TENANT_ID &&
-        process.env.AZURE_CLIENT_ID &&
-        process.env.AZURE_CLIENT_SECRET
+      const clientId = await this.configService.get("MICROSOFT_CLIENT_ID");
+      const clientSecret = await this.configService.get(
+        "MICROSOFT_CLIENT_SECRET",
       );
+
+      // Better Auth falls back to "common" when tenant ID is not configured.
+      // Treat client credentials as the real readiness signal here.
+      const hasCredentials = !!(clientId && clientSecret);
       msGraphSSOConfigured = hasCredentials;
 
-      if (hasCredentials && this.graphService) {
-        const msGraphStart = performance.now();
-        msGraphSSOConnected = await this.graphService.testConnection();
-        msGraphSSOResponseTime = Math.round(performance.now() - msGraphStart);
-      }
+      // There is no dedicated server-side SSO probe today. Once credentials
+      // are present, Better Auth can initialize successfully on restart.
+      msGraphSSOConnected = hasCredentials;
     } catch (error) {
       msGraphSSOError =
-        error instanceof Error ? error.message : "Unknown MS Graph error";
+        error instanceof Error ? error.message : "Unknown MS SSO error";
     }
 
-    // Check Intune connection
+    // Check Intune connection (uses AZURE_* credentials)
     let intuneConfigured = false;
     let intuneConnected = false;
     let intuneError: string | undefined;
     let intuneResponseTime: number | undefined;
     try {
-      // Intune uses same Graph credentials
       const hasCredentials = !!(
-        process.env.AZURE_TENANT_ID &&
-        process.env.AZURE_CLIENT_ID &&
-        process.env.AZURE_CLIENT_SECRET
+        (await this.configService.get("AZURE_TENANT_ID")) &&
+        (await this.configService.get("AZURE_CLIENT_ID")) &&
+        (await this.configService.get("AZURE_CLIENT_SECRET"))
       );
       intuneConfigured = hasCredentials;
 
@@ -213,12 +215,11 @@ export class CheckSystemHealthUseCase {
     let emailError: string | undefined;
     let emailResponseTime: number | undefined;
     try {
-      // Check if email credentials are configured
       const hasCredentials = !!(
-        process.env.AZURE_EMAIL_TENANT_ID &&
-        process.env.AZURE_EMAIL_CLIENT_ID &&
-        process.env.AZURE_EMAIL_CLIENT_SECRET &&
-        process.env.AZURE_EMAIL_FROM
+        (await this.configService.get("AZURE_EMAIL_TENANT_ID")) &&
+        (await this.configService.get("AZURE_EMAIL_CLIENT_ID")) &&
+        (await this.configService.get("AZURE_EMAIL_CLIENT_SECRET")) &&
+        (await this.configService.get("AZURE_EMAIL_FROM"))
       );
       emailConfigured = hasCredentials;
 
@@ -311,7 +312,7 @@ export class CheckSystemHealthUseCase {
         message: !msGraphSSOConfigured
           ? "Not configured (optional)"
           : msGraphSSOConnected
-            ? "Connected"
+            ? "Configured (no active connectivity probe available)"
             : msGraphSSOError
               ? `Connection failed: ${msGraphSSOError}`
               : "Configured, but the Graph connectivity check did not succeed",

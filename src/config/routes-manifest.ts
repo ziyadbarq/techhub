@@ -983,6 +983,16 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     navOrder: 3,
   },
   {
+    path: "/admin/settings",
+    label: "System Settings",
+    icon: Wrench,
+    description: "Manage application configuration and environment settings",
+    requiredPermissions: ["SETTINGS_MANAGE"],
+    visibleInNav: true,
+    navGroup: "system",
+    navOrder: 4,
+  },
+  {
     path: "/admin/assignment-conflicts",
     label: "Assignment Conflicts",
     icon: AlertCircle,
@@ -992,7 +1002,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     featureFlag: "INTUNE",
     visibleInNav: true,
     navGroup: "system",
-    navOrder: 4,
+    navOrder: 5,
   },
 
   // ============================================================================

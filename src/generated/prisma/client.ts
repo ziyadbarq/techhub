@@ -464,3 +464,8 @@ export type FeatureFlag = Prisma.FeatureFlagModel
  * 
  */
 export type FeatureFlagAuditLog = Prisma.FeatureFlagAuditLogModel
+/**
+ * Model SystemSetting
+ * 
+ */
+export type SystemSetting = Prisma.SystemSettingModel

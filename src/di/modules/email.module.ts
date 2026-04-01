@@ -31,21 +31,15 @@ const diLogger = logger.scope("DI");
  * @param container - InversifyJS container instance
  */
 export function bindEmailDependencies(container: Container): void {
-  const azureEmailFrom = process.env.AZURE_EMAIL_FROM;
+  // Always bind MicrosoftGraphEmailService. It lazily reads email credentials
+  // from IConfigService (DB → env fallback) on first send. If credentials are
+  // not configured in either source, the send call fails gracefully rather than
+  // the app failing to boot.
+  //
+  // To use MockEmailService for local development, set MOCK_EMAIL_SERVICE=true.
+  const useMock = process.env.MOCK_EMAIL_SERVICE === "true";
 
-  if (azureEmailFrom) {
-    // Production: Use Microsoft Graph API for email sending
-    container
-      .bind<IEmailService>(DI_TOKENS.IEmailService)
-      .to(MicrosoftGraphEmailService)
-      .inSingletonScope();
-
-    diLogger.debug(
-      "bindEmailDependencies",
-      `Email service registered (MicrosoftGraphEmailService, from: ${azureEmailFrom})`,
-    );
-  } else {
-    // Development/Testing: Use mock service that logs emails
+  if (useMock) {
     container
       .bind<IEmailService>(DI_TOKENS.IEmailService)
       .to(MockEmailService)
@@ -53,7 +47,17 @@ export function bindEmailDependencies(container: Container): void {
 
     diLogger.debug(
       "bindEmailDependencies",
-      "Email service registered (MockEmailService - set AZURE_EMAIL_FROM for production)",
+      "Email service registered (MockEmailService - MOCK_EMAIL_SERVICE=true)",
+    );
+  } else {
+    container
+      .bind<IEmailService>(DI_TOKENS.IEmailService)
+      .to(MicrosoftGraphEmailService)
+      .inSingletonScope();
+
+    diLogger.debug(
+      "bindEmailDependencies",
+      "Email service registered (MicrosoftGraphEmailService - credentials resolved via IConfigService at send time)",
     );
   }
 }

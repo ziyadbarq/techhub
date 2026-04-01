@@ -3,6 +3,7 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { OciWebhookService } from "../oci-webhook.service";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import type { IConfigService } from "@/core/services/config.service.interface";
 
 function createMockLogger(): ILoggerService {
   const logger = {
@@ -24,6 +25,37 @@ function createMockLogger(): ILoggerService {
 
   logger.child.mockReturnValue(logger);
   return logger as unknown as ILoggerService;
+}
+
+function createMockConfigService(): IConfigService {
+  return {
+    get: vi.fn(async (key: string) => {
+      const val = process.env[key];
+      return val && val.length > 0 ? val : undefined;
+    }),
+    getString: vi.fn(async (key: string) => {
+      const val = process.env[key];
+      return val && val.length > 0 ? val : undefined;
+    }),
+    getNumber: vi.fn(async (key: string) => {
+      const val = process.env[key];
+      return val ? Number(val) : undefined;
+    }),
+    getBoolean: vi.fn(async (key: string) => {
+      const val = process.env[key];
+      return val === "true" || val === "1"
+        ? true
+        : val === "false" || val === "0"
+          ? false
+          : undefined;
+    }),
+    getOrThrow: vi.fn(async (key: string) => {
+      const val = process.env[key];
+      if (!val) throw new Error(`Missing ${key}`);
+      return val;
+    }),
+    invalidateCache: vi.fn(),
+  };
 }
 
 describe("OciWebhookService", () => {
@@ -50,7 +82,7 @@ describe("OciWebhookService", () => {
 
   it("collapses endpoint-wide connectivity failures into a single warning", async () => {
     const logger = createMockLogger();
-    const service = new OciWebhookService(logger);
+    const service = new OciWebhookService(logger, createMockConfigService());
     const dnsCause = Object.assign(
       new Error("getaddrinfo ENOTFOUND n8n.prod.barq.com"),
       {
@@ -139,7 +171,7 @@ describe("OciWebhookService", () => {
     );
 
     const logger = createMockLogger();
-    const service = new OciWebhookService(logger);
+    const service = new OciWebhookService(logger, createMockConfigService());
     const result = await service.fetchAllServices(["compute"]);
 
     expect(result.source).toEqual({
@@ -155,7 +187,7 @@ describe("OciWebhookService", () => {
 
   it("keeps per-service warnings for non-global failures", async () => {
     const logger = createMockLogger();
-    const service = new OciWebhookService(logger);
+    const service = new OciWebhookService(logger, createMockConfigService());
 
     vi.stubGlobal(
       "fetch",

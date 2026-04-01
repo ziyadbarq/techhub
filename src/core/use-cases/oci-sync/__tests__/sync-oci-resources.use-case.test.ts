@@ -16,6 +16,7 @@ import type {
 import type { IOciWebhookService } from "@/core/services/oci-webhook.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import type { IConfigService } from "@/core/services/config.service.interface";
 import type { OciWebhookResponse } from "@/core/domain/value-objects/oci-resource.types";
 import { extractResourceAttributes } from "@/core/domain/value-objects/oci-service-mapping";
 import type { OciDataSourceDescriptor } from "@/core/services/oci-webhook.service.interface";
@@ -308,6 +309,15 @@ describe("SyncOciResourcesUseCase", () => {
       ),
     };
 
+    const configService: IConfigService = {
+      get: vi.fn(async () => undefined),
+      getString: vi.fn(async () => undefined),
+      getNumber: vi.fn(async () => undefined),
+      getBoolean: vi.fn(async () => undefined),
+      getOrThrow: vi.fn(async () => ""),
+      invalidateCache: vi.fn(),
+    };
+
     useCase = new SyncOciResourcesUseCase(
       logger,
       webhookService,
@@ -318,6 +328,7 @@ describe("SyncOciResourcesUseCase", () => {
       syncLogRepository as unknown as IOciSyncLogRepository,
       lifecycleStateRepository as unknown as ILifecycleStateRepository,
       idGenerator,
+      configService,
     );
   });
 

@@ -25,6 +25,7 @@ import { bindTwoFactorDependencies } from "./modules/two-factor.module";
 import { bindSystemSetupDependencies } from "./modules/system-setup.module";
 import { bindDatabaseBackupDependencies } from "./modules/database-backup.module";
 import { bindFeatureFlagsDependencies } from "./modules/feature-flags.module";
+import { bindSettingsDependencies } from "./modules/settings.module";
 import { bindFoundationDependencies } from "./modules/foundation.module";
 import { bindMicrosoftGraphDependencies } from "./modules/ms-graph.module";
 import { bindAssetDependencies } from "./modules/asset.module";
@@ -186,6 +187,18 @@ export const FEATURE_FLAGS_MODULE: DIModule = {
   isLoaded: false,
   bindFunction: (container: Container) => {
     bindFeatureFlagsDependencies(container);
+  },
+};
+
+export const SETTINGS_MODULE: DIModule = {
+  name: "settings",
+  displayName: "System Settings",
+  tier: ModuleTier.CORE,
+  description: "Database-backed application settings with env fallback",
+  dependencies: ["logger", "database"],
+  isLoaded: false,
+  bindFunction: (container: Container) => {
+    bindSettingsDependencies(container);
   },
 };
 
@@ -515,6 +528,7 @@ export const ALL_MODULES: DIModule[] = [
   SYSTEM_SETUP_MODULE,
   DATABASE_BACKUP_MODULE,
   FEATURE_FLAGS_MODULE,
+  SETTINGS_MODULE,
   FOUNDATION_MODULE,
   EMAIL_MODULE,
   REALTIME_MODULE,

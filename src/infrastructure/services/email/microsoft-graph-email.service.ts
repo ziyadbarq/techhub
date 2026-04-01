@@ -24,6 +24,7 @@ import type {
   SendEmailResult,
 } from "@/core/services/email.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import type { IConfigService } from "@/core/services/config.service.interface";
 import { DI_TOKENS } from "@/di/types";
 
 /**
@@ -38,7 +39,11 @@ export class MicrosoftGraphEmailService implements IEmailService {
   private readonly logger: ILoggerService;
   private emailsSent = 0;
 
-  constructor(@inject(DI_TOKENS.ILoggerService) logger: ILoggerService) {
+  constructor(
+    @inject(DI_TOKENS.ILoggerService) logger: ILoggerService,
+    @inject(DI_TOKENS.IConfigService)
+    private readonly configService: IConfigService,
+  ) {
     this.logger = logger.child({ service: "MicrosoftGraphEmailService" });
   }
 
@@ -46,14 +51,16 @@ export class MicrosoftGraphEmailService implements IEmailService {
    * Lazy initialization of Graph client
    * Allows service to be instantiated even if env vars are missing
    */
-  private getClient(): Client {
+  private async getClient(): Promise<Client> {
     if (this.client) {
       return this.client;
     }
 
-    const tenantId = process.env.AZURE_EMAIL_TENANT_ID;
-    const clientId = process.env.AZURE_EMAIL_CLIENT_ID;
-    const clientSecret = process.env.AZURE_EMAIL_CLIENT_SECRET;
+    const tenantId = await this.configService.get("AZURE_EMAIL_TENANT_ID");
+    const clientId = await this.configService.get("AZURE_EMAIL_CLIENT_ID");
+    const clientSecret = await this.configService.get(
+      "AZURE_EMAIL_CLIENT_SECRET",
+    );
 
     if (!tenantId || !clientId || !clientSecret) {
       throw new Error(
@@ -90,12 +97,12 @@ export class MicrosoftGraphEmailService implements IEmailService {
   /**
    * Get the sender email address from environment
    */
-  private getFromAddress(): string {
-    const from = process.env.AZURE_EMAIL_FROM;
+  private async getFromAddress(): Promise<string> {
+    const from = await this.configService.get("AZURE_EMAIL_FROM");
     if (!from) {
       throw new Error(
-        "Missing AZURE_EMAIL_FROM environment variable. " +
-          "This should be the email address to send from (e.g., noreply@company.com)",
+        "Missing AZURE_EMAIL_FROM configuration. " +
+          "Set via System Settings or AZURE_EMAIL_FROM environment variable.",
       );
     }
     return from;
@@ -106,8 +113,8 @@ export class MicrosoftGraphEmailService implements IEmailService {
    */
   async sendEmail(message: EmailMessage): Promise<SendEmailResult> {
     try {
-      const client = this.getClient();
-      const from = message.from ?? this.getFromAddress();
+      const client = await this.getClient();
+      const from = message.from ?? (await this.getFromAddress());
 
       // Build the Graph API message payload
       const graphMessage = this.buildGraphMessage(message, from);
@@ -426,8 +433,8 @@ export class MicrosoftGraphEmailService implements IEmailService {
    */
   async testConnection(): Promise<boolean> {
     try {
-      const client = this.getClient();
-      const from = this.getFromAddress();
+      const client = await this.getClient();
+      const from = await this.getFromAddress();
 
       // Test by fetching user profile to verify credentials
       // GET /users/{from}

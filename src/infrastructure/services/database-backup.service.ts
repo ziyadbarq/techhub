@@ -18,6 +18,7 @@ import {
   BackupStatus,
 } from "@/core/domain/entities/database-backup.entity";
 import type { ILoggerService } from "@/core/services";
+import type { IConfigService } from "@/core/services/config.service.interface";
 
 @injectable()
 export class DatabaseBackupService implements IDatabaseBackupService {
@@ -26,6 +27,8 @@ export class DatabaseBackupService implements IDatabaseBackupService {
     private readonly logger: ILoggerService,
     @inject(DI_TOKENS.PrismaClient)
     private readonly prisma: PrismaClient,
+    @inject(DI_TOKENS.IConfigService)
+    private readonly configService: IConfigService,
   ) {}
 
   getBackupDirectory(): string {
@@ -35,8 +38,15 @@ export class DatabaseBackupService implements IDatabaseBackupService {
     );
   }
 
+  private async resolveBackupDirectory(): Promise<string> {
+    return (
+      (await this.configService.get("BACKUP_STORAGE_PATH")) ||
+      path.resolve(process.cwd(), "local", "backups")
+    );
+  }
+
   async ensureBackupDirectory(): Promise<string> {
-    const dir = this.getBackupDirectory();
+    const dir = await this.resolveBackupDirectory();
     await fs.mkdir(dir, { recursive: true });
     await fs.access(dir, fsConstants.W_OK | fsConstants.R_OK);
     return dir;
@@ -64,10 +74,11 @@ export class DatabaseBackupService implements IDatabaseBackupService {
       throw new Error("DATABASE_URL is not configured");
     }
 
-    const pgDumpPath = process.env.PG_DUMP_PATH || "pg_dump";
+    const pgDumpPath =
+      (await this.configService.get("PG_DUMP_PATH")) || "pg_dump";
     const filePath = path.join(backupDir, options.filename);
-    const extraDumpFlags =
-      process.env.PG_DUMP_FLAGS?.split(/\s+/).filter(Boolean) ?? [];
+    const rawDumpFlags = await this.configService.get("PG_DUMP_FLAGS");
+    const extraDumpFlags = rawDumpFlags?.split(/\s+/).filter(Boolean) ?? [];
 
     await this.emitProgress(options.onProgress, {
       backupId: options.backupId,
@@ -167,9 +178,9 @@ export class DatabaseBackupService implements IDatabaseBackupService {
       currentStep: "Preparing restore operation",
     });
 
-    const psqlPath = process.env.PSQL_PATH || "psql";
-    const extraPsqlFlags =
-      process.env.PSQL_FLAGS?.split(/\s+/).filter(Boolean) ?? [];
+    const psqlPath = (await this.configService.get("PSQL_PATH")) || "psql";
+    const rawPsqlFlags = await this.configService.get("PSQL_FLAGS");
+    const extraPsqlFlags = rawPsqlFlags?.split(/\s+/).filter(Boolean) ?? [];
     await this.runCommand(
       psqlPath,
       [
@@ -280,7 +291,7 @@ export class DatabaseBackupService implements IDatabaseBackupService {
     onProgress?: (progress: BackupProgressEvent) => Promise<void> | void,
   ): Promise<{ status: string; error: string | null }> {
     const shouldVerify =
-      (process.env.BACKUP_VERIFY_TEMP_DB ?? "").toLowerCase() === "true";
+      (await this.configService.getBoolean("BACKUP_VERIFY_TEMP_DB")) === true;
     if (!shouldVerify) {
       return { status: "skipped", error: null };
     }
@@ -293,9 +304,9 @@ export class DatabaseBackupService implements IDatabaseBackupService {
     const adminUrl = new URL(databaseUrl);
     adminUrl.pathname = "/postgres";
     const tempDbName = `backup_verify_${crypto.randomUUID().replace(/-/g, "")}`;
-    const psqlPath = process.env.PSQL_PATH || "psql";
-    const extraPsqlFlags =
-      process.env.PSQL_FLAGS?.split(/\s+/).filter(Boolean) ?? [];
+    const psqlPath = (await this.configService.get("PSQL_PATH")) || "psql";
+    const rawPsqlFlags = await this.configService.get("PSQL_FLAGS");
+    const extraPsqlFlags = rawPsqlFlags?.split(/\s+/).filter(Boolean) ?? [];
 
     const progress = async (currentStep: string, percentage: number) => {
       await this.emitProgress(onProgress, {
