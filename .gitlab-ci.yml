@@ -150,7 +150,7 @@ build-gcp:
     - git fetch --unshallow || true
     - eval "$(node scripts/release/compute-version.mjs --format=env)"
     - version="${APP_VERSION}"
-    - commit_id=`git rev-parse --short=6 HEAD`
+    - commit_id=`git rev-parse --short=8 HEAD`
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
     - mv .dockerignore .dockerignore.tmp
@@ -223,7 +223,7 @@ build-oci:
     - git fetch --unshallow || true
     - eval "$(node scripts/release/compute-version.mjs --format=env)"
     - version="${APP_VERSION}"
-    - commit_id=`git rev-parse --short=6 HEAD`
+    - commit_id=`git rev-parse --short=8 HEAD`
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
     - mv .dockerignore .dockerignore.tmp
@@ -297,7 +297,7 @@ build-and-push-gcp-to-argo:
     - git fetch --unshallow || true
     - eval "$(node scripts/release/compute-version.mjs --format=env)"
     - version="${APP_VERSION}"
-    - commit_id=`git rev-parse --short=6 HEAD`
+    - commit_id=`git rev-parse --short=8 HEAD`
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
@@ -389,7 +389,7 @@ build-and-push-oci-to-argo:
     - git fetch --unshallow || true
     - eval "$(node scripts/release/compute-version.mjs --format=env)"
     - version="${APP_VERSION}"
-    - commit_id=`git rev-parse --short=6 HEAD`
+    - commit_id=`git rev-parse --short=8 HEAD`
     - mkdir -p package
     - cp -r /package/. package/ || echo "No shared packages to copy"
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"

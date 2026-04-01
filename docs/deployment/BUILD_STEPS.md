@@ -92,7 +92,7 @@ git fetch --tags --force
 git fetch --unshallow || true
 eval "$(node scripts/release/compute-version.mjs --format=env)"
 version="${APP_VERSION}"
-commit_id=`git rev-parse --short=6 HEAD`
+commit_id=`git rev-parse --short=8 HEAD`
 export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
 export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
 
