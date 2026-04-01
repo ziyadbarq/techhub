@@ -92,11 +92,13 @@ services:
       # Encryption key for OAuth tokens (required)
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
 
-    # Run migrations on startup (seeding via /setup wizard or manual command)
+    # Run migrations and seed on startup (seed is idempotent — safe to run repeatedly)
     command: >
       sh -c "
         echo '🔄 Running database migrations...' &&
         npx prisma migrate deploy &&
+        echo '🌱 Running database seed...' &&
+        npx tsx src/infrastructure/database/prisma/seed.ts production &&
         echo '🚀 Starting application...' &&
         node docker-start.mjs
       "

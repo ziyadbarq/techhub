@@ -93,11 +93,13 @@ services:
       # OpenAI (optional - for AI features)
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
 
-    # Override entrypoint to run migrations before starting (seeding via /setup wizard or manual command)
+    # Run migrations and seed on startup (seed is idempotent — safe to run repeatedly)
     command: >
       sh -c "
         echo '🔄 Running database migrations...' &&
         npx prisma migrate deploy &&
+        echo '🌱 Running database seed...' &&
+        npx tsx src/infrastructure/database/prisma/seed.ts production &&
         echo '🚀 Starting application...' &&
         node server.js
       "
