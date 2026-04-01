@@ -645,33 +645,6 @@ export type ActionResponse<T> =
 │  └────────────────┘                                      │
 │    Indexes: status, createdAt                            │
 │                                                          │
-│  ┌────────────────┐                                      │
-│  │  PromptBlock   │                                      │
-│  ├────────────────┤                                      │
-│  │ id: String     │ @id @default(cuid())                 │
-│  │ key: String    │ @unique                              │
-│  │ name: String   │                                      │
-│  │ description    │ String? @db.Text                     │
-│  │ content        │ String @db.Text                      │
-│  │ metadata       │ Json?                                │
-│  │ createdAt      │ DateTime @default(now())             │
-│  │ updatedAt      │ DateTime @updatedAt                  │
-│  └────────────────┘                                      │
-│    Indexes: key                                          │
-│                                                          │
-│  ┌─────────────────────┐                                 │
-│  │ PromptComposition   │                                 │
-│  ├─────────────────────┤                                 │
-│  │ id: String          │ @id @default(cuid())            │
-│  │ key: String         │ @unique                         │
-│  │ name: String        │                                 │
-│  │ description         │ String? @db.Text                │
-│  │ blocks              │ Json (Array of {key, order})    │
-│  │ metadata            │ Json?                           │
-│  │ createdAt           │ DateTime @default(now())        │
-│  │ updatedAt           │ DateTime @updatedAt             │
-│  └─────────────────────┘                                 │
-│    Indexes: key                                          │
 │                                                          │
 └──────────────────────────────────────────────────────────┘
 ```

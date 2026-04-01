@@ -5,10 +5,6 @@
  * Repositories define contracts for data access implementations.
  */
 
-// Prompt System Repositories (AI Infrastructure)
-export type { IPromptBlockRepository } from "./prompt-block.repository.interface";
-export type { IPromptCompositionRepository } from "./prompt-composition.repository.interface";
-
 // Task Repository (Example CRUD)
 export type { ITaskRepository } from "./task.repository.interface";
 

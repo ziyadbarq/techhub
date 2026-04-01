@@ -2250,13 +2250,8 @@ Define symbols for all interfaces.
 export const DI_TOKENS = {
   // Repositories
   ITaskRepository: Symbol.for("ITaskRepository"),
-  IPromptBlockRepository: Symbol.for("IPromptBlockRepository"),
-  IPromptCompositionRepository: Symbol.for("IPromptCompositionRepository"),
 
   // Services
-  IAIContentGeneratorService: Symbol.for("IAIContentGeneratorService"),
-  IAIPromptManagerService: Symbol.for("IAIPromptManagerService"),
-  IAIDebugTraceService: Symbol.for("IAIDebugTraceService"),
 
   // Use Cases
   CreateTaskUseCase: Symbol.for("CreateTaskUseCase"),
@@ -2405,33 +2400,6 @@ enum TaskStatus {
   COMPLETED
 }
 
-model PromptBlock {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  name        String
-  description String?  @db.Text
-  content     String   @db.Text
-  metadata    Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([key])
-  @@map("prompt_blocks")
-}
-
-model PromptComposition {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  name        String
-  description String?  @db.Text
-  blocks      Json     // Array of { key: string, order: number }
-  metadata    Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([key])
-  @@map("prompt_compositions")
-}
 ```
 
 ### Migrations

@@ -83,7 +83,6 @@ For data migration or demo seeding, populate in this **exact order**:
 27. VerificationCampaign → VerificationItem
 28. AttachmentType → Attachment
 29. AuditLogEntry
-30. PromptBlock → PromptComposition → PromptCompositionBlock (optional)
 31. Task (example CRUD, optional)
 ```
 
@@ -1080,51 +1079,11 @@ For data migration or demo seeding, populate in this **exact order**:
 
 ---
 
-### Layer 5: AI Infrastructure (Optional)
-
-**Purpose**: Modular prompt system for AI features
-**Dependencies**: None
-
-#### PromptBlock
-
-| Field | Type | Required | Dependencies | Description |
-|-------|------|----------|--------------|-------------|
-| name | String | ✅ | None | Unique block name |
-| category | Enum | ✅ | None | CORE_SYNTAX, CONTENT_GUIDELINES, VALIDATION, ADVANCED_FEATURES |
-| content | String | ✅ | None | Prompt block content |
-| parentBlockId | String | ❌ | PromptBlock (self) | Parent block for inheritance |
-| description | String | ❌ | None | Description |
-| metadata | JSON | ❌ | None | Additional data |
-| version | Int | ❌ | None | Version number (default 1) |
-| isActive | Boolean | ❌ | None | Active status |
-
-#### PromptComposition
-
-| Field | Type | Required | Dependencies | Description |
-|-------|------|----------|--------------|-------------|
-| name | String | ✅ | None | Unique composition name |
-| purpose | Enum | ✅ | None | OUTLINE, CONTENT, THEME, REVIEW, REFINEMENT |
-| description | String | ❌ | None | Description |
-| variables | JSON | ❌ | None | Variables |
-| version | Int | ❌ | None | Version number (default 1) |
-| isActive | Boolean | ❌ | None | Active status |
-
-#### PromptCompositionBlock
-
-| Field | Type | Required | Dependencies | Description |
-|-------|------|----------|--------------|-------------|
-| compositionId | String | ✅ | PromptComposition | Composition reference |
-| blockId | String | ✅ | PromptBlock | Block reference |
-| order | Int | ✅ | None | Block order in composition |
-| overrides | JSON | ❌ | None | Block overrides |
-
----
-
 ## Critical Migration Notes
 
 ### 1. Hierarchical Data (Self-Referencing)
 
-**Entities**: OrganizationUnit, Location, Role, CIClass, PromptBlock
+**Entities**: OrganizationUnit, Location, Role, CIClass
 
 **Strategy**: Populate **bottom-up** (children first) or use deferred FK resolution:
 - **OrganizationUnit**: Level 4 → 3 → 2 → 1

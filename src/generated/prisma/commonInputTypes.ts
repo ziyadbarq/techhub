@@ -1326,40 +1326,6 @@ export type EnumTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumTaskStatusFilter<$PrismaModel>
 }
 
-export type EnumPromptBlockCategoryFilter<$PrismaModel = never> = {
-  equals?: $Enums.PromptBlockCategory | Prisma.EnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  in?: $Enums.PromptBlockCategory[] | Prisma.ListEnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PromptBlockCategory[] | Prisma.ListEnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPromptBlockCategoryFilter<$PrismaModel> | $Enums.PromptBlockCategory
-}
-
-export type EnumPromptBlockCategoryWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.PromptBlockCategory | Prisma.EnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  in?: $Enums.PromptBlockCategory[] | Prisma.ListEnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PromptBlockCategory[] | Prisma.ListEnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPromptBlockCategoryWithAggregatesFilter<$PrismaModel> | $Enums.PromptBlockCategory
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumPromptBlockCategoryFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumPromptBlockCategoryFilter<$PrismaModel>
-}
-
-export type EnumPromptPurposeFilter<$PrismaModel = never> = {
-  equals?: $Enums.PromptPurpose | Prisma.EnumPromptPurposeFieldRefInput<$PrismaModel>
-  in?: $Enums.PromptPurpose[] | Prisma.ListEnumPromptPurposeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PromptPurpose[] | Prisma.ListEnumPromptPurposeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPromptPurposeFilter<$PrismaModel> | $Enums.PromptPurpose
-}
-
-export type EnumPromptPurposeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.PromptPurpose | Prisma.EnumPromptPurposeFieldRefInput<$PrismaModel>
-  in?: $Enums.PromptPurpose[] | Prisma.ListEnumPromptPurposeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PromptPurpose[] | Prisma.ListEnumPromptPurposeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPromptPurposeWithAggregatesFilter<$PrismaModel> | $Enums.PromptPurpose
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumPromptPurposeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumPromptPurposeFilter<$PrismaModel>
-}
-
 export type EnumFeatureFlagCategoryFilter<$PrismaModel = never> = {
   equals?: $Enums.FeatureFlagCategory | Prisma.EnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
   in?: $Enums.FeatureFlagCategory[] | Prisma.ListEnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
@@ -2663,40 +2629,6 @@ export type NestedEnumTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumTaskStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumTaskStatusFilter<$PrismaModel>
-}
-
-export type NestedEnumPromptBlockCategoryFilter<$PrismaModel = never> = {
-  equals?: $Enums.PromptBlockCategory | Prisma.EnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  in?: $Enums.PromptBlockCategory[] | Prisma.ListEnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PromptBlockCategory[] | Prisma.ListEnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPromptBlockCategoryFilter<$PrismaModel> | $Enums.PromptBlockCategory
-}
-
-export type NestedEnumPromptBlockCategoryWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.PromptBlockCategory | Prisma.EnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  in?: $Enums.PromptBlockCategory[] | Prisma.ListEnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PromptBlockCategory[] | Prisma.ListEnumPromptBlockCategoryFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPromptBlockCategoryWithAggregatesFilter<$PrismaModel> | $Enums.PromptBlockCategory
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumPromptBlockCategoryFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumPromptBlockCategoryFilter<$PrismaModel>
-}
-
-export type NestedEnumPromptPurposeFilter<$PrismaModel = never> = {
-  equals?: $Enums.PromptPurpose | Prisma.EnumPromptPurposeFieldRefInput<$PrismaModel>
-  in?: $Enums.PromptPurpose[] | Prisma.ListEnumPromptPurposeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PromptPurpose[] | Prisma.ListEnumPromptPurposeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPromptPurposeFilter<$PrismaModel> | $Enums.PromptPurpose
-}
-
-export type NestedEnumPromptPurposeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.PromptPurpose | Prisma.EnumPromptPurposeFieldRefInput<$PrismaModel>
-  in?: $Enums.PromptPurpose[] | Prisma.ListEnumPromptPurposeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.PromptPurpose[] | Prisma.ListEnumPromptPurposeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumPromptPurposeWithAggregatesFilter<$PrismaModel> | $Enums.PromptPurpose
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumPromptPurposeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumPromptPurposeFilter<$PrismaModel>
 }
 
 export type NestedEnumFeatureFlagCategoryFilter<$PrismaModel = never> = {

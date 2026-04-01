@@ -18,14 +18,8 @@ import type { Prisma } from "@/generated/prisma/server";
  *
  * @example
  * ```typescript
- * const metadata: PromptBlockMetadata = { version: 1, tags: ["ai"] };
+ * const metadata = { version: 1, tags: ["example"] };
  * const jsonValue = toJsonValue(metadata);
- * await prisma.promptBlock.create({
- *   data: {
- *     metadata: jsonValue,
- *     // ...
- *   }
- * });
  * ```
  */
 export function toJsonValue<T>(
@@ -58,11 +52,7 @@ export function toJsonValue<T>(
  *
  * @example
  * ```typescript
- * const block = await prisma.promptBlock.findUnique({ where: { id } });
- * const metadata = fromJsonValue<PromptBlockMetadata>(block.metadata);
- * if (metadata) {
- *   console.log(metadata.version);
- * }
+ * const metadata = fromJsonValue<{ version: number }>(record.metadata);
  * ```
  */
 export function fromJsonValue<T>(
@@ -76,52 +66,3 @@ export function fromJsonValue<T>(
   // Just cast to the expected type
   return value as T;
 }
-
-/**
- * Type-safe Prisma query result types for complex includes
- */
-
-/**
- * PromptComposition with included blocks (full composition)
- */
-export type PrismaCompositionWithBlocks = Prisma.PromptCompositionGetPayload<{
-  include: {
-    blocks: {
-      include: {
-        block: true;
-      };
-      orderBy: {
-        order: "asc";
-      };
-    };
-  };
-}>;
-
-/**
- * PromptCompositionBlock with included block
- */
-export type PrismaCompositionBlockWithBlock =
-  Prisma.PromptCompositionBlockGetPayload<{
-    include: {
-      block: true;
-    };
-  }>;
-
-/**
- * PromptBlock (base type for mapping to domain)
- */
-export type PrismaPromptBlock = Prisma.PromptBlockGetPayload<{
-  select: {
-    id: true;
-    name: true;
-    category: true;
-    content: true;
-    description: true;
-    metadata: true;
-    version: true;
-    isActive: true;
-    createdAt: true;
-    updatedAt: true;
-    parentBlockId: true;
-  };
-}>;

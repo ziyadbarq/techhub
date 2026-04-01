@@ -110,9 +110,6 @@ export interface CleanupResult {
   verificationCampaigns: number;
   dataOwnerships: number;
   persons: number;
-  promptCompositionBlocks: number;
-  promptCompositions: number;
-  promptBlocks: number;
   total: number;
 }
 
@@ -160,9 +157,6 @@ export async function cleanupDemoData(
     verificationCampaigns: 0,
     dataOwnerships: 0,
     persons: 0,
-    promptCompositionBlocks: 0,
-    promptCompositions: 0,
-    promptBlocks: 0,
     total: 0,
   };
 
@@ -239,15 +233,6 @@ export async function cleanupDemoData(
     })
   ).count;
 
-  // 13. AI Prompt blocks and compositions (in FK order)
-  result.promptCompositionBlocks = (
-    await prisma.promptCompositionBlock.deleteMany({})
-  ).count;
-  result.promptCompositions = (
-    await prisma.promptComposition.deleteMany({})
-  ).count;
-  result.promptBlocks = (await prisma.promptBlock.deleteMany({})).count;
-
   // Calculate total
   result.total =
     result.assets +
@@ -271,10 +256,7 @@ export async function cleanupDemoData(
     result.verificationItems +
     result.verificationCampaigns +
     result.dataOwnerships +
-    result.persons +
-    result.promptCompositionBlocks +
-    result.promptCompositions +
-    result.promptBlocks;
+    result.persons;
 
   return result;
 }

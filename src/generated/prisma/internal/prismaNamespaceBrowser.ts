@@ -131,9 +131,6 @@ export const ModelName = {
   ServiceHealthHistory: 'ServiceHealthHistory',
   ServiceSlaMetric: 'ServiceSlaMetric',
   Task: 'Task',
-  PromptBlock: 'PromptBlock',
-  PromptComposition: 'PromptComposition',
-  PromptCompositionBlock: 'PromptCompositionBlock',
   FeatureFlag: 'FeatureFlag',
   FeatureFlagAuditLog: 'FeatureFlagAuditLog',
   SystemSetting: 'SystemSetting'
@@ -1690,49 +1687,6 @@ export const TaskScalarFieldEnum = {
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
-
-
-export const PromptBlockScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  category: 'category',
-  content: 'content',
-  description: 'description',
-  metadata: 'metadata',
-  version: 'version',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  parentBlockId: 'parentBlockId'
-} as const
-
-export type PromptBlockScalarFieldEnum = (typeof PromptBlockScalarFieldEnum)[keyof typeof PromptBlockScalarFieldEnum]
-
-
-export const PromptCompositionScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  purpose: 'purpose',
-  description: 'description',
-  variables: 'variables',
-  version: 'version',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type PromptCompositionScalarFieldEnum = (typeof PromptCompositionScalarFieldEnum)[keyof typeof PromptCompositionScalarFieldEnum]
-
-
-export const PromptCompositionBlockScalarFieldEnum = {
-  id: 'id',
-  compositionId: 'compositionId',
-  blockId: 'blockId',
-  order: 'order',
-  overrides: 'overrides'
-} as const
-
-export type PromptCompositionBlockScalarFieldEnum = (typeof PromptCompositionBlockScalarFieldEnum)[keyof typeof PromptCompositionBlockScalarFieldEnum]
 
 
 export const FeatureFlagScalarFieldEnum = {

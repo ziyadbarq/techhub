@@ -25,18 +25,6 @@ export const DI_TOKENS = {
   // ==========================================
 
   /**
-   * Token for IPromptBlockRepository
-   * Manages CRUD operations for atomic prompt blocks
-   */
-  IPromptBlockRepository: Symbol.for("IPromptBlockRepository"),
-
-  /**
-   * Token for IPromptCompositionRepository
-   * Manages CRUD operations for prompt compositions
-   */
-  IPromptCompositionRepository: Symbol.for("IPromptCompositionRepository"),
-
-  /**
    * Token for ITaskRepository
    * Manages CRUD operations for task entities (example CRUD)
    */

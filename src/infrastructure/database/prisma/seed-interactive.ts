@@ -33,7 +33,6 @@ import {
   savePreset,
   isValidPresetName,
 } from "./seed-presets-manager.js";
-import { seedPrompts } from "./seed-prompts.js";
 import { seedRBAC } from "./seed-rbac.js";
 import { seedFoundation, seedDemoPersons } from "./seed-foundation.js";
 import { seedAssetConfig, seedDemoAssets } from "./seed-assets.js";
@@ -372,7 +371,6 @@ async function executeSeed(modules: SeedModule[]) {
           await seedLayer3ITAM(prisma);
           break;
         case SeedModule.AI_PROMPTS_TASKS:
-          await seedPrompts(prisma);
           await seedExampleTasks(prisma);
           break;
       }
@@ -417,12 +415,6 @@ function displayCleanupResult(result: CleanupResult) {
     { label: "Verification campaigns", count: result.verificationCampaigns },
     { label: "Data ownerships", count: result.dataOwnerships },
     { label: "Persons (demo)", count: result.persons },
-    {
-      label: "Prompt composition blocks",
-      count: result.promptCompositionBlocks,
-    },
-    { label: "Prompt compositions", count: result.promptCompositions },
-    { label: "Prompt blocks", count: result.promptBlocks },
   ];
 
   // Only show items with counts > 0
@@ -455,7 +447,7 @@ async function executeCleanupFlow(): Promise<boolean> {
   );
   console.log(chalk.gray("  • Asset kits, reservations, disposals"));
   console.log(chalk.gray("  • Configuration items and relationships"));
-  console.log(chalk.gray("  • Example tasks and AI prompt templates"));
+  console.log(chalk.gray("  • Example tasks"));
   console.log(chalk.gray("  • Demo persons (without Microsoft ID)"));
 
   console.log(chalk.white("\nThis will PRESERVE system configuration:"));

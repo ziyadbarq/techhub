@@ -622,27 +622,6 @@ export const TaskStatus = {
 export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
 
 
-export const PromptBlockCategory = {
-  CORE_SYNTAX: 'CORE_SYNTAX',
-  CONTENT_GUIDELINES: 'CONTENT_GUIDELINES',
-  VALIDATION: 'VALIDATION',
-  ADVANCED_FEATURES: 'ADVANCED_FEATURES'
-} as const
-
-export type PromptBlockCategory = (typeof PromptBlockCategory)[keyof typeof PromptBlockCategory]
-
-
-export const PromptPurpose = {
-  OUTLINE: 'OUTLINE',
-  CONTENT: 'CONTENT',
-  THEME: 'THEME',
-  REVIEW: 'REVIEW',
-  REFINEMENT: 'REFINEMENT'
-} as const
-
-export type PromptPurpose = (typeof PromptPurpose)[keyof typeof PromptPurpose]
-
-
 export const FeatureFlagCategory = {
   SYSTEM: 'SYSTEM',
   LAYER_1: 'LAYER_1',

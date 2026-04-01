@@ -464,9 +464,6 @@ export const ModelName = {
   ServiceHealthHistory: 'ServiceHealthHistory',
   ServiceSlaMetric: 'ServiceSlaMetric',
   Task: 'Task',
-  PromptBlock: 'PromptBlock',
-  PromptComposition: 'PromptComposition',
-  PromptCompositionBlock: 'PromptCompositionBlock',
   FeatureFlag: 'FeatureFlag',
   FeatureFlagAuditLog: 'FeatureFlagAuditLog',
   SystemSetting: 'SystemSetting'
@@ -485,7 +482,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "reportSchedule" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog" | "systemSetting"
+    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "reportSchedule" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "featureFlag" | "featureFlagAuditLog" | "systemSetting"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -6409,228 +6406,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    PromptBlock: {
-      payload: Prisma.$PromptBlockPayload<ExtArgs>
-      fields: Prisma.PromptBlockFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.PromptBlockFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.PromptBlockFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload>
-        }
-        findFirst: {
-          args: Prisma.PromptBlockFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.PromptBlockFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload>
-        }
-        findMany: {
-          args: Prisma.PromptBlockFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload>[]
-        }
-        create: {
-          args: Prisma.PromptBlockCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload>
-        }
-        createMany: {
-          args: Prisma.PromptBlockCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.PromptBlockCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload>[]
-        }
-        delete: {
-          args: Prisma.PromptBlockDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload>
-        }
-        update: {
-          args: Prisma.PromptBlockUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload>
-        }
-        deleteMany: {
-          args: Prisma.PromptBlockDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.PromptBlockUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.PromptBlockUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload>[]
-        }
-        upsert: {
-          args: Prisma.PromptBlockUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptBlockPayload>
-        }
-        aggregate: {
-          args: Prisma.PromptBlockAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregatePromptBlock>
-        }
-        groupBy: {
-          args: Prisma.PromptBlockGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PromptBlockGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.PromptBlockCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PromptBlockCountAggregateOutputType> | number
-        }
-      }
-    }
-    PromptComposition: {
-      payload: Prisma.$PromptCompositionPayload<ExtArgs>
-      fields: Prisma.PromptCompositionFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.PromptCompositionFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.PromptCompositionFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload>
-        }
-        findFirst: {
-          args: Prisma.PromptCompositionFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.PromptCompositionFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload>
-        }
-        findMany: {
-          args: Prisma.PromptCompositionFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload>[]
-        }
-        create: {
-          args: Prisma.PromptCompositionCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload>
-        }
-        createMany: {
-          args: Prisma.PromptCompositionCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.PromptCompositionCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload>[]
-        }
-        delete: {
-          args: Prisma.PromptCompositionDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload>
-        }
-        update: {
-          args: Prisma.PromptCompositionUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload>
-        }
-        deleteMany: {
-          args: Prisma.PromptCompositionDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.PromptCompositionUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.PromptCompositionUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload>[]
-        }
-        upsert: {
-          args: Prisma.PromptCompositionUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionPayload>
-        }
-        aggregate: {
-          args: Prisma.PromptCompositionAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregatePromptComposition>
-        }
-        groupBy: {
-          args: Prisma.PromptCompositionGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PromptCompositionGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.PromptCompositionCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PromptCompositionCountAggregateOutputType> | number
-        }
-      }
-    }
-    PromptCompositionBlock: {
-      payload: Prisma.$PromptCompositionBlockPayload<ExtArgs>
-      fields: Prisma.PromptCompositionBlockFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.PromptCompositionBlockFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.PromptCompositionBlockFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload>
-        }
-        findFirst: {
-          args: Prisma.PromptCompositionBlockFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.PromptCompositionBlockFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload>
-        }
-        findMany: {
-          args: Prisma.PromptCompositionBlockFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload>[]
-        }
-        create: {
-          args: Prisma.PromptCompositionBlockCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload>
-        }
-        createMany: {
-          args: Prisma.PromptCompositionBlockCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.PromptCompositionBlockCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload>[]
-        }
-        delete: {
-          args: Prisma.PromptCompositionBlockDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload>
-        }
-        update: {
-          args: Prisma.PromptCompositionBlockUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload>
-        }
-        deleteMany: {
-          args: Prisma.PromptCompositionBlockDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.PromptCompositionBlockUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.PromptCompositionBlockUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload>[]
-        }
-        upsert: {
-          args: Prisma.PromptCompositionBlockUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromptCompositionBlockPayload>
-        }
-        aggregate: {
-          args: Prisma.PromptCompositionBlockAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregatePromptCompositionBlock>
-        }
-        groupBy: {
-          args: Prisma.PromptCompositionBlockGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PromptCompositionBlockGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.PromptCompositionBlockCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PromptCompositionBlockCountAggregateOutputType> | number
-        }
-      }
-    }
     FeatureFlag: {
       payload: Prisma.$FeatureFlagPayload<ExtArgs>
       fields: Prisma.FeatureFlagFieldRefs
@@ -8429,49 +8204,6 @@ export const TaskScalarFieldEnum = {
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
 
 
-export const PromptBlockScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  category: 'category',
-  content: 'content',
-  description: 'description',
-  metadata: 'metadata',
-  version: 'version',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  parentBlockId: 'parentBlockId'
-} as const
-
-export type PromptBlockScalarFieldEnum = (typeof PromptBlockScalarFieldEnum)[keyof typeof PromptBlockScalarFieldEnum]
-
-
-export const PromptCompositionScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  purpose: 'purpose',
-  description: 'description',
-  variables: 'variables',
-  version: 'version',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type PromptCompositionScalarFieldEnum = (typeof PromptCompositionScalarFieldEnum)[keyof typeof PromptCompositionScalarFieldEnum]
-
-
-export const PromptCompositionBlockScalarFieldEnum = {
-  id: 'id',
-  compositionId: 'compositionId',
-  blockId: 'blockId',
-  order: 'order',
-  overrides: 'overrides'
-} as const
-
-export type PromptCompositionBlockScalarFieldEnum = (typeof PromptCompositionBlockScalarFieldEnum)[keyof typeof PromptCompositionBlockScalarFieldEnum]
-
-
 export const FeatureFlagScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -9403,34 +9135,6 @@ export type ListEnumTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
- * Reference to a field of type 'PromptBlockCategory'
- */
-export type EnumPromptBlockCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PromptBlockCategory'>
-    
-
-
-/**
- * Reference to a field of type 'PromptBlockCategory[]'
- */
-export type ListEnumPromptBlockCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PromptBlockCategory[]'>
-    
-
-
-/**
- * Reference to a field of type 'PromptPurpose'
- */
-export type EnumPromptPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PromptPurpose'>
-    
-
-
-/**
- * Reference to a field of type 'PromptPurpose[]'
- */
-export type ListEnumPromptPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PromptPurpose[]'>
-    
-
-
-/**
  * Reference to a field of type 'FeatureFlagCategory'
  */
 export type EnumFeatureFlagCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeatureFlagCategory'>
@@ -9646,9 +9350,6 @@ export type GlobalOmitConfig = {
   serviceHealthHistory?: Prisma.ServiceHealthHistoryOmit
   serviceSlaMetric?: Prisma.ServiceSlaMetricOmit
   task?: Prisma.TaskOmit
-  promptBlock?: Prisma.PromptBlockOmit
-  promptComposition?: Prisma.PromptCompositionOmit
-  promptCompositionBlock?: Prisma.PromptCompositionBlockOmit
   featureFlag?: Prisma.FeatureFlagOmit
   featureFlagAuditLog?: Prisma.FeatureFlagAuditLogOmit
   systemSetting?: Prisma.SystemSettingOmit

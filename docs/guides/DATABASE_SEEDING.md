@@ -124,7 +124,6 @@ src/infrastructure/database/prisma/
 │   ├── seed-governance.ts           # Governance features
 │   ├── seed-services.ts             # Service catalog
 │   ├── seed-attachments.ts          # Attachment types
-│   └── seed-prompts.ts              # AI prompt templates
 ```
 
 ### Design Principles
@@ -342,9 +341,9 @@ Seeds asset disposals, kits, reservations, licenses, contracts, configuration it
 
 **Dependencies**: DEMO_ASSETS, CMDB
 
-#### 13. AI_PROMPTS_TASKS (seed-prompts.ts, seed-operations.ts)
+#### 13. AI_PROMPTS_TASKS (seed-operations.ts)
 
-Seeds AI prompt templates and example tasks.
+Seeds example tasks.
 
 ---
 
@@ -1180,7 +1179,6 @@ export interface WarrantyFactoryOptions {
 4. seedWarrantiesMaintenance(prisma)// Requires Assets
 5. seedCMDB(prisma)                 // No dependencies (just relationship types)
 6. seedLayer3ITAM(prisma)           // Requires Assets, Persons, CMDB types
-7. seedPrompts(prisma)              // No dependencies
 ```
 
 #### 5. Cached tsx Process
