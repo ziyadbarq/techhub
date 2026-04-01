@@ -55,6 +55,7 @@ function createMockConfigService(): IConfigService {
       return val;
     }),
     invalidateCache: vi.fn(),
+    getServerStartTimestamp: vi.fn(() => null),
   };
 }
 

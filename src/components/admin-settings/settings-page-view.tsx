@@ -42,6 +42,7 @@ interface SettingsPageViewProps {
     notSet: number;
   };
   restartNeeded: boolean;
+  isRestarting: boolean;
   onTabChange: (tab: SettingTab) => void;
   onValueChange: (key: string, value: string | null) => void;
   onSaveTab: (tab: SettingTab) => void;
@@ -95,6 +96,7 @@ export function SettingsPageView({
   canManage,
   stats,
   restartNeeded,
+  isRestarting,
   onTabChange,
   onValueChange,
   onSaveTab,
@@ -211,16 +213,21 @@ export function SettingsPageView({
               <Button
                 size="sm"
                 variant="outline"
-                disabled={isPending}
+                disabled={isRestarting}
                 onClick={onRestart}
                 className="shrink-0 gap-1.5 border-amber-400 text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/30"
               >
-                {isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                {isRestarting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Restarting...
+                  </>
                 ) : (
-                  <RefreshCw className="h-4 w-4" />
+                  <>
+                    <RefreshCw className="h-4 w-4" />
+                    Restart Now
+                  </>
                 )}
-                Restart Now
               </Button>
             </CardContent>
           </Card>

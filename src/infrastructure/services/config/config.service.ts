@@ -10,6 +10,7 @@ import type { IConfigService } from "@/core/services/config.service.interface";
 import type { ISystemSettingRepository } from "@/core/repositories/system-setting.repository.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { getSettingDefinition } from "@/core/domain/value-objects/settings-registry";
+import { getLastHydrationTimestamp } from "@/infrastructure/config/hydrate-settings";
 
 interface CacheEntry {
   value: string | null;
@@ -105,5 +106,9 @@ export class ConfigService implements IConfigService {
     } else {
       this.cache.clear();
     }
+  }
+
+  getServerStartTimestamp(): Date | null {
+    return getLastHydrationTimestamp();
   }
 }

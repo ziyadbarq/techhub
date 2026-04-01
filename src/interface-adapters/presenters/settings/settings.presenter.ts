@@ -31,6 +31,7 @@ export class SettingsPresenter {
       updatedByEmail: setting.updatedByEmail,
       updatedAt: setting.updatedAt,
       hasValue: setting.source !== "not-set",
+      pendingRestart: setting.pendingRestart,
     };
   }
 

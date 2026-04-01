@@ -25,6 +25,7 @@ export function SettingsPageClient() {
   const [dirtyKeys, setDirtyKeys] = useState<Set<string>>(new Set());
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(true);
+  const [isRestarting, setIsRestarting] = useState(false);
   const { hasPermission } = usePermissions();
   const canManage = hasPermission(PERMISSIONS.SETTINGS_MANAGE);
 
@@ -123,16 +124,15 @@ export function SettingsPageClient() {
   );
 
   const handleRestart = useCallback(() => {
+    setIsRestarting(true);
     startTransition(async () => {
       const result = await restartApplicationAction();
       if (result.success) {
-        toast.success(
-          result.data.method === "pm2-reload"
-            ? "Application reloading (zero-downtime)..."
-            : "Application restarting...",
-        );
+        toast.success("Application reloading (zero-downtime)...");
+        // Keep disabled — the app is restarting, the page will reload
       } else {
-        toast.error(result.error);
+        toast.error(result.error, { duration: 10000 });
+        setIsRestarting(false);
       }
     });
   }, []);
@@ -144,9 +144,7 @@ export function SettingsPageClient() {
   ).length;
   const totalSecrets = settings.filter((s) => s.isSecret).length;
   const notSet = settings.filter((s) => s.source === "not-set").length;
-  const restartNeeded = settings.some(
-    (s) => s.requiresRestart && s.source === "database",
-  );
+  const restartNeeded = settings.some((s) => s.pendingRestart);
 
   // Group by tab
   const settingsByTab: Record<SettingTab, SettingResponseDTO[]> = {
@@ -171,6 +169,7 @@ export function SettingsPageClient() {
       canManage={canManage}
       stats={{ dbOverrides, secretsConfigured, totalSecrets, notSet }}
       restartNeeded={restartNeeded}
+      isRestarting={isRestarting}
       onTabChange={setActiveTab}
       onValueChange={handleValueChange}
       onSaveTab={handleSaveTab}

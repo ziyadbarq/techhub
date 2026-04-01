@@ -10,4 +10,6 @@ export interface IConfigService {
   getBoolean(key: string): Promise<boolean | undefined>;
   getOrThrow(key: string): Promise<string>;
   invalidateCache(key?: string): void;
+  /** When restart-required DB settings were last hydrated into process.env (server start). */
+  getServerStartTimestamp(): Date | null;
 }

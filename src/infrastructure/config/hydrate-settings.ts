@@ -26,6 +26,17 @@ const RESTART_REQUIRED_ENV_VARS = new Map(
   ]),
 );
 
+/**
+ * Timestamp of the last successful hydration. Settings with `updatedAt`
+ * before this time have already been applied to process.env and do not
+ * need another restart.
+ */
+let lastHydrationTimestamp: Date | null = null;
+
+export function getLastHydrationTimestamp(): Date | null {
+  return lastHydrationTimestamp;
+}
+
 export async function hydrateSettingsIntoEnv(): Promise<number> {
   const databaseUrl = process.env.DATABASE_URL;
 
@@ -71,6 +82,8 @@ export async function hydrateSettingsIntoEnv(): Promise<number> {
       process.env[envVarName] = resolvedValue;
       hydrated++;
     }
+
+    lastHydrationTimestamp = new Date();
 
     if (hydrated > 0) {
       console.log(

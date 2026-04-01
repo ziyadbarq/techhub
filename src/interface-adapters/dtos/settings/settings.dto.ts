@@ -26,6 +26,7 @@ export const SettingResponseSchema = z.object({
   updatedByEmail: z.string().nullable(),
   updatedAt: z.date().nullable(),
   hasValue: z.boolean(),
+  pendingRestart: z.boolean(),
 });
 
 export type SettingResponseDTO = z.infer<typeof SettingResponseSchema>;

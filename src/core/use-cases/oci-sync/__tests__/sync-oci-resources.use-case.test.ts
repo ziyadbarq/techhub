@@ -316,6 +316,7 @@ describe("SyncOciResourcesUseCase", () => {
       getBoolean: vi.fn(async () => undefined),
       getOrThrow: vi.fn(async () => ""),
       invalidateCache: vi.fn(),
+      getServerStartTimestamp: vi.fn(() => null),
     };
 
     useCase = new SyncOciResourcesUseCase(

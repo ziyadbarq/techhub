@@ -142,7 +142,9 @@ export async function updateSettingsBulkAction(
 
 /**
  * Restart the application via PM2 graceful reload.
- * Falls back to process.exit if PM2 is not available (K8s will auto-restart).
+ * Only works when PM2 is managing the process. Returns an instructional
+ * error otherwise — never calls process.exit (which kills the app with
+ * no guarantee of auto-restart in Docker or dev environments).
  */
 export async function restartApplicationAction(): Promise<
   ActionResponse<{ method: string }>
@@ -155,7 +157,7 @@ export async function restartApplicationAction(): Promise<
       return { success: false, error: "Authentication required" };
     }
 
-    const method = await detectAndRestart();
+    const method = await attemptPm2Reload();
 
     return { success: true, data: { method } };
   } catch (error) {
@@ -169,28 +171,25 @@ export async function restartApplicationAction(): Promise<
   }
 }
 
-function detectAndRestart(): Promise<string> {
+function attemptPm2Reload(): Promise<string> {
   return new Promise((resolve, reject) => {
-    // Try PM2 reload first (zero-downtime)
     exec("pm2 reload barq-web", { timeout: 10000 }, (error) => {
       if (!error) {
         resolve("pm2-reload");
         return;
       }
 
-      // PM2 not available — exit process and let the orchestrator restart
-      // (K8s, Docker, systemd, etc.)
-      if (process.env.NODE_ENV === "production") {
-        resolve("process-exit");
-        // Delay exit so the response reaches the client
-        setTimeout(() => process.exit(0), 500);
-      } else {
-        reject(
-          new Error(
-            "Restart not available in development. Stop and restart the dev server manually.",
-          ),
-        );
-      }
+      // PM2 not available — give the admin clear instructions instead of
+      // killing the process (which leaves the app dead without a restart policy).
+      reject(
+        new Error(
+          "PM2 is not managing this process. Restart manually:\n" +
+            "• PM2: pm2 reload barq-web\n" +
+            "• Docker: docker compose restart app\n" +
+            "• K8s: kubectl rollout restart deployment/techhub\n" +
+            "• Dev: stop and restart the dev server",
+        ),
+      );
     });
   });
 }
