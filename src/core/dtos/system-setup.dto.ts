@@ -70,6 +70,8 @@ export interface SystemHealthCheckDto {
     imageTag: string;
     pipelineId: string;
     pipelineUrl?: string;
+    jobId: string;
+    jobUrl?: string;
     projectUrl?: string;
   };
   overall: boolean; // ALL services including worker (for monitoring/alerts)

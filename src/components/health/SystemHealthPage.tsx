@@ -487,6 +487,14 @@ export function SystemHealthPage() {
                       href: data.buildInfo.pipelineUrl,
                     },
                     {
+                      label: "GitLab Job",
+                      value:
+                        data.buildInfo.jobId === "local"
+                          ? "Unavailable"
+                          : `#${data.buildInfo.jobId}`,
+                      href: data.buildInfo.jobUrl,
+                    },
+                    {
                       label: "Built At",
                       value: formatBuildDate(data.buildInfo.buildDate),
                       secondary:

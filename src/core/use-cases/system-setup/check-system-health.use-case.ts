@@ -34,6 +34,8 @@ export class CheckSystemHealthUseCase {
   private getBuildInfo() {
     const projectUrl = process.env.PROJECT_URL || undefined;
     const gitCommitFull = process.env.GIT_COMMIT_FULL ?? process.env.GIT_COMMIT;
+    const pipelineId = process.env.PIPELINE_ID ?? "local";
+    const jobId = process.env.GITLAB_JOB_ID ?? "local";
 
     return {
       version: process.env.APP_VERSION ?? "dev",
@@ -42,8 +44,18 @@ export class CheckSystemHealthUseCase {
       gitRef: process.env.GIT_REF ?? "local",
       buildDate: process.env.BUILD_DATE ?? "unknown",
       imageTag: process.env.IMAGE_TAG ?? "local",
-      pipelineId: process.env.PIPELINE_ID ?? "local",
-      pipelineUrl: process.env.PIPELINE_URL || undefined,
+      pipelineId,
+      pipelineUrl:
+        process.env.PIPELINE_URL ||
+        (projectUrl && pipelineId !== "local"
+          ? `${projectUrl}/-/pipelines/${pipelineId}`
+          : undefined),
+      jobId,
+      jobUrl:
+        process.env.GITLAB_JOB_URL ||
+        (projectUrl && jobId !== "local"
+          ? `${projectUrl}/-/jobs/${jobId}`
+          : undefined),
       projectUrl,
     };
   }
