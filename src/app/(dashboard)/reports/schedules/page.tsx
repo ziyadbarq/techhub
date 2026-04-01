@@ -17,7 +17,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { requireFeature } from "@/lib/features/server";
-import { requirePermission, hasPermission } from "@/lib/permissions/server";
+import {
+  hasAny,
+  hasPermission,
+  requirePermission,
+} from "@/lib/permissions/server";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
@@ -37,8 +41,13 @@ export const metadata: Metadata = {
 export default async function ReportSchedulesPage() {
   try {
     await requireFeature(FEATURE_FLAGS.REPORTS);
-    // Minimum permission: REPORTS_SCHEDULE (can see own)
-    await requirePermission(PERMISSIONS.REPORTS_SCHEDULE);
+    const canAccess = await hasAny([
+      PERMISSIONS.REPORTS_SCHEDULE,
+      PERMISSIONS.REPORTS_MANAGE,
+    ]);
+    if (!canAccess) {
+      await requirePermission(PERMISSIONS.REPORTS_SCHEDULE);
+    }
   } catch (error) {
     handlePermissionRedirect(error, "/reports/schedules");
     throw error;

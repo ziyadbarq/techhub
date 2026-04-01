@@ -10,7 +10,11 @@ import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "../types";
 import { handleControllerError } from "../error-handler";
 import { isFeatureEnabled, requireFeature } from "@/lib/features/server";
-import { requirePermission } from "@/lib/permissions/server";
+import {
+  hasAny,
+  hasPermission,
+  requirePermission,
+} from "@/lib/permissions/server";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -27,9 +31,9 @@ import {
   ReportScheduleEntity,
   type ReportScheduleProps,
 } from "@/core/domain/entities/report-schedule.entity";
-import { hasPermission } from "@/lib/permissions/server";
 import type { IReportScheduleRepository } from "@/core/repositories/report-schedule.repository.interface";
 import type { IReportPdfService } from "@/core/services/report-pdf.service.interface";
+import type { IReportDataService } from "@/core/services/report-data.service.interface";
 import type { ExecuteScheduledReportUseCase } from "@/core/use-cases/reports/execute-scheduled-report.use-case";
 import { getSession, getCurrentUserId } from "@/lib/auth/session";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
@@ -43,7 +47,6 @@ import type {
   ReportFilterOption,
   FilterOptionsSource,
 } from "@/core/domain/reports/report-types";
-import { prisma } from "@/infrastructure/database/prisma/client";
 
 /**
  * Validate that a specific report exists and its required feature flags are enabled.
@@ -272,7 +275,7 @@ export async function createReportScheduleAction(
 ): Promise<ActionResponse<ReportScheduleProps>> {
   try {
     await requireFeature(FEATURE_FLAGS.REPORTS);
-    await requirePermission(PERMISSIONS.REPORTS_SCHEDULE);
+    await requireScheduleManagementAccess();
 
     const data = input as Record<string, unknown>;
     await assertReportAccess(String(data.reportId ?? ""));
@@ -334,7 +337,7 @@ export async function listMyReportSchedulesAction(): Promise<
 > {
   try {
     await requireFeature(FEATURE_FLAGS.REPORTS);
-    await requirePermission(PERMISSIONS.REPORTS_VIEW);
+    await requireScheduleManagementAccess();
 
     const userId = await getCurrentUserId();
     if (!userId) throw new Error("Not authenticated");
@@ -371,9 +374,17 @@ export async function deleteReportScheduleAction(
 ): Promise<ActionResponse<void>> {
   try {
     await requireFeature(FEATURE_FLAGS.REPORTS);
-    await requirePermission(PERMISSIONS.REPORTS_MANAGE);
+    await requireScheduleManagementAccess();
 
     const container = getContainer();
+    const repository = container.get<IReportScheduleRepository>(
+      DI_TOKENS.IReportScheduleRepository,
+    );
+    const existing = await repository.findById(scheduleId);
+    if (!existing) throw new Error("Schedule not found");
+
+    await assertScheduleOwnership(existing, container);
+
     const useCase = container.get<DeleteReportScheduleUseCase>(
       DI_TOKENS.DeleteReportScheduleUseCase,
     );
@@ -425,7 +436,7 @@ export async function toggleReportScheduleAction(
 ): Promise<ActionResponse<ReportScheduleProps>> {
   try {
     await requireFeature(FEATURE_FLAGS.REPORTS);
-    await requirePermission(PERMISSIONS.REPORTS_SCHEDULE);
+    await requireScheduleManagementAccess();
 
     const container = getContainer();
     const repository = container.get<IReportScheduleRepository>(
@@ -465,7 +476,7 @@ export async function updateReportScheduleAction(
 ): Promise<ActionResponse<ReportScheduleProps>> {
   try {
     await requireFeature(FEATURE_FLAGS.REPORTS);
-    await requirePermission(PERMISSIONS.REPORTS_SCHEDULE);
+    await requireScheduleManagementAccess();
 
     const data = input as Record<string, unknown>;
 
@@ -518,9 +529,17 @@ export async function triggerReportScheduleAction(
 ): Promise<ActionResponse<void>> {
   try {
     await requireFeature(FEATURE_FLAGS.REPORTS);
-    await requirePermission(PERMISSIONS.REPORTS_MANAGE);
+    await requireScheduleManagementAccess();
 
     const container = getContainer();
+    const repository = container.get<IReportScheduleRepository>(
+      DI_TOKENS.IReportScheduleRepository,
+    );
+    const existing = await repository.findById(scheduleId);
+    if (!existing) throw new Error("Schedule not found");
+
+    await assertScheduleOwnership(existing, container);
+
     const useCase = container.get<ExecuteScheduledReportUseCase>(
       DI_TOKENS.ExecuteScheduledReportUseCase,
     );
@@ -566,72 +585,11 @@ export async function getFilterOptionsAction(
       }
     }
 
-    let options: ReportFilterOption[];
-
-    switch (source) {
-      case "assetCategories": {
-        const rows = await prisma.assetCategory.findMany({
-          where: { deletedAt: null },
-          select: { id: true, name: true },
-          orderBy: { name: "asc" },
-        });
-        options = rows.map((r) => ({ value: r.id, label: r.name }));
-        break;
-      }
-      case "lifecycleStates": {
-        const rows = await prisma.lifecycleState.findMany({
-          select: { id: true, name: true },
-          orderBy: { name: "asc" },
-        });
-        options = rows.map((r) => ({ value: r.id, label: r.name }));
-        break;
-      }
-      case "departments": {
-        const rows = await prisma.organizationUnit.findMany({
-          where: { deletedAt: null },
-          select: { id: true, name: true },
-          orderBy: { name: "asc" },
-        });
-        options = rows.map((r) => ({ value: r.id, label: r.name }));
-        break;
-      }
-      case "stockLocations": {
-        const rows = await prisma.stockLocation.findMany({
-          select: { id: true, name: true },
-          orderBy: { name: "asc" },
-        });
-        options = rows.map((r) => ({ value: r.id, label: r.name }));
-        break;
-      }
-      case "vendors": {
-        const rows = await prisma.vendor.findMany({
-          where: { deletedAt: null },
-          select: { id: true, name: true },
-          orderBy: { name: "asc" },
-        });
-        options = rows.map((r) => ({ value: r.id, label: r.name }));
-        break;
-      }
-      case "ciClasses": {
-        const rows = await prisma.cIClass.findMany({
-          where: { deletedAt: null },
-          select: { id: true, name: true },
-          orderBy: { name: "asc" },
-        });
-        options = rows.map((r) => ({ value: r.id, label: r.name }));
-        break;
-      }
-      case "relationshipTypes": {
-        const rows = await prisma.relationshipType.findMany({
-          select: { id: true, name: true },
-          orderBy: { name: "asc" },
-        });
-        options = rows.map((r) => ({ value: r.id, label: r.name }));
-        break;
-      }
-      default:
-        options = [];
-    }
+    const container = getContainer();
+    const reportDataService = container.get<IReportDataService>(
+      DI_TOKENS.IReportDataService,
+    );
+    const options = await reportDataService.getFilterOptions(source);
 
     return { success: true, data: options };
   } catch (error) {
@@ -671,6 +629,18 @@ async function assertScheduleOwnership(
   if (!entity.isOwnedBy(person.id)) {
     throw new Error("You do not have permission to modify this schedule");
   }
+}
+
+async function requireScheduleManagementAccess(): Promise<void> {
+  const allowed = await hasAny([
+    PERMISSIONS.REPORTS_SCHEDULE,
+    PERMISSIONS.REPORTS_MANAGE,
+  ]);
+  if (allowed) {
+    return;
+  }
+
+  await requirePermission(PERMISSIONS.REPORTS_SCHEDULE);
 }
 
 /**

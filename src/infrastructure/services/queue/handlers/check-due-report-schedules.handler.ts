@@ -54,6 +54,7 @@ export async function handleCheckDueReportSchedules(
         REPORT_JOBS.GENERATE_AND_SEND,
         {
           scheduleId: schedule.id,
+          claimedNextSendAt: savedNextSendAt?.toISOString() ?? null,
           createdAt: Date.now(),
         },
       );

@@ -384,7 +384,10 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     description: "Individual report viewer with filters and export",
   },
   "/reports/schedules": {
-    requiredPermissions: [PERMISSIONS.REPORTS_SCHEDULE],
+    requiredPermissions: [
+      PERMISSIONS.REPORTS_SCHEDULE,
+      PERMISSIONS.REPORTS_MANAGE,
+    ],
     description: "Manage scheduled report email deliveries",
   },
 

@@ -1064,6 +1064,7 @@ export const DI_TOKENS = {
 
   // Reports: Services
   IReportPdfService: Symbol.for("IReportPdfService"),
+  IReportDataService: Symbol.for("IReportDataService"),
 
   // Reports: Repositories
   IReportScheduleRepository: Symbol.for("IReportScheduleRepository"),

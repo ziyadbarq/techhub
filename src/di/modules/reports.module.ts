@@ -9,7 +9,9 @@ import { DI_TOKENS } from "../types";
 import { logger } from "@/lib/logger";
 
 // Services
+import type { IReportDataService } from "@/core/services/report-data.service.interface";
 import type { IReportPdfService } from "@/core/services/report-pdf.service.interface";
+import { PrismaReportDataService } from "@/infrastructure/services/reports/prisma-report-data.service";
 import { ReportPdfService } from "@/infrastructure/services/reports/report-pdf.service";
 
 // Repositories
@@ -41,6 +43,11 @@ export function bindReportsDependencies(container: Container): void {
   // ==========================================
   // Services
   // ==========================================
+
+  container
+    .bind<IReportDataService>(DI_TOKENS.IReportDataService)
+    .to(PrismaReportDataService)
+    .inSingletonScope();
 
   container
     .bind<IReportPdfService>(DI_TOKENS.IReportPdfService)

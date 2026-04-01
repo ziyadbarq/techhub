@@ -277,4 +277,6 @@ export interface CheckDueReportSchedulesJobData extends BaseJobData {}
 export interface GenerateAndSendReportJobData extends BaseJobData {
   /** The report schedule ID to execute */
   scheduleId: string;
+  /** Original due timestamp claimed by the scheduler, serialized as ISO string */
+  claimedNextSendAt?: string | null;
 }

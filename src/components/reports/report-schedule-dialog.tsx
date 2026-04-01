@@ -80,8 +80,11 @@ export function ReportScheduleDialog(props: ReportScheduleDialogProps) {
   const [format, setFormat] = useState<"PDF" | "CSV" | "XLSX">("PDF");
   const [recipientsText, setRecipientsText] = useState("");
 
-  const { hasPermission } = usePermissions();
-  const canSchedule = hasPermission(PERMISSIONS.REPORTS_SCHEDULE);
+  const { hasAnyPermission } = usePermissions();
+  const canSchedule = hasAnyPermission([
+    PERMISSIONS.REPORTS_SCHEDULE,
+    PERMISSIONS.REPORTS_MANAGE,
+  ]);
 
   // Reset form when dialog opens
   useEffect(() => {

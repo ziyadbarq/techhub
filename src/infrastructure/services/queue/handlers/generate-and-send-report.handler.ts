@@ -17,7 +17,7 @@ export async function handleGenerateAndSendReport(
   const container = getContainer();
   const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
 
-  const { scheduleId } = job.data;
+  const { scheduleId, claimedNextSendAt } = job.data;
 
   logger.info("Starting scheduled report execution", {
     scheduleId,
@@ -28,7 +28,10 @@ export async function handleGenerateAndSendReport(
     DI_TOKENS.ExecuteScheduledReportUseCase,
   );
 
-  await useCase.execute(scheduleId);
+  await useCase.execute(
+    scheduleId,
+    claimedNextSendAt ? new Date(claimedNextSendAt) : undefined,
+  );
 
   logger.info("Scheduled report execution completed", {
     scheduleId,

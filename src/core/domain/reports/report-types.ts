@@ -5,7 +5,6 @@
  * Reports are configured as static definitions, not database records.
  */
 
-import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 
 /**
@@ -101,7 +100,7 @@ export interface ReportDefinition {
   /** Category for grouping */
   category: ReportCategory;
   /** Feature flags required (report hidden if any are disabled) */
-  requiredFeatureFlags: FeatureFlagKey[];
+  requiredFeatureFlags: string[];
   /** Permission required to view/run this report */
   requiredPermission: PermissionKey;
   /** Available filters */

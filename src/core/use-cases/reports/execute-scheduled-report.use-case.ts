@@ -8,70 +8,42 @@
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import type { IFeatureFlagRepository } from "@/core/repositories/feature-flag.repository.interface";
+import type { ICSVService } from "@/core/services/csv.service.interface";
 import type { IEmailService } from "@/core/services/email.service.interface";
 import type { IReportPdfService } from "@/core/services/report-pdf.service.interface";
 import type { IReportScheduleRepository } from "@/core/repositories/report-schedule.repository.interface";
 import { LogExecution } from "@/lib/decorators";
 import { ReportScheduleEntity } from "@/core/domain/entities/report-schedule.entity";
 import { getReportDefinition } from "@/core/domain/reports/report-definitions";
-import { isFeatureEnabled } from "@/lib/features/server";
-import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
-import { prisma } from "@/infrastructure/database/prisma/client";
-import {
-  generateAssetInventorySummary,
-  generateAssetFinancialSummary,
-  generateAssetsNearingEol,
-  generateUnassignedAssets,
-  generateWarrantyExpiration,
-  generateAssetAssignmentHistory,
-  generateStockMovementSummary,
-} from "./data-generators/asset-report-generators";
-import {
-  generateCiInventorySummary,
-  generateCiRelationshipOverview,
-  generateCiAssetCoverage,
-} from "./data-generators/cmdb-report-generators";
-import type {
-  ReportFilterValues,
-  ReportResult,
-} from "@/core/domain/reports/report-types";
-import { arrayToCSV } from "@/lib/csv-export";
+import type { ReportFilterValues } from "@/core/domain/reports/report-types";
+import type { GenerateReportDataUseCase } from "./generate-report-data.use-case";
 import * as XLSX from "xlsx";
-
-const REPORT_GENERATORS: Record<
-  string,
-  (
-    filters: ReportFilterValues,
-    prismaClient: typeof prisma,
-  ) => Promise<ReportResult>
-> = {
-  "asset-inventory-summary": generateAssetInventorySummary,
-  "asset-financial-summary": generateAssetFinancialSummary,
-  "assets-nearing-eol": generateAssetsNearingEol,
-  "unassigned-assets": generateUnassignedAssets,
-  "warranty-expiration": generateWarrantyExpiration,
-  "asset-assignment-history": generateAssetAssignmentHistory,
-  "stock-movement-summary": generateStockMovementSummary,
-  "ci-inventory-summary": generateCiInventorySummary,
-  "ci-relationship-overview": generateCiRelationshipOverview,
-  "ci-asset-coverage": generateCiAssetCoverage,
-};
 
 @injectable()
 export class ExecuteScheduledReportUseCase {
   constructor(
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.IFeatureFlagRepository)
+    private readonly featureFlagRepository: IFeatureFlagRepository,
+    @inject(DI_TOKENS.ICSVService)
+    private readonly csvService: ICSVService,
     @inject(DI_TOKENS.IEmailService)
     private readonly emailService: IEmailService,
     @inject(DI_TOKENS.IReportPdfService)
     private readonly pdfService: IReportPdfService,
     @inject(DI_TOKENS.IReportScheduleRepository)
     private readonly repository: IReportScheduleRepository,
+    @inject(DI_TOKENS.GenerateReportDataUseCase)
+    private readonly generateReportData: GenerateReportDataUseCase,
   ) {}
 
   @LogExecution("reports.schedule.execute")
-  async execute(scheduleId: string): Promise<void> {
+  async execute(
+    scheduleId: string,
+    claimedNextSendAt?: Date | null,
+  ): Promise<void> {
     const scheduleData = await this.repository.findById(scheduleId);
     if (!scheduleData) {
       throw new Error(`Schedule not found: ${scheduleId}`);
@@ -88,7 +60,7 @@ export class ExecuteScheduledReportUseCase {
 
     // Check if required feature flags are still enabled
     for (const flag of definition.requiredFeatureFlags) {
-      const enabled = await isFeatureEnabled(flag as FeatureFlagKey);
+      const enabled = await this.featureFlagRepository.isFeatureEnabled(flag);
       if (!enabled) {
         this.logger.info("Required feature flag disabled, skipping", {
           scheduleId,
@@ -104,17 +76,11 @@ export class ExecuteScheduledReportUseCase {
       }
     }
 
-    // Generate report data
-    const generator = REPORT_GENERATORS[scheduleData.reportId];
-    if (!generator) {
-      this.logger.error("No generator for report", undefined, {
-        reportId: scheduleData.reportId,
-      });
-      return;
-    }
-
     const filters = (scheduleData.filters ?? {}) as ReportFilterValues;
-    const result = await generator(filters, prisma);
+    const result = await this.generateReportData.execute(
+      scheduleData.reportId,
+      filters,
+    );
 
     // Generate attachment based on format
     let attachmentBuffer: Buffer;
@@ -139,16 +105,13 @@ export class ExecuteScheduledReportUseCase {
         break;
 
       case "CSV": {
-        const columns = definition.columns.map((c) => ({
-          key: c.key,
-          label: c.label,
-        }));
-        const csv = arrayToCSV(
-          result.rows as Record<
-            string,
-            string | number | boolean | null | undefined
-          >[],
-          columns,
+        const fields = definition.columns.map((column) => column.key);
+        const headers = Object.fromEntries(
+          definition.columns.map((column) => [column.key, column.label]),
+        );
+        const csv = this.csvService.exportToCSV(
+          result.rows as Record<string, unknown>[],
+          { fields, headers },
         );
         attachmentBuffer = Buffer.from(csv, "utf-8");
         attachmentFilename = `${scheduleData.reportId}-${dateStr}.csv`;
@@ -319,14 +282,19 @@ export class ExecuteScheduledReportUseCase {
         nextSendAt: marked.nextSendAt,
       });
     } else {
-      // All deliveries failed — restore nextSendAt for retry on next cycle
-      // but don't update lastSentAt since nothing was actually sent
+      // Restore the claimed due time so the checker will retry this missed slot
+      // on its next pass instead of skipping ahead to the next cadence window.
+      const retryNextSendAt = claimedNextSendAt ?? scheduleData.nextSendAt;
       await this.repository.update(scheduleId, {
-        nextSendAt: marked.nextSendAt,
+        nextSendAt: retryNextSendAt,
       });
       this.logger.warn(
-        "All email deliveries failed, scheduled for next cycle",
-        { scheduleId, recipientCount: scheduleData.recipients.length },
+        "All email deliveries failed, restored schedule for retry",
+        {
+          scheduleId,
+          recipientCount: scheduleData.recipients.length,
+          retryNextSendAt: retryNextSendAt?.toISOString() ?? null,
+        },
       );
     }
 

@@ -11,7 +11,7 @@ import Link from "next/link";
 import { Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { requireFeature } from "@/lib/features/server";
-import { requirePermission, hasPermission } from "@/lib/permissions/server";
+import { hasAny, requirePermission } from "@/lib/permissions/server";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
@@ -41,7 +41,10 @@ export default async function ReportsPage() {
     throw error;
   }
 
-  const canSchedule = await hasPermission(PERMISSIONS.REPORTS_SCHEDULE);
+  const canSchedule = await hasAny([
+    PERMISSIONS.REPORTS_SCHEDULE,
+    PERMISSIONS.REPORTS_MANAGE,
+  ]);
 
   return (
     <div className="space-y-6">
