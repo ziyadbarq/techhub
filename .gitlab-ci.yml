@@ -471,11 +471,37 @@ build-and-push-oci-to-argo:
         echo "Tag v${APP_VERSION} already exists."
         exit 0
       fi
-    - git config user.email "${GITLAB_USER_EMAIL:-sdev@barq.com}"
-    - git config user.name "${GITLAB_USER_NAME:-${GITLAB_USER_LOGIN:-gitlab-ci}}"
-    - git remote set-url origin "${CI_REPOSITORY_URL}"
-    - git tag -a "v${APP_VERSION}" -m "Release v${APP_VERSION}"
-    - git push origin "v${APP_VERSION}"
+    - |
+      node --input-type=module <<'EOF'
+      const releaseVersion = `v${process.env.APP_VERSION}`;
+      const endpoint = `${process.env.CI_API_V4_URL}/projects/${process.env.CI_PROJECT_ID}/releases`;
+      const body = new URLSearchParams({
+        name: releaseVersion,
+        tag_name: releaseVersion,
+        ref: process.env.CI_COMMIT_SHA,
+        description: `Release ${releaseVersion}`,
+      });
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "JOB-TOKEN": process.env.CI_JOB_TOKEN,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body,
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error(
+          `Failed to create release ${releaseVersion}: ${response.status} ${response.statusText}`,
+        );
+        console.error(errorBody);
+        process.exit(1);
+      }
+
+      console.log(`Created release ${releaseVersion} from ${process.env.CI_COMMIT_SHA}`);
+      EOF
 
 tag-main-release-gcp:
   <<: *tag_main_release
