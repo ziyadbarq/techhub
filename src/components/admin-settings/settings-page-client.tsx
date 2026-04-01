@@ -13,6 +13,7 @@ import {
   listSettingsAction,
   updateSettingsBulkAction,
   restartApplicationAction,
+  checkRestartCapabilityAction,
 } from "@/interface-adapters/controllers/settings/settings.controller";
 import { SettingsPageView } from "./settings-page-view";
 
@@ -26,17 +27,28 @@ export function SettingsPageClient() {
   const [isPending, startTransition] = useTransition();
   const [isLoading, setIsLoading] = useState(true);
   const [isRestarting, setIsRestarting] = useState(false);
+  const [canRestart, setCanRestart] = useState<boolean | null>(null);
   const { hasPermission } = usePermissions();
   const canManage = hasPermission(PERMISSIONS.SETTINGS_MANAGE);
 
   const fetchSettings = useCallback(() => {
     startTransition(async () => {
-      const result = await listSettingsAction();
-      if (result.success) {
-        setSettings(result.data.settings);
+      const [result, restartCheck] = await Promise.all([
+        listSettingsAction(),
+        canRestart === null ? checkRestartCapabilityAction() : null,
+      ]);
+
+      if (restartCheck?.success) {
+        setCanRestart(restartCheck.data.canRestart);
+      }
+
+      // Use the settings result (rename for clarity)
+      const settingsResult = result;
+      if (settingsResult.success) {
+        setSettings(settingsResult.data.settings);
         // Initialize form values from current settings
         const values: Record<string, string | null> = {};
-        for (const setting of result.data.settings) {
+        for (const setting of settingsResult.data.settings) {
           if (setting.isEditable && !setting.isSecret) {
             values[setting.key] = setting.value;
           }
@@ -44,11 +56,11 @@ export function SettingsPageClient() {
         setFormValues(values);
         setDirtyKeys(new Set());
       } else {
-        toast.error(result.error);
+        toast.error(settingsResult.error);
       }
       setIsLoading(false);
     });
-  }, []);
+  }, [canRestart]);
 
   useEffect(() => {
     fetchSettings();
@@ -169,6 +181,7 @@ export function SettingsPageClient() {
       canManage={canManage}
       stats={{ dbOverrides, secretsConfigured, totalSecrets, notSet }}
       restartNeeded={restartNeeded}
+      canRestart={canRestart === true}
       isRestarting={isRestarting}
       onTabChange={setActiveTab}
       onValueChange={handleValueChange}

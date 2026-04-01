@@ -171,6 +171,42 @@ export async function restartApplicationAction(): Promise<
   }
 }
 
+/**
+ * Check whether the app can be restarted from the UI (PM2 available).
+ * Called once on page load so the banner can adapt its display.
+ */
+export async function checkRestartCapabilityAction(): Promise<
+  ActionResponse<{ canRestart: boolean }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.SETTINGS_MANAGE);
+    const available = await isPm2Available();
+    return { success: true, data: { canRestart: available } };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to check restart capability",
+    };
+  }
+}
+
+let pm2CachedResult: boolean | null = null;
+
+function isPm2Available(): Promise<boolean> {
+  if (pm2CachedResult !== null) return Promise.resolve(pm2CachedResult);
+
+  return new Promise((resolve) => {
+    exec("pm2 pid barq-web", { timeout: 5000 }, (error, stdout) => {
+      const available = !error && stdout.trim().length > 0;
+      pm2CachedResult = available;
+      resolve(available);
+    });
+  });
+}
+
 function attemptPm2Reload(): Promise<string> {
   return new Promise((resolve, reject) => {
     exec("pm2 reload barq-web", { timeout: 10000 }, (error) => {
@@ -179,8 +215,6 @@ function attemptPm2Reload(): Promise<string> {
         return;
       }
 
-      // PM2 not available — give the admin clear instructions instead of
-      // killing the process (which leaves the app dead without a restart policy).
       reject(
         new Error(
           "PM2 is not managing this process. Restart manually:\n" +

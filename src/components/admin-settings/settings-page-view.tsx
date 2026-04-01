@@ -42,6 +42,7 @@ interface SettingsPageViewProps {
     notSet: number;
   };
   restartNeeded: boolean;
+  canRestart: boolean;
   isRestarting: boolean;
   onTabChange: (tab: SettingTab) => void;
   onValueChange: (key: string, value: string | null) => void;
@@ -96,6 +97,7 @@ export function SettingsPageView({
   canManage,
   stats,
   restartNeeded,
+  canRestart,
   isRestarting,
   onTabChange,
   onValueChange,
@@ -205,30 +207,33 @@ export function SettingsPageView({
                     Restart required
                   </p>
                   <p className="text-xs text-amber-700 dark:text-amber-400">
-                    Some saved settings need an application restart to take
-                    effect.
+                    {canRestart
+                      ? "Some saved settings need an application restart to take effect."
+                      : "Restart the server to apply changes: pm2 reload barq-web, docker compose restart, or kubectl rollout restart."}
                   </p>
                 </div>
               </div>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={isRestarting}
-                onClick={onRestart}
-                className="shrink-0 gap-1.5 border-amber-400 text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/30"
-              >
-                {isRestarting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Restarting...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="h-4 w-4" />
-                    Restart Now
-                  </>
-                )}
-              </Button>
+              {canRestart && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isRestarting}
+                  onClick={onRestart}
+                  className="shrink-0 gap-1.5 border-amber-400 text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/30"
+                >
+                  {isRestarting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Restarting...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="h-4 w-4" />
+                      Restart Now
+                    </>
+                  )}
+                </Button>
+              )}
             </CardContent>
           </Card>
         )}
