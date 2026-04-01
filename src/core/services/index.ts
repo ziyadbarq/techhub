@@ -5,11 +5,6 @@
  * Services define contracts for infrastructure implementations.
  */
 
-// AI Services
-export type { IAIContentGeneratorService } from "./ai-content-generator.service.interface";
-export type { IAIPromptManagerService } from "./ai-prompt-manager.service.interface";
-export type { IAIDebugTraceService } from "./ai-debug-trace.service.interface";
-
 // File Storage Service
 export type { IFileStorageService } from "./file-storage.service.interface";
 
@@ -31,24 +26,6 @@ export type {
   CSVImportOptions,
   CSVImportResult,
 } from "./csv.service.interface";
-
-// AI Content Generator Types
-export type {
-  AIGenerationResult,
-  OutlineGenerationInput,
-  PresentationOutline,
-  SlideOutline,
-  ClickAnimation,
-  SlideContentGenerationInput,
-  GeneratedSlide,
-  CodeBlockMetadata,
-  Diagram,
-  SlideTransition,
-  ElementAnimation,
-  SlideRefinementInput,
-  ThemeRecommendation,
-  QualityReview,
-} from "./ai-content-generator.service.interface";
 
 // Real-time Services
 export type {

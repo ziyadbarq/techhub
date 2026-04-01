@@ -232,7 +232,6 @@ NODE_ENV="production"
 
 # Other required services
 REDIS_URL="redis://prod-redis:6379"
-OPENAI_API_KEY="sk-..."
 
 # Logging (optional)
 LOG_LEVEL="info"

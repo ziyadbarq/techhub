@@ -40,7 +40,6 @@ A production-ready Next.js 16 starter kit implementing Clean Architecture with d
 
 - ✅ **Clean Architecture** - 5-layer separation of concerns
 - ✅ **Dependency Injection** - InversifyJS with TypeScript decorators
-- ✅ **AI Integration** - OpenAI with structured outputs & prompt management
 - ✅ **Modern UI** - 35+ shadcn/ui components, OKLCH colors, dark mode
 - ✅ **Type Safety** - Strict TypeScript, Zod validation, Prisma ORM
 - ✅ **Developer Experience** - Hot reload, ESLint, Prettier, Husky hooks
@@ -311,7 +310,6 @@ openssl rand -hex 32
 # Configure other required variables in .env.local:
 # - DATABASE_URL (PostgreSQL connection string)
 # - REDIS_URL (Redis connection for background jobs)
-# - OPENAI_API_KEY (for AI features)
 # - NEXT_PUBLIC_APP_URL (your application URL)
 
 # Apply database migrations
@@ -449,10 +447,6 @@ src/
 │   │   └── repository-logger.ts            # Repository logging
 │   │
 │   └── services/                           # Service Implementations
-│       └── ai/
-│           ├── openai-content-generator.service.ts
-│           ├── openai-prompt-manager.service.ts
-│           └── openai-debug-trace.service.ts
 │
 ├── di/                                     # Dependency Injection
 │   ├── container.ts                        # InversifyJS container
@@ -2516,144 +2510,6 @@ Opens [http://localhost:5555](http://localhost:5555) with a GUI for viewing and 
 
 ---
 
-## 13. AI Integration
-
-### Overview
-
-The assets app includes complete OpenAI integration with:
-
-- ✅ GPT-5 with structured outputs
-- ✅ Extended caching (24-hour cache for prompts)
-- ✅ Modular prompt system
-- ✅ Debug tracing
-
-### AI Services
-
-**Location**: `src/infrastructure/services/ai/`
-
-1. **OpenAIContentGeneratorService** - Generate content with structured outputs
-2. **OpenAIPromptManagerService** - Compose prompts from blocks
-3. **OpenAIDebugTraceService** - Log AI requests/responses
-
-### Service Interfaces
-
-**Location**: `src/core/services/`
-
-```typescript
-export interface IAIContentGeneratorService {
-  generateContent<T>(
-    prompt: string,
-    schema: z.ZodType<T>,
-    options?: AIGenerationOptions,
-  ): Promise<T>;
-}
-
-export interface IAIPromptManagerService {
-  getPromptByKey(key: string): Promise<string>;
-  composePrompt(compositionKey: string): Promise<string>;
-}
-
-export interface IAIDebugTraceService {
-  logRequest(prompt: string, options?: Record<string, unknown>): void;
-  logResponse(response: unknown, duration: number): void;
-}
-```
-
-### Example Usage
-
-```typescript
-import { inject, injectable } from "inversify";
-import { DI_TOKENS } from "@/di/types";
-import { z } from "zod";
-import type { IAIContentGeneratorService } from "@/core/services/ai-content-generator.service.interface";
-
-const BlogPostSchema = z.object({
-  title: z.string(),
-  content: z.string(),
-  tags: z.array(z.string()),
-});
-
-@injectable()
-export class GenerateBlogPostUseCase {
-  constructor(
-    @inject(DI_TOKENS.IAIContentGeneratorService)
-    private readonly ai: IAIContentGeneratorService,
-  ) {}
-
-  async execute(topic: string): Promise<z.infer<typeof BlogPostSchema>> {
-    const prompt = `Write a blog post about: ${topic}`;
-    return await this.ai.generateContent(prompt, BlogPostSchema);
-  }
-}
-```
-
-### Prompt Management
-
-Prompts are stored in the database as reusable blocks.
-
-**Seed Example** (`seed.ts`):
-
-```typescript
-await prisma.promptBlock.createMany({
-  data: [
-    {
-      key: "system-role",
-      name: "System Role",
-      content:
-        "You are a helpful AI assistant specialized in technical writing.",
-    },
-    {
-      key: "blog-structure",
-      name: "Blog Structure",
-      content:
-        "Include: engaging title, introduction, 3-5 main points, conclusion.",
-    },
-  ],
-});
-
-await prisma.promptComposition.create({
-  data: {
-    key: "blog-post-generator",
-    name: "Blog Post Generator",
-    blocks: [
-      { key: "system-role", order: 1 },
-      { key: "blog-structure", order: 2 },
-    ],
-  },
-});
-```
-
-**Usage**:
-
-```typescript
-const prompt = await promptManager.composePrompt("blog-post-generator");
-const blogPost = await ai.generateContent(prompt, BlogPostSchema);
-```
-
-### Extended Caching
-
-OpenAI's extended caching reduces costs by caching prompts for 24 hours.
-
-**Enabled by default** in `OpenAIPromptManagerService`:
-
-```typescript
-const response = await openai.chat.completions.create({
-  model: "gpt-5",
-  messages: [
-    {
-      role: "system",
-      content: [
-        {
-          type: "text",
-          text: composedPrompt,
-          cache_control: { type: "ephemeral" }, // 24-hour cache
-        },
-      ],
-    },
-  ],
-});
-```
-
 ---
 
 ## 14. Theme System
@@ -2950,7 +2806,6 @@ Test full user flows (not yet implemented).
 
 ```env
 DATABASE_URL="postgresql://user:password@host:5432/db"
-OPENAI_API_KEY="sk-..."
 NODE_ENV="production"
 LOG_LEVEL="info"
 ```

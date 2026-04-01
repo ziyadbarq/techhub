@@ -86,8 +86,6 @@ services:
       # Logging
       LOG_LEVEL: ${LOG_LEVEL:-info}
 
-      # OpenAI (use dummy value if not provided)
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-sk-dummy-key-for-local-testing}
 
       # Encryption key for OAuth tokens (required)
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}

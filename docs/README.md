@@ -120,7 +120,6 @@ Cross-cutting features and utilities:
 - [Build Optimization Guide](./guides/BUILD_OPTIMIZATION.md) - Build performance optimization and bundle analysis
 - Email Service Integration - Microsoft Graph email via `MicrosoftGraphEmailService`, test with `scripts/dev/test-email.ts`
 - **[MISSING]** File Storage System - File upload/download, storage backends, and metadata management
-- **[MISSING]** AI Infrastructure - OpenAI integration, prompt management, caching, and structured outputs (currently disabled)
 
 #### Authentication & Security
 

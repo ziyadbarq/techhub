@@ -39,7 +39,6 @@ This assets app implements **Clean Architecture** (Robert C. Martin) with **Depe
 │  State Management  │  React Hooks, Server Actions        │
 │  DI Container      │  InversifyJS                        │
 │  Database          │  Prisma ORM, PostgreSQL             │
-│  AI Services       │  OpenAI API                         │
 │  Styling           │  Tailwind CSS 4, OKLCH colors       │
 └──────────────────────────────────────────────────────────┘
 ```
@@ -138,12 +137,6 @@ This assets app implements **Clean Architecture** (Robert C. Martin) with **Depe
 ║  │  • prisma-prompt-composition.repository.ts              │ ║
 ║  │  • prisma-helpers.ts (JSON utilities)                   │ ║
 ║  │  • repository-logger.ts                                 │ ║
-║  └─────────────────────────────────────────────────────────┘ ║
-║  ┌─────────────────────────────────────────────────────────┐ ║
-║  │  Service Implementations                                │ ║
-║  │  • openai-content-generator.service.ts                  │ ║
-║  │  • openai-prompt-manager.service.ts                     │ ║
-║  │  • openai-debug-trace.service.ts                        │ ║
 ║  └─────────────────────────────────────────────────────────┘ ║
 ║  ┌─────────────────────────────────────────────────────────┐ ║
 ║  │  Database                                               │ ║
@@ -372,7 +365,6 @@ Infrastructure Layer
 │  ┌───────────────────────────────────────────────────────┐ │
 │  │  BINDINGS (Interface → Implementation)                │ │
 │  │  • ITaskRepository → PrismaTaskRepository             │ │
-│  │  • IAIContentGenerator → OpenAIContentGenerator       │ │
 │  │  • CreateTaskUseCase → CreateTaskUseCase (self)       │ │
 │  └───────────────────────────────────────────────────────┘ │
 │                                                             │
@@ -704,90 +696,6 @@ Transformation happens in Repository:
 
 ---
 
-## AI Integration Architecture
-
-### AI Service Layers
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    AI INTEGRATION                           │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌───────────────────────────────────────────────────────┐ │
-│  │  Use Case Layer                                       │ │
-│  │  • GenerateContentUseCase (hypothetical)              │ │
-│  │  • Depends on: IAIContentGeneratorService             │ │
-│  └────────────────────┬──────────────────────────────────┘ │
-│                       │                                     │
-│                       ▼                                     │
-│  ┌───────────────────────────────────────────────────────┐ │
-│  │  Service Interface (Domain Layer)                     │ │
-│  │  • IAIContentGeneratorService                         │ │
-│  │  • IAIPromptManagerService                            │ │
-│  │  • IAIDebugTraceService                               │ │
-│  └────────────────────┬──────────────────────────────────┘ │
-│                       │                                     │
-│                       ▼                                     │
-│  ┌───────────────────────────────────────────────────────┐ │
-│  │  Service Implementation (Infrastructure)              │ │
-│  │  • OpenAIContentGeneratorService                      │ │
-│  │    - Uses OpenAI SDK                                  │ │
-│  │    - Structured outputs with Zod schemas              │ │
-│  │    - Extended caching (24h)                           │ │
-│  │  • OpenAIPromptManagerService                         │ │
-│  │    - Fetches prompt blocks from DB                    │ │
-│  │    - Composes prompts in order                        │ │
-│  │  • OpenAIDebugTraceService                            │ │
-│  │    - Logs requests/responses                          │ │
-│  └────────────────────┬──────────────────────────────────┘ │
-│                       │                                     │
-│                       ▼                                     │
-│  ┌───────────────────────────────────────────────────────┐ │
-│  │  External API                                         │ │
-│  │  • OpenAI GPT-5 API                                   │ │
-│  └───────────────────────────────────────────────────────┘ │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Prompt Composition Flow
-
-```
-1. Use Case requests composed prompt
-   │
-   ▼
-2. PromptManagerService.composePrompt("blog-post-generator")
-   │
-   ├──> Fetch PromptComposition by key
-   │       │
-   │       └──> SELECT * FROM prompt_compositions WHERE key = ?
-   │
-   ├──> Get blocks array: [{ key: "system-role", order: 1 }, ...]
-   │
-   ├──> For each block:
-   │       │
-   │       ├──> Fetch PromptBlock by key
-   │       │       │
-   │       │       └──> SELECT * FROM prompt_blocks WHERE key = ?
-   │       │
-   │       └──> Add content to composition
-   │
-   └──> Return concatenated prompt string
-
-3. ContentGeneratorService.generateContent(prompt, schema)
-   │
-   ├──> Call OpenAI API with:
-   │       • messages: [{ role: "system", content: prompt }]
-   │       • cache_control: { type: "ephemeral" }
-   │       • response_format: { type: "json_schema", schema }
-   │
-   └──> Parse response with Zod schema
-
-4. Return structured data to use case
-```
-
----
-
 ## Design Principles
 
 ### SOLID Principles
@@ -850,7 +758,6 @@ Transformation happens in Repository:
 
 - **Stateless Design**: No server-side sessions
 - **Database Connection Pooling**: Prisma connection pooling
-- **Caching**: OpenAI extended caching (24h)
 - **Load Balancing**: Multiple Next.js instances
 
 ### Vertical Scaling

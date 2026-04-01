@@ -148,24 +148,6 @@ export const DI_TOKENS = {
   ILoggerService: Symbol.for("ILoggerService"),
 
   /**
-   * Token for IAIContentGeneratorService
-   * Handles AI-powered content generation using OpenAI models
-   */
-  IAIContentGeneratorService: Symbol.for("IAIContentGeneratorService"),
-
-  /**
-   * Token for IAIPromptManagerService
-   * Manages AI prompt templates and extended caching (24-hour)
-   */
-  IAIPromptManagerService: Symbol.for("IAIPromptManagerService"),
-
-  /**
-   * Token for IAIDebugTraceService
-   * Provides debug tracing for AI operations (when AI_DEBUG_MODE=true)
-   */
-  IAIDebugTraceService: Symbol.for("IAIDebugTraceService"),
-
-  /**
    * Token for IFileStorageService
    * Provides file system operations for debug artifacts and other files
    */

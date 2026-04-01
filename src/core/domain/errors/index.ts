@@ -10,6 +10,3 @@ export * from "./domain-errors";
 // Core domain errors
 export { ValidationError } from "./validation.error";
 export { NotFoundError } from "./not-found.error";
-
-// AI Errors
-export * from "./ai.errors";

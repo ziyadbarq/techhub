@@ -90,8 +90,6 @@ services:
       # Logging
       LOG_LEVEL: ${LOG_LEVEL:-info}
 
-      # OpenAI (optional - for AI features)
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
 
     # Run migrations and seed on startup (seed is idempotent — safe to run repeatedly)
     command: >

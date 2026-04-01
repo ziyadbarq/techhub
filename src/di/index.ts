@@ -30,7 +30,6 @@ export { DI_TOKENS, type DITokens, type TokenType } from "./types";
 
 // Export module binding functions (for advanced usage)
 export { bindDatabaseDependencies } from "./modules/database.module";
-export { bindAIServiceDependencies } from "./modules/ai-services.module";
 export { bindUseCaseDependencies } from "./modules/use-cases.module";
 export { bindLoggerDependencies } from "./modules/logger.module";
 export { bindCSVServiceDependencies } from "./modules/csv.module";

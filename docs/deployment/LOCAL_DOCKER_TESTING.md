@@ -187,7 +187,6 @@ BETTER_AUTH_URL=http://localhost:3000
 TRUSTED_ORIGINS=http://localhost:3000,http://192.168.1.x:3000
 
 # Optional
-OPENAI_API_KEY=sk-...                  # Only needed for AI features
 LOG_LEVEL=info                         # debug, info, warn, error
 ```
 

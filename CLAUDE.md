@@ -302,7 +302,7 @@ Keep messages concise with relevant context.
 
 **Environment Variables**: Copy `.env.example` to `.env.local`
 
-- Required: `DATABASE_URL`, `REDIS_URL`, `OPENAI_API_KEY`
+- Required: `DATABASE_URL`, `REDIS_URL`
 - Debug: `PRISMA_VERBOSE_LOGS=true`, `AUTH_DEBUG_LOGS=true`, `LOG_LEVEL=debug`
 - Config Server (optional): `CONFIG_SERVER_URL`, `SPRING_PROFILE` - See instrumentation.ts for Spring Cloud Config integration
 
