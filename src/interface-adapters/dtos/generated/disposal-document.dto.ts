@@ -17,8 +17,8 @@ export const DisposalDocumentDTO = z.object({
   documentType: z.string(),
   fileName: z.string(),
   filePath: z.string(),
-  fileSize: z.number(),
-  mimeType: z.string(),
+  sizeBytes: z.number().nullable(),
+  mimeType: z.string().nullable(),
   uploadedById: z.string().min(24).max(25),
   uploadedAt: z.date(),
 });

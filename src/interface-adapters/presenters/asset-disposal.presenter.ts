@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import type { AssetDisposal } from "@/core/domain/entities/asset-disposal.entity";
 import type { AssetDisposalDTO } from "../dtos/generated/asset-disposal.dto";
 

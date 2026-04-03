@@ -19,6 +19,7 @@ import type {
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { UpdateAssetUseCase } from "@/core/use-cases/asset/asset";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
+import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
 import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
 import type { CancelReservationUseCase } from "@/core/use-cases/reservations/cancel-reservation.use-case";
 import {
@@ -72,7 +73,10 @@ export async function assignAssetToEmployeeAction(data: {
   stockLocationFromId: string | null;
   note?: string;
 }): Promise<
-  ActionResponse<{ assignment: AssetAssignmentDTO; movement: StockMovementDTO }>
+  ActionResponse<{
+    assignment: AssetAssignmentDTO;
+    movement: StockMovementDTO | null;
+  }>
 > {
   try {
     await requirePermission(PERMISSIONS.ASSET_ASSIGNMENTS_CREATE);
@@ -116,6 +120,23 @@ export async function assignAssetToEmployeeAction(data: {
       });
     }
 
+    // Auto-end any active assignments before creating the new one
+    const assetAssignmentRepository = container.get<IAssetAssignmentRepository>(
+      DI_TOKENS.IAssetAssignmentRepository,
+    );
+    const updateAssignmentUseCase = container.get<UpdateAssetAssignmentUseCase>(
+      DI_TOKENS.UpdateAssetAssignmentUseCase,
+    );
+    const activeAssignments = await assetAssignmentRepository.findActiveByAsset(
+      data.assetId,
+    );
+    for (const active of activeAssignments) {
+      await updateAssignmentUseCase.execute({
+        id: active.id,
+        endDate: now,
+      });
+    }
+
     // 1. Create assignment
     const createAssignmentUseCase = container.get<CreateAssetAssignmentUseCase>(
       DI_TOKENS.CreateAssetAssignmentUseCase,
@@ -129,7 +150,7 @@ export async function assignAssetToEmployeeAction(data: {
       note: data.note,
     });
 
-    // 2. Create stock movement OUT with source tracking
+    // 2. Create stock movement OUT only if asset was in a stock location
     const assetMovementService = container.get<IAssetMovementService>(
       DI_TOKENS.IAssetMovementService,
     );
@@ -143,16 +164,7 @@ export async function assignAssetToEmployeeAction(data: {
           sourceReferenceType: "AssetAssignment",
           sourceReferenceId: assignment.id,
         })
-      : await assetMovementService.createMovement({
-          movementType: "OUT",
-          assetId: data.assetId,
-          stockLocationFromId: null,
-          performedById: personId,
-          reason: `Assigned to employee`,
-          source: "ASSIGNMENT",
-          sourceReferenceType: "AssetAssignment",
-          sourceReferenceId: assignment.id,
-        });
+      : null;
 
     // 3. Update asset location (set to null since assigned to person)
     const updateAssetUseCase = container.get<UpdateAssetUseCase>(
@@ -173,7 +185,7 @@ export async function assignAssetToEmployeeAction(data: {
       success: true,
       data: {
         assignment: presentAssetAssignment(assignment),
-        movement: presentStockMovement(movement),
+        movement: movement ? presentStockMovement(movement) : null,
       },
     };
   } catch (error) {

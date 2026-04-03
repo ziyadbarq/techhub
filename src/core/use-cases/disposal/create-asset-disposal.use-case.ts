@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
+import type { IDisposalApprovalRepository } from "@/core/repositories/disposal-approval.repository.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import {
   AssetDisposal,
   type DisposalType,
 } from "@/core/domain/entities/asset-disposal.entity";
+import { LogExecution } from "@/lib/decorators/log-execution.decorator";
+import { DisposalApproval } from "@/core/domain/entities/disposal-approval.entity";
 
 export interface CreateAssetDisposalRequest {
   assetId: string;
@@ -22,7 +21,7 @@ export interface CreateAssetDisposalRequest {
   recipientInfo?: string | null;
   note?: string | null;
   metadata?: Record<string, unknown> | null;
-  approverIds?: string[]; // TODO: Implement DisposalApproval creation
+  approverIds?: string[];
 }
 
 @injectable()
@@ -31,12 +30,15 @@ export class CreateAssetDisposalUseCase {
     @inject(DI_TOKENS.IAssetDisposalRepository)
     private readonly assetDisposalRepository: IAssetDisposalRepository,
 
+    @inject(DI_TOKENS.IDisposalApprovalRepository)
+    private readonly disposalApprovalRepository: IDisposalApprovalRepository,
+
     @inject(DI_TOKENS.IIdGenerator)
     private readonly idGenerator: IIdGenerator,
   ) {}
 
+  @LogExecution("disposal.create")
   async execute(request: CreateAssetDisposalRequest): Promise<AssetDisposal> {
-    // Create disposal entity
     const disposal = AssetDisposal.create(
       {
         assetId: request.assetId,
@@ -52,10 +54,18 @@ export class CreateAssetDisposalUseCase {
       this.idGenerator,
     );
 
-    // TODO: Handle metadata if needed (entity.create doesn't support it yet)
-    // TODO: Create DisposalApproval records for each approverId
+    const created = await this.assetDisposalRepository.create(disposal);
 
-    // Persist to database
-    return this.assetDisposalRepository.create(disposal, this.idGenerator);
+    if (request.approverIds && request.approverIds.length > 0) {
+      for (const approverId of request.approverIds) {
+        const approval = DisposalApproval.create(
+          { disposalId: created.id, approverId },
+          this.idGenerator,
+        );
+        await this.disposalApprovalRepository.create(approval);
+      }
+    }
+
+    return created;
   }
 }

@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 /**
  * Asset Disposal Controller
  */
@@ -14,7 +10,8 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
-import { getCurrentUserId } from "@/lib/auth/session";
+import { getSession } from "@/lib/auth/session";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import {
   CreateAssetDisposalDTO,
   StartDisposalDTO,
@@ -49,6 +46,31 @@ import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
 import type { AssetDisposal } from "@/core/domain/entities/asset-disposal.entity";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { requireFeature } from "@/lib/features/server";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+
+/**
+ * Resolve current user's linked Person ID
+ * Returns null if the user has no session or is not linked to a Person record
+ */
+async function resolveCurrentPersonId(
+  container: ReturnType<typeof getContainer>,
+): Promise<string | null> {
+  const { user } = await getSession();
+  if (!user) {
+    return null;
+  }
+
+  const personRepository = container.get<IPersonRepository>(
+    DI_TOKENS.IPersonRepository,
+  );
+
+  const person =
+    (await personRepository.findByUserId(user.id)) ||
+    (user.email ? await personRepository.findByEmail(user.email) : null);
+
+  return person?.id ?? null;
+}
 
 /**
  * Enrich asset disposals with related entity display data
@@ -96,12 +118,19 @@ export async function createAssetDisposalAction(
   data: z.infer<typeof CreateAssetDisposalDTO>,
 ): Promise<ActionResponse<AssetDisposalDTO>> {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
     const validated = CreateAssetDisposalDTO.parse(data);
-    const currentUserId = await getCurrentUserId();
-
     const container = getContainer();
+
+    const initiatedById = await resolveCurrentPersonId(container);
+    if (!initiatedById) {
+      throw new Error(
+        "Your account is not linked to a Person record. Ask an admin to link your user before creating disposals.",
+      );
+    }
+
     const useCase = container.get<CreateAssetDisposalUseCase>(
       DI_TOKENS.CreateAssetDisposalUseCase,
     );
@@ -110,7 +139,7 @@ export async function createAssetDisposalAction(
       assetId: validated.assetId,
       disposalType: validated.disposalType,
       reason: validated.reason,
-      initiatedById: currentUserId,
+      initiatedById,
       estimatedValue: validated.estimatedValue,
       currency: validated.currency,
       disposalVendorId: validated.disposalVendorId,
@@ -139,6 +168,7 @@ export async function listAssetDisposalsAction(): Promise<
   ActionResponse<AssetDisposalDTO[]>
 > {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_VIEW);
 
     const container = getContainer();
@@ -168,6 +198,7 @@ export async function getAssetDisposalAction(
   id: string,
 ): Promise<ActionResponse<AssetDisposalDTO>> {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_VIEW);
 
     const container = getContainer();
@@ -175,7 +206,7 @@ export async function getAssetDisposalAction(
       DI_TOKENS.GetAssetDisposalUseCase,
     );
 
-    const disposal = await useCase.execute({ disposalId: id });
+    const disposal = await useCase.execute({ id });
 
     return {
       success: true,
@@ -194,6 +225,7 @@ export async function approveDisposalAction(
   data: z.infer<typeof ApproveDisposalDTO>,
 ): Promise<ActionResponse<AssetDisposalDTO>> {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
     const validated = ApproveDisposalDTO.parse(data);
@@ -205,8 +237,7 @@ export async function approveDisposalAction(
 
     const disposal = await useCase.execute({
       disposalId: validated.disposalId,
-      approverId: validated.approverId,
-      comments: validated.comments,
+      approvedById: validated.approverId,
     });
 
     revalidatePath("/asset-disposals");
@@ -229,6 +260,7 @@ export async function rejectDisposalAction(
   data: z.infer<typeof RejectDisposalDTO>,
 ): Promise<ActionResponse<AssetDisposalDTO>> {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
     const validated = RejectDisposalDTO.parse(data);
@@ -240,7 +272,6 @@ export async function rejectDisposalAction(
 
     const disposal = await useCase.execute({
       disposalId: validated.disposalId,
-      approverId: validated.approverId,
       rejectionReason: validated.rejectionReason,
     });
 
@@ -264,6 +295,7 @@ export async function startDisposalAction(
   data: z.infer<typeof StartDisposalDTO>,
 ): Promise<ActionResponse<AssetDisposalDTO>> {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
     const validated = StartDisposalDTO.parse(data);
@@ -297,6 +329,7 @@ export async function completeSanitizationAction(
   data: z.infer<typeof CompleteSanitizationDTO>,
 ): Promise<ActionResponse<AssetDisposalDTO>> {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
     const validated = CompleteSanitizationDTO.parse(data);
@@ -332,6 +365,7 @@ export async function completeDisposalAction(
   data: z.infer<typeof CompleteDisposalDTO>,
 ): Promise<ActionResponse<AssetDisposalDTO>> {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
     const validated = CompleteDisposalDTO.parse(data);
@@ -344,7 +378,7 @@ export async function completeDisposalAction(
     const disposal = await useCase.execute({
       disposalId: validated.disposalId,
       disposalDate: validated.disposalDate,
-      actualProceeds: validated.actualProceeds,
+      actualProceeds: validated.actualProceeds ?? undefined,
     });
 
     revalidatePath("/asset-disposals");
@@ -372,6 +406,7 @@ export async function generateCertificateAction(
   }>
 > {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
     const validated = GenerateCertificateDTO.parse(data);
@@ -408,6 +443,7 @@ export async function cancelDisposalAction(
   data: z.infer<typeof CancelDisposalDTO>,
 ): Promise<ActionResponse<AssetDisposalDTO>> {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
     const validated = CancelDisposalDTO.parse(data);
@@ -442,6 +478,7 @@ export async function deleteAssetDisposalAction(
   id: string,
 ): Promise<ActionResponse<void>> {
   try {
+    await requireFeature(FEATURE_FLAGS.ASSET_DISPOSALS);
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
     const container = getContainer();

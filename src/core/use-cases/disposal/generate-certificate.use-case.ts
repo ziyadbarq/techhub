@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
 import type { AssetDisposal } from "@/core/domain/entities/asset-disposal.entity";
+import { LogExecution } from "@/lib/decorators/log-execution.decorator";
 
 export interface GenerateCertificateRequest {
   disposalId: string;
@@ -23,6 +20,7 @@ export class GenerateCertificateUseCase {
     private readonly assetDisposalRepository: IAssetDisposalRepository,
   ) {}
 
+  @LogExecution("disposal.generateCertificate")
   async execute(
     request: GenerateCertificateRequest,
   ): Promise<GenerateCertificateResponse> {
