@@ -309,7 +309,7 @@ export async function initializeCodeSequences(
 export async function seedExampleTasks(prisma: PrismaClient): Promise<number> {
   const exampleTasks = [
     {
-      title: "Welcome to Barq Assets!",
+      title: "Welcome to TechHub!",
       description:
         "This is an example task demonstrating the Clean Architecture pattern. " +
         "Explore the Task entity, repository, and use cases to understand how the architecture works.",

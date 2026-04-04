@@ -1,6 +1,6 @@
 # RBAC Developer Guide
 
-**Complete developer guide** for implementing Role-Based Access Control (RBAC) in the barq-assets.
+**Complete developer guide** for implementing Role-Based Access Control (RBAC) in TechHub.
 
 ## Table of Contents
 

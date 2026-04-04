@@ -123,7 +123,7 @@ export function SystemHealthPanel({
               </Button>
               <Button size="sm" variant="outline" asChild>
                 <a
-                  href="https://github.com/anthropics/barq-assets/blob/main/docs/features/SYSTEM_SETUP.md"
+                  href="https://github.com/azzuwayed/techhub/blob/main/docs/features/SYSTEM_SETUP.md"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

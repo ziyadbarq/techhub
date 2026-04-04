@@ -1,6 +1,6 @@
 # Developer Guide
 
-**Barq Assets** - A comprehensive guide to building production-ready applications with Clean Architecture.
+**TechHub** - A comprehensive guide to building production-ready applications with Clean Architecture.
 
 ## Table of Contents
 
@@ -32,7 +32,7 @@
 
 ## 1. Introduction
 
-### What is Barq Assets?
+### What is TechHub?
 
 A production-ready Next.js 16 starter kit implementing Clean Architecture with dependency injection. Built to accelerate development while maintaining code quality, testability, and scalability.
 
@@ -293,7 +293,7 @@ npm run test        # Unit + integration tests
 
 ```bash
 # Clone or use as template
-cd barq-assets
+cd techhub
 
 # Install dependencies
 npm install
@@ -351,7 +351,7 @@ npm run db:studio        # Open Prisma Studio
 ### High-Level Overview
 
 ```
-barq-assets/
+techhub/
 ├── src/                    # Source code
 │   ├── app/                # Next.js routes (Layer 1)
 │   ├── components/         # React components (Layer 1)
@@ -2444,7 +2444,7 @@ async function main() {
   await prisma.task.createMany({
     data: [
       {
-        title: "Welcome to Barq Assets!",
+        title: "Welcome to TechHub!",
         description: "This is an example task...",
         status: TaskStatus.COMPLETED,
       },

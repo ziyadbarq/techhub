@@ -1,6 +1,6 @@
 # Testing Guide
 
-This directory contains integration tests for the Barq Assets using Vitest and Testcontainers.
+This directory contains integration tests for the TechHub using Vitest and Testcontainers.
 
 ## Overview
 

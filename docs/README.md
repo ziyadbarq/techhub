@@ -1,6 +1,6 @@
 # Documentation Index
 
-Welcome to the comprehensive documentation for Barq Assets. This index provides quick access to all documentation resources organized by category.
+Welcome to the comprehensive documentation for TechHub. This index provides quick access to all documentation resources organized by category.
 
 ## 🚀 Start Here
 

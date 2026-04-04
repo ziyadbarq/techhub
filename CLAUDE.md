@@ -310,7 +310,7 @@ Keep messages concise with relevant context.
 
 **Dual Remote Setup**: Repository uses two remotes for backup and CI/CD
 
-- `origin` → GitHub (https://github.com/azzuwayed/barq-assets.git) - Backup repository
+- `github` → GitHub (https://github.com/azzuwayed/techhub.git) - Backup repository
 - `gitlab` → GitLab (git@gitlab.dev.baraq.com.internal:baraq-engineering/webdev/techhub.git) - CI/CD trigger
 
 **Workflow**: Always commit locally first, then push to both remotes. Pushing to `gitlab` remote triggers CI/CD pipeline.
@@ -324,7 +324,7 @@ Keep messages concise with relevant context.
 git status
 
 # Push to both remotes
-git push origin main    # Backup to GitHub
+git push github main    # Backup to GitHub
 git push gitlab main    # Trigger CI/CD pipeline on GitLab
 
 # Check remote configuration

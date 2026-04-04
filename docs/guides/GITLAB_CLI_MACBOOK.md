@@ -9,13 +9,13 @@ Use this guide when you need to:
 - install `glab` on macOS
 - authenticate against `gitlab.dev.baraq.com.internal`
 - create or manage merge requests from the terminal
-- work safely in this repo's dual-remote setup (`origin` + `gitlab`)
+- work safely in this repo's dual-remote setup (`github` + `gitlab`)
 
 ## Repository context
 
 This repository uses two remotes:
 
-- `origin` -> GitHub backup: `https://github.com/azzuwayed/barq-assets.git`
+- `github` -> GitHub backup: `https://github.com/azzuwayed/techhub.git`
 - `gitlab` -> internal GitLab: `git@gitlab.dev.baraq.com.internal:baraq-engineering/webdev/techhub.git`
 
 `gitlab` is the remote that triggers CI/CD and hosts merge requests.
@@ -158,7 +158,7 @@ glab config get api_protocol --host gitlab.dev.baraq.com.internal
 
 ## Working in this dual-remote repository
 
-Because this repo also has a GitHub `origin`, do not rely on implicit host selection for MR commands. Prefer one of these patterns:
+Because this repo also has a GitHub `github` remote, do not rely on implicit host selection for MR commands. Prefer one of these patterns:
 
 ```bash
 GITLAB_HOST=gitlab.dev.baraq.com.internal glab mr list -R baraq-engineering/webdev/techhub
@@ -168,7 +168,7 @@ GITLAB_HOST=gitlab.dev.baraq.com.internal glab mr list -R baraq-engineering/webd
 GITLAB_HOST=gitlab.dev.baraq.com.internal glab mr create -R baraq-engineering/webdev/techhub ...
 ```
 
-That removes ambiguity when `origin` points to GitHub and `gitlab` points to the internal GitLab project.
+That removes ambiguity when `github` points to GitHub and `gitlab` points to the internal GitLab project.
 
 ## Common workflows
 

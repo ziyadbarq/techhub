@@ -215,7 +215,7 @@ The landing page ([`src/app/page.tsx`](src/app/page.tsx)) uses the logo:
   <div className="mb-8 flex justify-center">
     <Logo width={200} height={60} priority />
   </div>
-  <h1 className="text-5xl font-bold">Barq Assets</h1>
+  <h1 className="text-5xl font-bold">TechHub</h1>
 </div>
 ```
 

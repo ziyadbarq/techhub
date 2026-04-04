@@ -8,7 +8,7 @@ This guide covers the marketing homepage and authentication flow, including auth
 
 ## Overview
 
-The Barq Assets application includes a public marketing homepage and authentication pages that intelligently adapt based on user authentication state.
+The TechHub application includes a public marketing homepage and authentication pages that intelligently adapt based on user authentication state.
 
 ### Pages
 
@@ -441,7 +441,7 @@ authClient
 
 ## Summary
 
-The Barq Assets marketing pages and authentication flow provide:
+The TechHub marketing pages and authentication flow provide:
 
 ✅ **Seamless UX** - No flashes, smooth transitions
 ✅ **Smart Navigation** - Buttons adapt to auth state

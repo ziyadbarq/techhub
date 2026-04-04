@@ -24,9 +24,9 @@ import {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Documentation | Barq Assets",
+  title: "Documentation | TechHub",
   description:
-    "Complete documentation for Barq Assets CMDB/ITAM system - user guides, workflows, and references",
+    "Complete documentation for TechHub CMDB/ITAM system - user guides, workflows, and references",
 };
 
 export default async function DocsLayout({

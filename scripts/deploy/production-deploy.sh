@@ -1,5 +1,5 @@
 #!/bin/bash
-# Production deployment pipeline for barq-assets
+# Production deployment pipeline for techhub
 # Called by git-auto-deploy.sh when changes are detected
 #
 # Exit codes:
@@ -453,7 +453,7 @@ stage_backup() {
 
     # Retention policy: keep last 10 backups, remove older ones
     local retention_count=10
-    local backup_glob="$backup_dir/barq-assets-"*".sql"
+    local backup_glob="$backup_dir/techhub-"*".sql"
     # shellcheck disable=SC2206
     local backups=( $backup_glob )
     # If glob doesn't match, it returns the pattern itself; filter that out
@@ -480,7 +480,7 @@ stage_backup() {
     fi
 
     # Generate backup filename
-    local backup_file="$backup_dir/barq-assets-$(date +%Y%m%d_%H%M%S).sql"
+    local backup_file="$backup_dir/techhub-$(date +%Y%m%d_%H%M%S).sql"
 
     # Call existing db-backup.sh script
     log "Creating database backup: $(basename "$backup_file")"
@@ -501,7 +501,7 @@ stage_backup() {
     log_success "Database backup created: $(basename "$backup_file") (${backup_size})"
 
     # Store backup path for potential rollback
-    local last_backup_file="$tmp_dir/barq-last-backup.txt"
+    local last_backup_file="$tmp_dir/techhub-last-backup.txt"
     echo "$backup_file" > "$last_backup_file"
     log "Backup path saved for rollback: $last_backup_file"
 }

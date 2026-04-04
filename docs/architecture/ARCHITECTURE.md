@@ -1,6 +1,6 @@
 # Architecture Documentation
 
-**Barq Assets** - Comprehensive architecture guide with diagrams.
+**TechHub** - Comprehensive architecture guide with diagrams.
 
 ## Table of Contents
 

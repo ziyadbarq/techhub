@@ -1,6 +1,6 @@
 {
   "$schema": "https://partykit.io/schema.json",
-  "name": "barq-assets",
+  "name": "techhub",
   "main": "partykit/server.ts",
   "parties": {
     "task-collaboration": "partykit/servers/task-collaboration.ts",

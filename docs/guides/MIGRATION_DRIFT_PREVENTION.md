@@ -324,7 +324,7 @@ git commit -m "feat: Add purchase order number to Asset"
 # ✅ Drift check (passes)
 
 # 7. Push and create PR
-git push origin feat/add-purchase-order-field
+git push github feat/add-purchase-order-field
 ```
 
 ## Troubleshooting

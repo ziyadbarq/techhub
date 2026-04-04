@@ -1,6 +1,6 @@
 # End-User Documentation System
 
-Technical guide for the in-app documentation system serving Barq Assets end-users.
+Technical guide for the in-app documentation system serving TechHub end-users.
 
 > **Important**: This documentation system is for **end-users** (employees using the system), NOT for developers. Developer documentation lives in `docs/`.
 

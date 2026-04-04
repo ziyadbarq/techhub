@@ -1287,7 +1287,7 @@ A: Ensure:
 
 ## License & Credits
 
-Part of the Barq Assets CMDB/ITAM system.
+Part of the TechHub CMDB/ITAM system.
 Built with Clean Architecture principles for a SAMA-regulated financial services environment.
 
 **Technology Stack**:

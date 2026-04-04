@@ -167,7 +167,7 @@ git commit -m "Add migration: describe_changes"
 
 ```bash
 # 1. Pull latest code
-git pull origin main
+git pull github main
 
 # 2. Install dependencies (use 'ci' for production)
 npm ci
@@ -203,7 +203,7 @@ npx prisma migrate deploy
 
 ```bash
 # Create backup before production migration
-pg_dump barq_assets_prod > backup_$(date +%Y%m%d_%H%M%S).sql
+pg_dump techhub_prod > backup_$(date +%Y%m%d_%H%M%S).sql
 
 # Then apply migration
 npx prisma migrate deploy
@@ -225,7 +225,7 @@ Ensure `.env` (production) has correct values:
 
 ```bash
 # Production database (NOT the dev database!)
-DATABASE_URL="postgresql://user:password@prod-host:5432/barq_assets_prod"
+DATABASE_URL="postgresql://user:password@prod-host:5432/techhub_prod"
 
 # Node environment
 NODE_ENV="production"
@@ -430,7 +430,7 @@ npx prisma migrate reset
 npx prisma migrate dev
 
 # Production: Restore from backup and investigate
-psql barq_assets_prod < backup_YYYYMMDD_HHMMSS.sql
+psql techhub_prod < backup_YYYYMMDD_HHMMSS.sql
 
 # Fix migration, test on staging, then redeploy
 ```

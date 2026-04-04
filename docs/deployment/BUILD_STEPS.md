@@ -186,7 +186,7 @@ yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_OC
 # 4. Commit and push changes to trigger ArgoCD sync
 git add manifests/${PROJECT}/${DEV_OCI_VALUES}
 git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
-git push origin -o ci.skip HEAD:main
+git push github -o ci.skip HEAD:main
 ```
 
 **Key Concepts**:
@@ -246,7 +246,7 @@ git push origin -o ci.skip HEAD:main
 # No rebuild - just update values.yaml for target environment
 yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${TARGET_VALUES}
 git commit -m "🚀 Promote ${PROJECT} to ${ENVIRONMENT}: ${IMAGE_TAG}"
-git push origin -o ci.skip HEAD:main
+git push github -o ci.skip HEAD:main
 ```
 
 **Benefits**:

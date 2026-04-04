@@ -31,8 +31,8 @@ type PlatformSettings = {
 
 const initialSettings: PlatformSettings = {
   organization: "Barq Technology",
-  productName: "Barq Assets",
-  baseUrl: "https://assets.barq.com",
+  productName: "TechHub",
+  baseUrl: "https://techhub.baraq.com",
   timezone: "Asia/Riyadh",
   locale: "en-SA",
   announcement:
@@ -111,7 +111,7 @@ export default function PlatformSettingsPage() {
             </h1>
             <p className="text-muted-foreground">
               Configure platform identity, branding, and general settings for
-              Barq Assets.
+              TechHub.
             </p>
           </div>
           <Button onClick={handleSave} disabled={saving}>
@@ -123,8 +123,8 @@ export default function PlatformSettingsPage() {
           <ShieldCheck className="h-4 w-4" />
           <AlertTitle>Configuration scope</AlertTitle>
           <AlertDescription>
-            These controls apply across the Barq Assets platform. Changes are
-            logged in audit trails and mirrored to downstream services when
+            These controls apply across the TechHub platform. Changes are logged
+            in audit trails and mirrored to downstream services when
             synchronization is enabled.
           </AlertDescription>
         </Alert>

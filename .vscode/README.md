@@ -1,6 +1,6 @@
 # VS Code Workspace Configuration
 
-This directory contains the ultimate VS Code workspace configuration for the Barq Assets project, optimized for Clean Architecture, Next.js 16, React 19, TypeScript 5.9, Prisma 7, and InversifyJS development.
+This directory contains the ultimate VS Code workspace configuration for the TechHub project, optimized for Clean Architecture, Next.js 16, React 19, TypeScript 5.9, Prisma 7, and InversifyJS development.
 
 ## 🚀 Quick Start
 

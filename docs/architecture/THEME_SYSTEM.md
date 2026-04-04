@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Barq Assets application uses a centralized, type-safe theme system built on **Next.js 16**, **Tailwind CSS 4**, and **shadcn/ui**. The system provides:
+The TechHub application uses a centralized, type-safe theme system built on **Next.js 16**, **Tailwind CSS 4**, and **shadcn/ui**. The system provides:
 
 - ✅ **Single Source of Truth** - All colors defined in one place
 - ✅ **Type Safety** - TypeScript types for all theme tokens

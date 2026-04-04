@@ -270,7 +270,7 @@ All shadcn/ui primitives included:
 
 ```bash
 # 1. Clone or navigate to the project
-cd /Users/abdullahalzuwayed/dev/barq/barq-assets
+cd /Users/abdullahalzuwayed/dev/barq/TechHub
 
 # 2. Install dependencies
 npm install

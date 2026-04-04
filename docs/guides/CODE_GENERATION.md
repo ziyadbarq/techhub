@@ -1,6 +1,6 @@
 # Code Generation System
 
-**Automatic code/tag generation for entities** - A comprehensive guide to the auto-generation system that creates unique identifiers for all major entities in Barq Assets.
+**Automatic code/tag generation for entities** - A comprehensive guide to the auto-generation system that creates unique identifiers for all major entities in TechHub.
 
 ## Table of Contents
 

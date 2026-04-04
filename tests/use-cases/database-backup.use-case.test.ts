@@ -56,7 +56,7 @@ function buildBackup(
     currentStep: overrides.currentStep ?? null,
     createdById: overrides.createdById ?? "user-1",
     notes: overrides.notes ?? null,
-    databaseName: overrides.databaseName ?? "barq_assets",
+    databaseName: overrides.databaseName ?? "techhub",
     postgresVersion: overrides.postgresVersion ?? "15",
     tableCount: overrides.tableCount ?? null,
     recordCount: overrides.recordCount ?? null,
@@ -240,7 +240,7 @@ describe("Database Backup Use Cases", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-01T00:00:00Z"));
     process.env.DATABASE_URL =
-      "postgresql://user:password@localhost:5432/barq_assets_test";
+      "postgresql://user:password@localhost:5432/techhub_test";
     idCounter = 0;
 
     container = new Container();

@@ -1,10 +1,10 @@
 #!/bin/bash
-# Auto-deployment script for barq-assets
+# Auto-deployment script for techhub
 # Polls GitHub and deploys when changes detected on main branch
 #
 # CONFIGURATION:
-#   Repository: azzuwayed/barq-assets (Private GitHub)
-#   Server: Oracle Cloud VM at /home/opc/node-projects/barq-assets
+#   Repository: azzuwayed/techhub (Private GitHub)
+#   Server: Oracle Cloud VM at /home/opc/node-projects/techhub
 #   Deployment Method: Git polling (no webhooks - VPN-only inbound)
 #   Branch: main only
 #   Notifications: Pushover (success, failure, health alerts)
@@ -13,7 +13,7 @@
 #   Downtime: ~0s via PM2 graceful reload
 #   aaPanel: Keep for monitoring, PM2 handles deployments
 #
-# Run via cron: */2 * * * * /home/opc/node-projects/barq-assets/scripts/git-auto-deploy.sh
+# Run via cron: */2 * * * * /home/opc/node-projects/techhub/scripts/deploy/git-auto-deploy.sh
 # Manual: scripts/deploy/git-auto-deploy.sh [--force|--skip-git-check]
 
 set -euo pipefail
@@ -22,7 +22,7 @@ set -euo pipefail
 # Configuration
 # ========================================
 
-PROJECT_DIR="/home/opc/node-projects/barq-assets"
+PROJECT_DIR="/home/opc/node-projects/techhub"
 LOG_DIR="$PROJECT_DIR/local/logs"
 LOG_FILE="$LOG_DIR/auto-deploy-$(date +%Y%m).log"  # Monthly aggregated log
 LOCK_FILE="/tmp/barq-deploy.lock"
@@ -61,7 +61,7 @@ HEALTH_ALERT_SOUND="${HEALTH_ALERT_SOUND:-siren}"
 HEALTH_ALERT_FILE="/tmp/barq-health-alert-sent"
 
 # GitHub repo URL for compare links
-GITHUB_REPO_URL="https://github.com/azzuwayed/barq-assets"
+GITHUB_REPO_URL="https://github.com/azzuwayed/techhub"
 
 # Optional flags
 FORCE_DEPLOY=0
@@ -80,6 +80,20 @@ ensure_project_dir() {
         echo "✗ ERROR: Invalid PROJECT_DIR (missing package.json or next.config.ts): $PROJECT_DIR" >&2
         exit 1
     fi
+}
+
+resolve_github_remote() {
+    if git remote get-url github >/dev/null 2>&1; then
+        echo "github"
+        return 0
+    fi
+
+    if git remote get-url origin >/dev/null 2>&1; then
+        echo "origin"
+        return 0
+    fi
+
+    return 1
 }
 
 # ========================================
@@ -528,8 +542,16 @@ main() {
     # Mark directory as safe for git (handles ownership differences)
     git config --global safe.directory "$PROJECT_DIR" 2>/dev/null || true
 
-    # Fetch latest from origin
-    if ! git fetch origin --quiet 2>&1; then
+    local github_remote remote_ref
+    github_remote=$(resolve_github_remote) || {
+        log_error "No GitHub remote found (expected `github` or `origin`)"
+        notify "Barq Deploy Error" "No GitHub remote found (expected github or origin)" 1
+        exit 1
+    }
+    remote_ref="${github_remote}/main"
+
+    # Fetch latest from the GitHub backup remote
+    if ! git fetch "$github_remote" --quiet 2>&1; then
         log_error "git fetch failed"
         notify "Barq Deploy Error" "git fetch failed" 1
         # Still run healthcheck so you know if app is alive
@@ -544,9 +566,9 @@ main() {
         exit 1
     }
 
-    REMOTE_HEAD=$(git rev-parse origin/main 2>/dev/null) || {
-        log_error "Failed to get remote HEAD (origin/main)"
-        notify "Barq Deploy Error" "Failed to get remote HEAD (origin/main)" 1
+    REMOTE_HEAD=$(git rev-parse "$remote_ref" 2>/dev/null) || {
+        log_error "Failed to get remote HEAD ($remote_ref)"
+        notify "Barq Deploy Error" "Failed to get remote HEAD ($remote_ref)" 1
         exit 1
     }
 
@@ -564,7 +586,7 @@ main() {
     fi
 
     # Sync local branch to remote before deployment to avoid repeated triggers
-    log "Syncing local main to origin/main..."
+    log "Syncing local main to $remote_ref..."
     if ! git checkout -f main >/dev/null 2>&1; then
         log_error "Failed to checkout main"
         notify "Barq Deploy Error" "Failed to checkout main" 1
@@ -572,8 +594,8 @@ main() {
     fi
 
     if ! git reset --hard "$REMOTE_HEAD" >/dev/null 2>&1; then
-        log_error "Failed to reset to origin/main"
-        notify "Barq Deploy Error" "Failed to reset to origin/main" 1
+        log_error "Failed to reset to $remote_ref"
+        notify "Barq Deploy Error" "Failed to reset to $remote_ref" 1
         exit 1
     fi
     log "Local repository updated to ${REMOTE_HEAD:0:7}"

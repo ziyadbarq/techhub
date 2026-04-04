@@ -270,12 +270,12 @@ npm run dev:restart    # Clear cache + restart dev server
 
 ## Production Cron Job
 
-**Location:** Production server only (`/home/opc/node-projects/barq-assets/`)
+**Location:** Production server only (`/home/opc/node-projects/techhub/`)
 
 **Cron Entry:**
 
 ```bash
-*/2 * * * * /home/opc/node-projects/barq-assets/scripts/deploy/git-auto-deploy.sh
+*/2 * * * * /home/opc/node-projects/techhub/scripts/deploy/git-auto-deploy.sh
 ```
 
 **Monitoring:**

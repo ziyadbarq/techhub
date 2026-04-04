@@ -2,7 +2,7 @@
 
 ## Overview
 
-Barq Assets uses a **centralized, dependency-injected ID generation system** based on CUID2 (Collision-resistant Unique Identifiers). This approach ensures consistency, testability, and adherence to Clean Architecture principles.
+TechHub uses a **centralized, dependency-injected ID generation system** based on CUID2 (Collision-resistant Unique Identifiers). This approach ensures consistency, testability, and adherence to Clean Architecture principles.
 
 ## Why CUID2?
 

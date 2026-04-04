@@ -2,7 +2,7 @@
 
 **Last Updated**: November 2025
 
-This document outlines the schema design conventions, patterns, and best practices used throughout the barq-assets application. Understanding these patterns is essential for maintaining consistency when adding new entities or modifying existing ones.
+This document outlines the schema design conventions, patterns, and best practices used throughout the TechHub application. Understanding these patterns is essential for maintaining consistency when adding new entities or modifying existing ones.
 
 ## Table of Contents
 

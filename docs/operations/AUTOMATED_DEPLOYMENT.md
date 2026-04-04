@@ -1,7 +1,7 @@
 # Automated Deployment System - Operations Guide
 
 **Last Updated:** 2025-01-01
-**System:** Barq Assets CMDB
+**System:** TechHub CMDB
 **Deployment Type:** Automated Git polling with zero-downtime PM2 reloads
 
 ---
@@ -53,7 +53,7 @@ Pushover notification (success or failure)
 ### **Required Environment**
 
 - **Server:** Oracle Cloud VM
-- **Path:** `/home/opc/node-projects/barq-assets`
+- **Path:** `/home/opc/node-projects/techhub`
 - **Users:**
   - `opc` - Git operations and deployment
   - `www` - Web server process owner
@@ -66,8 +66,8 @@ Pushover notification (success or failure)
 **Location:** `opc` user crontab (`crontab -e`)
 
 ```bash
-# Barq Assets Auto-Deployment (every 2 minutes)
-*/2 * * * * /home/opc/node-projects/barq-assets/scripts/deploy/git-auto-deploy.sh >> /home/opc/node-projects/barq-assets/local/logs/cron.log 2>&1
+# TechHub Auto-Deployment (every 2 minutes)
+*/2 * * * * /home/opc/node-projects/techhub/scripts/deploy/git-auto-deploy.sh >> /home/opc/node-projects/techhub/local/logs/cron.log 2>&1
 ```
 
 **Verify cron is running:**
@@ -81,9 +81,9 @@ crontab -l  # List cron jobs
 
 ```bash
 # Allow opc user to manage file permissions without password
-opc ALL=(ALL) NOPASSWD: /bin/chown -R www\:www /home/opc/node-projects/barq-assets
-opc ALL=(ALL) NOPASSWD: /bin/chown -R opc\:opc /home/opc/node-projects/barq-assets
-opc ALL=(ALL) NOPASSWD: /bin/chmod -R g+w /home/opc/node-projects/barq-assets
+opc ALL=(ALL) NOPASSWD: /bin/chown -R www\:www /home/opc/node-projects/techhub
+opc ALL=(ALL) NOPASSWD: /bin/chown -R opc\:opc /home/opc/node-projects/techhub
+opc ALL=(ALL) NOPASSWD: /bin/chmod -R g+w /home/opc/node-projects/techhub
 ```
 
 ---
@@ -94,18 +94,18 @@ opc ALL=(ALL) NOPASSWD: /bin/chmod -R g+w /home/opc/node-projects/barq-assets
 
 **Monitor auto-deployment logs (monthly aggregated):**
 ```bash
-tail -f /home/opc/node-projects/barq-assets/local/logs/auto-deploy-$(date +%Y%m).log
+tail -f /home/opc/node-projects/techhub/local/logs/auto-deploy-$(date +%Y%m).log
 ```
 
 **Monitor cron execution:**
 ```bash
-tail -f /home/opc/node-projects/barq-assets/local/logs/cron.log
+tail -f /home/opc/node-projects/techhub/local/logs/cron.log
 ```
 
 **Monitor specific deployment (per-deployment logs):**
 ```bash
-ls -lt /home/opc/node-projects/barq-assets/local/logs/deploy-*.log | head -5
-tail -f /home/opc/node-projects/barq-assets/local/logs/deploy-YYYYMMDD_HHMMSS.log
+ls -lt /home/opc/node-projects/techhub/local/logs/deploy-*.log | head -5
+tail -f /home/opc/node-projects/techhub/local/logs/deploy-YYYYMMDD_HHMMSS.log
 ```
 
 ### **PM2 Process Status**
@@ -132,7 +132,7 @@ Automatic notifications sent for:
 **Trigger a full deployment manually:**
 
 ```bash
-cd /home/opc/node-projects/barq-assets
+cd /home/opc/node-projects/techhub
 
 # Fix permissions (required before deployment)
 sudo chown -R opc:opc .
@@ -166,7 +166,7 @@ sudo chmod -R g+w .
 ```bash
 # 1. SSH to server
 ssh opc@your-server
-cd /home/opc/node-projects/barq-assets
+cd /home/opc/node-projects/techhub
 
 # 2. Find the failed deployment's backup
 ls -lt local/backups/db-script/ | head -5
@@ -201,7 +201,7 @@ curl http://localhost:2212/api/system-health
 ```bash
 # 1. SSH to server
 ssh opc@your-server
-cd /home/opc/node-projects/barq-assets
+cd /home/opc/node-projects/techhub
 
 # 2. Restore database to pre-deployment state
 bash scripts/deploy/db-backup.sh restore  # Interactive - select backup
@@ -278,8 +278,8 @@ crontab -e  # Uncomment the cron job
 
 3. Git fetch working?
    ```bash
-   cd /home/opc/node-projects/barq-assets
-   git fetch origin
+   cd /home/opc/node-projects/techhub
+   git fetch github
    git status
    ```
 
@@ -393,7 +393,7 @@ crontab -e  # Uncomment the cron job
 ### **Log Locations**
 
 ```
-/home/opc/node-projects/barq-assets/local/logs/
+/home/opc/node-projects/techhub/local/logs/
 ├── auto-deploy-YYYYMM.log      # Monthly aggregated deployment logs
 ├── deploy-YYYYMMDD_HHMMSS.log  # Per-deployment detailed logs
 └── cron.log                    # Cron execution logs
@@ -404,7 +404,7 @@ crontab -e  # Uncomment the cron job
 **Manual rotation (run monthly):**
 
 ```bash
-cd /home/opc/node-projects/barq-assets/local/logs
+cd /home/opc/node-projects/techhub/local/logs
 
 # Archive old logs
 tar -czf archive-$(date +%Y%m).tar.gz auto-deploy-*.log deploy-*.log
@@ -416,9 +416,9 @@ ls -t archive-*.tar.gz | tail -n +4 | xargs rm -f
 
 **Or use logrotate (automated):**
 
-Create `/etc/logrotate.d/barq-assets`:
+Create `/etc/logrotate.d/techhub`:
 ```
-/home/opc/node-projects/barq-assets/local/logs/*.log {
+/home/opc/node-projects/techhub/local/logs/*.log {
     monthly
     rotate 3
     compress
@@ -434,9 +434,9 @@ Create `/etc/logrotate.d/barq-assets`:
 ### **Automatic Backups**
 
 - **Created:** Before every deployment (Stage 2)
-- **Location:** `/home/opc/node-projects/barq-assets/local/backups/db-script/`
-- **Format:** `barq-assets-YYYYMMDD_HHMMSS.sql`
-- **Latest backup path:** Stored in `/home/opc/node-projects/barq-assets/local/tmp/barq-last-backup.txt`
+- **Location:** `/home/opc/node-projects/techhub/local/backups/db-script/`
+- **Format:** `techhub-YYYYMMDD_HHMMSS.sql`
+- **Latest backup path:** Stored in `/home/opc/node-projects/techhub/local/tmp/techhub-last-backup.txt`
 - **Retention:** Last 10 backups are kept; older backups are pruned automatically during deployment
 
 ### **Manual Backup**
@@ -456,7 +456,7 @@ bash scripts/deploy/db-backup.sh backup --file local/backups/db-script/pre-maint
 bash scripts/deploy/db-backup.sh restore
 
 # Restore specific backup
-bash scripts/deploy/db-backup.sh restore --file local/backups/db-script/barq-assets-20250101_120000.sql --force
+bash scripts/deploy/db-backup.sh restore --file local/backups/db-script/techhub-20250101_120000.sql --force
 
 # Restore with schema wipe (fixes drifted DB)
 bash scripts/deploy/db-backup.sh restore --drop-schema --force
@@ -566,7 +566,7 @@ chmod 600 local/backups/db-script/*.sql
 
 ```bash
 # Review deployment logs for patterns
-cd /home/opc/node-projects/barq-assets/local/logs
+cd /home/opc/node-projects/techhub/local/logs
 grep "DEPLOYMENT FAILED" auto-deploy-*.log
 
 # Check backup sizes
@@ -580,7 +580,7 @@ pm2 status
 
 ```bash
 # Archive old logs
-cd /home/opc/node-projects/barq-assets/local/logs
+cd /home/opc/node-projects/techhub/local/logs
 tar -czf archive-$(date +%Y%m).tar.gz auto-deploy-*.log deploy-*.log
 rm auto-deploy-*.log deploy-*.log
 

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Barq Assets ITAM/CMDB system will be documented in this file.
+All notable changes to the TechHub ITAM/CMDB system will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -135,6 +135,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See git history for previous changes prior to CHANGELOG introduction.
 
-[Unreleased]: https://github.com/your-org/barq-assets/compare/v1.2.0...HEAD
-[1.2.0]: https://github.com/your-org/barq-assets/compare/v1.1.0...v1.2.0
-[1.1.0]: https://github.com/your-org/barq-assets/releases/tag/v1.1.0
+[Unreleased]: https://github.com/your-org/techhub/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/your-org/techhub/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/your-org/techhub/releases/tag/v1.1.0

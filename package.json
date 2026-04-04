@@ -1,5 +1,5 @@
 {
-  "name": "barq-assets",
+  "name": "techhub",
   "version": "1.0.0",
   "description": "Enterprise CMDB and IT Asset Management system with Clean Architecture, DI, RBAC, and comprehensive Foundation layer",
   "private": true,

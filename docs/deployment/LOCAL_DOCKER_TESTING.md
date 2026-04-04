@@ -340,7 +340,7 @@ RUN apk add --no-cache bash
 **Solution**: The Dockerfile now defaults to Docker Hub. Ensure you're using the latest version:
 
 ```bash
-git pull origin dev
+git pull github dev
 docker compose up --build
 ```
 

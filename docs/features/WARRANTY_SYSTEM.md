@@ -661,6 +661,6 @@ A: Verify user has appropriate warranty permissions:
 
 ## License & Credits
 
-Part of the Barq Assets CMDB/ITAM system.
+Part of the TechHub CMDB/ITAM system.
 Built with Clean Architecture principles.
 Technology: Next.js 16, Prisma 7, PostgreSQL, BullMQ, InversifyJS.

@@ -1,6 +1,6 @@
 # Database Seeding Guide
 
-Comprehensive guide to the database seeding system in Barq Assets ITAM application.
+Comprehensive guide to the database seeding system in TechHub ITAM application.
 
 ## Table of Contents
 
@@ -1387,7 +1387,7 @@ console.log(`Seeding version: ${SEED_VERSION}`);
 
 ## Summary
 
-The Barq Assets seed system provides:
+The TechHub seed system provides:
 
 ✅ **DRY & SOLID**: No code duplication, clear separation of concerns
 ✅ **Type-Safe**: Full TypeScript with Prisma generated types
