@@ -235,7 +235,9 @@
   },
   "lint-staged": {
     "ignore": [
-      "src/generated/prisma/**"
+      "src/generated/prisma/**",
+      "src/config/navigation-groups/**",
+      "src/config/protected-routes.ts"
     ],
     "*.{ts,tsx}": [
       "prettier --write",

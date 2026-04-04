@@ -31,8 +31,21 @@ echo ""
 echo "✅ Type check passed!"
 echo ""
 
-# Phase 3: Drift detection (warn only, non-blocking)
-echo "🔍 Phase 3: Checking for migration drift..."
+# Phase 3: Route generation drift check
+if git diff --cached --name-only | grep -q "src/config/routes-manifest.ts"; then
+  echo "🔍 Phase 3: routes-manifest.ts staged — checking generated files..."
+  npm run generate:routes --silent 2>/dev/null
+  ROUTE_DRIFT=$(git diff --name-only -- src/config/navigation-groups/ src/config/protected-routes.ts)
+  if [ -n "$ROUTE_DRIFT" ]; then
+    echo "  ⚠️  Generated route files were out of date — auto-staging updates..."
+    git add src/config/navigation-groups/ src/config/protected-routes.ts
+  else
+    echo "  ✅ Generated route files are up to date"
+  fi
+fi
+
+# Phase 4: Drift detection (warn only, non-blocking)
+echo "🔍 Phase 4: Checking for migration drift..."
 npm run drift:check-warn
 
 # Drift check uses warn-only mode, so it won't block commits
