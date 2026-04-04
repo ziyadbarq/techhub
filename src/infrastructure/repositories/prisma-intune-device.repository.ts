@@ -157,44 +157,12 @@ export class PrismaIntuneDeviceRepository implements IIntuneDeviceRepository {
 
   async update(device: IntuneDevice): Promise<IntuneDevice> {
     const timer = this.logger.startTimer();
+    const data = this.buildUpdateData(device);
 
     try {
       const updated = await this.prisma.intuneDevice.update({
         where: { id: device.id },
-        data: {
-          // Include intuneDeviceId for re-enrollment scenarios
-          intuneDeviceId: device.intuneDeviceId,
-          azureAdDeviceId: device.azureAdDeviceId,
-          deviceName: device.deviceName,
-          serialNumber: device.serialNumber,
-          manufacturer: device.manufacturer,
-          model: device.model,
-          operatingSystem: device.operatingSystem,
-          osVersion: device.osVersion,
-          imei: device.imei,
-          wiFiMacAddress: device.wiFiMacAddress,
-          ethernetMacAddress: device.ethernetMacAddress,
-          intuneUserId: device.intuneUserId,
-          userPrincipalName: device.userPrincipalName,
-          userDisplayName: device.userDisplayName,
-          ownershipType: device.ownershipType,
-          complianceState: device.complianceState,
-          managementState: device.managementState,
-          isEncrypted: device.isEncrypted,
-          isSupervised: device.isSupervised,
-          isJailBroken: device.isJailBroken,
-          enrolledDateTime: device.enrolledDateTime,
-          lastSyncDateTime: device.lastSyncDateTime,
-          linkedAssetId: device.linkedAssetId,
-          linkedPersonId: device.linkedPersonId,
-          assetLinkMethod: device.assetLinkMethod,
-          assetLinkedAt: device.assetLinkedAt,
-          personLinkMethod: device.personLinkMethod,
-          personLinkedAt: device.personLinkedAt,
-          lastSyncedFromIntune: device.lastSyncedFromIntune,
-          isActive: device.isActive,
-          updatedAt: device.updatedAt,
-        },
+        data,
       });
 
       this.logger.timed("update", "Intune Device updated", timer(), {
@@ -202,6 +170,24 @@ export class PrismaIntuneDeviceRepository implements IIntuneDeviceRepository {
       });
       return this.toDomain(updated);
     } catch (error) {
+      const reconciled = await this.tryReconcileDuplicateAzureAdDevice(
+        device,
+        error,
+      );
+      if (reconciled) {
+        this.logger.timed(
+          "update",
+          "Intune Device updated after duplicate reconciliation",
+          timer(),
+          {
+            id: reconciled.id,
+            intuneDeviceId: reconciled.intuneDeviceId,
+            azureAdDeviceId: reconciled.azureAdDeviceId,
+          },
+        );
+        return reconciled;
+      }
+
       this.logger.error("update", "Failed to update Intune device", error);
       throw error;
     }
@@ -588,6 +574,181 @@ export class PrismaIntuneDeviceRepository implements IIntuneDeviceRepository {
   // Private Helpers
   // ==========================================
 
+  private buildUpdateData(
+    device: IntuneDevice,
+    overrides?: Partial<{
+      linkedAssetId: string | null;
+      linkedPersonId: string | null;
+      assetLinkMethod: AssetLinkMethod | null;
+      assetLinkedAt: Date | null;
+      personLinkMethod: PersonLinkMethod | null;
+      personLinkedAt: Date | null;
+    }>,
+  ) {
+    return {
+      // Include intuneDeviceId for re-enrollment scenarios
+      intuneDeviceId: device.intuneDeviceId,
+      azureAdDeviceId: device.azureAdDeviceId,
+      deviceName: device.deviceName,
+      serialNumber: device.serialNumber,
+      manufacturer: device.manufacturer,
+      model: device.model,
+      operatingSystem: device.operatingSystem,
+      osVersion: device.osVersion,
+      imei: device.imei,
+      wiFiMacAddress: device.wiFiMacAddress,
+      ethernetMacAddress: device.ethernetMacAddress,
+      intuneUserId: device.intuneUserId,
+      userPrincipalName: device.userPrincipalName,
+      userDisplayName: device.userDisplayName,
+      ownershipType: device.ownershipType,
+      complianceState: device.complianceState,
+      managementState: device.managementState,
+      isEncrypted: device.isEncrypted,
+      isSupervised: device.isSupervised,
+      isJailBroken: device.isJailBroken,
+      enrolledDateTime: device.enrolledDateTime,
+      lastSyncDateTime: device.lastSyncDateTime,
+      linkedAssetId: device.linkedAssetId,
+      linkedPersonId: device.linkedPersonId,
+      assetLinkMethod: device.assetLinkMethod,
+      assetLinkedAt: device.assetLinkedAt,
+      personLinkMethod: device.personLinkMethod,
+      personLinkedAt: device.personLinkedAt,
+      lastSyncedFromIntune: device.lastSyncedFromIntune,
+      isActive: device.isActive,
+      updatedAt: device.updatedAt,
+      ...overrides,
+    };
+  }
+
+  private isAzureAdUniqueConstraintError(error: unknown): boolean {
+    if (
+      typeof error !== "object" ||
+      error === null ||
+      !("code" in error) ||
+      error.code !== "P2002"
+    ) {
+      return false;
+    }
+
+    const message =
+      "message" in error && typeof error.message === "string"
+        ? error.message
+        : "";
+    const metadata =
+      "meta" in error && error.meta !== undefined
+        ? JSON.stringify(error.meta)
+        : "";
+
+    return `${message} ${metadata}`.includes("azureAdDeviceId");
+  }
+
+  private async tryReconcileDuplicateAzureAdDevice(
+    device: IntuneDevice,
+    error: unknown,
+  ): Promise<IntuneDevice | null> {
+    if (
+      !device.azureAdDeviceId ||
+      !this.isAzureAdUniqueConstraintError(error)
+    ) {
+      return null;
+    }
+
+    const duplicate = await this.prisma.intuneDevice.findUnique({
+      where: { azureAdDeviceId: device.azureAdDeviceId },
+    });
+
+    if (!duplicate || duplicate.id === device.id) {
+      return null;
+    }
+
+    const mergedLinks = {
+      linkedAssetId: device.linkedAssetId ?? duplicate.linkedAssetId,
+      linkedPersonId: device.linkedPersonId ?? duplicate.linkedPersonId,
+      assetLinkMethod: device.linkedAssetId
+        ? device.assetLinkMethod
+        : (duplicate.assetLinkMethod as AssetLinkMethod | null),
+      assetLinkedAt: device.linkedAssetId
+        ? device.assetLinkedAt
+        : duplicate.assetLinkedAt,
+      personLinkMethod: device.linkedPersonId
+        ? device.personLinkMethod
+        : (duplicate.personLinkMethod as PersonLinkMethod | null),
+      personLinkedAt: device.linkedPersonId
+        ? device.personLinkedAt
+        : duplicate.personLinkedAt,
+    };
+
+    if (
+      device.linkedAssetId &&
+      duplicate.linkedAssetId &&
+      device.linkedAssetId !== duplicate.linkedAssetId
+    ) {
+      this.logger.warn(
+        "update",
+        "Duplicate Intune device rows have conflicting asset links; preserving target row link",
+        {
+          targetId: device.id,
+          duplicateId: duplicate.id,
+          targetLinkedAssetId: device.linkedAssetId,
+          duplicateLinkedAssetId: duplicate.linkedAssetId,
+        },
+      );
+    }
+
+    if (
+      device.linkedPersonId &&
+      duplicate.linkedPersonId &&
+      device.linkedPersonId !== duplicate.linkedPersonId
+    ) {
+      this.logger.warn(
+        "update",
+        "Duplicate Intune device rows have conflicting person links; preserving target row link",
+        {
+          targetId: device.id,
+          duplicateId: duplicate.id,
+          targetLinkedPersonId: device.linkedPersonId,
+          duplicateLinkedPersonId: duplicate.linkedPersonId,
+        },
+      );
+    }
+
+    this.logger.warn(
+      "update",
+      "Reconciling duplicate Intune device rows by azureAdDeviceId",
+      {
+        targetId: device.id,
+        duplicateId: duplicate.id,
+        intuneDeviceId: device.intuneDeviceId,
+        azureAdDeviceId: device.azureAdDeviceId,
+      },
+    );
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      await tx.intuneComplianceHistory.updateMany({
+        where: { intuneDeviceId: duplicate.id },
+        data: { intuneDeviceId: device.id },
+      });
+
+      await tx.intuneSyncLog.updateMany({
+        where: { intuneDeviceId: duplicate.id },
+        data: { intuneDeviceId: device.id },
+      });
+
+      await tx.intuneDevice.delete({
+        where: { id: duplicate.id },
+      });
+
+      return tx.intuneDevice.update({
+        where: { id: device.id },
+        data: this.buildUpdateData(device, mergedLinks),
+      });
+    });
+
+    return this.toDomain(updated);
+  }
+
   private buildWhereClause(filters?: IntuneDeviceFilters) {
     if (!filters) return {};
 
@@ -693,9 +854,7 @@ export class PrismaIntuneDeviceRepository implements IIntuneDeviceRepository {
 }
 
 @injectable()
-export class PrismaIntuneComplianceHistoryRepository
-  implements IIntuneComplianceHistoryRepository
-{
+export class PrismaIntuneComplianceHistoryRepository implements IIntuneComplianceHistoryRepository {
   private readonly logger = createRepositoryLogger(
     "IntuneComplianceHistoryRepository",
   );
