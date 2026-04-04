@@ -7,6 +7,7 @@
 
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import type { ReactElement } from "react";
 import Link from "next/link";
 import { Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LicenseComplianceReport } from "@/components/reports/license-compliance-report";
 import { ContractExpirationReport } from "@/components/reports/contract-expiration-report";
 import { OciResourceInventoryReport } from "@/components/reports/oci-resource-inventory-report";
-import { requireFeature } from "@/lib/features/server";
+import { isFeatureEnabled, requireFeature } from "@/lib/features/server";
 import { hasAny, requirePermission } from "@/lib/permissions/server";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -36,6 +37,12 @@ function CatalogSkeleton() {
   );
 }
 
+type SnapshotTab = {
+  value: string;
+  label: string;
+  content: ReactElement;
+};
+
 export default async function ReportsPage() {
   try {
     await requireFeature(FEATURE_FLAGS.REPORTS);
@@ -49,6 +56,41 @@ export default async function ReportsPage() {
     PERMISSIONS.REPORTS_SCHEDULE,
     PERMISSIONS.REPORTS_MANAGE,
   ]);
+  const [licensesEnabled, contractsEnabled, ociSyncEnabled] = await Promise.all(
+    [
+      isFeatureEnabled(FEATURE_FLAGS.LICENSES),
+      isFeatureEnabled(FEATURE_FLAGS.CONTRACTS),
+      isFeatureEnabled(FEATURE_FLAGS.OCI_SYNC),
+    ],
+  );
+  const snapshotTabs: SnapshotTab[] = [];
+  if (licensesEnabled) {
+    snapshotTabs.push({
+      value: "licenses",
+      label: "License Compliance",
+      content: <LicenseComplianceReport />,
+    });
+  }
+  if (contractsEnabled) {
+    snapshotTabs.push({
+      value: "contracts",
+      label: "Contract Expiration",
+      content: <ContractExpirationReport />,
+    });
+  }
+  if (ociSyncEnabled) {
+    snapshotTabs.push({
+      value: "oci",
+      label: "OCI Inventory",
+      content: <OciResourceInventoryReport />,
+    });
+  }
+  const tabsListClassName =
+    snapshotTabs.length === 1
+      ? "grid w-full grid-cols-1 gap-2"
+      : snapshotTabs.length === 2
+        ? "grid w-full grid-cols-1 gap-2 sm:grid-cols-2"
+        : "grid w-full grid-cols-1 gap-2 sm:grid-cols-3";
 
   return (
     <div className="space-y-6">
@@ -74,38 +116,35 @@ export default async function ReportsPage() {
         <ReportCatalog />
       </Suspense>
 
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-xl font-semibold tracking-tight">
-            Operational Snapshots
-          </h2>
-          <p className="text-muted-foreground">
-            Focused compliance and OCI inventory views added in the enterprise
-            hardening branch, without replacing the newer report catalog and
-            scheduling flow on `main`.
-          </p>
-        </div>
+      {snapshotTabs.length > 0 && (
+        <section className="space-y-4">
+          <div>
+            <h2 className="text-xl font-semibold tracking-tight">
+              Operational Snapshots
+            </h2>
+            <p className="text-muted-foreground">
+              Focused compliance and infrastructure views for quick operational
+              status checks.
+            </p>
+          </div>
 
-        <Tabs defaultValue="licenses" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-3">
-            <TabsTrigger value="licenses">License Compliance</TabsTrigger>
-            <TabsTrigger value="contracts">Contract Expiration</TabsTrigger>
-            <TabsTrigger value="oci">OCI Inventory</TabsTrigger>
-          </TabsList>
+          <Tabs defaultValue={snapshotTabs[0].value} className="w-full">
+            <TabsList className={tabsListClassName}>
+              {snapshotTabs.map((tab) => (
+                <TabsTrigger key={tab.value} value={tab.value}>
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-          <TabsContent value="licenses" className="mt-6">
-            <LicenseComplianceReport />
-          </TabsContent>
-
-          <TabsContent value="contracts" className="mt-6">
-            <ContractExpirationReport />
-          </TabsContent>
-
-          <TabsContent value="oci" className="mt-6">
-            <OciResourceInventoryReport />
-          </TabsContent>
-        </Tabs>
-      </section>
+            {snapshotTabs.map((tab) => (
+              <TabsContent key={tab.value} value={tab.value} className="mt-6">
+                {tab.content}
+              </TabsContent>
+            ))}
+          </Tabs>
+        </section>
+      )}
     </div>
   );
 }

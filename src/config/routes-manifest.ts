@@ -227,7 +227,6 @@ export const NAV_GROUPS: Record<NavGroupId, NavGroupMetadata> = {
     title: "System & Operations",
     collapsible: true,
     defaultCollapsed: true,
-    permission: PERMISSIONS.USERS_VIEW,
     order: 7,
   },
   rbac: {

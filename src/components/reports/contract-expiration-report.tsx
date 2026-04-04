@@ -41,17 +41,26 @@ interface ReportData {
 export function ContractExpirationReport() {
   const [data, setData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
+        setError(null);
         const result = await getContractExpirationReportAction();
-        if (result.success && result.data) {
+        if (result.success) {
           setData(result.data);
+        } else {
+          setData(null);
+          setError(
+            result.error ?? "Unable to load contract expiration report.",
+          );
         }
       } catch {
         toast.error("Failed to load contract expiration report");
+        setData(null);
+        setError("Failed to load contract expiration report.");
       } finally {
         setLoading(false);
       }
@@ -108,6 +117,22 @@ export function ContractExpirationReport() {
         <CardHeader>
           <CardTitle>Contract Expiration</CardTitle>
           <CardDescription>Loading report...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-purple-500" />
+            Contract Expiration
+          </CardTitle>
+          <CardDescription className="text-destructive">
+            {error}
+          </CardDescription>
         </CardHeader>
       </Card>
     );

@@ -112,7 +112,7 @@ export function MyServicesWidget() {
       headerAction={
         services.length > 0 && (
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/cmdb/services">
+            <Link href="/services">
               <ExternalLink className="mr-1 h-3 w-3" />
               View All
             </Link>
