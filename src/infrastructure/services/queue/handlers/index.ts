@@ -18,3 +18,7 @@ export {
   handleDatabaseBackup,
   handleDatabaseRestore,
 } from "./database-backup.handler";
+export { handleDatabaseCleanup } from "./database-cleanup.handler";
+export { handleDataExport } from "./data-export.handler";
+export { handleHealthCheck } from "./health-check.handler";
+export { handleDetectStaleCIs } from "./detect-stale-cis.handler";

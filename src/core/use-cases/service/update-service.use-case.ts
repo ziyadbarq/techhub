@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
+import type { ILoggerService } from "@/core/services";
 import type { Service } from "@/core/domain/entities/service.entity";
 import type {
   ServiceType,
@@ -13,6 +10,7 @@ import type {
   BusinessImpactLevel,
   CriticalityLevel,
 } from "@/generated/prisma";
+import { LogExecution } from "@/lib/decorators";
 
 export interface UpdateServiceRequest {
   serviceId: string;
@@ -62,8 +60,12 @@ export class UpdateServiceUseCase {
   constructor(
     @inject(DI_TOKENS.IServiceRepository)
     private readonly serviceRepository: IServiceRepository,
+
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("service.update")
   async execute(request: UpdateServiceRequest): Promise<Service> {
     const service = await this.serviceRepository.findById(request.serviceId);
     if (!service) {

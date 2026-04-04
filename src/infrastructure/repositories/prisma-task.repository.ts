@@ -44,6 +44,7 @@ export class PrismaTaskRepository implements ITaskRepository {
     const tasks = await this.prisma.task.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      take: filter?.limit,
     });
 
     return tasks.map(this.toDomain);
@@ -122,6 +123,35 @@ export class PrismaTaskRepository implements ITaskRepository {
     });
 
     return result;
+  }
+
+  /**
+   * Delete completed tasks older than the given date
+   */
+  async deleteOldCompleted(
+    cutoffDate: Date,
+    batchSize: number,
+  ): Promise<number> {
+    // Find IDs first (Prisma deleteMany doesn't support limit)
+    const toDelete = await this.prisma.task.findMany({
+      where: {
+        status: "COMPLETED",
+        updatedAt: { lt: cutoffDate },
+      },
+      select: { id: true },
+      take: batchSize,
+      orderBy: { updatedAt: "asc" },
+    });
+
+    if (toDelete.length === 0) return 0;
+
+    const result = await this.prisma.task.deleteMany({
+      where: {
+        id: { in: toDelete.map((t) => t.id) },
+      },
+    });
+
+    return result.count;
   }
 
   /**

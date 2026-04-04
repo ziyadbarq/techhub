@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitRepository } from "@/core/repositories/asset-kit.repository.interface";
@@ -33,7 +29,7 @@ export class CheckKitAvailabilityUseCase {
     @inject(DI_TOKENS.IAssetKitItemRepository)
     private readonly kitItemRepository: IAssetKitItemRepository,
     @inject(DI_TOKENS.IAssetKitCheckoutItemRepository)
-    private readonly checkoutItemRepository: IAssetKitCheckoutItemRepository,
+    private readonly _checkoutItemRepository: IAssetKitCheckoutItemRepository,
   ) {}
 
   async execute(

@@ -3,6 +3,8 @@
  *
  * Processes cleanup jobs that remove old completed tasks from the database.
  * Designed to run as a scheduled job (e.g., daily at 2 AM).
+ *
+ * Delegates to batchDeleteOldTasks to share logic with DATABASE_CLEANUP handler.
  */
 
 import type { Job } from "bullmq";
@@ -11,14 +13,15 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ITaskRepository } from "@/core/repositories/task.repository.interface";
 import type { ILoggerService } from "@/core/services";
+import {
+  batchDeleteOldTasks,
+  getBatchDeleteErrorContext,
+} from "./database-cleanup.handler";
 
 /**
  * Handles cleanup of old tasks job.
  *
- * Responsibilities:
- * - Find tasks older than specified days
- * - Delete completed tasks in batches
- * - Report cleanup statistics
+ * Deletes completed tasks older than the configured retention period in batches.
  *
  * @param job - BullMQ job instance
  * @returns Cleanup statistics
@@ -28,10 +31,9 @@ export async function handleCleanupOldTasks(
 ): Promise<{ deletedCount: number; processedBatches: number }> {
   const { olderThanDays, batchSize = 100 } = job.data;
 
-  // Get services from DI container
   const container = getContainer();
   const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
-  const _taskRepository = container.get<ITaskRepository>(
+  const taskRepository = container.get<ITaskRepository>(
     DI_TOKENS.ITaskRepository,
   );
 
@@ -43,78 +45,34 @@ export async function handleCleanupOldTasks(
 
   await job.updateProgress(10);
 
-  // Calculate cutoff date
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
 
-  logger.debug("Calculated cutoff date for cleanup", {
-    jobId: job.id,
-    cutoffDate: cutoffDate.toISOString(),
-  });
-
-  await job.updateProgress(20);
-
-  /**
-   * TODO: Implement batch deletion for old tasks
-   *
-   * Implementation steps:
-   * 1. Add method to ITaskRepository:
-   *    findOldCompletedTasks(cutoffDate: Date, limit: number): Promise<Task[]>
-   *    deleteMany(taskIds: string[]): Promise<number>
-   * 2. Implement batch deletion to avoid overwhelming database:
-   *    - Process in batches of 100-500 records
-   *    - Use Promise.all for parallel deletion within batches
-   *    - Update job progress after each batch
-   * 3. Add safety checks:
-   *    - Only delete completed tasks older than retention period
-   *    - Add dry-run mode for testing
-   *    - Log deletion statistics for auditing
-   * 4. Consider archiving instead of deletion:
-   *    - Move to archive table for compliance/backup
-   *    - Export to S3/storage before deletion
-   */
-
-  const deletedCount = 0;
-  const processedBatches = 0;
-
   try {
-    // Example: Find and delete old completed tasks
-    // const oldTasks = await taskRepository.findOldCompletedTasks(cutoffDate, batchSize);
-
-    // For demonstration purposes, we'll simulate the cleanup
-    logger.info("Simulating cleanup of old tasks", {
-      jobId: job.id,
-      cutoffDate: cutoffDate.toISOString(),
+    const result = await batchDeleteOldTasks(
+      taskRepository,
+      cutoffDate,
       batchSize,
-    });
-
-    // Simulate batch processing
-    // while (oldTasks.length > 0) {
-    //   await taskRepository.deleteMany(oldTasks.map(t => t.id));
-    //   deletedCount += oldTasks.length;
-    //   processedBatches++;
-    //
-    //   await job.updateProgress(20 + (processedBatches * 60 / estimatedBatches));
-    //
-    //   oldTasks = await taskRepository.findOldCompletedTasks(cutoffDate, batchSize);
-    // }
-
-    await job.updateProgress(90);
-
-    logger.info("Cleanup job completed successfully", {
-      jobId: job.id,
-      deletedCount,
-      processedBatches,
-    });
+      logger,
+      job,
+    );
 
     await job.updateProgress(100);
 
-    return { deletedCount, processedBatches };
+    logger.info("Cleanup job completed successfully", {
+      jobId: job.id,
+      deletedCount: result.deletedCount,
+      processedBatches: result.processedBatches,
+      cutoffDate: cutoffDate.toISOString(),
+    });
+
+    return result;
   } catch (error) {
+    const batchDeleteContext = getBatchDeleteErrorContext(error);
     logger.error(
       "Error during cleanup job",
       error instanceof Error ? error : new Error(String(error)),
-      { jobId: job.id },
+      { jobId: job.id, ...batchDeleteContext },
     );
     throw error;
   }

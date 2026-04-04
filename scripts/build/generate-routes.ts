@@ -47,9 +47,6 @@ function generateFileHeader(sourceFile: string): string {
  *
  * Manual edits will be lost on next generation.
  */
-
-/* eslint-disable */
-// @ts-nocheck
 `;
 }
 

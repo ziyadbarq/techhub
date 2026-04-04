@@ -25,7 +25,7 @@ export class CancelDisposalUseCase {
       throw new Error(`Disposal with ID ${request.disposalId} not found`);
     }
 
-    disposal.cancel(request.cancellationReason);
+    disposal.cancel();
 
     return this.assetDisposalRepository.update(disposal);
   }

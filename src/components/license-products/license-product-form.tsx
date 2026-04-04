@@ -55,6 +55,15 @@ import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter
 import type { LifecycleModelDTO } from "@/interface-adapters/presenters/lifecycle-model.presenter";
 import { LicenseMetricType } from "@/core/domain/entities/license-product.entity";
 import type { LicenseProductDTO } from "@/interface-adapters/presenters/license-product.presenter";
+import {
+  LicenseProductCustomFieldsSection,
+  validateLicenseProductCustomFields,
+} from "@/components/custom-fields/license-product-custom-fields-section";
+import type {
+  CustomFieldValues,
+  CustomFieldErrors,
+} from "@/components/custom-fields/custom-fields-section";
+import { useLicenseProductFields } from "@/hooks/use-license-product-fields";
 
 type LicenseProductFormValues = z.input<typeof CreateLicenseProductSchema>;
 
@@ -66,6 +75,7 @@ interface LicenseProductFormProps {
 }
 
 const NONE_OPTION_VALUE = "__none__";
+const GLOBAL_LICENSE_PRODUCT_FIELDS_ID = "__global_license_product__";
 
 const metricTypeOptions: Array<{ value: LicenseMetricType; label: string }> = [
   { value: LicenseMetricType.PER_DEVICE, label: "Per Device" },
@@ -88,6 +98,22 @@ export function LicenseProductForm({
   );
   const [loadingRefs, setLoadingRefs] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [customFieldValues, setCustomFieldValues] = useState<CustomFieldValues>(
+    () => (licenseProduct?.attributes as CustomFieldValues) ?? {},
+  );
+  const [customFieldErrors, setCustomFieldErrors] = useState<CustomFieldErrors>(
+    {},
+  );
+
+  // Fetch custom field definitions for validation on submit.
+  // For create mode, use a sentinel ID to fetch global LICENSE_PRODUCT fields only
+  // (the repo query returns global fields for any non-matching product ID).
+  const customFieldsProductId = isEditing
+    ? licenseProduct?.id
+    : GLOBAL_LICENSE_PRODUCT_FIELDS_ID;
+  const { fields: licenseProductFields } = useLicenseProductFields(
+    open ? customFieldsProductId : null,
+  );
 
   const vendorOptions: SearchableSelectOption[] = useMemo(
     () =>
@@ -132,6 +158,10 @@ export function LicenseProductForm({
       description: licenseProduct?.description ?? "",
       lifecycleModelId: licenseProduct?.lifecycleModelId ?? null,
     });
+    setCustomFieldValues(
+      (licenseProduct?.attributes as CustomFieldValues) ?? {},
+    );
+    setCustomFieldErrors({});
   }, [licenseProduct, form, open]);
 
   useEffect(() => {
@@ -167,8 +197,21 @@ export function LicenseProductForm({
   }, [open]);
 
   const handleSubmit = async (data: LicenseProductFormValues) => {
+    // Validate custom fields before submitting
+    if (licenseProductFields.length > 0) {
+      const fieldErrors = validateLicenseProductCustomFields(
+        licenseProductFields,
+        customFieldValues,
+      );
+      if (Object.keys(fieldErrors).length > 0) {
+        setCustomFieldErrors(fieldErrors);
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     try {
+      const hasCustomFields = Object.keys(customFieldValues).length > 0;
       const payload: CreateLicenseProductDTO = {
         name: data.name.trim(),
         code: data.code?.trim() ? data.code.trim().toUpperCase() : undefined,
@@ -176,6 +219,7 @@ export function LicenseProductForm({
         metricType: data.metricType,
         description: data.description?.trim() || null,
         lifecycleModelId: data.lifecycleModelId || null,
+        attributes: hasCustomFields ? customFieldValues : null,
       };
 
       const result = isEditing
@@ -388,6 +432,15 @@ export function LicenseProductForm({
                   <FormMessage />
                 </FormItem>
               )}
+            />
+
+            {/* Custom Fields Section — shown in both create and edit modes */}
+            <LicenseProductCustomFieldsSection
+              licenseProductId={customFieldsProductId}
+              values={customFieldValues}
+              onChange={setCustomFieldValues}
+              errors={customFieldErrors}
+              disabled={isSubmitting}
             />
 
             <DialogFooter>

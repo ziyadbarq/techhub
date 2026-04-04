@@ -19,17 +19,11 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
   const hideSidebar =
     pathname?.startsWith("/settings") || pathname?.startsWith("/docs");
 
-  // Check if we're on a special page that needs full-width layout (no padding/max-width)
-  // Add your special routes here (e.g., editor pages, canvas pages, etc.)
-  const isFullWidthPage = false; // Modify this based on your needs
   const isDocsPage = pathname?.startsWith("/docs");
 
-  // Apply padding and max-width to all pages except special full-width pages
-  const mainClasses = isFullWidthPage
+  const mainClasses = isDocsPage
     ? "flex-1 overflow-y-auto bg-muted/40"
-    : isDocsPage
-      ? "flex-1 overflow-y-auto bg-muted/40"
-      : "flex-1 overflow-y-auto bg-muted/40 p-4 md:p-6 lg:p-8";
+    : "flex-1 overflow-y-auto bg-muted/40 p-4 md:p-6 lg:p-8";
 
   return (
     <ErrorBoundary>
@@ -55,17 +49,9 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
 
                     {/* Page Content */}
                     <main className={mainClasses}>
-                      {isFullWidthPage ? (
-                        <Suspense fallback={<GlobalLoading />}>
-                          {children}
-                        </Suspense>
-                      ) : (
-                        <div className="mx-auto max-w-7xl">
-                          <Suspense fallback={<GlobalLoading />}>
-                            {children}
-                          </Suspense>
-                        </div>
-                      )}
+                      <Suspense fallback={<GlobalLoading />}>
+                        {children}
+                      </Suspense>
                     </main>
                   </div>
                 </div>

@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IBusinessProcessRepository } from "@/core/repositories/business-process.repository.interface";
+import type { ILoggerService } from "@/core/services";
 import { BusinessProcess } from "@/core/domain/entities/business-process.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { LogExecution } from "@/lib/decorators";
 
 export interface CreateBusinessProcessRequest {
   code: string;
@@ -24,8 +22,12 @@ export class CreateBusinessProcessUseCase {
 
     @inject(DI_TOKENS.IIdGenerator)
     private readonly idGenerator: IIdGenerator,
+
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("businessProcess.create")
   async execute(
     request: CreateBusinessProcessRequest,
   ): Promise<BusinessProcess> {
@@ -50,9 +52,6 @@ export class CreateBusinessProcessUseCase {
       this.idGenerator,
     );
 
-    return this.businessProcessRepository.create(
-      businessProcess,
-      this.idGenerator,
-    );
+    return this.businessProcessRepository.create(businessProcess);
   }
 }

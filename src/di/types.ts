@@ -90,6 +90,7 @@ export const DI_TOKENS = {
   IRelationshipTypeScopeRepository: Symbol.for(
     "IRelationshipTypeScopeRepository",
   ),
+  ICMDBHealthRepository: Symbol.for("ICMDBHealthRepository"),
 
   // Contracts Repositories
   IContractTypeRepository: Symbol.for("IContractTypeRepository"),
@@ -537,6 +538,27 @@ export const DI_TOKENS = {
   DeleteConfigurationItemUseCase: Symbol.for("DeleteConfigurationItemUseCase"),
   DeleteCIWithConfirmationUseCase: Symbol.for(
     "DeleteCIWithConfirmationUseCase",
+  ),
+
+  // CMDB: Impact Analysis Use Cases
+  AnalyzeCIImpactUseCase: Symbol.for("AnalyzeCIImpactUseCase"),
+  AnalyzeUpstreamDependenciesUseCase: Symbol.for(
+    "AnalyzeUpstreamDependenciesUseCase",
+  ),
+
+  // CMDB: Data Quality Use Cases
+  GetCMDBHealthMetricsUseCase: Symbol.for("GetCMDBHealthMetricsUseCase"),
+  DetectStaleCIsUseCase: Symbol.for("DetectStaleCIsUseCase"),
+
+  // Reports Use Cases
+  GetLicenseComplianceReportUseCase: Symbol.for(
+    "GetLicenseComplianceReportUseCase",
+  ),
+  GetContractExpirationReportUseCase: Symbol.for(
+    "GetContractExpirationReportUseCase",
+  ),
+  GetOciResourceInventoryReportUseCase: Symbol.for(
+    "GetOciResourceInventoryReportUseCase",
   ),
 
   // CMDB: CI Relationship Use Cases
@@ -993,6 +1015,9 @@ export const DI_TOKENS = {
   GetIntuneDeviceUseCase: Symbol.for("GetIntuneDeviceUseCase"),
   ListIntuneDevicesUseCase: Symbol.for("ListIntuneDevicesUseCase"),
   LinkIntuneDeviceToAssetUseCase: Symbol.for("LinkIntuneDeviceToAssetUseCase"),
+  SyncAssetAssignmentFromIntuneDeviceUseCase: Symbol.for(
+    "SyncAssetAssignmentFromIntuneDeviceUseCase",
+  ),
   UnlinkIntuneDeviceFromAssetUseCase: Symbol.for(
     "UnlinkIntuneDeviceFromAssetUseCase",
   ),

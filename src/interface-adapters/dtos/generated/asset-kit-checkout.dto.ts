@@ -3,19 +3,18 @@ import { z } from "zod";
 // Asset Kit Checkout DTOs
 export const CreateKitCheckoutDTO = z.object({
   kitId: z.string().min(24).max(25),
-  assignedToPersonId: z.string().min(24).max(25).optional(),
-  assignedToOrgUnitId: z.string().min(24).max(25).optional(),
-  checkoutDate: z.coerce.date(),
-  expectedReturnDate: z.coerce.date(),
-  purpose: z.string().optional(),
-  assetIds: z
-    .array(z.string().min(24).max(25))
-    .min(1, "At least one asset is required"),
+  assigneeType: z.enum(["PERSON", "ORG_UNIT", "LOCATION"]),
+  assigneeId: z.string().min(24).max(25),
+  checkedOutById: z.string().min(24).max(25).optional(),
+  expectedReturnDate: z.coerce.date().optional(),
+  note: z.string().optional(),
+  assetIds: z.array(z.string().min(24).max(25)).optional().default([]),
+  kitItemIds: z.array(z.string().min(24).max(25)).optional().default([]),
 });
 
 export const ReturnKitCheckoutDTO = z.object({
   checkoutId: z.string().min(24).max(25),
-  returnDate: z.coerce.date().optional(),
+  conditionAtReturn: z.string().optional(),
 });
 
 export const ReturnKitItemDTO = z.object({
@@ -30,7 +29,6 @@ export const MarkItemDamagedDTO = z.object({
 
 export const MarkItemLostDTO = z.object({
   checkoutItemId: z.string().min(24).max(25),
-  notes: z.string().optional(),
 });
 
 export const ExtendCheckoutDTO = z.object({
@@ -40,14 +38,15 @@ export const ExtendCheckoutDTO = z.object({
 
 export const AssetKitCheckoutDTO = z.object({
   id: z.string().min(24).max(25),
-  kitId: z.string().min(24).max(25),
-  assignedToPersonId: z.string().min(24).max(25).nullable(),
-  assignedToOrgUnitId: z.string().min(24).max(25).nullable(),
+  assetKitId: z.string().min(24).max(25),
+  assigneeType: z.enum(["PERSON", "ORG_UNIT", "LOCATION"]),
+  assigneeId: z.string().min(24).max(25),
   checkoutDate: z.date(),
-  expectedReturnDate: z.date(),
+  expectedReturnDate: z.date().nullable(),
   actualReturnDate: z.date().nullable(),
-  purpose: z.string().nullable(),
   status: z.string(),
+  checkedOutById: z.string().min(24).max(25),
+  note: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
   // Display fields (enriched from relations)
@@ -57,12 +56,15 @@ export const AssetKitCheckoutDTO = z.object({
 
 export const AssetKitCheckoutItemDTO = z.object({
   id: z.string().min(24).max(25),
-  checkoutId: z.string().min(24).max(25),
+  kitCheckoutId: z.string().min(24).max(25),
   assetId: z.string().min(24).max(25),
+  kitItemId: z.string().min(24).max(25),
   checkoutDate: z.date(),
   returnDate: z.date().nullable(),
-  conditionAtReturn: z.string().nullable(),
   status: z.string(),
+  conditionAtCheckout: z.string().nullable(),
+  conditionAtReturn: z.string().nullable(),
+  note: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

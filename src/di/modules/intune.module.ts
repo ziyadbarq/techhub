@@ -25,6 +25,7 @@ import { ListIntuneDevicesUseCase } from "@/core/use-cases/intune/list-intune-de
 import { GetIntuneComplianceStatsUseCase } from "@/core/use-cases/intune/get-intune-compliance-stats.use-case";
 import { GetDeviceComplianceHistoryUseCase } from "@/core/use-cases/intune/get-device-compliance-history.use-case";
 import { LinkIntuneDeviceToAssetUseCase } from "@/core/use-cases/intune/link-intune-device-to-asset.use-case";
+import { SyncAssetAssignmentFromIntuneDeviceUseCase } from "@/core/use-cases/intune/sync-asset-assignment-from-intune-device.use-case";
 import { UnlinkIntuneDeviceFromAssetUseCase } from "@/core/use-cases/intune/unlink-intune-device-from-asset.use-case";
 import { LinkIntuneDeviceToPersonUseCase } from "@/core/use-cases/intune/link-intune-device-to-person.use-case";
 import { UnlinkIntuneDeviceFromPersonUseCase } from "@/core/use-cases/intune/unlink-intune-device-from-person.use-case";
@@ -88,6 +89,13 @@ export function bindIntuneDependencies(container: Container): void {
     .inTransientScope();
 
   // Link/Unlink to Asset Use Cases
+  container
+    .bind<SyncAssetAssignmentFromIntuneDeviceUseCase>(
+      DI_TOKENS.SyncAssetAssignmentFromIntuneDeviceUseCase,
+    )
+    .to(SyncAssetAssignmentFromIntuneDeviceUseCase)
+    .inTransientScope();
+
   container
     .bind<LinkIntuneDeviceToAssetUseCase>(
       DI_TOKENS.LinkIntuneDeviceToAssetUseCase,

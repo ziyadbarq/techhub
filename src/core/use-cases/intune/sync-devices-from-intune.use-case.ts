@@ -207,6 +207,30 @@ export class SyncDevicesFromIntuneUseCase {
 
             // Update existing device
             if (!opts.dryRun) {
+              // Handle azureAdDeviceId reassignment: if Intune now reports a different
+              // azureAdDeviceId for this device, clear it from any conflicting record first
+              if (
+                syncInput.azureAdDeviceId &&
+                syncInput.azureAdDeviceId !== existingDevice.azureAdDeviceId
+              ) {
+                const conflicting =
+                  await this.deviceRepository.findByAzureAdDeviceId(
+                    syncInput.azureAdDeviceId,
+                  );
+                if (conflicting && conflicting.id !== existingDevice.id) {
+                  this.logger.info(
+                    "Clearing stale azureAdDeviceId from conflicting record",
+                    {
+                      conflictingDeviceId: conflicting.intuneDeviceId,
+                      azureAdDeviceId: syncInput.azureAdDeviceId,
+                      newOwnerDeviceId: syncInput.intuneDeviceId,
+                    },
+                  );
+                  conflicting.update({ azureAdDeviceId: null });
+                  await this.deviceRepository.update(conflicting);
+                }
+              }
+
               existingDevice.update({
                 // Update intuneDeviceId in case of re-enrollment
                 intuneDeviceId: syncInput.intuneDeviceId,
@@ -381,18 +405,86 @@ export class SyncDevicesFromIntuneUseCase {
           await this.deviceRepository.findByLinkedAsset(asset.id);
 
         if (existingDeviceForAsset && existingDeviceForAsset.id !== device.id) {
-          this.logger.warn(
-            "Skipping auto-link: asset already linked to another Intune device",
-            {
-              intuneDeviceId: device.intuneDeviceId,
-              assetId: asset.id,
-              assetTag: asset.assetTag,
-              serialNumber,
-              linkedIntuneDeviceId: existingDeviceForAsset.intuneDeviceId,
-              linkedDeviceId: existingDeviceForAsset.id,
-            },
-          );
-          return false;
+          // If the existing linked device is inactive or stale (no sync in 90+ days),
+          // automatically unlink it so the current active device can take over
+          const isStale =
+            !existingDeviceForAsset.isActive ||
+            (existingDeviceForAsset.lastSyncDateTime &&
+              Date.now() - existingDeviceForAsset.lastSyncDateTime.getTime() >
+                90 * 24 * 60 * 60 * 1000);
+
+          if (isStale) {
+            this.logger.info(
+              "Unlinking stale/inactive device from asset to allow re-link",
+              {
+                staleDeviceId: existingDeviceForAsset.intuneDeviceId,
+                isActive: existingDeviceForAsset.isActive,
+                lastSync: existingDeviceForAsset.lastSyncDateTime,
+                newDeviceId: device.intuneDeviceId,
+                assetTag: asset.assetTag,
+              },
+            );
+            if (!dryRun) {
+              // Perform unlink + link atomically: if the new link fails,
+              // roll back the unlink so the asset isn't left orphaned
+              const previousAssetId = existingDeviceForAsset.linkedAssetId;
+              const previousLinkMethod = existingDeviceForAsset.assetLinkMethod;
+              existingDeviceForAsset.unlinkFromAsset();
+              await this.deviceRepository.update(existingDeviceForAsset);
+
+              try {
+                device.linkToAsset(asset.id, "auto_serial");
+                await this.deviceRepository.update(device);
+              } catch (linkError) {
+                // Revert the in-memory mutation so later updates on this device
+                // do not accidentally re-persist the failed asset link.
+                device.unlinkFromAsset();
+
+                // Roll back: restore the old device's link
+                this.logger.warn(
+                  "Failed to link new device to asset, restoring previous link",
+                  {
+                    staleDeviceId: existingDeviceForAsset.intuneDeviceId,
+                    newDeviceId: device.intuneDeviceId,
+                    assetId: asset.id,
+                    error:
+                      linkError instanceof Error
+                        ? linkError.message
+                        : String(linkError),
+                  },
+                );
+                if (previousAssetId) {
+                  existingDeviceForAsset.linkToAsset(
+                    previousAssetId,
+                    (previousLinkMethod as "auto_serial" | "manual") ??
+                      "auto_serial",
+                  );
+                  await this.deviceRepository.update(existingDeviceForAsset);
+                }
+                return false;
+              }
+
+              this.logger.debug("Auto-linked device to asset", {
+                intuneDeviceId: device.intuneDeviceId,
+                assetId: asset.id,
+                serialNumber,
+              });
+              return true;
+            }
+          } else {
+            this.logger.debug(
+              "Skipping auto-link: asset already linked to another active Intune device",
+              {
+                intuneDeviceId: device.intuneDeviceId,
+                assetId: asset.id,
+                assetTag: asset.assetTag,
+                serialNumber,
+                linkedIntuneDeviceId: existingDeviceForAsset.intuneDeviceId,
+                linkedDeviceId: existingDeviceForAsset.id,
+              },
+            );
+            return false;
+          }
         }
 
         if (!dryRun) {

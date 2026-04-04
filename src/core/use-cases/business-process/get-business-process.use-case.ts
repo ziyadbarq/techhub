@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IBusinessProcessRepository } from "@/core/repositories/business-process.repository.interface";
+import type { ILoggerService } from "@/core/services";
 import type { BusinessProcess } from "@/core/domain/entities/business-process.entity";
+import { LogExecution } from "@/lib/decorators";
 
 export interface GetBusinessProcessRequest {
   businessProcessId: string;
@@ -16,8 +14,12 @@ export class GetBusinessProcessUseCase {
   constructor(
     @inject(DI_TOKENS.IBusinessProcessRepository)
     private readonly businessProcessRepository: IBusinessProcessRepository,
+
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("businessProcess.get")
   async execute(request: GetBusinessProcessRequest): Promise<BusinessProcess> {
     const businessProcess = await this.businessProcessRepository.findById(
       request.businessProcessId,

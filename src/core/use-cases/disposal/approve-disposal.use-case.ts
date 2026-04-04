@@ -6,7 +6,8 @@ import { LogExecution } from "@/lib/decorators/log-execution.decorator";
 
 export interface ApproveDisposalRequest {
   disposalId: string;
-  approvedById: string;
+  approverId: string;
+  comments?: string;
 }
 
 @injectable()
@@ -27,7 +28,7 @@ export class ApproveDisposalUseCase {
     }
 
     // Approve disposal (entity validates state)
-    disposal.approve(request.approvedById);
+    disposal.approve(request.approverId);
 
     // Persist changes
     return this.assetDisposalRepository.update(disposal);

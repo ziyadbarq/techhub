@@ -4,6 +4,25 @@ import type {
   EnvironmentEnum,
 } from "../domain/entities/configuration-item.entity";
 
+export interface StaleCIRawRecord {
+  id: string;
+  name: string;
+  ciKey: string | null;
+  ciClassId: string;
+  ciClassName: string;
+  criticality: string | null;
+  environment: string | null;
+  updatedAt: Date;
+  primaryOwnerPersonId: string | null;
+  primaryOwnerOrgUnitId: string | null;
+}
+
+export interface FindStaleOptions {
+  thresholdDate: Date;
+  environmentFilter?: string;
+  criticalityFilter?: string;
+}
+
 export interface CIDeletionDependencies {
   relationshipsFrom: number;
   relationshipsTo: number;
@@ -150,4 +169,18 @@ export interface IConfigurationItemRepository {
    * Delete a CI and its relationships in a single transaction
    */
   deleteWithRelationships(ciId: string): Promise<void>;
+
+  /**
+   * Find stale CIs not updated since the threshold date.
+   * Returns raw records with CI class name for aggregation.
+   */
+  findStale(options: FindStaleOptions): Promise<StaleCIRawRecord[]>;
+
+  /**
+   * Count non-deleted CIs matching optional filters.
+   */
+  countActive(filters?: {
+    environmentFilter?: string;
+    criticalityFilter?: string;
+  }): Promise<number>;
 }

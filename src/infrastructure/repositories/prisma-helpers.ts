@@ -52,7 +52,11 @@ export function toJsonValue<T>(
  *
  * @example
  * ```typescript
- * const metadata = fromJsonValue<{ version: number }>(record.metadata);
+ * const record = await prisma.someModel.findUnique({ where: { id } });
+ * const metadata = fromJsonValue<{ version: number }>(record?.metadata);
+ * if (metadata) {
+ *   console.log(metadata.version);
+ * }
  * ```
  */
 export function fromJsonValue<T>(

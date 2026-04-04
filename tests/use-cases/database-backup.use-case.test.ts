@@ -200,6 +200,18 @@ class MockJobQueue implements IJobQueueService {
   }
   async pauseQueue() {}
   async resumeQueue() {}
+  async getRepeatableJobs() {
+    return [];
+  }
+  async getRecentFailedJobs() {
+    return [];
+  }
+  async getRecentCompletedJobs() {
+    return [];
+  }
+  async isQueuePaused() {
+    return false;
+  }
   async close() {
     this.activeQueues.clear();
   }

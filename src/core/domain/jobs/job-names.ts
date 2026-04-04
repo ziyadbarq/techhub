@@ -34,8 +34,10 @@ export const MAINTENANCE_JOBS = {
   USER_SYNC_FROM_GRAPH: "user-sync-from-graph",
   INTUNE_DEVICE_SYNC: "intune-device-sync",
   OCI_RESOURCE_SYNC: "oci-resource-sync",
+  OCI_CRITICAL_SYNC: "oci-critical-sync",
   DATABASE_BACKUP: "database-backup",
   DATABASE_RESTORE: "database-restore",
+  DETECT_STALE_CIS: "detect-stale-cis",
 } as const;
 
 /**

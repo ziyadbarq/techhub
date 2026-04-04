@@ -659,7 +659,7 @@ export async function bulkCreate[Entity]Action(
 1. **Incomplete Entity Configurations**
    - **Risk**: Users expect all entities to be importable
    - **Mitigation**: Clear messaging about which entities are supported
-   - **Status**: Only 2 of 66 configured currently
+   - **Status**: 31 of 66 configured (47% coverage)
 
 2. **Data Quality Issues**
    - **Risk**: Poor imports create bad data in production
@@ -704,7 +704,7 @@ export async function bulkCreate[Entity]Action(
 
 ### Phase 3 (Later)
 1. Import History & Audit Trail (1 day)
-2. Remaining 54 entity configurations (3-4 days)
+2. Remaining 35 entity configurations (2-3 days)
 3. Enhanced features (as needed)
 
 ---
@@ -743,5 +743,5 @@ export async function bulkCreate[Entity]Action(
 
 ---
 
-**Last Updated**: 2025-11-25
+**Last Updated**: 2026-03-27
 **Maintained By**: Development Team

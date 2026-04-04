@@ -8,3 +8,6 @@ export { CreateReportScheduleUseCase } from "./create-report-schedule.use-case";
 export { ListReportSchedulesUseCase } from "./list-report-schedules.use-case";
 export { DeleteReportScheduleUseCase } from "./delete-report-schedule.use-case";
 export { ExecuteScheduledReportUseCase } from "./execute-scheduled-report.use-case";
+export * from "./get-license-compliance-report.use-case";
+export * from "./get-contract-expiration-report.use-case";
+export * from "./get-oci-resource-inventory-report.use-case";

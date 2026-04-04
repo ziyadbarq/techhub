@@ -99,7 +99,7 @@ export interface TaskReminderJobData extends BaseJobData {
  * Data for database cleanup job
  */
 export interface DatabaseCleanupJobData extends BaseJobData {
-  tables?: string[];
+  tables?: "tasks"[];
   olderThanDays: number;
 }
 
@@ -108,7 +108,7 @@ export interface DatabaseCleanupJobData extends BaseJobData {
  */
 export interface DataExportJobData extends BaseJobData {
   userId: string;
-  exportType: "tasks" | "full" | "custom";
+  exportType: "tasks";
   format: "json" | "csv";
   email: string;
 }
@@ -117,7 +117,7 @@ export interface DataExportJobData extends BaseJobData {
  * Data for health check job
  */
 export interface HealthCheckJobData extends BaseJobData {
-  checks: ("database" | "redis" | "api")[];
+  checks: ("database" | "redis")[];
   notifyOnFailure: boolean;
 }
 
@@ -238,6 +238,21 @@ export interface IntuneSyncJobData extends BaseJobData {
    * User who triggered the sync (for audit logging)
    */
   triggeredBy?: string;
+}
+
+// ========================================
+// CMDB Data Quality Jobs
+// ========================================
+
+/**
+ * Data for stale CI detection job
+ */
+export interface DetectStaleCIsJobData extends BaseJobData {
+  /**
+   * Number of days without update before a CI is considered stale
+   * @default 90
+   */
+  thresholdDays: number;
 }
 
 // ========================================

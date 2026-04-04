@@ -793,6 +793,17 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     navOrder: 3,
   },
   {
+    path: "/configuration-items/topology",
+    label: "CI Topology Map",
+    icon: Network,
+    description: "Interactive topology of CI relationships and dependencies",
+    requiredPermissions: ["CONFIGURATION_ITEMS_VIEW"],
+    featureFlag: "CMDB",
+    visibleInNav: true,
+    navGroup: "services-cmdb",
+    navOrder: 4,
+  },
+  {
     path: "/ci-classes",
     label: "CI Classes",
     icon: Binary,
@@ -801,7 +812,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     featureFlag: "CMDB",
     visibleInNav: true,
     navGroup: "services-cmdb",
-    navOrder: 4,
+    navOrder: 5,
   },
   {
     path: "/ci-relationships",
@@ -812,7 +823,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     featureFlag: "CMDB",
     visibleInNav: true,
     navGroup: "services-cmdb",
-    navOrder: 5,
+    navOrder: 6,
   },
   {
     path: "/relationship-types",
@@ -823,7 +834,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     featureFlag: "CMDB",
     visibleInNav: true,
     navGroup: "services-cmdb",
-    navOrder: 6,
+    navOrder: 7,
   },
 
   // ============================================================================
@@ -993,6 +1004,17 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     navOrder: 4,
   },
   {
+    path: "/admin/cmdb-health",
+    label: "CMDB Health",
+    icon: Activity,
+    description: "CMDB data quality health metrics dashboard",
+    requiredPermissions: ["CONFIGURATION_ITEMS_VIEW"],
+    featureFlag: "CMDB",
+    visibleInNav: true,
+    navGroup: "system",
+    navOrder: 5,
+  },
+  {
     path: "/admin/assignment-conflicts",
     label: "Assignment Conflicts",
     icon: AlertCircle,
@@ -1002,7 +1024,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     featureFlag: "INTUNE",
     visibleInNav: true,
     navGroup: "system",
-    navOrder: 5,
+    navOrder: 6,
   },
 
   // ============================================================================
@@ -1230,6 +1252,16 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     visibleInNav: false,
     isChildRoute: true,
     parentRoute: "/settings",
+  },
+  {
+    path: "/admin/workers",
+    label: "Worker Status",
+    icon: Activity,
+    description: "Background job queue monitoring and worker status",
+    requiredPermissions: ["SETTINGS_MANAGE"],
+    visibleInNav: true,
+    navGroup: "system",
+    navOrder: 7,
   },
   {
     path: "/settings/platform",

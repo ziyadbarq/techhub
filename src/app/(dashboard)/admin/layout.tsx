@@ -41,6 +41,7 @@ export default async function AdminLayout({
     PERMISSIONS.DATABASE_BACKUP,
     PERMISSIONS.DATABASE_RESTORE,
     PERMISSIONS.FEATURE_FLAGS_MANAGE,
+    PERMISSIONS.SETTINGS_MANAGE,
   ]);
 
   // Redirect to unauthorized page if no admin access
@@ -51,7 +52,7 @@ export default async function AdminLayout({
   return (
     <div className="space-y-6">
       {/* Admin Content Area */}
-      <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+      <div className="px-4 md:px-6 lg:px-8">
         <Card className="min-h-[calc(100vh-16rem)] p-6">{children}</Card>
       </div>
     </div>

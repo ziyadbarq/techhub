@@ -37,6 +37,9 @@ import { ListContractLinkedObjectsUseCase } from "@/core/use-cases/contract-link
 import { UpdateContractLinkedObjectUseCase } from "@/core/use-cases/contract-linked-object/update-contract-linked-object.use-case";
 import { DeleteContractLinkedObjectUseCase } from "@/core/use-cases/contract-linked-object/delete-contract-linked-object.use-case";
 
+// Report Use Cases
+import { GetContractExpirationReportUseCase } from "@/core/use-cases/reports/get-contract-expiration-report.use-case";
+
 const diLogger = logger.scope("DI:ContractsModule");
 
 export function bindContractsDependencies(container: Container): void {
@@ -137,5 +140,13 @@ export function bindContractsDependencies(container: Container): void {
       DI_TOKENS.DeleteContractLinkedObjectUseCase,
     )
     .to(DeleteContractLinkedObjectUseCase)
+    .inTransientScope();
+
+  // Report Use Cases
+  container
+    .bind<GetContractExpirationReportUseCase>(
+      DI_TOKENS.GetContractExpirationReportUseCase,
+    )
+    .to(GetContractExpirationReportUseCase)
     .inTransientScope();
 }

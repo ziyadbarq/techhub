@@ -6,7 +6,8 @@ import { LogExecution } from "@/lib/decorators/log-execution.decorator";
 
 export interface RejectDisposalRequest {
   disposalId: string;
-  rejectionReason?: string;
+  approverId: string;
+  rejectionReason: string;
 }
 
 @injectable()

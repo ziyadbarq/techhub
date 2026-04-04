@@ -37,6 +37,10 @@ import {
   handleUserSyncFromGraph,
   handleIntuneDeviceSync,
   handleOciResourceSync,
+  handleDetectStaleCIs,
+  handleDatabaseCleanup,
+  handleDataExport,
+  handleHealthCheck,
 } from "./handlers";
 import {
   handleDatabaseBackup,
@@ -174,10 +178,20 @@ function createMaintenanceWorker(): BaseWorker {
     handleIntuneDeviceSync,
   );
 
-  // Register OCI cloud resource sync handler
+  // Register OCI cloud resource sync handlers (tiered strategy)
+  worker.registerHandler(
+    MAINTENANCE_JOBS.OCI_CRITICAL_SYNC,
+    handleOciResourceSync,
+  );
   worker.registerHandler(
     MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
     handleOciResourceSync,
+  );
+
+  // Register stale CI detection handler
+  worker.registerHandler(
+    MAINTENANCE_JOBS.DETECT_STALE_CIS,
+    handleDetectStaleCIs,
   );
 
   // Register database backup/restore handlers
@@ -212,6 +226,18 @@ function createMaintenanceWorker(): BaseWorker {
    *    worker.registerHandler(MAINTENANCE_JOBS.DATA_EXPORT, handleDataExport);
    * 3. Schedule recurring jobs via BullMQ scheduleJob() for daily/weekly maintenance
    */
+
+  // Register database cleanup handler (old completed tasks)
+  worker.registerHandler(
+    MAINTENANCE_JOBS.DATABASE_CLEANUP,
+    handleDatabaseCleanup,
+  );
+
+  // Register data export handler (CSV/JSON)
+  worker.registerHandler(MAINTENANCE_JOBS.DATA_EXPORT, handleDataExport);
+
+  // Register infrastructure health check handler
+  worker.registerHandler(MAINTENANCE_JOBS.HEALTH_CHECK, handleHealthCheck);
 
   return worker;
 }

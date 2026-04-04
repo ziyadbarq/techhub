@@ -18,6 +18,8 @@ import type {
   JobOptions,
   JobStatus,
   RepeatableJobOptions,
+  RepeatableJobInfo,
+  QueueJobSummary,
 } from "@/core/services/job-queue.service.interface";
 
 /**
@@ -465,6 +467,93 @@ export class BullMQService implements IJobQueueService {
     } catch (error) {
       this.logger.error(
         `[JobQueue] Failed to find job '${jobName}' in queue '${queueName}'`,
+        error as Error,
+      );
+      throw error;
+    }
+  }
+
+  async getRepeatableJobs(queueName: string): Promise<RepeatableJobInfo[]> {
+    try {
+      const queue = await this.getQueue(queueName);
+      const jobs = await queue.getRepeatableJobs();
+      return jobs.map((job) => ({
+        key: job.key,
+        name: job.name,
+        pattern: job.pattern ?? null,
+        tz: job.tz ?? null,
+        next: job.next ?? 0,
+      }));
+    } catch (error) {
+      this.logger.error(
+        `[JobQueue] Failed to get repeatable jobs for '${queueName}'`,
+        error as Error,
+      );
+      throw error;
+    }
+  }
+
+  async getRecentFailedJobs(
+    queueName: string,
+    limit = 20,
+  ): Promise<QueueJobSummary[]> {
+    try {
+      const queue = await this.getQueue(queueName);
+      const jobs = await queue.getJobs(["failed"], 0, limit - 1);
+      return jobs
+        .filter((job) => job.id)
+        .map((job) => ({
+          id: job.id!,
+          name: job.name,
+          failedReason: job.failedReason,
+          stacktrace: job.stacktrace,
+          attemptsMade: job.attemptsMade,
+          timestamp: job.timestamp,
+          finishedOn: job.finishedOn,
+          processedOn: job.processedOn,
+        }));
+    } catch (error) {
+      this.logger.error(
+        `[JobQueue] Failed to get recent failed jobs for '${queueName}'`,
+        error as Error,
+      );
+      throw error;
+    }
+  }
+
+  async getRecentCompletedJobs(
+    queueName: string,
+    limit = 20,
+  ): Promise<QueueJobSummary[]> {
+    try {
+      const queue = await this.getQueue(queueName);
+      const jobs = await queue.getJobs(["completed"], 0, limit - 1);
+      return jobs
+        .filter((job) => job.id)
+        .map((job) => ({
+          id: job.id!,
+          name: job.name,
+          attemptsMade: job.attemptsMade,
+          timestamp: job.timestamp,
+          finishedOn: job.finishedOn,
+          processedOn: job.processedOn,
+        }));
+    } catch (error) {
+      this.logger.error(
+        `[JobQueue] Failed to get recent completed jobs for '${queueName}'`,
+        error as Error,
+      );
+      throw error;
+    }
+  }
+
+  async isQueuePaused(queueName: string): Promise<boolean> {
+    try {
+      const queue = await this.getQueue(queueName);
+      return await queue.isPaused();
+    } catch (error) {
+      this.logger.error(
+        `[JobQueue] Failed to check pause status for '${queueName}'`,
         error as Error,
       );
       throw error;

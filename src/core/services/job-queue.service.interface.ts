@@ -92,6 +92,31 @@ export interface JobStatus {
 }
 
 /**
+ * Information about a repeatable/scheduled job
+ */
+export interface RepeatableJobInfo {
+  key: string;
+  name: string;
+  pattern: string | null;
+  tz: string | null;
+  next: number;
+}
+
+/**
+ * Summary of a completed or failed job
+ */
+export interface QueueJobSummary {
+  id: string;
+  name: string;
+  failedReason?: string;
+  stacktrace?: string[];
+  attemptsMade: number;
+  timestamp: number;
+  finishedOn?: number;
+  processedOn?: number;
+}
+
+/**
  * Service interface for managing background job queues.
  *
  * This service is responsible for:
@@ -253,6 +278,32 @@ export interface IJobQueueService {
     states: JobType[],
     predicate?: (data: unknown) => boolean,
   ): Promise<{ id: string; state: string; data: unknown } | null>;
+
+  /**
+   * Returns all repeatable/scheduled jobs for a given queue.
+   */
+  getRepeatableJobs(queueName: string): Promise<RepeatableJobInfo[]>;
+
+  /**
+   * Returns recent failed jobs for a given queue (newest first).
+   */
+  getRecentFailedJobs(
+    queueName: string,
+    limit?: number,
+  ): Promise<QueueJobSummary[]>;
+
+  /**
+   * Returns recent completed jobs for a given queue (newest first).
+   */
+  getRecentCompletedJobs(
+    queueName: string,
+    limit?: number,
+  ): Promise<QueueJobSummary[]>;
+
+  /**
+   * Returns whether a queue is currently paused.
+   */
+  isQueuePaused(queueName: string): Promise<boolean>;
 
   // ========================================
   // Queue Control

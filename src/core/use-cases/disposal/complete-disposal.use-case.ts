@@ -7,7 +7,7 @@ import { LogExecution } from "@/lib/decorators/log-execution.decorator";
 export interface CompleteDisposalRequest {
   disposalId: string;
   disposalDate: Date;
-  actualProceeds?: number;
+  actualProceeds?: number | null;
 }
 
 @injectable()
@@ -26,7 +26,10 @@ export class CompleteDisposalUseCase {
       throw new Error(`Disposal with ID ${request.disposalId} not found`);
     }
 
-    disposal.completeDisposal(request.disposalDate, request.actualProceeds);
+    disposal.completeDisposal(
+      request.disposalDate,
+      request.actualProceeds ?? undefined,
+    );
 
     return this.assetDisposalRepository.update(disposal);
   }

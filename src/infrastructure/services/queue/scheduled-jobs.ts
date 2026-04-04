@@ -15,8 +15,10 @@ import {
 } from "@/core/domain/jobs/job-names";
 import type {
   CleanupOldTasksJobData,
+  HealthCheckJobData,
   IntuneSyncJobData,
   OciSyncJobData,
+  DetectStaleCIsJobData,
 } from "@/core/domain/jobs/job-data.types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
@@ -156,12 +158,36 @@ export async function setupScheduledJobs(
   });
 
   // ==========================================
-  // OCI Cloud Resource Sync
+  // OCI Cloud Resource Sync (Tiered Strategy)
   // ==========================================
 
-  // Sync OCI cloud resources daily at 4:00 AM UTC (1 hour after Intune)
-  // Fetches from n8n webhook, upserts CMDB Configuration Items
-  const ociSyncJobData: OciSyncJobData = {
+  // Tier 1: Critical resources every 30 minutes
+  // Compute, load balancers, and databases — production infrastructure
+  const ociCriticalSyncJobData: OciSyncJobData = {
+    serviceKeys: ["compute", "lb", "nlb", "dbsystems"],
+    dryRun: false,
+    createdAt: Date.now(),
+  };
+
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    MAINTENANCE_JOBS.OCI_CRITICAL_SYNC,
+    ociCriticalSyncJobData,
+    {
+      pattern: "*/30 * * * *", // Every 30 minutes
+      tz: "UTC",
+    },
+  );
+
+  logger.info("OCI critical resource sync job scheduled", {
+    pattern: "*/30 * * * *",
+    timezone: "UTC",
+    jobName: MAINTENANCE_JOBS.OCI_CRITICAL_SYNC,
+    serviceKeys: ociCriticalSyncJobData.serviceKeys,
+  });
+
+  // Tier 2: Full sync daily at 4:00 AM UTC (all resource types)
+  const ociFullSyncJobData: OciSyncJobData = {
     dryRun: false,
     createdAt: Date.now(),
   };
@@ -169,20 +195,19 @@ export async function setupScheduledJobs(
   await jobQueueService.scheduleJob(
     QUEUE_NAMES.MAINTENANCE,
     MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
-    ociSyncJobData,
+    ociFullSyncJobData,
     {
       pattern: "0 4 * * *", // Every day at 4:00 AM UTC
       tz: "UTC",
     },
   );
 
-  logger.info("OCI resource sync job scheduled", {
+  logger.info("OCI full resource sync job scheduled", {
     pattern: "0 4 * * *",
     timezone: "UTC",
     jobName: MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
   });
 
-  // ==========================================
   // Report Schedule Checker
   // ==========================================
 
@@ -205,8 +230,63 @@ export async function setupScheduledJobs(
   });
 
   // ==========================================
-  // Add more scheduled jobs here
+  // Stale CI Detection - Daily at 5:00 AM UTC
   // ==========================================
+
+  // Detect configuration items not updated within threshold period
+  // Flags stale records for verification campaigns
+  const detectStaleCIsJobData: DetectStaleCIsJobData = {
+    thresholdDays: 90,
+    createdAt: Date.now(),
+  };
+
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    MAINTENANCE_JOBS.DETECT_STALE_CIS,
+    detectStaleCIsJobData,
+    {
+      pattern: "0 5 * * *", // Every day at 5:00 AM UTC
+      tz: "UTC",
+    },
+  );
+
+  logger.info("Stale CI detection job scheduled", {
+    pattern: "0 5 * * *",
+    timezone: "UTC",
+    jobName: MAINTENANCE_JOBS.DETECT_STALE_CIS,
+  });
+
+  // Note: DATABASE_CLEANUP handler is registered but not scheduled.
+  // The daily CLEANUP_OLD_TASKS (tasks queue, 2 AM) already handles completed
+  // task deletion. DATABASE_CLEANUP can be triggered on-demand from admin UI
+  // for broader cleanup (audit logs, old exports, etc.) once expanded.
+
+  // ==========================================
+  // Health Check - Every 5 minutes
+  // ==========================================
+
+  // Verify database and Redis connectivity proactively
+  const healthCheckJobData: HealthCheckJobData = {
+    checks: ["database", "redis"],
+    notifyOnFailure: true,
+    createdAt: Date.now(),
+  };
+
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    MAINTENANCE_JOBS.HEALTH_CHECK,
+    healthCheckJobData,
+    {
+      pattern: "*/5 * * * *", // Every 5 minutes
+      tz: "UTC",
+    },
+  );
+
+  logger.info("Health check job scheduled", {
+    pattern: "*/5 * * * *",
+    timezone: "UTC",
+    jobName: MAINTENANCE_JOBS.HEALTH_CHECK,
+  });
 
   logger.info("All scheduled jobs configured successfully");
 }

@@ -206,7 +206,7 @@ export async function getAssetDisposalAction(
       DI_TOKENS.GetAssetDisposalUseCase,
     );
 
-    const disposal = await useCase.execute({ id });
+    const disposal = await useCase.execute({ disposalId: id });
 
     return {
       success: true,
@@ -237,7 +237,7 @@ export async function approveDisposalAction(
 
     const disposal = await useCase.execute({
       disposalId: validated.disposalId,
-      approvedById: validated.approverId,
+      approverId: validated.approverId,
     });
 
     revalidatePath("/asset-disposals");
@@ -272,6 +272,7 @@ export async function rejectDisposalAction(
 
     const disposal = await useCase.execute({
       disposalId: validated.disposalId,
+      approverId: validated.approverId,
       rejectionReason: validated.rejectionReason,
     });
 

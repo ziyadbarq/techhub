@@ -38,7 +38,7 @@ export const AddKitItemDTO = z.object({
   assetModelId: z.string().min(24).max(25).optional().nullable(),
   quantity: z.number().int().positive("Quantity must be positive"),
   isRequired: z.boolean().optional().default(true),
-  notes: z.string().optional(),
+  note: z.string().optional(),
 });
 
 export const UpdateKitItemDTO = z.object({
@@ -46,7 +46,7 @@ export const UpdateKitItemDTO = z.object({
   assetModelId: z.string().min(24).max(25).optional().nullable(),
   quantity: z.number().int().positive().optional(),
   isRequired: z.boolean().optional(),
-  notes: z.string().optional(),
+  note: z.string().optional(),
 });
 
 export const AssetKitDTO = z.object({
@@ -69,14 +69,13 @@ export const AssetKitDTO = z.object({
 
 export const AssetKitItemDTO = z.object({
   id: z.string().min(24).max(25),
-  kitId: z.string().min(24).max(25),
-  assetCategoryId: z.string().min(24).max(25).nullable(),
+  assetKitId: z.string().min(24).max(25),
+  assetCategoryId: z.string().min(24).max(25),
   assetModelId: z.string().min(24).max(25).nullable(),
   quantity: z.number(),
   isRequired: z.boolean(),
-  notes: z.string().nullable(),
+  note: z.string().nullable(),
   createdAt: z.date(),
-  updatedAt: z.date(),
 });
 
 export type CreateAssetKitDTO = z.infer<typeof CreateAssetKitDTO>;

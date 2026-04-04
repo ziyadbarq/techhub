@@ -16,12 +16,14 @@ import type { IConfigurationItemRepository } from "@/core/repositories/configura
 import type { ICIRelationshipRepository } from "@/core/repositories/ci-relationship.repository.interface";
 import type { IRelationshipTypeRepository } from "@/core/repositories/relationship-type.repository.interface";
 import type { IRelationshipTypeScopeRepository } from "@/core/repositories/relationship-type-scope.repository.interface";
+import type { ICMDBHealthRepository } from "@/core/repositories/cmdb-health.repository.interface";
 import { PrismaCIClassRepository } from "@/infrastructure/repositories/prisma-ci-class.repository";
 import { PrismaCIClassFieldRepository } from "@/infrastructure/repositories/prisma-ci-class-field.repository";
 import { PrismaConfigurationItemRepository } from "@/infrastructure/repositories/prisma-configuration-item.repository";
 import { PrismaCIRelationshipRepository } from "@/infrastructure/repositories/prisma-ci-relationship.repository";
 import { PrismaRelationshipTypeRepository } from "@/infrastructure/repositories/prisma-relationship-type.repository";
 import { PrismaRelationshipTypeScopeRepository } from "@/infrastructure/repositories/prisma-relationship-type-scope.repository";
+import { PrismaCMDBHealthRepository } from "@/infrastructure/repositories/prisma-cmdb-health.repository";
 
 // Use Cases - CI Classes
 import { CreateCIClassUseCase } from "@/core/use-cases/ci-class/create-ci-class.use-case";
@@ -58,6 +60,17 @@ import { GetRelationshipTypeScopeUseCase } from "@/core/use-cases/relationship-t
 import { ListRelationshipTypeScopesUseCase } from "@/core/use-cases/relationship-type-scope/list-relationship-type-scopes.use-case";
 import { UpdateRelationshipTypeScopeUseCase } from "@/core/use-cases/relationship-type-scope/update-relationship-type-scope.use-case";
 import { DeleteRelationshipTypeScopeUseCase } from "@/core/use-cases/relationship-type-scope/delete-relationship-type-scope.use-case";
+
+// Use Cases - Impact Analysis
+import { AnalyzeCIImpactUseCase } from "@/core/use-cases/cmdb/impact-analysis/analyze-ci-impact.use-case";
+import { AnalyzeUpstreamDependenciesUseCase } from "@/core/use-cases/cmdb/impact-analysis/analyze-upstream-dependencies.use-case";
+
+// Use Cases - Data Quality
+import { GetCMDBHealthMetricsUseCase } from "@/core/use-cases/cmdb/data-quality/get-cmdb-health-metrics.use-case";
+import { DetectStaleCIsUseCase } from "@/core/use-cases/cmdb/data-quality/detect-stale-cis.use-case";
+
+// Report Use Cases
+import { GetOciResourceInventoryReportUseCase } from "@/core/use-cases/reports/get-oci-resource-inventory-report.use-case";
 
 // Use Cases - CI Relationships
 import { CreateCIRelationshipUseCase } from "@/core/use-cases/cmdb/ci-relationship/create-ci-relationship.use-case";
@@ -102,6 +115,11 @@ export function bindCMDBDependencies(container: Container): void {
       DI_TOKENS.IRelationshipTypeScopeRepository,
     )
     .to(PrismaRelationshipTypeScopeRepository)
+    .inSingletonScope();
+
+  container
+    .bind<ICMDBHealthRepository>(DI_TOKENS.ICMDBHealthRepository)
+    .to(PrismaCMDBHealthRepository)
     .inSingletonScope();
 
   // CI Class Use Cases
@@ -244,6 +262,28 @@ export function bindCMDBDependencies(container: Container): void {
     .to(DeleteRelationshipTypeScopeUseCase)
     .inTransientScope();
 
+  // Impact Analysis Use Cases
+  container
+    .bind<AnalyzeCIImpactUseCase>(DI_TOKENS.AnalyzeCIImpactUseCase)
+    .to(AnalyzeCIImpactUseCase)
+    .inTransientScope();
+  container
+    .bind<AnalyzeUpstreamDependenciesUseCase>(
+      DI_TOKENS.AnalyzeUpstreamDependenciesUseCase,
+    )
+    .to(AnalyzeUpstreamDependenciesUseCase)
+    .inTransientScope();
+
+  // Data Quality Use Cases
+  container
+    .bind<GetCMDBHealthMetricsUseCase>(DI_TOKENS.GetCMDBHealthMetricsUseCase)
+    .to(GetCMDBHealthMetricsUseCase)
+    .inTransientScope();
+  container
+    .bind<DetectStaleCIsUseCase>(DI_TOKENS.DetectStaleCIsUseCase)
+    .to(DetectStaleCIsUseCase)
+    .inTransientScope();
+
   // CI Relationship Use Cases
   container
     .bind<CreateCIRelationshipUseCase>(DI_TOKENS.CreateCIRelationshipUseCase)
@@ -264,5 +304,13 @@ export function bindCMDBDependencies(container: Container): void {
   container
     .bind<DeleteCIRelationshipUseCase>(DI_TOKENS.DeleteCIRelationshipUseCase)
     .to(DeleteCIRelationshipUseCase)
+    .inTransientScope();
+
+  // Report Use Cases
+  container
+    .bind<GetOciResourceInventoryReportUseCase>(
+      DI_TOKENS.GetOciResourceInventoryReportUseCase,
+    )
+    .to(GetOciResourceInventoryReportUseCase)
     .inTransientScope();
 }

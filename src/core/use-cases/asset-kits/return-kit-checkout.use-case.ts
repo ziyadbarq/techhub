@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
@@ -10,7 +6,7 @@ import type { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout
 
 export interface ReturnKitCheckoutRequest {
   checkoutId: string;
-  returnDate?: Date;
+  conditionAtReturn?: string;
 }
 
 @injectable()
@@ -34,17 +30,16 @@ export class ReturnKitCheckoutUseCase {
     const items = await this.checkoutItemRepository.findByCheckoutId(
       request.checkoutId,
     );
-    const returnDate = request.returnDate || new Date();
 
     for (const item of items) {
       if (item.status === "CHECKED_OUT") {
-        item.returnItem();
+        item.returnItem(request.conditionAtReturn);
         await this.checkoutItemRepository.update(item);
       }
     }
 
     // Complete the checkout
-    checkout.completeReturn(returnDate);
+    checkout.returnAllItems();
 
     return this.kitCheckoutRepository.update(checkout);
   }

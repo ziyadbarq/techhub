@@ -292,13 +292,18 @@ export function WarrantyForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {(Object.values(WarrantyCoverageType) as string[]).map(
-                        (type) => (
-                          <SelectItem key={type} value={type}>
-                            {type.replace(/_/g, " ")}
-                          </SelectItem>
-                        ),
-                      )}
+                      {(
+                        [
+                          WarrantyCoverageType.STANDARD,
+                          WarrantyCoverageType.EXTENDED,
+                          WarrantyCoverageType.THIRD_PARTY,
+                          WarrantyCoverageType.PREMIUM,
+                        ] as string[]
+                      ).map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type.replace(/_/g, " ")}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
