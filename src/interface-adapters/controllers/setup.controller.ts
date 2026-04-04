@@ -5,7 +5,7 @@
 
 "use server";
 
-import { getContainer } from "@/di/container";
+import { getContainer, isModuleLoaded, loadHeavyModule } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -37,6 +37,14 @@ import type {
 import type { ResetDatabaseResult } from "@/core/use-cases/system-setup";
 
 const SYSTEM_ADMIN_ROLE_NAME = "system-administrator";
+
+async function ensureSystemHealthIntegrationModulesLoaded(): Promise<void> {
+  getContainer();
+
+  if (!isModuleLoaded("microsoft-graph")) {
+    await loadHeavyModule("microsoft-graph");
+  }
+}
 
 /**
  * Check if first system admin setup is needed
@@ -472,6 +480,8 @@ export async function checkSystemHealthAction(): Promise<
   ActionResponse<SystemHealthCheckDto>
 > {
   try {
+    await ensureSystemHealthIntegrationModulesLoaded();
+
     const container = getContainer();
     const checkSystemHealth = container.get<CheckSystemHealthUseCase>(
       DI_TOKENS.CheckSystemHealthUseCase,

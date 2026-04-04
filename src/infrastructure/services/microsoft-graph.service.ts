@@ -108,6 +108,41 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
     this.logger = logger.child({ service: "MicrosoftGraphService" });
   }
 
+  private createProbeError(prefix: string, error: unknown): Error {
+    if (error instanceof Error) {
+      return new Error(`${prefix}: ${error.message}`);
+    }
+
+    if (error && typeof error === "object") {
+      const message =
+        "message" in error && typeof error.message === "string"
+          ? error.message
+          : "Unknown error";
+      const statusCode =
+        "statusCode" in error && typeof error.statusCode === "number"
+          ? error.statusCode
+          : undefined;
+      const code =
+        "code" in error && typeof error.code === "string"
+          ? error.code
+          : undefined;
+
+      const details = [statusCode ? `HTTP ${statusCode}` : null, code]
+        .filter((part): part is string => part !== null)
+        .join(", ");
+
+      return new Error(
+        details
+          ? `${prefix}: ${message} (${details})`
+          : `${prefix}: ${message}`,
+      );
+    }
+
+    return new Error(
+      `${prefix}: ${typeof error === "string" ? error : "Unknown error"}`,
+    );
+  }
+
   /**
    * Lazy initialization of Graph client
    * Allows service to be instantiated even if env vars are missing
@@ -365,11 +400,12 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
       this.logger.info("Graph API connection successful");
       return true;
     } catch (error) {
-      this.logger.error(
-        "Graph API connection failed",
-        error instanceof Error ? error : new Error(String(error)),
+      const probeError = this.createProbeError(
+        "Failed to connect to Microsoft Graph",
+        error,
       );
-      return false;
+      this.logger.error("Graph API connection failed", probeError);
+      throw probeError;
     }
   }
 
@@ -531,11 +567,12 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
       this.logger.info("Intune API connection successful");
       return true;
     } catch (error) {
-      this.logger.error(
-        "Intune API connection failed",
-        error instanceof Error ? error : new Error(String(error)),
+      const probeError = this.createProbeError(
+        "Failed to connect to Intune via Microsoft Graph",
+        error,
       );
-      return false;
+      this.logger.error("Intune API connection failed", probeError);
+      throw probeError;
     }
   }
 }

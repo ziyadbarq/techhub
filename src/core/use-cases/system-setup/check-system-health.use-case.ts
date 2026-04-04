@@ -199,10 +199,20 @@ export class CheckSystemHealthUseCase {
       );
       intuneConfigured = hasCredentials;
 
+      if (hasCredentials && !this.graphService) {
+        intuneError =
+          "Microsoft Graph integration service is not loaded in this runtime";
+      }
+
       if (hasCredentials && this.graphService) {
         const intuneStart = performance.now();
         intuneConnected = await this.graphService.testIntuneConnection();
         intuneResponseTime = Math.round(performance.now() - intuneStart);
+
+        if (!intuneConnected) {
+          intuneError =
+            "Intune connectivity probe returned false without an error";
+        }
       }
     } catch (error) {
       intuneError =

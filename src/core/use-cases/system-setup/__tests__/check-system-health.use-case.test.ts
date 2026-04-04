@@ -95,4 +95,59 @@ describe("CheckSystemHealthUseCase", () => {
     expect(result.msGraphSSO.message).toContain("Configured");
     expect(result.integrationsHealthy).toBe(true);
   });
+
+  it("explains when Intune credentials exist but the Graph service is unavailable", async () => {
+    const useCase = new CheckSystemHealthUseCase(
+      systemSetupRepository as never,
+      jobQueueService as never,
+      createMockLogger(),
+      null,
+      null,
+      createMockConfigService({
+        AZURE_TENANT_ID: "tenant-id",
+        AZURE_CLIENT_ID: "client-id",
+        AZURE_CLIENT_SECRET: "client-secret",
+      }),
+    );
+
+    const result = await useCase.execute();
+
+    expect(result.intune.configured).toBe(true);
+    expect(result.intune.connected).toBe(false);
+    expect(result.intune.error).toContain("not loaded");
+    expect(result.intune.message).toContain("Connection failed");
+    expect(result.integrationsHealthy).toBe(false);
+  });
+
+  it("surfaces Intune probe failures in the health response", async () => {
+    const graphService = {
+      testIntuneConnection: vi
+        .fn()
+        .mockRejectedValue(
+          new Error(
+            "Failed to connect to Intune via Microsoft Graph: 403 Forbidden",
+          ),
+        ),
+    };
+
+    const useCase = new CheckSystemHealthUseCase(
+      systemSetupRepository as never,
+      jobQueueService as never,
+      createMockLogger(),
+      graphService as never,
+      null,
+      createMockConfigService({
+        AZURE_TENANT_ID: "tenant-id",
+        AZURE_CLIENT_ID: "client-id",
+        AZURE_CLIENT_SECRET: "client-secret",
+      }),
+    );
+
+    const result = await useCase.execute();
+
+    expect(graphService.testIntuneConnection).toHaveBeenCalledTimes(1);
+    expect(result.intune.connected).toBe(false);
+    expect(result.intune.error).toContain("403 Forbidden");
+    expect(result.intune.message).toContain("403 Forbidden");
+  });
 });
