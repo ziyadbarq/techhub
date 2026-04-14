@@ -444,7 +444,7 @@ export async function runSetupSeedAction(
     // Docker env, K8s ConfigMap/Secrets, or Spring Cloud Config). Child process
     // inherits process.env from the parent automatically.
     const { execSync } = await import("child_process");
-    execSync(`npx tsx src/infrastructure/database/prisma/seed.ts ${preset}`, {
+    execSync(`node node_modules/tsx/dist/cli.mjs src/infrastructure/database/prisma/seed.ts ${preset}`, {
       cwd: process.cwd(),
       stdio: "pipe",
       timeout: 300_000,

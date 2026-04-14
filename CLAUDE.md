@@ -107,7 +107,7 @@ kubectl get pods -n horizontal-services -l app=techhub    # GCP development
 
 **UI-Selectable Variables**: type (build_only/build_and_deploy), CLOUD (oci/gcp), npm_migration (true/false)
 
-See **[docs/deployment/LOCAL_DOCKER_TESTING.md](docs/deployment/LOCAL_DOCKER_TESTING.md)** for local Docker testing, **[docs/deployment/GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md)** for CI/CD setup, [docs/deployment/BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) for build process, [docs/deployment/KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) for K8s operations, and [docs/deployment/ARGOCD_TECHHUB_APPLICATION.md](docs/deployment/ARGOCD_TECHHUB_APPLICATION.md) for the verified live Argo CD application wiring.
+See **[docs/deployment/LOCAL_DOCKER_TESTING.md](docs/deployment/LOCAL_DOCKER_TESTING.md)** for local Docker testing, **[docs/deployment/GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md)** for CI/CD setup, [docs/deployment/BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) for build process, [docs/deployment/KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) for K8s operations, [docs/deployment/ARGOCD_TECHHUB_APPLICATION.md](docs/deployment/ARGOCD_TECHHUB_APPLICATION.md) for the verified live Argo CD application wiring, and **[docs/deployment/COOLIFY_API_GUIDE.md](docs/deployment/COOLIFY_API_GUIDE.md)** for Coolify API endpoints, working curl commands, and resource UUIDs.
 
 ## Documentation
 
