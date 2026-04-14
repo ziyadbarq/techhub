@@ -15,7 +15,6 @@
  * ```typescript
  * import { env } from '@/infrastructure/config/env';
  *
- * const apiKey = env.OPENAI_API_KEY;
  * const dbUrl = env.DATABASE_URL;
  * ```
  *
@@ -32,10 +31,8 @@ import { z } from "zod";
 type ServerEnvKeys =
   | "DATABASE_URL"
   | "REDIS_URL"
-  | "OPENAI_API_KEY"
   | "NODE_ENV"
   | "LOG_LEVEL"
-  | "AI_DEBUG_MODE"
   | "ENCRYPTION_KEY"
   | "BACKUP_STORAGE_PATH"
   | "PG_DUMP_PATH"
@@ -59,7 +56,6 @@ const isTestEnv = process.env.NODE_ENV === "test";
 const testEnvFallbacks: Partial<Record<RuntimeEnvKeys, string>> = {
   DATABASE_URL: "postgresql://user:password@localhost:5432/test?schema=public",
   REDIS_URL: "redis://localhost:6379",
-  OPENAI_API_KEY: "sk-test",
   ENCRYPTION_KEY:
     "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
   NEXT_PUBLIC_APP_URL: "http://localhost:3000",
@@ -80,10 +76,8 @@ const runtimeEnv = {
   // Server-side variables
   DATABASE_URL: resolveEnv("DATABASE_URL"),
   REDIS_URL: resolveEnv("REDIS_URL"),
-  OPENAI_API_KEY: resolveEnv("OPENAI_API_KEY"),
   NODE_ENV: resolveEnv("NODE_ENV"),
   LOG_LEVEL: resolveEnv("LOG_LEVEL"),
-  AI_DEBUG_MODE: resolveEnv("AI_DEBUG_MODE"),
   ENCRYPTION_KEY: resolveEnv("ENCRYPTION_KEY"),
   BACKUP_STORAGE_PATH: resolveEnv("BACKUP_STORAGE_PATH"),
   PG_DUMP_PATH: resolveEnv("PG_DUMP_PATH"),
@@ -135,12 +129,6 @@ export const env = createEnv({
       ),
 
     /**
-     * OpenAI API key for AI services
-     * @example "sk-..."
-     */
-    OPENAI_API_KEY: z.string().min(1),
-
-    /**
      * Node environment
      * Defaults to "production" if not set
      */
@@ -156,16 +144,6 @@ export const env = createEnv({
     LOG_LEVEL: z
       .enum(["debug", "info", "warn", "error"])
       .default(process.env.NODE_ENV === "production" ? "info" : "debug"),
-
-    /**
-     * AI Debug Mode (optional)
-     * When enabled, writes detailed debug traces to .ai-debug/ directory
-     * @example "true" | "false"
-     */
-    AI_DEBUG_MODE: z
-      .enum(["true", "false", "1", "0"])
-      .optional()
-      .transform((val) => val === "true" || val === "1"),
 
     /**
      * AES-256-GCM encryption key for OAuth tokens (REQUIRED for Microsoft SSO)

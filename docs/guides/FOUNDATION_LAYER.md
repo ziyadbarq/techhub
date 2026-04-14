@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Foundation Layer provides the core building blocks for the entire Barq Assets CMDB/ITAM system. These entities are shared across all other modules and establish the organizational, geographical, and lifecycle framework that all other entities reference.
+The Foundation Layer provides the core building blocks for the entire TechHub CMDB/ITAM system. These entities are shared across all other modules and establish the organizational, geographical, and lifecycle framework that all other entities reference.
 
 **Purpose**: Pure reference data that should NOT know anything about specific CI types (computers, routers, etc.). Instead, it provides shared concepts that all higher layers reuse.
 
@@ -1863,4 +1863,4 @@ See [Logging Guide](./LOGGING.md) for complete logging documentation.
 
 **Document Version**: 1.0
 **Last Updated**: November 2025
-**Maintained By**: Barq Assets Development Team
+**Maintained By**: TechHub Development Team

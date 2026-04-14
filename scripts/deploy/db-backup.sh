@@ -248,7 +248,7 @@ perform_backup() {
   verify_database_connection
 
   if [[ -z "$BACKUP_FILE" ]]; then
-    BACKUP_FILE="${BACKUP_DIR}/barq-assets-$(date +%Y%m%d_%H%M%S).sql"
+    BACKUP_FILE="${BACKUP_DIR}/techhub-$(date +%Y%m%d_%H%M%S).sql"
   elif [[ "$BACKUP_FILE" != /* ]]; then
     BACKUP_FILE="${ROOT_DIR}/${BACKUP_FILE}"
   fi

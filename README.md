@@ -262,7 +262,6 @@ All shadcn/ui primitives included:
 - **Node.js** 18+ and npm
 - **PostgreSQL** database
 - **Redis** for caching and background jobs
-- **OpenAI API key** (optional - AI features currently disabled)
 
 **Local Development**: macOS with PostgreSQL and Redis via Homebrew (NOT Docker)
 **Production**: On-premises infrastructure at Barq facilities (dev, UAT, prod environments)
@@ -271,7 +270,7 @@ All shadcn/ui primitives included:
 
 ```bash
 # 1. Clone or navigate to the project
-cd /Users/abdullahalzuwayed/dev/barq/barq-assets
+cd /Users/abdullahalzuwayed/dev/barq/TechHub
 
 # 2. Install dependencies
 npm install
@@ -281,7 +280,6 @@ cp .env.example .env.local
 # Edit .env.local with:
 #   - DATABASE_URL (PostgreSQL connection)
 #   - REDIS_URL (Redis connection)
-#   - OPENAI_API_KEY (optional)
 #   - BETTER_AUTH_SECRET (generate with `openssl rand -base64 32`)
 
 # 4. Initialize database
@@ -411,7 +409,7 @@ src/
 │         Business rules + Repository contracts        │
 ├─────────────────────────────────────────────────────┤
 │     5. Infrastructure (Prisma + External APIs)       │
-│        Database + OpenAI + File Storage              │
+│        Database + File Storage                       │
 └─────────────────────────────────────────────────────┘
 ```
 

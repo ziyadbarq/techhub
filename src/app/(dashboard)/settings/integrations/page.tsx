@@ -147,8 +147,8 @@ export default function IntegrationSettingsPage() {
           <ShieldCheck className="h-4 w-4" />
           <AlertTitle>Configuration scope</AlertTitle>
           <AlertDescription>
-            These controls apply across the Barq Assets platform. Changes are
-            logged in audit trails and mirrored to downstream services when
+            These controls apply across the TechHub platform. Changes are logged
+            in audit trails and mirrored to downstream services when
             synchronization is enabled.
           </AlertDescription>
         </Alert>
@@ -158,7 +158,7 @@ export default function IntegrationSettingsPage() {
             <SectionHeading
               icon={Cloud}
               title="Integrations & sync"
-              description="Control how Barq Assets exchanges data with other platforms."
+              description="Control how TechHub exchanges data with other platforms."
             />
           </CardHeader>
           <CardContent className="space-y-4">

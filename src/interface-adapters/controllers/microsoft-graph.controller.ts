@@ -80,17 +80,28 @@ export async function testGraphConnectionAction(): Promise<
       IMicrosoftGraphService,
     );
 
-    const isConnected = await graphService.testConnection();
+    try {
+      await graphService.testConnection();
 
-    return {
-      success: true,
-      data: {
-        connected: isConnected,
-        message: isConnected
-          ? "Successfully connected to Microsoft Graph"
-          : "Failed to connect to Microsoft Graph. Check credentials.",
-      },
-    };
+      return {
+        success: true,
+        data: {
+          connected: true,
+          message: "Successfully connected to Microsoft Graph",
+        },
+      };
+    } catch (error) {
+      return {
+        success: true,
+        data: {
+          connected: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to connect to Microsoft Graph. Check credentials.",
+        },
+      };
+    }
   } catch (error) {
     return handleControllerError(
       error,

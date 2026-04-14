@@ -15,9 +15,6 @@ if (!env.DATABASE_URL) {
 if (!env.REDIS_URL) {
   env.REDIS_URL = "redis://localhost:6379";
 }
-if (!env.OPENAI_API_KEY) {
-  env.OPENAI_API_KEY = "test-api-key";
-}
 if (!env.NODE_ENV) {
   env.NODE_ENV = "test";
 }

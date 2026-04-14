@@ -82,7 +82,7 @@ export function MyPendingApprovalsWidget() {
       headerAction={
         approvals.length > 0 && (
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/assets/disposals">
+            <Link href="/asset-disposals">
               <ExternalLink className="mr-1 h-3 w-3" />
               View All
             </Link>
@@ -101,7 +101,7 @@ export function MyPendingApprovalsWidget() {
           {approvals.slice(0, 5).map((approval) => (
             <Link
               key={approval.id}
-              href={`/assets/disposals/${approval.disposalId}`}
+              href="/asset-disposals"
               className="hover:bg-muted/50 -mx-2 flex items-center justify-between rounded border-b px-2 py-1 pb-2 transition-colors last:border-0 last:pb-0"
             >
               <div className="space-y-1">

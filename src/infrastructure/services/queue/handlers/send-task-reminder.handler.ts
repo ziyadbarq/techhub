@@ -11,6 +11,7 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ITaskRepository } from "@/core/repositories/task.repository.interface";
 import type { IEmailService, ILoggerService } from "@/core/services";
+import type { IConfigService } from "@/core/services/config.service.interface";
 
 /**
  * Handles send task reminder job.
@@ -92,7 +93,7 @@ export async function handleSendTaskReminder(
       taskTitle,
       dueDate: new Date(dueDate).toLocaleDateString(),
       reminderMessage,
-      taskLink: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/tasks/${taskId}`,
+      taskLink: `${(await getContainer().get<IConfigService>(DI_TOKENS.IConfigService).get("NEXT_PUBLIC_APP_URL")) ?? "http://localhost:3000"}/tasks/${taskId}`,
     },
   );
 

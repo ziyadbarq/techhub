@@ -274,4 +274,4 @@ Version 1.3.0 (planned) will focus on:
 
 ---
 
-**Thank you for using Barq Assets ITAM/CMDB System! 🎉**
+**Thank you for using TechHub ITAM/CMDB System! 🎉**

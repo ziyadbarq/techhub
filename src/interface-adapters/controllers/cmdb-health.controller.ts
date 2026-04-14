@@ -6,6 +6,8 @@
  * Server action for retrieving CMDB data quality health metrics.
  */
 
+import { requireFeature } from "@/lib/features/server";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getContainer } from "@/di/container";
@@ -23,6 +25,7 @@ export async function getCMDBHealthMetricsAction(): Promise<
   ActionResponse<CMDBHealthMetrics>
 > {
   try {
+    await requireFeature(FEATURE_FLAGS.CMDB);
     await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
 
     const container = getContainer();
@@ -47,6 +50,7 @@ export async function detectStaleCIsAction(
   environmentFilter?: string,
 ): Promise<ActionResponse<DetectStaleCIsResult>> {
   try {
+    await requireFeature(FEATURE_FLAGS.CMDB);
     await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
 
     const container = getContainer();

@@ -15,10 +15,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import {
-  getFeatureFlagsPollInterval,
-  isFeatureFlagsPollingEnabled,
-} from "@/config/feature-flags.config";
+import { useClientSetting } from "@/hooks/use-client-settings";
 
 interface FeatureFlagsContextValue {
   enabledFeatures: Set<string>;
@@ -46,6 +43,16 @@ export function FeatureFlagsProvider({ children }: FeatureFlagsProviderProps) {
     new Set(),
   );
   const [isLoading, setIsLoading] = useState(true);
+
+  // Poll interval from DB settings (falls back to build-time env → 30000)
+  const pollIntervalSetting = useClientSetting(
+    "NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL",
+  );
+  const pollIntervalMs = pollIntervalSetting
+    ? parseInt(pollIntervalSetting, 10)
+    : 30000;
+  const effectivePollInterval =
+    !Number.isNaN(pollIntervalMs) && pollIntervalMs > 0 ? pollIntervalMs : 0;
   const [error, setError] = useState<string | null>(null);
 
   const fetchFeatures = useCallback(async () => {
@@ -92,9 +99,8 @@ export function FeatureFlagsProvider({ children }: FeatureFlagsProviderProps) {
     let pollInterval: NodeJS.Timeout | undefined;
 
     const startPolling = () => {
-      if (isFeatureFlagsPollingEnabled() && !pollInterval) {
-        const interval = getFeatureFlagsPollInterval();
-        pollInterval = setInterval(fetchFeatures, interval);
+      if (effectivePollInterval > 0 && !pollInterval) {
+        pollInterval = setInterval(fetchFeatures, effectivePollInterval);
       }
     };
 
@@ -125,7 +131,7 @@ export function FeatureFlagsProvider({ children }: FeatureFlagsProviderProps) {
       stopPolling();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [fetchFeatures]);
+  }, [fetchFeatures, effectivePollInterval]);
 
   const isFeatureEnabled = useCallback(
     (featureName: string): boolean => {

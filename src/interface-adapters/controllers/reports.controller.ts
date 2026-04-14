@@ -1,7 +1,9 @@
 "use server";
 
 import { requirePermission } from "@/lib/permissions/server";
+import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { getContainer } from "@/di";
 import { loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
@@ -38,7 +40,8 @@ export async function getLicenseComplianceReportAction(): Promise<
   }>
 > {
   try {
-    await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+    await requireFeature(FEATURE_FLAGS.LICENSES);
+    await requirePermission(PERMISSIONS.REPORTS_VIEW);
     if (!isModuleLoaded("licenses")) {
       await loadHeavyModule("licenses");
     }
@@ -92,7 +95,8 @@ export async function getContractExpirationReportAction(): Promise<
   }>
 > {
   try {
-    await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+    await requireFeature(FEATURE_FLAGS.CONTRACTS);
+    await requirePermission(PERMISSIONS.REPORTS_VIEW);
     const container = getContainer();
     const useCase = container.get<GetContractExpirationReportUseCase>(
       DI_TOKENS.GetContractExpirationReportUseCase,
@@ -140,7 +144,8 @@ export async function getOciResourceInventoryReportAction(): Promise<
   }>
 > {
   try {
-    await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+    await requireFeature(FEATURE_FLAGS.OCI_SYNC);
+    await requirePermission(PERMISSIONS.REPORTS_VIEW);
     const container = getContainer();
     const useCase = container.get<GetOciResourceInventoryReportUseCase>(
       DI_TOKENS.GetOciResourceInventoryReportUseCase,

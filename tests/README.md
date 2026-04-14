@@ -1,6 +1,6 @@
 # Testing Guide
 
-This directory contains integration tests for the Barq Assets using Vitest and Testcontainers.
+This directory contains integration tests for the TechHub using Vitest and Testcontainers.
 
 ## Overview
 
@@ -125,10 +125,7 @@ beforeEach(async () => {
 
 ```typescript
 // Deletes in reverse dependency order:
-1. PromptCompositionBlock
-2. PromptComposition
-3. PromptBlock
-4. Task
+1. Task
 ```
 
 ### `getTestPrisma()`

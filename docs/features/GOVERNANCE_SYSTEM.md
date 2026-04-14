@@ -1076,9 +1076,9 @@ for (const ci of dbServerCIs) {
 
 ## DI Configuration
 
-**Module**: `/home/user/barq-assets/src/di/modules/governance.module.ts`
+**Module**: `/home/user/techhub/src/di/modules/governance.module.ts`
 
-**Registration**: `bindGovernanceDependencies(container)` in `/home/user/barq-assets/src/di/container.ts`
+**Registration**: `bindGovernanceDependencies(container)` in `/home/user/techhub/src/di/container.ts`
 
 ```typescript
 // Repositories (Singleton Scope)
@@ -1381,6 +1381,6 @@ While core UI is implemented, the following enhancements are planned:
 
 ## License & Credits
 
-Part of the Barq Assets CMDB/ITAM system.
+Part of the TechHub CMDB/ITAM system.
 Built with Clean Architecture principles for SAMA compliance.
 Technology: Next.js 16, Prisma 7, PostgreSQL, InversifyJS, Zod.

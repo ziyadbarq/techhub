@@ -13,29 +13,40 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import {
   checkFirstAdminAction,
   assignFirstAdminAction,
+  checkSystemHealthAction,
 } from "../setup.controller";
 
-// Mock logger service
-const mockLogger = {
-  debug: vi.fn(),
-  info: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-  startTimer: vi.fn(() => ({ startTime: Date.now() })),
-  endTimer: vi.fn(),
-};
+const {
+  mockLogger,
+  mockCheckFirstAdminUseCase,
+  mockAssignFirstAdminUseCase,
+  mockCheckSystemHealthUseCase,
+  mockLoadHeavyModule,
+  mockIsModuleLoaded,
+  mockGetCurrentUserId,
+} = vi.hoisted(() => ({
+  mockLogger: {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    startTimer: vi.fn(() => ({ startTime: Date.now() })),
+    endTimer: vi.fn(),
+  },
+  mockCheckFirstAdminUseCase: {
+    execute: vi.fn(),
+  },
+  mockAssignFirstAdminUseCase: {
+    execute: vi.fn(),
+  },
+  mockCheckSystemHealthUseCase: {
+    execute: vi.fn(),
+  },
+  mockLoadHeavyModule: vi.fn(),
+  mockIsModuleLoaded: vi.fn(),
+  mockGetCurrentUserId: vi.fn(),
+}));
 
-// Mock use cases
-const mockCheckFirstAdminUseCase = {
-  execute: vi.fn(),
-};
-
-const mockAssignFirstAdminUseCase = {
-  execute: vi.fn(),
-};
-
-// Mock getCurrentUserId
-const mockGetCurrentUserId = vi.fn();
 vi.mock("@/lib/auth/session", () => ({
   getCurrentUserId: () => mockGetCurrentUserId(),
 }));
@@ -56,17 +67,23 @@ vi.mock("@/di/container", () => ({
       if (tokenKey === Symbol.for("AssignFirstAdminUseCase").toString()) {
         return mockAssignFirstAdminUseCase;
       }
+      if (tokenKey === Symbol.for("CheckSystemHealthUseCase").toString()) {
+        return mockCheckSystemHealthUseCase;
+      }
       if (tokenKey === Symbol.for("ILoggerService").toString()) {
         return mockLogger;
       }
       return null;
     }),
   })),
+  loadHeavyModule: mockLoadHeavyModule,
+  isModuleLoaded: mockIsModuleLoaded,
 }));
 
 describe("Setup Controller", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsModuleLoaded.mockReturnValue(true);
   });
 
   describe("checkFirstAdminAction", () => {
@@ -474,6 +491,53 @@ describe("Setup Controller", () => {
       if (!result.success) {
         expect(result.error).toBe("Admin role already assigned");
       }
+    });
+  });
+
+  describe("checkSystemHealthAction", () => {
+    it("loads Microsoft Graph before running the health check", async () => {
+      mockIsModuleLoaded.mockReturnValue(false);
+      mockCheckSystemHealthUseCase.execute.mockResolvedValue({
+        database: { connected: true, message: "Connected" },
+        redis: { connected: true, message: "Connected" },
+        environment: { valid: true, missing: [] },
+        migrations: {
+          applied: true,
+          pending: 0,
+          message: "All migrations applied",
+        },
+        seeding: {
+          initialized: true,
+          organizationUnits: 1,
+          locations: 1,
+          vendors: 1,
+          featureFlags: 1,
+          services: 0,
+        },
+        worker: { active: true, queue: "maintenance" },
+        msGraphSSO: { configured: false, connected: false },
+        intune: { configured: false, connected: false },
+        email: { configured: false, connected: false },
+        buildInfo: {
+          version: "dev",
+          gitCommit: "local",
+          gitCommitFull: "local",
+          gitRef: "local",
+          buildDate: "unknown",
+          imageTag: "local",
+          pipelineId: "local",
+          jobId: "local",
+        },
+        overall: true,
+        coreServicesHealthy: true,
+        integrationsHealthy: true,
+      });
+
+      const result = await checkSystemHealthAction();
+
+      expect(mockLoadHeavyModule).toHaveBeenCalledWith("microsoft-graph");
+      expect(mockCheckSystemHealthUseCase.execute).toHaveBeenCalledTimes(1);
+      expect(result.success).toBe(true);
     });
   });
 });

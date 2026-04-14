@@ -119,6 +119,7 @@ export const ModelName = {
   UserRole: 'UserRole',
   AuditLog: 'AuditLog',
   CodeSequence: 'CodeSequence',
+  ReportSchedule: 'ReportSchedule',
   AssetReservation: 'AssetReservation',
   AssetReservationConflict: 'AssetReservationConflict',
   BusinessProcess: 'BusinessProcess',
@@ -130,11 +131,9 @@ export const ModelName = {
   ServiceHealthHistory: 'ServiceHealthHistory',
   ServiceSlaMetric: 'ServiceSlaMetric',
   Task: 'Task',
-  PromptBlock: 'PromptBlock',
-  PromptComposition: 'PromptComposition',
-  PromptCompositionBlock: 'PromptCompositionBlock',
   FeatureFlag: 'FeatureFlag',
-  FeatureFlagAuditLog: 'FeatureFlagAuditLog'
+  FeatureFlagAuditLog: 'FeatureFlagAuditLog',
+  SystemSetting: 'SystemSetting'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1433,6 +1432,30 @@ export const CodeSequenceScalarFieldEnum = {
 export type CodeSequenceScalarFieldEnum = (typeof CodeSequenceScalarFieldEnum)[keyof typeof CodeSequenceScalarFieldEnum]
 
 
+export const ReportScheduleScalarFieldEnum = {
+  id: 'id',
+  reportId: 'reportId',
+  name: 'name',
+  frequency: 'frequency',
+  dayOfWeek: 'dayOfWeek',
+  dayOfMonth: 'dayOfMonth',
+  hour: 'hour',
+  minute: 'minute',
+  timezone: 'timezone',
+  recipients: 'recipients',
+  filters: 'filters',
+  format: 'format',
+  isActive: 'isActive',
+  lastSentAt: 'lastSentAt',
+  nextSendAt: 'nextSendAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReportScheduleScalarFieldEnum = (typeof ReportScheduleScalarFieldEnum)[keyof typeof ReportScheduleScalarFieldEnum]
+
+
 export const AssetReservationScalarFieldEnum = {
   id: 'id',
   assetId: 'assetId',
@@ -1666,49 +1689,6 @@ export const TaskScalarFieldEnum = {
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
 
 
-export const PromptBlockScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  category: 'category',
-  content: 'content',
-  description: 'description',
-  metadata: 'metadata',
-  version: 'version',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  parentBlockId: 'parentBlockId'
-} as const
-
-export type PromptBlockScalarFieldEnum = (typeof PromptBlockScalarFieldEnum)[keyof typeof PromptBlockScalarFieldEnum]
-
-
-export const PromptCompositionScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  purpose: 'purpose',
-  description: 'description',
-  variables: 'variables',
-  version: 'version',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type PromptCompositionScalarFieldEnum = (typeof PromptCompositionScalarFieldEnum)[keyof typeof PromptCompositionScalarFieldEnum]
-
-
-export const PromptCompositionBlockScalarFieldEnum = {
-  id: 'id',
-  compositionId: 'compositionId',
-  blockId: 'blockId',
-  order: 'order',
-  overrides: 'overrides'
-} as const
-
-export type PromptCompositionBlockScalarFieldEnum = (typeof PromptCompositionBlockScalarFieldEnum)[keyof typeof PromptCompositionBlockScalarFieldEnum]
-
-
 export const FeatureFlagScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1736,6 +1716,20 @@ export const FeatureFlagAuditLogScalarFieldEnum = {
 } as const
 
 export type FeatureFlagAuditLogScalarFieldEnum = (typeof FeatureFlagAuditLogScalarFieldEnum)[keyof typeof FeatureFlagAuditLogScalarFieldEnum]
+
+
+export const SystemSettingScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  isEncrypted: 'isEncrypted',
+  updatedBy: 'updatedBy',
+  updatedByEmail: 'updatedByEmail',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type SystemSettingScalarFieldEnum = (typeof SystemSettingScalarFieldEnum)[keyof typeof SystemSettingScalarFieldEnum]
 
 
 export const SortOrder = {

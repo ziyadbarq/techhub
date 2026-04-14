@@ -24,6 +24,7 @@ import {
   TASK_JOBS,
   MAINTENANCE_JOBS,
   RESERVATION_JOBS,
+  REPORT_JOBS,
 } from "@/core/domain/jobs/job-names";
 import {
   handleTaskCompletedNotification,
@@ -45,6 +46,8 @@ import {
   handleDatabaseBackup,
   handleDatabaseRestore,
 } from "./handlers/database-backup.handler";
+import { handleCheckDueReportSchedules } from "./handlers/check-due-report-schedules.handler";
+import { handleGenerateAndSendReport } from "./handlers/generate-and-send-report.handler";
 
 /**
  * Worker instances
@@ -200,6 +203,29 @@ function createMaintenanceWorker(): BaseWorker {
     MAINTENANCE_JOBS.DATABASE_RESTORE,
     handleDatabaseRestore,
   );
+
+  // Register report schedule handlers
+  worker.registerHandler(
+    REPORT_JOBS.CHECK_DUE_SCHEDULES,
+    handleCheckDueReportSchedules,
+  );
+  worker.registerHandler(
+    REPORT_JOBS.GENERATE_AND_SEND,
+    handleGenerateAndSendReport,
+  );
+
+  /**
+   * TODO: Register additional maintenance job handlers
+   *
+   * Implementation steps:
+   * 1. Implement handlers in src/infrastructure/services/queue/handlers/
+   *    - handleDatabaseCleanup.handler.ts - Clean up old records, optimize tables
+   *    - handleDataExport.handler.ts - Export data for backups or reporting
+   * 2. Import handlers and register them here:
+   *    worker.registerHandler(MAINTENANCE_JOBS.DATABASE_CLEANUP, handleDatabaseCleanup);
+   *    worker.registerHandler(MAINTENANCE_JOBS.DATA_EXPORT, handleDataExport);
+   * 3. Schedule recurring jobs via BullMQ scheduleJob() for daily/weekly maintenance
+   */
 
   // Register database cleanup handler (old completed tasks)
   worker.registerHandler(

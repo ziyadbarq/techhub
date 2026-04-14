@@ -1,6 +1,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
+import { LogExecution } from "@/lib/decorators/log-execution.decorator";
 
 export interface DeleteAssetDisposalRequest {
   disposalId: string;
@@ -13,6 +14,7 @@ export class DeleteAssetDisposalUseCase {
     private readonly assetDisposalRepository: IAssetDisposalRepository,
   ) {}
 
+  @LogExecution("disposal.delete")
   async execute(request: DeleteAssetDisposalRequest): Promise<void> {
     const disposal = await this.assetDisposalRepository.findById(
       request.disposalId,

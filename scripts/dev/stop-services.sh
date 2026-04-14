@@ -1,5 +1,5 @@
 #!/bin/bash
-# Master stop switch for barq-assets services
+# Master stop switch for techhub services
 # Usage: ./scripts/stop-services.sh [--force] [--debug]
 #
 # The nuclear option: fuser -k is the only reliable way to kill processes
@@ -33,7 +33,7 @@ debug() {
     fi
 }
 
-echo "Stopping barq-assets services ($MODE_TEXT shutdown)..."
+echo "Stopping techhub services ($MODE_TEXT shutdown)..."
 echo ""
 
 # Get PORT

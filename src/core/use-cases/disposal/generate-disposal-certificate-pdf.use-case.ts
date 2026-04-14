@@ -3,6 +3,7 @@ import { jsPDF } from "jspdf";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import { LogExecution } from "@/lib/decorators/log-execution.decorator";
 
 export interface GenerateDisposalCertificatePDFRequest {
   disposalId: string;
@@ -34,6 +35,7 @@ export class GenerateDisposalCertificatePDFUseCase {
     private readonly assetRepository: IAssetRepository,
   ) {}
 
+  @LogExecution("disposal.generateCertificatePdf")
   async execute(
     request: GenerateDisposalCertificatePDFRequest,
   ): Promise<GenerateDisposalCertificatePDFResponse> {

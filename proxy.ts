@@ -66,7 +66,9 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL("/dashboard", request.url));
       }
 
-      // Redirect authenticated users from auth pages to dashboard
+      // Redirect authenticated users from auth pages to dashboard.
+      // `/setup` is handled by the server page itself so recovery remains reachable
+      // even if a previous attempt left behind a stale/invalid session cookie.
       if (
         (pathname === "/login" || pathname === "/register") &&
         hasSessionCookie(request)

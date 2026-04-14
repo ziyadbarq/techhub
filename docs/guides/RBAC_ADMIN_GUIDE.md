@@ -1,6 +1,6 @@
 # RBAC Admin Guide
 
-**Administrator's guide** for managing roles, permissions, and user access in the barq-assets.
+**Administrator's guide** for managing roles, permissions, and user access in TechHub.
 
 ## Table of Contents
 

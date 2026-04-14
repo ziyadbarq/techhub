@@ -1,5 +1,5 @@
 {
-  "name": "barq-assets",
+  "name": "techhub",
   "version": "1.0.0",
   "description": "Enterprise CMDB and IT Asset Management system with Clean Architecture, DI, RBAC, and comprehensive Foundation layer",
   "private": true,
@@ -13,9 +13,13 @@
     "dev:restart": "bash scripts/dev/restart-dev.sh && npm run dev",
     "dev:clean": "npm run cache:clear && bash scripts/dev/restart-dev.sh && npm run dev",
     "validate": "npm run type-check && npm run lint && vitest --run",
+    "commitlint": "commitlint",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",
     "type-check:staged": "bash scripts/dev/type-check-staged.sh",
+    "version:preview": "node scripts/release/compute-version.mjs",
+    "version:preview:json": "node scripts/release/compute-version.mjs --format=json",
+    "version:preview:env": "node scripts/release/compute-version.mjs --format=env",
     "generate:routes": "tsx scripts/build/generate-routes.ts",
     "build": "NODE_OPTIONS=\"--require ./scripts/build/silence-baseline-warning.cjs\" npm run type-check && npm run lint && NODE_OPTIONS=\"--require ./scripts/build/silence-baseline-warning.cjs\" node scripts/build/build.js",
     "build:fast": "NODE_OPTIONS=\"--require ./scripts/build/silence-baseline-warning.cjs\" SKIP_TYPE_CHECK=true BROWSERSLIST_IGNORE_OLD_DATA=true next build",
@@ -153,7 +157,6 @@
     "next": "^16.0.6",
     "next-mdx-remote": "^5.0.0",
     "next-themes": "^0.4.6",
-    "openai": "^6.9.1",
     "ora": "^9.0.0",
     "papaparse": "^5.5.3",
     "partysocket": "^1.1.6",
@@ -187,6 +190,8 @@
     "zod-validation-error": "^5.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@eslint/compat": "^2.0.0",
     "@eslint/js": "^9.39.1",
     "@next/bundle-analyzer": "^16.0.3",
@@ -230,7 +235,9 @@
   },
   "lint-staged": {
     "ignore": [
-      "src/generated/prisma/**"
+      "src/generated/prisma/**",
+      "src/config/navigation-groups/**",
+      "src/config/protected-routes.ts"
     ],
     "*.{ts,tsx}": [
       "prettier --write",

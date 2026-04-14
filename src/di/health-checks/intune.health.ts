@@ -6,6 +6,8 @@
 
 import { getContainer } from "../container";
 import { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
+import type { IConfigService } from "@/core/services/config.service.interface";
+import { DI_TOKENS } from "../types";
 import { ModuleHealthStatus, type ModuleHealthCheck } from "../module-registry";
 
 /**
@@ -17,6 +19,9 @@ export function createIntuneHealthCheck() {
 
     try {
       const container = getContainer();
+      const configService = container.get<IConfigService>(
+        DI_TOKENS.IConfigService,
+      );
 
       // Check if Microsoft Graph service is available (dependency)
       const graphService = container.get<IMicrosoftGraphService>(
@@ -36,10 +41,13 @@ export function createIntuneHealthCheck() {
       }
 
       // Check if credentials are configured
-      if (
-        !process.env.MS_GRAPH_CLIENT_ID ||
-        !process.env.MS_GRAPH_CLIENT_SECRET
-      ) {
+      const [tenantId, clientId, clientSecret] = await Promise.all([
+        configService.get("AZURE_TENANT_ID"),
+        configService.get("AZURE_CLIENT_ID"),
+        configService.get("AZURE_CLIENT_SECRET"),
+      ]);
+
+      if (!tenantId || !clientId || !clientSecret) {
         return {
           moduleName: "intune",
           status: ModuleHealthStatus.DEGRADED,

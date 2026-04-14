@@ -38,17 +38,26 @@ interface ReportData {
 export function OciResourceInventoryReport() {
   const [data, setData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
+        setError(null);
         const result = await getOciResourceInventoryReportAction();
-        if (result.success && result.data) {
+        if (result.success) {
           setData(result.data);
+        } else {
+          setData(null);
+          setError(
+            result.error ?? "Unable to load OCI resource inventory report.",
+          );
         }
       } catch {
         toast.error("Failed to load OCI resource inventory report");
+        setData(null);
+        setError("Failed to load OCI resource inventory report.");
       } finally {
         setLoading(false);
       }
@@ -78,6 +87,22 @@ export function OciResourceInventoryReport() {
         <CardHeader>
           <CardTitle>OCI Resource Inventory</CardTitle>
           <CardDescription>Loading report...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Cloud className="h-5 w-5 text-cyan-500" />
+            OCI Resource Inventory
+          </CardTitle>
+          <CardDescription className="text-destructive">
+            {error}
+          </CardDescription>
         </CardHeader>
       </Card>
     );

@@ -11,6 +11,7 @@ import {
   TASK_JOBS,
   RESERVATION_JOBS,
   MAINTENANCE_JOBS,
+  REPORT_JOBS,
 } from "@/core/domain/jobs/job-names";
 import type {
   CleanupOldTasksJobData,
@@ -205,6 +206,27 @@ export async function setupScheduledJobs(
     pattern: "0 4 * * *",
     timezone: "UTC",
     jobName: MAINTENANCE_JOBS.OCI_RESOURCE_SYNC,
+  });
+
+  // Report Schedule Checker
+  // ==========================================
+
+  // Check for due report schedules every 15 minutes
+  // Enqueues individual generate-and-send jobs for each due schedule
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    REPORT_JOBS.CHECK_DUE_SCHEDULES,
+    { createdAt: Date.now() },
+    {
+      pattern: "*/15 * * * *", // Every 15 minutes
+      tz: "UTC",
+    },
+  );
+
+  logger.info("Check due report schedules job scheduled", {
+    pattern: "*/15 * * * *",
+    timezone: "UTC",
+    jobName: REPORT_JOBS.CHECK_DUE_SCHEDULES,
   });
 
   // ==========================================

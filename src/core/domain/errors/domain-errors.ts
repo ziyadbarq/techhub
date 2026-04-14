@@ -6,12 +6,11 @@
 
 import { ValidationError } from "./validation.error";
 import { NotFoundError } from "./not-found.error";
-import { AIGenerationError } from "./ai.errors";
 
 /**
  * Base domain errors that should be handled gracefully in controllers
  */
-export type DomainError = ValidationError | NotFoundError | AIGenerationError;
+export type DomainError = ValidationError | NotFoundError;
 
 /**
  * Type guard to check if an error is a domain error
@@ -23,11 +22,7 @@ export type DomainError = ValidationError | NotFoundError | AIGenerationError;
  * @returns true if error is a domain error
  */
 export function isDomainError(error: unknown): error is DomainError {
-  return (
-    error instanceof ValidationError ||
-    error instanceof NotFoundError ||
-    error instanceof AIGenerationError
-  );
+  return error instanceof ValidationError || error instanceof NotFoundError;
 }
 
 /**

@@ -192,7 +192,7 @@ helm upgrade techhub ./manifests/techhub \
 # Commit changes
 git add manifests/techhub/values-oci-prod.yaml
 git commit -m "chore: Scale TechHub to 3 replicas"
-git push origin main
+git push github main
 ```
 
 ### Auto-Scaling (HPA)

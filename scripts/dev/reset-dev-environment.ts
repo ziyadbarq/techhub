@@ -27,7 +27,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Project paths
-const PROJECT_ROOT = path.resolve(__dirname, "..");
+const PROJECT_ROOT = path.resolve(__dirname, "../..");
 
 // Directories to clear
 const CACHE_DIRECTORIES = [
@@ -167,13 +167,10 @@ async function reset() {
   console.log("🗄️  Step 2: Resetting database...");
   console.log("   → Running prisma migrate reset...");
   try {
-    execSync(
-      "dotenv -e .env.local -- prisma migrate reset --force --skip-seed",
-      {
-        cwd: PROJECT_ROOT,
-        stdio: "inherit",
-      },
-    );
+    execSync("npx prisma migrate reset --force", {
+      cwd: PROJECT_ROOT,
+      stdio: "inherit",
+    });
     console.log("   ✓ Database reset and migrations applied");
   } catch (_error) {
     console.error("   ✗ Database reset failed");

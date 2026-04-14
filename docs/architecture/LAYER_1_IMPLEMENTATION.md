@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides technical implementation details for the Foundation Layer (Layer 1) of the Barq Assets CMDB/ITAM system. It covers database schema design, domain entity patterns, repository implementations, use case orchestration, DI container configuration, and testing strategies.
+This document provides technical implementation details for the Foundation Layer (Layer 1) of the TechHub CMDB/ITAM system. It covers database schema design, domain entity patterns, repository implementations, use case orchestration, DI container configuration, and testing strategies.
 
 **Audience**: Developers implementing or maintaining the Foundation layer.
 
@@ -2114,4 +2114,4 @@ With Layer 1 complete, proceed to implement Layer 2 (CMDB & Asset):
 
 **Document Version**: 1.0
 **Last Updated**: November 2025
-**Maintained By**: Barq Assets Development Team
+**Maintained By**: TechHub Development Team

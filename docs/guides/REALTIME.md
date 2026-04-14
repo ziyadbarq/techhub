@@ -1,6 +1,6 @@
 # Real-time Features Guide
 
-This guide covers the real-time communication features in the Barq Assets, including Server-Sent Events (SSE) and Partykit (WebSocket).
+This guide covers the real-time communication features in the TechHub, including Server-Sent Events (SSE) and Partykit (WebSocket).
 
 ## Table of Contents
 

@@ -18,14 +18,8 @@ import type { Prisma } from "@/generated/prisma/server";
  *
  * @example
  * ```typescript
- * const metadata = { version: 1, tags: ["config"] };
+ * const metadata = { version: 1, tags: ["example"] };
  * const jsonValue = toJsonValue(metadata);
- * await prisma.someModel.create({
- *   data: {
- *     metadata: jsonValue,
- *     // ...
- *   }
- * });
  * ```
  */
 export function toJsonValue<T>(
@@ -59,7 +53,7 @@ export function toJsonValue<T>(
  * @example
  * ```typescript
  * const record = await prisma.someModel.findUnique({ where: { id } });
- * const metadata = fromJsonValue<MyMetadataType>(record.metadata);
+ * const metadata = fromJsonValue<{ version: number }>(record?.metadata);
  * if (metadata) {
  *   console.log(metadata.version);
  * }

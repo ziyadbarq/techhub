@@ -10,6 +10,7 @@ import { Agent } from "undici";
 import { OciWebhookError } from "@/core/domain/errors/oci-webhook.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services";
+import type { IConfigService } from "@/core/services/config.service.interface";
 import type {
   IOciWebhookService,
   OciDataSourceDescriptor,
@@ -42,23 +43,31 @@ const NETWORK_ERROR_CODES = new Set([
   "UND_ERR_SOCKET",
 ]);
 
+interface ResolvedOciConfig {
+  source: OciDataSourceDescriptor;
+  token: string | undefined;
+  insecureDispatcher: Agent | undefined;
+  localDataDir: string | undefined;
+}
+
 @injectable()
 export class OciWebhookService implements IOciWebhookService {
-  private readonly token: string | undefined;
-  private readonly insecureDispatcher: Agent | undefined;
-  private readonly source: OciDataSourceDescriptor;
-  private readonly localDataDir: string | undefined;
-
   constructor(
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
-  ) {
-    this.insecureDispatcher = undefined;
-    this.localDataDir = undefined;
+    @inject(DI_TOKENS.IConfigService)
+    private readonly configService: IConfigService,
+  ) {}
 
+  /**
+   * Config resolution via IConfigService (DB → env → default).
+   * Called per operation so DB setting changes take effect on the next sync.
+   */
+  private async resolveConfig(): Promise<ResolvedOciConfig> {
     let sourceMode: ReturnType<typeof parseOciSyncSourceMode>;
     try {
-      sourceMode = parseOciSyncSourceMode(process.env.OCI_SYNC_SOURCE);
+      const rawSource = await this.configService.get("OCI_SYNC_SOURCE");
+      sourceMode = parseOciSyncSourceMode(rawSource);
     } catch (error) {
       throw new OciWebhookError(
         {
@@ -72,7 +81,7 @@ export class OciWebhookService implements IOciWebhookService {
       );
     }
 
-    this.source = {
+    const source: OciDataSourceDescriptor = {
       mode: sourceMode,
       attributeValue: getOciSyncAttributeSource(sourceMode),
       description:
@@ -81,38 +90,47 @@ export class OciWebhookService implements IOciWebhookService {
           : "OCI webhook endpoint",
     };
 
+    let token: string | undefined;
+    let insecureDispatcher: Agent | undefined;
+    let localDataDir: string | undefined;
+
     if (sourceMode === "local") {
-      this.localDataDir = resolveOciLocalDataDir();
-      this.source.location = this.localDataDir;
+      const customDir = await this.configService.get("OCI_LOCAL_DATA_DIR");
+      localDataDir = resolveOciLocalDataDir(customDir);
+      source.location = localDataDir;
       this.logger.info("OCI sync source configured", {
         sourceMode,
-        localDataDir: this.localDataDir,
+        localDataDir,
       });
-      this.token = undefined;
-      return;
+    } else {
+      token = await this.configService.get("OCI_WEBHOOK_TOKEN");
+      if (!token) {
+        throw new OciWebhookError({
+          kind: "config",
+          userMessage:
+            "OCI sync is not configured. Set OCI_WEBHOOK_TOKEN via System Settings or environment and try again.",
+        });
+      }
+
+      const insecure = await this.configService.getBoolean(
+        "OCI_WEBHOOK_INSECURE",
+      );
+      if (insecure) {
+        insecureDispatcher = new Agent({
+          connect: { rejectUnauthorized: false },
+        });
+      }
     }
 
-    const token = process.env.OCI_WEBHOOK_TOKEN;
-    if (!token) {
-      throw new OciWebhookError({
-        kind: "config",
-        userMessage:
-          "OCI sync is not configured. Set OCI_WEBHOOK_TOKEN and try again.",
-      });
-    }
-    this.token = token;
-
-    if (process.env.OCI_WEBHOOK_INSECURE === "true") {
-      this.insecureDispatcher = new Agent({
-        connect: { rejectUnauthorized: false },
-      });
-    }
+    return { source, token, insecureDispatcher, localDataDir };
   }
 
   async fetchServiceData(
     serviceKey: OciServiceKey,
   ): Promise<OciWebhookResponse> {
-    if (this.source.mode === "local") {
+    const config = await this.resolveConfig();
+
+    if (config.source.mode === "local") {
       return this.fetchLocalServiceData(serviceKey);
     }
 
@@ -125,11 +143,11 @@ export class OciWebhookService implements IOciWebhookService {
       response = await fetch(url, {
         method: "GET",
         headers: {
-          token: this.token!,
+          token: config.token!,
           Accept: "application/json",
         },
-        ...(this.insecureDispatcher
-          ? { dispatcher: this.insecureDispatcher }
+        ...(config.insecureDispatcher
+          ? { dispatcher: config.insecureDispatcher }
           : {}),
       });
     } catch (error) {
@@ -191,13 +209,14 @@ export class OciWebhookService implements IOciWebhookService {
   async fetchAllServices(
     serviceKeys?: OciServiceKey[],
   ): Promise<OciWebhookBatchResult> {
+    const config = await this.resolveConfig();
     const keys = serviceKeys ?? [...OCI_SERVICE_KEYS];
     const responses = new Map<OciServiceKey, OciWebhookResponse>();
     const failures: OciWebhookBatchResult["failures"] = [];
 
     this.logger.info("Fetching all OCI services", {
-      sourceMode: this.source.mode,
-      sourceLocation: this.source.location,
+      sourceMode: config.source.mode,
+      sourceLocation: config.source.location,
       serviceCount: keys.length,
       services: keys,
     });
@@ -251,14 +270,16 @@ export class OciWebhookService implements IOciWebhookService {
     });
 
     return {
-      source: this.source,
+      source: config.source,
       responses,
       failures,
     };
   }
 
   async testConnection(): Promise<boolean> {
-    if (this.source.mode === "local") {
+    const config = await this.resolveConfig();
+
+    if (config.source.mode === "local") {
       try {
         for (const key of OCI_SERVICE_KEYS) {
           await this.fetchLocalServiceData(key);
@@ -275,11 +296,11 @@ export class OciWebhookService implements IOciWebhookService {
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          token: this.token!,
+          token: config.token!,
           Accept: "application/json",
         },
-        ...(this.insecureDispatcher
-          ? { dispatcher: this.insecureDispatcher }
+        ...(config.insecureDispatcher
+          ? { dispatcher: config.insecureDispatcher }
           : {}),
       });
       return response.ok;
@@ -291,7 +312,8 @@ export class OciWebhookService implements IOciWebhookService {
   private async fetchLocalServiceData(
     serviceKey: OciServiceKey,
   ): Promise<OciWebhookResponse> {
-    const dataDir = this.localDataDir ?? resolveOciLocalDataDir();
+    const config = await this.resolveConfig();
+    const dataDir = config.localDataDir ?? resolveOciLocalDataDir();
 
     this.logger.info("Loading OCI service data from local snapshot", {
       serviceKey,

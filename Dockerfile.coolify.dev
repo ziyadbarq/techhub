@@ -1,0 +1,81 @@
+# syntax=docker/dockerfile:1
+# Dev Dockerfile for Coolify — full node_modules in runner, no selective copying.
+# Larger image but zero package whack-a-mole. Use for the dev environment only.
+
+FROM node:22-alpine AS deps
+
+RUN sed -i 's/https/http/g' /etc/apk/repositories && \
+    apk add --no-cache bash libc6-compat
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN --mount=type=cache,target=/root/.npm \
+    HUSKY=0 npm ci --include=dev --legacy-peer-deps
+
+
+FROM node:22-alpine AS builder
+
+RUN sed -i 's/https/http/g' /etc/apk/repositories && \
+    apk add --no-cache bash libc6-compat
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+RUN export CI=true && \
+    export DATABASE_URL=postgresql://build:build@localhost:5432/techhub && \
+    export ENCRYPTION_KEY=0000000000000000000000000000000000000000000000000000000000000000 && \
+    export BETTER_AUTH_SECRET=build-time-placeholder-secret-not-used-at-runtime && \
+    export BETTER_AUTH_URL=http://localhost:3000 && \
+    npm run db:generate && npm run build:fast
+
+
+FROM node:22-alpine AS runner
+
+RUN sed -i 's/https/http/g' /etc/apk/repositories && \
+    apk add --no-cache libc6-compat curl postgresql-client
+
+WORKDIR /app
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOST=0.0.0.0
+ENV HOSTNAME=0.0.0.0
+
+ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
+COPY --from=builder /app/docker-start.mjs ./docker-start.mjs
+
+# Full node_modules — all tooling (tsx, seed, migrations) works out of the box
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/src/infrastructure/database/prisma ./src/infrastructure/database/prisma
+
+RUN mkdir -p local/logs local/uploads && \
+    chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:3000/api/health || exit 1
+
+CMD ["node", "docker-start.mjs"]

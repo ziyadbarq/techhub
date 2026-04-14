@@ -141,7 +141,7 @@ npm run dev  # Should use .env.local only
    Profile: dev
    Retry attempts: 1
    Loaded at: 2025-01-11T20:00:00.000Z
-   Sample keys: DATABASE_URL, REDIS_URL, BETTER_AUTH_URL, BETTER_AUTH_SECRET, OPENAI_API_KEY...
+   Sample keys: DATABASE_URL, REDIS_URL, BETTER_AUTH_URL, BETTER_AUTH_SECRET...
 ✅ All critical environment variables are present
 =======================================
 ```

@@ -134,7 +134,7 @@ export function MyMaintenanceTasksWidget() {
       headerAction={
         tasks.length > 0 && (
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/assets/maintenance">
+            <Link href="/maintenance/schedules">
               <ExternalLink className="mr-1 h-3 w-3" />
               View All
             </Link>

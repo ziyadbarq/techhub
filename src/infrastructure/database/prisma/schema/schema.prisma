@@ -21,7 +21,7 @@
 //   governance.prisma  - Data governance & verification
 //   attachments.prisma - Document attachments
 //   intune.prisma      - Intune/MDM integration
-//   system.prisma      - Feature flags, Tasks, Prompts
+//   system.prisma      - Feature flags, Tasks
 // ============================================
 
 generator client {

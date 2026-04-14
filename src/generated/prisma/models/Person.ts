@@ -413,6 +413,7 @@ export type PersonWhereInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementListRelationFilter
   deletedAssetKits?: Prisma.AssetKitListRelationFilter
   deletedAssetReservations?: Prisma.AssetReservationListRelationFilter
+  reportSchedulesCreated?: Prisma.ReportScheduleListRelationFilter
 }
 
 export type PersonOrderByWithRelationInput = {
@@ -502,6 +503,7 @@ export type PersonOrderByWithRelationInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementOrderByRelationAggregateInput
   deletedAssetKits?: Prisma.AssetKitOrderByRelationAggregateInput
   deletedAssetReservations?: Prisma.AssetReservationOrderByRelationAggregateInput
+  reportSchedulesCreated?: Prisma.ReportScheduleOrderByRelationAggregateInput
 }
 
 export type PersonWhereUniqueInput = Prisma.AtLeast<{
@@ -594,6 +596,7 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementListRelationFilter
   deletedAssetKits?: Prisma.AssetKitListRelationFilter
   deletedAssetReservations?: Prisma.AssetReservationListRelationFilter
+  reportSchedulesCreated?: Prisma.ReportScheduleListRelationFilter
 }, "id" | "azureAdId" | "userId" | "email" | "employeeId">
 
 export type PersonOrderByWithAggregationInput = {
@@ -742,6 +745,7 @@ export type PersonCreateInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateInput = {
@@ -824,6 +828,7 @@ export type PersonUncheckedCreateInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUpdateInput = {
@@ -906,6 +911,7 @@ export type PersonUpdateInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateInput = {
@@ -988,6 +994,7 @@ export type PersonUncheckedUpdateInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateManyInput = {
@@ -2169,6 +2176,20 @@ export type PersonUpdateOneWithoutPerformedMaintenanceRecordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutPerformedMaintenanceRecordsInput, Prisma.PersonUpdateWithoutPerformedMaintenanceRecordsInput>, Prisma.PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput>
 }
 
+export type PersonCreateNestedOneWithoutReportSchedulesCreatedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutReportSchedulesCreatedInput, Prisma.PersonUncheckedCreateWithoutReportSchedulesCreatedInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutReportSchedulesCreatedInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonUpdateOneRequiredWithoutReportSchedulesCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutReportSchedulesCreatedInput, Prisma.PersonUncheckedCreateWithoutReportSchedulesCreatedInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutReportSchedulesCreatedInput
+  upsert?: Prisma.PersonUpsertWithoutReportSchedulesCreatedInput
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutReportSchedulesCreatedInput, Prisma.PersonUpdateWithoutReportSchedulesCreatedInput>, Prisma.PersonUncheckedUpdateWithoutReportSchedulesCreatedInput>
+}
+
 export type PersonCreateNestedOneWithoutDeletedAssetReservationsInput = {
   create?: Prisma.XOR<Prisma.PersonCreateWithoutDeletedAssetReservationsInput, Prisma.PersonUncheckedCreateWithoutDeletedAssetReservationsInput>
   connectOrCreate?: Prisma.PersonCreateOrConnectWithoutDeletedAssetReservationsInput
@@ -2356,6 +2377,7 @@ export type PersonCreateWithoutDeletedAssetCategoriesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedAssetCategoriesInput = {
@@ -2437,6 +2459,7 @@ export type PersonUncheckedCreateWithoutDeletedAssetCategoriesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedAssetCategoriesInput = {
@@ -2534,6 +2557,7 @@ export type PersonUpdateWithoutDeletedAssetCategoriesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedAssetCategoriesInput = {
@@ -2615,6 +2639,7 @@ export type PersonUncheckedUpdateWithoutDeletedAssetCategoriesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedAssetModelsInput = {
@@ -2696,6 +2721,7 @@ export type PersonCreateWithoutDeletedAssetModelsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedAssetModelsInput = {
@@ -2777,6 +2803,7 @@ export type PersonUncheckedCreateWithoutDeletedAssetModelsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedAssetModelsInput = {
@@ -2874,6 +2901,7 @@ export type PersonUpdateWithoutDeletedAssetModelsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedAssetModelsInput = {
@@ -2955,6 +2983,7 @@ export type PersonUncheckedUpdateWithoutDeletedAssetModelsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutStockMovementsPerformedInput = {
@@ -3036,6 +3065,7 @@ export type PersonCreateWithoutStockMovementsPerformedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutStockMovementsPerformedInput = {
@@ -3117,6 +3147,7 @@ export type PersonUncheckedCreateWithoutStockMovementsPerformedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutStockMovementsPerformedInput = {
@@ -3203,6 +3234,7 @@ export type PersonCreateWithoutStockMovementsVoidedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutStockMovementsVoidedInput = {
@@ -3284,6 +3316,7 @@ export type PersonUncheckedCreateWithoutStockMovementsVoidedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutStockMovementsVoidedInput = {
@@ -3381,6 +3414,7 @@ export type PersonUpdateWithoutStockMovementsPerformedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutStockMovementsPerformedInput = {
@@ -3462,6 +3496,7 @@ export type PersonUncheckedUpdateWithoutStockMovementsPerformedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutStockMovementsVoidedInput = {
@@ -3554,6 +3589,7 @@ export type PersonUpdateWithoutStockMovementsVoidedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutStockMovementsVoidedInput = {
@@ -3635,6 +3671,7 @@ export type PersonUncheckedUpdateWithoutStockMovementsVoidedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedAssetsInput = {
@@ -3716,6 +3753,7 @@ export type PersonCreateWithoutDeletedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedAssetsInput = {
@@ -3797,6 +3835,7 @@ export type PersonUncheckedCreateWithoutDeletedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedAssetsInput = {
@@ -3883,6 +3922,7 @@ export type PersonCreateWithoutCreatedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutCreatedAssetsInput = {
@@ -3964,6 +4004,7 @@ export type PersonUncheckedCreateWithoutCreatedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutCreatedAssetsInput = {
@@ -4050,6 +4091,7 @@ export type PersonCreateWithoutUpdatedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutUpdatedAssetsInput = {
@@ -4131,6 +4173,7 @@ export type PersonUncheckedCreateWithoutUpdatedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutUpdatedAssetsInput = {
@@ -4228,6 +4271,7 @@ export type PersonUpdateWithoutDeletedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedAssetsInput = {
@@ -4309,6 +4353,7 @@ export type PersonUncheckedUpdateWithoutDeletedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutCreatedAssetsInput = {
@@ -4401,6 +4446,7 @@ export type PersonUpdateWithoutCreatedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutCreatedAssetsInput = {
@@ -4482,6 +4528,7 @@ export type PersonUncheckedUpdateWithoutCreatedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutUpdatedAssetsInput = {
@@ -4574,6 +4621,7 @@ export type PersonUpdateWithoutUpdatedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutUpdatedAssetsInput = {
@@ -4655,6 +4703,7 @@ export type PersonUncheckedUpdateWithoutUpdatedAssetsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedWarrantiesInput = {
@@ -4736,6 +4785,7 @@ export type PersonCreateWithoutDeletedWarrantiesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedWarrantiesInput = {
@@ -4817,6 +4867,7 @@ export type PersonUncheckedCreateWithoutDeletedWarrantiesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedWarrantiesInput = {
@@ -4914,6 +4965,7 @@ export type PersonUpdateWithoutDeletedWarrantiesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedWarrantiesInput = {
@@ -4995,6 +5047,7 @@ export type PersonUncheckedUpdateWithoutDeletedWarrantiesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutAttachmentsInput = {
@@ -5076,6 +5129,7 @@ export type PersonCreateWithoutAttachmentsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutAttachmentsInput = {
@@ -5157,6 +5211,7 @@ export type PersonUncheckedCreateWithoutAttachmentsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutAttachmentsInput = {
@@ -5254,6 +5309,7 @@ export type PersonUpdateWithoutAttachmentsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAttachmentsInput = {
@@ -5335,6 +5391,7 @@ export type PersonUncheckedUpdateWithoutAttachmentsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutUserInput = {
@@ -5416,6 +5473,7 @@ export type PersonCreateWithoutUserInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutUserInput = {
@@ -5497,6 +5555,7 @@ export type PersonUncheckedCreateWithoutUserInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutUserInput = {
@@ -5594,6 +5653,7 @@ export type PersonUpdateWithoutUserInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutUserInput = {
@@ -5675,6 +5735,7 @@ export type PersonUncheckedUpdateWithoutUserInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedCIClassesInput = {
@@ -5756,6 +5817,7 @@ export type PersonCreateWithoutDeletedCIClassesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedCIClassesInput = {
@@ -5837,6 +5899,7 @@ export type PersonUncheckedCreateWithoutDeletedCIClassesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedCIClassesInput = {
@@ -5934,6 +5997,7 @@ export type PersonUpdateWithoutDeletedCIClassesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedCIClassesInput = {
@@ -6015,6 +6079,7 @@ export type PersonUncheckedUpdateWithoutDeletedCIClassesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutConfigurationItemsInput = {
@@ -6096,6 +6161,7 @@ export type PersonCreateWithoutConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
@@ -6177,6 +6243,7 @@ export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutConfigurationItemsInput = {
@@ -6263,6 +6330,7 @@ export type PersonCreateWithoutDeletedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedConfigurationItemsInput = {
@@ -6344,6 +6412,7 @@ export type PersonUncheckedCreateWithoutDeletedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedConfigurationItemsInput = {
@@ -6430,6 +6499,7 @@ export type PersonCreateWithoutCreatedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutCreatedConfigurationItemsInput = {
@@ -6511,6 +6581,7 @@ export type PersonUncheckedCreateWithoutCreatedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutCreatedConfigurationItemsInput = {
@@ -6597,6 +6668,7 @@ export type PersonCreateWithoutUpdatedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutUpdatedConfigurationItemsInput = {
@@ -6678,6 +6750,7 @@ export type PersonUncheckedCreateWithoutUpdatedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutUpdatedConfigurationItemsInput = {
@@ -6775,6 +6848,7 @@ export type PersonUpdateWithoutConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
@@ -6856,6 +6930,7 @@ export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutDeletedConfigurationItemsInput = {
@@ -6948,6 +7023,7 @@ export type PersonUpdateWithoutDeletedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedConfigurationItemsInput = {
@@ -7029,6 +7105,7 @@ export type PersonUncheckedUpdateWithoutDeletedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutCreatedConfigurationItemsInput = {
@@ -7121,6 +7198,7 @@ export type PersonUpdateWithoutCreatedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutCreatedConfigurationItemsInput = {
@@ -7202,6 +7280,7 @@ export type PersonUncheckedUpdateWithoutCreatedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutUpdatedConfigurationItemsInput = {
@@ -7294,6 +7373,7 @@ export type PersonUpdateWithoutUpdatedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutUpdatedConfigurationItemsInput = {
@@ -7375,6 +7455,7 @@ export type PersonUncheckedUpdateWithoutUpdatedConfigurationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedContractTypesInput = {
@@ -7456,6 +7537,7 @@ export type PersonCreateWithoutDeletedContractTypesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedContractTypesInput = {
@@ -7537,6 +7619,7 @@ export type PersonUncheckedCreateWithoutDeletedContractTypesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedContractTypesInput = {
@@ -7634,6 +7717,7 @@ export type PersonUpdateWithoutDeletedContractTypesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedContractTypesInput = {
@@ -7715,6 +7799,7 @@ export type PersonUncheckedUpdateWithoutDeletedContractTypesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedContractsInput = {
@@ -7796,6 +7881,7 @@ export type PersonCreateWithoutDeletedContractsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedContractsInput = {
@@ -7877,6 +7963,7 @@ export type PersonUncheckedCreateWithoutDeletedContractsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedContractsInput = {
@@ -7974,6 +8061,7 @@ export type PersonUpdateWithoutDeletedContractsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedContractsInput = {
@@ -8055,6 +8143,7 @@ export type PersonUncheckedUpdateWithoutDeletedContractsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutInitiatedDisposalsInput = {
@@ -8136,6 +8225,7 @@ export type PersonCreateWithoutInitiatedDisposalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutInitiatedDisposalsInput = {
@@ -8217,6 +8307,7 @@ export type PersonUncheckedCreateWithoutInitiatedDisposalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutInitiatedDisposalsInput = {
@@ -8303,6 +8394,7 @@ export type PersonCreateWithoutApprovedDisposalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutApprovedDisposalsInput = {
@@ -8384,6 +8476,7 @@ export type PersonUncheckedCreateWithoutApprovedDisposalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutApprovedDisposalsInput = {
@@ -8481,6 +8574,7 @@ export type PersonUpdateWithoutInitiatedDisposalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutInitiatedDisposalsInput = {
@@ -8562,6 +8656,7 @@ export type PersonUncheckedUpdateWithoutInitiatedDisposalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutApprovedDisposalsInput = {
@@ -8654,6 +8749,7 @@ export type PersonUpdateWithoutApprovedDisposalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
@@ -8735,6 +8831,7 @@ export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDisposalApprovalsInput = {
@@ -8816,6 +8913,7 @@ export type PersonCreateWithoutDisposalApprovalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDisposalApprovalsInput = {
@@ -8897,6 +8995,7 @@ export type PersonUncheckedCreateWithoutDisposalApprovalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDisposalApprovalsInput = {
@@ -8994,6 +9093,7 @@ export type PersonUpdateWithoutDisposalApprovalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
@@ -9075,6 +9175,7 @@ export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutUploadedDisposalDocumentsInput = {
@@ -9156,6 +9257,7 @@ export type PersonCreateWithoutUploadedDisposalDocumentsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput = {
@@ -9237,6 +9339,7 @@ export type PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutUploadedDisposalDocumentsInput = {
@@ -9334,6 +9437,7 @@ export type PersonUpdateWithoutUploadedDisposalDocumentsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
@@ -9415,6 +9519,7 @@ export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutManagedOrgUnitsInput = {
@@ -9496,6 +9601,7 @@ export type PersonCreateWithoutManagedOrgUnitsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
@@ -9577,6 +9683,7 @@ export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutManagedOrgUnitsInput = {
@@ -9663,6 +9770,7 @@ export type PersonCreateWithoutOrgUnitInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutOrgUnitInput = {
@@ -9744,6 +9852,7 @@ export type PersonUncheckedCreateWithoutOrgUnitInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutOrgUnitInput = {
@@ -9835,6 +9944,7 @@ export type PersonCreateWithoutDeletedOrgUnitsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedOrgUnitsInput = {
@@ -9916,6 +10026,7 @@ export type PersonUncheckedCreateWithoutDeletedOrgUnitsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedOrgUnitsInput = {
@@ -10013,6 +10124,7 @@ export type PersonUpdateWithoutManagedOrgUnitsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
@@ -10094,6 +10206,7 @@ export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutOrgUnitInput = {
@@ -10235,6 +10348,7 @@ export type PersonUpdateWithoutDeletedOrgUnitsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedOrgUnitsInput = {
@@ -10316,6 +10430,7 @@ export type PersonUncheckedUpdateWithoutDeletedOrgUnitsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDirectReportsInput = {
@@ -10397,6 +10512,7 @@ export type PersonCreateWithoutDirectReportsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDirectReportsInput = {
@@ -10478,6 +10594,7 @@ export type PersonUncheckedCreateWithoutDirectReportsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDirectReportsInput = {
@@ -10564,6 +10681,7 @@ export type PersonCreateWithoutManagerInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutManagerInput = {
@@ -10645,6 +10763,7 @@ export type PersonUncheckedCreateWithoutManagerInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutManagerInput = {
@@ -10736,6 +10855,7 @@ export type PersonCreateWithoutDeletedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedPersonsInput = {
@@ -10817,6 +10937,7 @@ export type PersonUncheckedCreateWithoutDeletedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedPersonsInput = {
@@ -10903,6 +11024,7 @@ export type PersonCreateWithoutDeletedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedByInput = {
@@ -10984,6 +11106,7 @@ export type PersonUncheckedCreateWithoutDeletedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedByInput = {
@@ -11075,6 +11198,7 @@ export type PersonCreateWithoutCreatedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutCreatedPersonsInput = {
@@ -11156,6 +11280,7 @@ export type PersonUncheckedCreateWithoutCreatedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutCreatedPersonsInput = {
@@ -11242,6 +11367,7 @@ export type PersonCreateWithoutCreatedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutCreatedByInput = {
@@ -11323,6 +11449,7 @@ export type PersonUncheckedCreateWithoutCreatedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutCreatedByInput = {
@@ -11414,6 +11541,7 @@ export type PersonCreateWithoutUpdatedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutUpdatedPersonsInput = {
@@ -11495,6 +11623,7 @@ export type PersonUncheckedCreateWithoutUpdatedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutUpdatedPersonsInput = {
@@ -11581,6 +11710,7 @@ export type PersonCreateWithoutUpdatedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutUpdatedByInput = {
@@ -11662,6 +11792,7 @@ export type PersonUncheckedCreateWithoutUpdatedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutUpdatedByInput = {
@@ -11764,6 +11895,7 @@ export type PersonUpdateWithoutDirectReportsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDirectReportsInput = {
@@ -11845,6 +11977,7 @@ export type PersonUncheckedUpdateWithoutDirectReportsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutManagerInput = {
@@ -11953,6 +12086,7 @@ export type PersonUpdateWithoutDeletedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedPersonsInput = {
@@ -12034,6 +12168,7 @@ export type PersonUncheckedUpdateWithoutDeletedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutDeletedByInput = {
@@ -12142,6 +12277,7 @@ export type PersonUpdateWithoutCreatedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutCreatedPersonsInput = {
@@ -12223,6 +12359,7 @@ export type PersonUncheckedUpdateWithoutCreatedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutCreatedByInput = {
@@ -12331,6 +12468,7 @@ export type PersonUpdateWithoutUpdatedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutUpdatedPersonsInput = {
@@ -12412,6 +12550,7 @@ export type PersonUncheckedUpdateWithoutUpdatedPersonsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutUpdatedByInput = {
@@ -12509,6 +12648,7 @@ export type PersonCreateWithoutLocationInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutLocationInput = {
@@ -12590,6 +12730,7 @@ export type PersonUncheckedCreateWithoutLocationInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutLocationInput = {
@@ -12681,6 +12822,7 @@ export type PersonCreateWithoutDeletedLocationsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedLocationsInput = {
@@ -12762,6 +12904,7 @@ export type PersonUncheckedCreateWithoutDeletedLocationsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedLocationsInput = {
@@ -12875,6 +13018,7 @@ export type PersonUpdateWithoutDeletedLocationsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedLocationsInput = {
@@ -12956,6 +13100,7 @@ export type PersonUncheckedUpdateWithoutDeletedLocationsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedVendorsInput = {
@@ -13037,6 +13182,7 @@ export type PersonCreateWithoutDeletedVendorsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedVendorsInput = {
@@ -13118,6 +13264,7 @@ export type PersonUncheckedCreateWithoutDeletedVendorsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedVendorsInput = {
@@ -13215,6 +13362,7 @@ export type PersonUpdateWithoutDeletedVendorsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedVendorsInput = {
@@ -13296,6 +13444,7 @@ export type PersonUncheckedUpdateWithoutDeletedVendorsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedLifecycleModelsInput = {
@@ -13377,6 +13526,7 @@ export type PersonCreateWithoutDeletedLifecycleModelsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedLifecycleModelsInput = {
@@ -13458,6 +13608,7 @@ export type PersonUncheckedCreateWithoutDeletedLifecycleModelsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedLifecycleModelsInput = {
@@ -13555,6 +13706,7 @@ export type PersonUpdateWithoutDeletedLifecycleModelsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedLifecycleModelsInput = {
@@ -13636,6 +13788,7 @@ export type PersonUncheckedUpdateWithoutDeletedLifecycleModelsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedLifecycleStatesInput = {
@@ -13717,6 +13870,7 @@ export type PersonCreateWithoutDeletedLifecycleStatesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedLifecycleStatesInput = {
@@ -13798,6 +13952,7 @@ export type PersonUncheckedCreateWithoutDeletedLifecycleStatesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedLifecycleStatesInput = {
@@ -13895,6 +14050,7 @@ export type PersonUpdateWithoutDeletedLifecycleStatesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedLifecycleStatesInput = {
@@ -13976,6 +14132,7 @@ export type PersonUncheckedUpdateWithoutDeletedLifecycleStatesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedFieldDefinitionsInput = {
@@ -14057,6 +14214,7 @@ export type PersonCreateWithoutDeletedFieldDefinitionsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedFieldDefinitionsInput = {
@@ -14138,6 +14296,7 @@ export type PersonUncheckedCreateWithoutDeletedFieldDefinitionsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedFieldDefinitionsInput = {
@@ -14224,6 +14383,7 @@ export type PersonCreateWithoutArchivedFieldDefinitionsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutArchivedFieldDefinitionsInput = {
@@ -14305,6 +14465,7 @@ export type PersonUncheckedCreateWithoutArchivedFieldDefinitionsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutArchivedFieldDefinitionsInput = {
@@ -14402,6 +14563,7 @@ export type PersonUpdateWithoutDeletedFieldDefinitionsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedFieldDefinitionsInput = {
@@ -14483,6 +14645,7 @@ export type PersonUncheckedUpdateWithoutDeletedFieldDefinitionsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutArchivedFieldDefinitionsInput = {
@@ -14575,6 +14738,7 @@ export type PersonUpdateWithoutArchivedFieldDefinitionsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutArchivedFieldDefinitionsInput = {
@@ -14656,6 +14820,7 @@ export type PersonUncheckedUpdateWithoutArchivedFieldDefinitionsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutCreatedFieldTemplatesInput = {
@@ -14737,6 +14902,7 @@ export type PersonCreateWithoutCreatedFieldTemplatesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutCreatedFieldTemplatesInput = {
@@ -14818,6 +14984,7 @@ export type PersonUncheckedCreateWithoutCreatedFieldTemplatesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutCreatedFieldTemplatesInput = {
@@ -14915,6 +15082,7 @@ export type PersonUpdateWithoutCreatedFieldTemplatesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutCreatedFieldTemplatesInput = {
@@ -14996,6 +15164,7 @@ export type PersonUncheckedUpdateWithoutCreatedFieldTemplatesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDataOwnershipsInput = {
@@ -15077,6 +15246,7 @@ export type PersonCreateWithoutDataOwnershipsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
@@ -15158,6 +15328,7 @@ export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDataOwnershipsInput = {
@@ -15255,6 +15426,7 @@ export type PersonUpdateWithoutDataOwnershipsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
@@ -15336,6 +15508,7 @@ export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutVerificationCampaignsInput = {
@@ -15417,6 +15590,7 @@ export type PersonCreateWithoutVerificationCampaignsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
@@ -15498,6 +15672,7 @@ export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutVerificationCampaignsInput = {
@@ -15595,6 +15770,7 @@ export type PersonUpdateWithoutVerificationCampaignsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
@@ -15676,6 +15852,7 @@ export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutVerificationItemsInput = {
@@ -15757,6 +15934,7 @@ export type PersonCreateWithoutVerificationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutVerificationItemsInput = {
@@ -15838,6 +16016,7 @@ export type PersonUncheckedCreateWithoutVerificationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutVerificationItemsInput = {
@@ -15935,6 +16114,7 @@ export type PersonUpdateWithoutVerificationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
@@ -16016,6 +16196,7 @@ export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutAuditLogsChangedInput = {
@@ -16097,6 +16278,7 @@ export type PersonCreateWithoutAuditLogsChangedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
@@ -16178,6 +16360,7 @@ export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutAuditLogsChangedInput = {
@@ -16275,6 +16458,7 @@ export type PersonUpdateWithoutAuditLogsChangedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
@@ -16356,6 +16540,7 @@ export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutIntuneDevicesInput = {
@@ -16437,6 +16622,7 @@ export type PersonCreateWithoutIntuneDevicesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutIntuneDevicesInput = {
@@ -16518,6 +16704,7 @@ export type PersonUncheckedCreateWithoutIntuneDevicesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutIntuneDevicesInput = {
@@ -16615,6 +16802,7 @@ export type PersonUpdateWithoutIntuneDevicesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutIntuneDevicesInput = {
@@ -16696,6 +16884,7 @@ export type PersonUncheckedUpdateWithoutIntuneDevicesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedAssetKitsInput = {
@@ -16777,6 +16966,7 @@ export type PersonCreateWithoutDeletedAssetKitsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutDeletedByInput
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedAssetKitsInput = {
@@ -16858,6 +17048,7 @@ export type PersonUncheckedCreateWithoutDeletedAssetKitsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutDeletedByInput
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedAssetKitsInput = {
@@ -16955,6 +17146,7 @@ export type PersonUpdateWithoutDeletedAssetKitsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductUpdateManyWithoutDeletedByNestedInput
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedAssetKitsInput = {
@@ -17036,6 +17228,7 @@ export type PersonUncheckedUpdateWithoutDeletedAssetKitsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutKitCheckoutsInput = {
@@ -17117,6 +17310,7 @@ export type PersonCreateWithoutKitCheckoutsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutKitCheckoutsInput = {
@@ -17198,6 +17392,7 @@ export type PersonUncheckedCreateWithoutKitCheckoutsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutKitCheckoutsInput = {
@@ -17295,6 +17490,7 @@ export type PersonUpdateWithoutKitCheckoutsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
@@ -17376,6 +17572,7 @@ export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedLicenseProductsInput = {
@@ -17457,6 +17654,7 @@ export type PersonCreateWithoutDeletedLicenseProductsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedLicenseProductsInput = {
@@ -17538,6 +17736,7 @@ export type PersonUncheckedCreateWithoutDeletedLicenseProductsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedLicenseProductsInput = {
@@ -17635,6 +17834,7 @@ export type PersonUpdateWithoutDeletedLicenseProductsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedLicenseProductsInput = {
@@ -17716,6 +17916,7 @@ export type PersonUncheckedUpdateWithoutDeletedLicenseProductsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedLicenseEntitlementsInput = {
@@ -17797,6 +17998,7 @@ export type PersonCreateWithoutDeletedLicenseEntitlementsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedLicenseEntitlementsInput = {
@@ -17878,6 +18080,7 @@ export type PersonUncheckedCreateWithoutDeletedLicenseEntitlementsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedLicenseEntitlementsInput = {
@@ -17975,6 +18178,7 @@ export type PersonUpdateWithoutDeletedLicenseEntitlementsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedLicenseEntitlementsInput = {
@@ -18056,6 +18260,7 @@ export type PersonUncheckedUpdateWithoutDeletedLicenseEntitlementsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
@@ -18137,6 +18342,7 @@ export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
@@ -18218,6 +18424,7 @@ export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutAssignedMaintenanceSchedulesInput = {
@@ -18304,6 +18511,7 @@ export type PersonCreateWithoutDeletedMaintenanceSchedulesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedMaintenanceSchedulesInput = {
@@ -18385,6 +18593,7 @@ export type PersonUncheckedCreateWithoutDeletedMaintenanceSchedulesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedMaintenanceSchedulesInput = {
@@ -18482,6 +18691,7 @@ export type PersonUpdateWithoutAssignedMaintenanceSchedulesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
@@ -18563,6 +18773,7 @@ export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutDeletedMaintenanceSchedulesInput = {
@@ -18655,6 +18866,7 @@ export type PersonUpdateWithoutDeletedMaintenanceSchedulesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedMaintenanceSchedulesInput = {
@@ -18736,6 +18948,7 @@ export type PersonUncheckedUpdateWithoutDeletedMaintenanceSchedulesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
@@ -18817,6 +19030,7 @@ export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
@@ -18898,6 +19112,7 @@ export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutPerformedMaintenanceRecordsInput = {
@@ -18995,6 +19210,7 @@ export type PersonUpdateWithoutPerformedMaintenanceRecordsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
@@ -19036,6 +19252,351 @@ export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+  serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
+  deletedFieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutDeletedByNestedInput
+  archivedFieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutArchivedByNestedInput
+  createdFieldTemplates?: Prisma.FieldTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
+  deletedPersons?: Prisma.PersonUncheckedUpdateManyWithoutDeletedByNestedInput
+  createdPersons?: Prisma.PersonUncheckedUpdateManyWithoutCreatedByNestedInput
+  updatedPersons?: Prisma.PersonUncheckedUpdateManyWithoutUpdatedByNestedInput
+  deletedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedLocations?: Prisma.LocationUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedVendors?: Prisma.VendorUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedLifecycleModels?: Prisma.LifecycleModelUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedLifecycleStates?: Prisma.LifecycleStateUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedAssetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedAssetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedAssets?: Prisma.AssetUncheckedUpdateManyWithoutDeletedByNestedInput
+  createdAssets?: Prisma.AssetUncheckedUpdateManyWithoutCreatedByNestedInput
+  updatedAssets?: Prisma.AssetUncheckedUpdateManyWithoutUpdatedByNestedInput
+  deletedWarranties?: Prisma.WarrantyUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedContractTypes?: Prisma.ContractTypeUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedContracts?: Prisma.ContractUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedCIClasses?: Prisma.CIClassUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedConfigurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutDeletedByNestedInput
+  createdConfigurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCreatedByNestedInput
+  updatedConfigurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutUpdatedByNestedInput
+  deletedServices?: Prisma.ServiceUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedLicenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
+  deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type PersonCreateWithoutReportSchedulesCreatedInput = {
+  id?: string
+  azureAdId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  office?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  isExcluded?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+  serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
+  deletedFieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutDeletedByInput
+  archivedFieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutArchivedByInput
+  createdFieldTemplates?: Prisma.FieldTemplateCreateNestedManyWithoutCreatedByInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedPersonsInput
+  deletedPersons?: Prisma.PersonCreateNestedManyWithoutDeletedByInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedPersonsInput
+  createdPersons?: Prisma.PersonCreateNestedManyWithoutCreatedByInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedPersonsInput
+  updatedPersons?: Prisma.PersonCreateNestedManyWithoutUpdatedByInput
+  deletedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutDeletedByInput
+  deletedLocations?: Prisma.LocationCreateNestedManyWithoutDeletedByInput
+  deletedVendors?: Prisma.VendorCreateNestedManyWithoutDeletedByInput
+  deletedLifecycleModels?: Prisma.LifecycleModelCreateNestedManyWithoutDeletedByInput
+  deletedLifecycleStates?: Prisma.LifecycleStateCreateNestedManyWithoutDeletedByInput
+  deletedAssetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutDeletedByInput
+  deletedAssetModels?: Prisma.AssetModelCreateNestedManyWithoutDeletedByInput
+  deletedAssets?: Prisma.AssetCreateNestedManyWithoutDeletedByInput
+  createdAssets?: Prisma.AssetCreateNestedManyWithoutCreatedByInput
+  updatedAssets?: Prisma.AssetCreateNestedManyWithoutUpdatedByInput
+  deletedWarranties?: Prisma.WarrantyCreateNestedManyWithoutDeletedByInput
+  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutDeletedByInput
+  deletedContractTypes?: Prisma.ContractTypeCreateNestedManyWithoutDeletedByInput
+  deletedContracts?: Prisma.ContractCreateNestedManyWithoutDeletedByInput
+  deletedCIClasses?: Prisma.CIClassCreateNestedManyWithoutDeletedByInput
+  deletedConfigurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutDeletedByInput
+  createdConfigurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutCreatedByInput
+  updatedConfigurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutUpdatedByInput
+  deletedServices?: Prisma.ServiceCreateNestedManyWithoutDeletedByInput
+  deletedLicenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutDeletedByInput
+  deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
+  deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
+  deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+}
+
+export type PersonUncheckedCreateWithoutReportSchedulesCreatedInput = {
+  id?: string
+  azureAdId?: string | null
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  managerId?: string | null
+  title?: string | null
+  office?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  isExcluded?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+  serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
+  deletedFieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutDeletedByInput
+  archivedFieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutArchivedByInput
+  createdFieldTemplates?: Prisma.FieldTemplateUncheckedCreateNestedManyWithoutCreatedByInput
+  deletedPersons?: Prisma.PersonUncheckedCreateNestedManyWithoutDeletedByInput
+  createdPersons?: Prisma.PersonUncheckedCreateNestedManyWithoutCreatedByInput
+  updatedPersons?: Prisma.PersonUncheckedCreateNestedManyWithoutUpdatedByInput
+  deletedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedLocations?: Prisma.LocationUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedVendors?: Prisma.VendorUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedLifecycleModels?: Prisma.LifecycleModelUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedLifecycleStates?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedAssetCategories?: Prisma.AssetCategoryUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedAssetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedAssets?: Prisma.AssetUncheckedCreateNestedManyWithoutDeletedByInput
+  createdAssets?: Prisma.AssetUncheckedCreateNestedManyWithoutCreatedByInput
+  updatedAssets?: Prisma.AssetUncheckedCreateNestedManyWithoutUpdatedByInput
+  deletedWarranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedContractTypes?: Prisma.ContractTypeUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedContracts?: Prisma.ContractUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedCIClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedConfigurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutDeletedByInput
+  createdConfigurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCreatedByInput
+  updatedConfigurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutUpdatedByInput
+  deletedServices?: Prisma.ServiceUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedLicenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
+  deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+}
+
+export type PersonCreateOrConnectWithoutReportSchedulesCreatedInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutReportSchedulesCreatedInput, Prisma.PersonUncheckedCreateWithoutReportSchedulesCreatedInput>
+}
+
+export type PersonUpsertWithoutReportSchedulesCreatedInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutReportSchedulesCreatedInput, Prisma.PersonUncheckedUpdateWithoutReportSchedulesCreatedInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutReportSchedulesCreatedInput, Prisma.PersonUncheckedCreateWithoutReportSchedulesCreatedInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutReportSchedulesCreatedInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutReportSchedulesCreatedInput, Prisma.PersonUncheckedUpdateWithoutReportSchedulesCreatedInput>
+}
+
+export type PersonUpdateWithoutReportSchedulesCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+  serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
+  deletedFieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutDeletedByNestedInput
+  archivedFieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutArchivedByNestedInput
+  createdFieldTemplates?: Prisma.FieldTemplateUpdateManyWithoutCreatedByNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedPersonsNestedInput
+  deletedPersons?: Prisma.PersonUpdateManyWithoutDeletedByNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedPersonsNestedInput
+  createdPersons?: Prisma.PersonUpdateManyWithoutCreatedByNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedPersonsNestedInput
+  updatedPersons?: Prisma.PersonUpdateManyWithoutUpdatedByNestedInput
+  deletedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutDeletedByNestedInput
+  deletedLocations?: Prisma.LocationUpdateManyWithoutDeletedByNestedInput
+  deletedVendors?: Prisma.VendorUpdateManyWithoutDeletedByNestedInput
+  deletedLifecycleModels?: Prisma.LifecycleModelUpdateManyWithoutDeletedByNestedInput
+  deletedLifecycleStates?: Prisma.LifecycleStateUpdateManyWithoutDeletedByNestedInput
+  deletedAssetCategories?: Prisma.AssetCategoryUpdateManyWithoutDeletedByNestedInput
+  deletedAssetModels?: Prisma.AssetModelUpdateManyWithoutDeletedByNestedInput
+  deletedAssets?: Prisma.AssetUpdateManyWithoutDeletedByNestedInput
+  createdAssets?: Prisma.AssetUpdateManyWithoutCreatedByNestedInput
+  updatedAssets?: Prisma.AssetUpdateManyWithoutUpdatedByNestedInput
+  deletedWarranties?: Prisma.WarrantyUpdateManyWithoutDeletedByNestedInput
+  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutDeletedByNestedInput
+  deletedContractTypes?: Prisma.ContractTypeUpdateManyWithoutDeletedByNestedInput
+  deletedContracts?: Prisma.ContractUpdateManyWithoutDeletedByNestedInput
+  deletedCIClasses?: Prisma.CIClassUpdateManyWithoutDeletedByNestedInput
+  deletedConfigurationItems?: Prisma.ConfigurationItemUpdateManyWithoutDeletedByNestedInput
+  createdConfigurationItems?: Prisma.ConfigurationItemUpdateManyWithoutCreatedByNestedInput
+  updatedConfigurationItems?: Prisma.ConfigurationItemUpdateManyWithoutUpdatedByNestedInput
+  deletedServices?: Prisma.ServiceUpdateManyWithoutDeletedByNestedInput
+  deletedLicenseProducts?: Prisma.LicenseProductUpdateManyWithoutDeletedByNestedInput
+  deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
+  deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
+  deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutReportSchedulesCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
   initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
   approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
   disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -19157,6 +19718,7 @@ export type PersonCreateWithoutDeletedAssetReservationsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutDeletedByInput
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedAssetReservationsInput = {
@@ -19238,6 +19800,7 @@ export type PersonUncheckedCreateWithoutDeletedAssetReservationsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutDeletedByInput
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedAssetReservationsInput = {
@@ -19324,6 +19887,7 @@ export type PersonCreateWithoutReservationsForInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutReservationsForInput = {
@@ -19405,6 +19969,7 @@ export type PersonUncheckedCreateWithoutReservationsForInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutReservationsForInput = {
@@ -19491,6 +20056,7 @@ export type PersonCreateWithoutReservationsCreatedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutReservationsCreatedInput = {
@@ -19572,6 +20138,7 @@ export type PersonUncheckedCreateWithoutReservationsCreatedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutReservationsCreatedInput = {
@@ -19658,6 +20225,7 @@ export type PersonCreateWithoutReservationsConfirmedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutReservationsConfirmedInput = {
@@ -19739,6 +20307,7 @@ export type PersonUncheckedCreateWithoutReservationsConfirmedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutReservationsConfirmedInput = {
@@ -19825,6 +20394,7 @@ export type PersonCreateWithoutReservationsCancelledInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutReservationsCancelledInput = {
@@ -19906,6 +20476,7 @@ export type PersonUncheckedCreateWithoutReservationsCancelledInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutReservationsCancelledInput = {
@@ -20003,6 +20574,7 @@ export type PersonUpdateWithoutDeletedAssetReservationsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductUpdateManyWithoutDeletedByNestedInput
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedAssetReservationsInput = {
@@ -20084,6 +20656,7 @@ export type PersonUncheckedUpdateWithoutDeletedAssetReservationsInput = {
   deletedLicenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutReservationsForInput = {
@@ -20176,6 +20749,7 @@ export type PersonUpdateWithoutReservationsForInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutReservationsForInput = {
@@ -20257,6 +20831,7 @@ export type PersonUncheckedUpdateWithoutReservationsForInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutReservationsCreatedInput = {
@@ -20349,6 +20924,7 @@ export type PersonUpdateWithoutReservationsCreatedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutReservationsCreatedInput = {
@@ -20430,6 +21006,7 @@ export type PersonUncheckedUpdateWithoutReservationsCreatedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutReservationsConfirmedInput = {
@@ -20522,6 +21099,7 @@ export type PersonUpdateWithoutReservationsConfirmedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutReservationsConfirmedInput = {
@@ -20603,6 +21181,7 @@ export type PersonUncheckedUpdateWithoutReservationsConfirmedInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUpsertWithoutReservationsCancelledInput = {
@@ -20695,6 +21274,7 @@ export type PersonUpdateWithoutReservationsCancelledInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
@@ -20776,6 +21356,7 @@ export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutDeletedServicesInput = {
@@ -20857,6 +21438,7 @@ export type PersonCreateWithoutDeletedServicesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutDeletedServicesInput = {
@@ -20938,6 +21520,7 @@ export type PersonUncheckedCreateWithoutDeletedServicesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutDeletedServicesInput = {
@@ -21035,6 +21618,7 @@ export type PersonUpdateWithoutDeletedServicesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedServicesInput = {
@@ -21116,6 +21700,7 @@ export type PersonUncheckedUpdateWithoutDeletedServicesInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateWithoutServiceOwnershipsInput = {
@@ -21197,6 +21782,7 @@ export type PersonCreateWithoutServiceOwnershipsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonUncheckedCreateWithoutServiceOwnershipsInput = {
@@ -21278,6 +21864,7 @@ export type PersonUncheckedCreateWithoutServiceOwnershipsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type PersonCreateOrConnectWithoutServiceOwnershipsInput = {
@@ -21375,6 +21962,7 @@ export type PersonUpdateWithoutServiceOwnershipsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutServiceOwnershipsInput = {
@@ -21456,6 +22044,7 @@ export type PersonUncheckedUpdateWithoutServiceOwnershipsInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonCreateManyOrgUnitInput = {
@@ -21566,6 +22155,7 @@ export type PersonUpdateWithoutOrgUnitInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutOrgUnitInput = {
@@ -21647,6 +22237,7 @@ export type PersonUncheckedUpdateWithoutOrgUnitInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -21873,6 +22464,7 @@ export type PersonUpdateWithoutManagerInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutManagerInput = {
@@ -21954,6 +22546,7 @@ export type PersonUncheckedUpdateWithoutManagerInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutManagerInput = {
@@ -22064,6 +22657,7 @@ export type PersonUpdateWithoutDeletedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDeletedByInput = {
@@ -22145,6 +22739,7 @@ export type PersonUncheckedUpdateWithoutDeletedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutDeletedByInput = {
@@ -22255,6 +22850,7 @@ export type PersonUpdateWithoutCreatedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutCreatedByInput = {
@@ -22336,6 +22932,7 @@ export type PersonUncheckedUpdateWithoutCreatedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutCreatedByInput = {
@@ -22446,6 +23043,7 @@ export type PersonUpdateWithoutUpdatedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutUpdatedByInput = {
@@ -22527,6 +23125,7 @@ export type PersonUncheckedUpdateWithoutUpdatedByInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutUpdatedByInput = {
@@ -22666,6 +23265,7 @@ export type PersonUpdateWithoutLocationInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutLocationInput = {
@@ -22747,6 +23347,7 @@ export type PersonUncheckedUpdateWithoutLocationInput = {
   deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
+  reportSchedulesCreated?: Prisma.ReportScheduleUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutLocationInput = {
@@ -22836,6 +23437,7 @@ export type PersonCountOutputType = {
   deletedLicenseEntitlements: number
   deletedAssetKits: number
   deletedAssetReservations: number
+  reportSchedulesCreated: number
 }
 
 export type PersonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -22891,6 +23493,7 @@ export type PersonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   deletedLicenseEntitlements?: boolean | PersonCountOutputTypeCountDeletedLicenseEntitlementsArgs
   deletedAssetKits?: boolean | PersonCountOutputTypeCountDeletedAssetKitsArgs
   deletedAssetReservations?: boolean | PersonCountOutputTypeCountDeletedAssetReservationsArgs
+  reportSchedulesCreated?: boolean | PersonCountOutputTypeCountReportSchedulesCreatedArgs
 }
 
 /**
@@ -23267,6 +23870,13 @@ export type PersonCountOutputTypeCountDeletedAssetReservationsArgs<ExtArgs exten
   where?: Prisma.AssetReservationWhereInput
 }
 
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountReportSchedulesCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReportScheduleWhereInput
+}
+
 
 export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -23355,6 +23965,7 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   deletedLicenseEntitlements?: boolean | Prisma.Person$deletedLicenseEntitlementsArgs<ExtArgs>
   deletedAssetKits?: boolean | Prisma.Person$deletedAssetKitsArgs<ExtArgs>
   deletedAssetReservations?: boolean | Prisma.Person$deletedAssetReservationsArgs<ExtArgs>
+  reportSchedulesCreated?: boolean | Prisma.Person$reportSchedulesCreatedArgs<ExtArgs>
   _count?: boolean | Prisma.PersonCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["person"]>
 
@@ -23523,6 +24134,7 @@ export type PersonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   deletedLicenseEntitlements?: boolean | Prisma.Person$deletedLicenseEntitlementsArgs<ExtArgs>
   deletedAssetKits?: boolean | Prisma.Person$deletedAssetKitsArgs<ExtArgs>
   deletedAssetReservations?: boolean | Prisma.Person$deletedAssetReservationsArgs<ExtArgs>
+  reportSchedulesCreated?: boolean | Prisma.Person$reportSchedulesCreatedArgs<ExtArgs>
   _count?: boolean | Prisma.PersonCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PersonIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -23606,6 +24218,7 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     deletedLicenseEntitlements: Prisma.$LicenseEntitlementPayload<ExtArgs>[]
     deletedAssetKits: Prisma.$AssetKitPayload<ExtArgs>[]
     deletedAssetReservations: Prisma.$AssetReservationPayload<ExtArgs>[]
+    reportSchedulesCreated: Prisma.$ReportSchedulePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -24088,6 +24701,7 @@ export interface Prisma__PersonClient<T, Null = never, ExtArgs extends runtime.T
   deletedLicenseEntitlements<T extends Prisma.Person$deletedLicenseEntitlementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$deletedLicenseEntitlementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LicenseEntitlementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deletedAssetKits<T extends Prisma.Person$deletedAssetKitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$deletedAssetKitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetKitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deletedAssetReservations<T extends Prisma.Person$deletedAssetReservationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$deletedAssetReservationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reportSchedulesCreated<T extends Prisma.Person$reportSchedulesCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$reportSchedulesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -25899,6 +26513,30 @@ export type Person$deletedAssetReservationsArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.AssetReservationScalarFieldEnum | Prisma.AssetReservationScalarFieldEnum[]
+}
+
+/**
+ * Person.reportSchedulesCreated
+ */
+export type Person$reportSchedulesCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReportSchedule
+   */
+  select?: Prisma.ReportScheduleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReportSchedule
+   */
+  omit?: Prisma.ReportScheduleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReportScheduleInclude<ExtArgs> | null
+  where?: Prisma.ReportScheduleWhereInput
+  orderBy?: Prisma.ReportScheduleOrderByWithRelationInput | Prisma.ReportScheduleOrderByWithRelationInput[]
+  cursor?: Prisma.ReportScheduleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReportScheduleScalarFieldEnum | Prisma.ReportScheduleScalarFieldEnum[]
 }
 
 /**

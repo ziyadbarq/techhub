@@ -148,6 +148,7 @@ model Person {
   deletedLicenseEntitlements   LicenseEntitlement[]   @relation("LicenseEntitlementDeletedBy")
   deletedAssetKits             AssetKit[]             @relation("AssetKitDeletedBy")
   deletedAssetReservations     AssetReservation[]     @relation("AssetReservationDeletedBy")
+  reportSchedulesCreated       ReportSchedule[]       @relation("ReportScheduleCreatedBy")
 
   // Indexes
   @@index([azureAdId])

@@ -1,0 +1,57 @@
+// ============================================
+// REPORTS & ANALYTICS
+// ============================================
+//
+// Models: ReportSchedule
+// Enums: ReportFrequency, ReportExportFormat
+// Layer: Layer 3 (Advanced ITAM)
+// Related DI Module: reports.module.ts
+// ============================================
+
+// ReportSchedule model
+// Scheduled email delivery of pre-defined reports
+model ReportSchedule {
+  id          String             @id @default(cuid())
+  reportId    String // References static report definition ID (e.g., "asset-inventory-summary")
+  name        String // User-given schedule name
+  frequency   ReportFrequency
+  dayOfWeek   Int? // 0-6 for WEEKLY (0=Sunday)
+  dayOfMonth  Int? // 1-28 for MONTHLY
+  hour        Int                @default(8) // Hour to send (in timezone)
+  minute      Int                @default(0) // Minute to send
+  timezone    String             @default("Asia/Riyadh")
+  recipients  String[] // Email addresses
+  filters     Json? // Saved filter state for report execution
+  format      ReportExportFormat @default(PDF)
+  isActive    Boolean            @default(true)
+  lastSentAt  DateTime?
+  nextSendAt  DateTime?
+  createdById String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  // Relations
+  createdBy Person @relation("ReportScheduleCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@index([isActive, nextSendAt])
+  @@index([createdById])
+  @@index([reportId])
+  @@map("report_schedules")
+}
+
+// ============================================
+// REPORT ENUMS
+// ============================================
+
+enum ReportFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum ReportExportFormat {
+  PDF
+  CSV
+  XLSX
+}

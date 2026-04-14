@@ -1,6 +1,6 @@
 # UI/UX Improvements
 
-This document tracks significant user interface and user experience improvements made to the Barq Assets application.
+This document tracks significant user interface and user experience improvements made to the TechHub application.
 
 ## Table of Contents
 

@@ -1,6 +1,6 @@
 # RBAC Architecture
 
-**Role-Based Access Control (RBAC)** - Complete architecture documentation for the barq-assets permission system.
+**Role-Based Access Control (RBAC)** - Complete architecture documentation for the TechHub permission system.
 
 ## Table of Contents
 

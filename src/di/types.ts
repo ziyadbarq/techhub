@@ -314,6 +314,14 @@ export const DI_TOKENS = {
   CheckFeatureEnabledUseCase: Symbol.for("CheckFeatureEnabledUseCase"),
   IFeatureFlagAuditService: Symbol.for("IFeatureFlagAuditService"),
 
+  // System Settings
+  ISystemSettingRepository: Symbol.for("ISystemSettingRepository"),
+  IConfigService: Symbol.for("IConfigService"),
+  ListSettingsUseCase: Symbol.for("ListSettingsUseCase"),
+  GetSettingUseCase: Symbol.for("GetSettingUseCase"),
+  UpdateSettingUseCase: Symbol.for("UpdateSettingUseCase"),
+  UpdateSettingsBulkUseCase: Symbol.for("UpdateSettingsBulkUseCase"),
+
   // RBAC Analytics Use Cases
   GetRoleUsageStatsUseCase: Symbol.for("GetRoleUsageStatsUseCase"),
   GetPermissionUsageStatsUseCase: Symbol.for("GetPermissionUsageStatsUseCase"),
@@ -1052,6 +1060,27 @@ export const DI_TOKENS = {
   // OCI Sync: Use Cases
   SyncOciResourcesUseCase: Symbol.for("SyncOciResourcesUseCase"),
   GetOciSyncLogsUseCase: Symbol.for("GetOciSyncLogsUseCase"),
+
+  // ==========================================
+  // Reports Tokens
+  // ==========================================
+
+  // Reports: Services
+  IReportPdfService: Symbol.for("IReportPdfService"),
+  IReportDataService: Symbol.for("IReportDataService"),
+
+  // Reports: Repositories
+  IReportScheduleRepository: Symbol.for("IReportScheduleRepository"),
+
+  // Reports: Use Cases
+  GetReportCatalogUseCase: Symbol.for("GetReportCatalogUseCase"),
+  GenerateReportDataUseCase: Symbol.for("GenerateReportDataUseCase"),
+  GenerateReportPdfUseCase: Symbol.for("GenerateReportPdfUseCase"),
+  CreateReportScheduleUseCase: Symbol.for("CreateReportScheduleUseCase"),
+  ListReportSchedulesUseCase: Symbol.for("ListReportSchedulesUseCase"),
+  UpdateReportScheduleUseCase: Symbol.for("UpdateReportScheduleUseCase"),
+  DeleteReportScheduleUseCase: Symbol.for("DeleteReportScheduleUseCase"),
+  ExecuteScheduledReportUseCase: Symbol.for("ExecuteScheduledReportUseCase"),
 
   // ==========================================
   // Query Layer Tokens

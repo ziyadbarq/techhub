@@ -50,6 +50,14 @@ export const RESERVATION_JOBS = {
 } as const;
 
 /**
+ * Report queue job names
+ */
+export const REPORT_JOBS = {
+  CHECK_DUE_SCHEDULES: "check-due-report-schedules",
+  GENERATE_AND_SEND: "generate-and-send-report",
+} as const;
+
+/**
  * Queue names
  */
 export const QUEUE_NAMES = {
@@ -67,4 +75,5 @@ export type MaintenanceJobName =
   (typeof MAINTENANCE_JOBS)[keyof typeof MAINTENANCE_JOBS];
 export type ReservationJobName =
   (typeof RESERVATION_JOBS)[keyof typeof RESERVATION_JOBS];
+export type ReportJobName = (typeof REPORT_JOBS)[keyof typeof REPORT_JOBS];
 export type QueueName = (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES];

@@ -342,6 +342,24 @@ export const LicenseMetricTypeEnum = {
 export type LicenseMetricTypeEnum = (typeof LicenseMetricTypeEnum)[keyof typeof LicenseMetricTypeEnum]
 
 
+export const ReportFrequency = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY'
+} as const
+
+export type ReportFrequency = (typeof ReportFrequency)[keyof typeof ReportFrequency]
+
+
+export const ReportExportFormat = {
+  PDF: 'PDF',
+  CSV: 'CSV',
+  XLSX: 'XLSX'
+} as const
+
+export type ReportExportFormat = (typeof ReportExportFormat)[keyof typeof ReportExportFormat]
+
+
 export const AssetReservationStatusEnum = {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
@@ -602,27 +620,6 @@ export const TaskStatus = {
 } as const
 
 export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
-
-
-export const PromptBlockCategory = {
-  CORE_SYNTAX: 'CORE_SYNTAX',
-  CONTENT_GUIDELINES: 'CONTENT_GUIDELINES',
-  VALIDATION: 'VALIDATION',
-  ADVANCED_FEATURES: 'ADVANCED_FEATURES'
-} as const
-
-export type PromptBlockCategory = (typeof PromptBlockCategory)[keyof typeof PromptBlockCategory]
-
-
-export const PromptPurpose = {
-  OUTLINE: 'OUTLINE',
-  CONTENT: 'CONTENT',
-  THEME: 'THEME',
-  REVIEW: 'REVIEW',
-  REFINEMENT: 'REFINEMENT'
-} as const
-
-export type PromptPurpose = (typeof PromptPurpose)[keyof typeof PromptPurpose]
 
 
 export const FeatureFlagCategory = {

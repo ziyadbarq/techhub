@@ -1,6 +1,6 @@
 # Table Components Guide
 
-**Complete guide to building standardized tables in Barq Assets using hooks and reusable components.**
+**Complete guide to building standardized tables in TechHub using hooks and reusable components.**
 
 ## Overview
 

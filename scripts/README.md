@@ -22,6 +22,7 @@ bash scripts/deploy/db-backup.sh restore           # Interactive restore
 # Production
 npm run deploy               # Deploy with migrations + seed
 npm run build                # Production build with validation
+npm run version:preview      # Preview CI-calculated release version
 bash scripts/deploy/production-deploy.sh           # Manual 8-stage pipeline
 
 # User Management
@@ -40,6 +41,7 @@ scripts/
 ├── imports/         # Data import tools (10 scripts)
 ├── users/           # User & admin management (5 scripts)
 ├── build/           # Build & bundling tools (7 scripts)
+├── release/         # Version calculation tools (1 script)
 ├── dev/             # Development utilities (9 scripts)
 ├── monitoring/      # Infrastructure monitoring (2 scripts)
 ├── one-time/        # Historical fixes (5 scripts)
@@ -50,110 +52,119 @@ scripts/
 
 ### Deploy (Production-Critical)
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **git-auto-deploy.sh** | Auto-deploy from Git | Cron: `*/2 * * * *` (production only) |
+| Script                   | Purpose                     | Usage                                      |
+| ------------------------ | --------------------------- | ------------------------------------------ |
+| **git-auto-deploy.sh**   | Auto-deploy from Git        | Cron: `*/2 * * * *` (production only)      |
 | **production-deploy.sh** | 8-stage deployment pipeline | `bash scripts/deploy/production-deploy.sh` |
-| **db-backup.sh** | Database backup/restore | `bash scripts/deploy/db-backup.sh backup` |
-| **start-server.js** | Production server startup | `node scripts/deploy/start-server.js` |
+| **db-backup.sh**         | Database backup/restore     | `bash scripts/deploy/db-backup.sh backup`  |
+| **start-server.js**      | Production server startup   | `node scripts/deploy/start-server.js`      |
 
 ### Database Operations
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **fix-migration-drift.ts** | Auto-fix schema drift | `npm run drift:fix` |
-| **verify-migration-drift.ts** | Detect schema drift | `npm run drift:check` |
-| **rollback-migration-fix.ts** | Rollback drift fix | `npm run drift:rollback` |
-| **migrate-sla-data.ts** | One-time SLA migration | `npx tsx scripts/db/migrate-sla-data.ts` |
+| Script                        | Purpose                | Usage                                    |
+| ----------------------------- | ---------------------- | ---------------------------------------- |
+| **fix-migration-drift.ts**    | Auto-fix schema drift  | `npm run drift:fix`                      |
+| **verify-migration-drift.ts** | Detect schema drift    | `npm run drift:check`                    |
+| **rollback-migration-fix.ts** | Rollback drift fix     | `npm run drift:rollback`                 |
+| **migrate-sla-data.ts**       | One-time SLA migration | `npx tsx scripts/db/migrate-sla-data.ts` |
 
 ### Data Imports
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **import-physical-assets.ts** | Import laptops + monitors | `npx tsx scripts/imports/import-physical-assets.ts` |
-| **import-network-assets.ts** | Import network infrastructure | `npx tsx scripts/imports/import-network-assets.ts` |
-| **import-telephone-assets.ts** | Import telephone systems | `npx tsx scripts/imports/import-telephone-assets.ts` |
-| **import-network-cis.ts** | Import network CIs | `npx tsx scripts/imports/import-network-cis.ts` |
-| **import-cloud-cis.ts** | Import cloud infrastructure CIs | `npx tsx scripts/imports/import-cloud-cis.ts` |
-| **import-services.ts** | Import service definitions | `npx tsx scripts/imports/import-services.ts` |
-| **import-service-cis.ts** | Import service-to-CI relationships | `npx tsx scripts/imports/import-service-cis.ts` |
-| **import-service-ownership.ts** | Import service ownership | `npx tsx scripts/imports/import-service-ownership.ts` |
-| **import-service-bia.ts** | Import business impact analysis | `npx tsx scripts/imports/import-service-bia.ts` |
-| **download-oci-data.ts** | Download OCI inventory from n8n webhook, archive previous snapshot, write manifest | `npm run download:oci` |
-| **compare-oci-data.ts** | Compare local OCI snapshot files with OCI-backed CIs in the app DB | `npm run compare:oci` |
+| Script                          | Purpose                                                                            | Usage                                                 |
+| ------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| **import-physical-assets.ts**   | Import laptops + monitors                                                          | `npx tsx scripts/imports/import-physical-assets.ts`   |
+| **import-network-assets.ts**    | Import network infrastructure                                                      | `npx tsx scripts/imports/import-network-assets.ts`    |
+| **import-telephone-assets.ts**  | Import telephone systems                                                           | `npx tsx scripts/imports/import-telephone-assets.ts`  |
+| **import-network-cis.ts**       | Import network CIs                                                                 | `npx tsx scripts/imports/import-network-cis.ts`       |
+| **import-cloud-cis.ts**         | Import cloud infrastructure CIs                                                    | `npx tsx scripts/imports/import-cloud-cis.ts`         |
+| **import-services.ts**          | Import service definitions                                                         | `npx tsx scripts/imports/import-services.ts`          |
+| **import-service-cis.ts**       | Import service-to-CI relationships                                                 | `npx tsx scripts/imports/import-service-cis.ts`       |
+| **import-service-ownership.ts** | Import service ownership                                                           | `npx tsx scripts/imports/import-service-ownership.ts` |
+| **import-service-bia.ts**       | Import business impact analysis                                                    | `npx tsx scripts/imports/import-service-bia.ts`       |
+| **download-oci-data.ts**        | Download OCI inventory from n8n webhook, archive previous snapshot, write manifest | `npm run download:oci`                                |
+| **compare-oci-data.ts**         | Compare local OCI snapshot files with OCI-backed CIs in the app DB                 | `npm run compare:oci`                                 |
 
 **Note:** All import scripts support `--dry-run` mode. Most source from `local/barq-data/`. OCI snapshot tooling uses `local/oci-data/` by default and supports `OCI_LOCAL_DATA_DIR`, `OCI_LOCAL_DATA_ARCHIVE_DIR`, and `OCI_SYNC_SOURCE=local` for dev/test replay.
 
 ### User Management
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **manage-user-roles.ts** | Interactive role manager | `npm run roles:manage` |
-| **sync-users-from-graph.ts** | Sync from Microsoft Graph | `npm run sync:users` |
-| **backfill-azure-ad-ids.ts** | Match existing users with Azure AD | `npm run backfill:azure-ids` |
-| **link-user-to-person.ts** | Link User account to Person record | `npm run link:user-to-person` |
-| **ensure-system-admin-permissions.ts** | Ensure system admin has all permissions | `npm run fix:admin-perms` |
+| Script                                 | Purpose                                 | Usage                         |
+| -------------------------------------- | --------------------------------------- | ----------------------------- |
+| **manage-user-roles.ts**               | Interactive role manager                | `npm run roles:manage`        |
+| **sync-users-from-graph.ts**           | Sync from Microsoft Graph               | `npm run sync:users`          |
+| **backfill-azure-ad-ids.ts**           | Match existing users with Azure AD      | `npm run backfill:azure-ids`  |
+| **link-user-to-person.ts**             | Link User account to Person record      | `npm run link:user-to-person` |
+| **ensure-system-admin-permissions.ts** | Ensure system admin has all permissions | `npm run fix:admin-perms`     |
 
 ### Build Tools
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **build.js** | Enhanced build with progress | `npm run build` (via package.json) |
-| **deploy.js** | Deployment orchestrator | `npm run deploy` |
-| **analyze-bundle.js** | Bundle size analysis | `npm run build:analyze` |
-| **recreate-prisma-index.js** | Prisma client barrel exports | `npm run db:generate` (postgenerate hook) |
-| **generate-routes.ts** | Auto-generate route config | `npm run generate:routes` |
-| **shim-server-only.js** | Server-only shim for workers | Used in worker processes |
-| **silence-baseline-warning.cjs** | Suppress Browserslist warnings | Used in build scripts |
+| Script                           | Purpose                        | Usage                                     |
+| -------------------------------- | ------------------------------ | ----------------------------------------- |
+| **build.js**                     | Enhanced build with progress   | `npm run build` (via package.json)        |
+| **deploy.js**                    | Deployment orchestrator        | `npm run deploy`                          |
+| **analyze-bundle.js**            | Bundle size analysis           | `npm run build:analyze`                   |
+| **recreate-prisma-index.js**     | Prisma client barrel exports   | `npm run db:generate` (postgenerate hook) |
+| **generate-routes.ts**           | Auto-generate route config     | `npm run generate:routes`                 |
+| **shim-server-only.js**          | Server-only shim for workers   | Used in worker processes                  |
+| **silence-baseline-warning.cjs** | Suppress Browserslist warnings | Used in build scripts                     |
+
+### Release Tools
+
+| Script                  | Purpose                                                       | Usage                     |
+| ----------------------- | ------------------------------------------------------------- | ------------------------- |
+| **compute-version.mjs** | Calculate CI release version from tags + conventional commits | `npm run version:preview` |
 
 ### Development Utilities
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **reset-dev-environment.ts** | Full reset: DB + cache | `npm run reset` |
-| **clear-cache.ts** | Clear all caches | `npm run cache:clear` |
-| **restart-dev.sh** | Restart dev server | `npm run dev:restart` |
-| **stop-services.sh** | Stop all services | `npm run stop` or `npm run stop:force` |
-| **type-check-staged.sh** | Fast staged file type-check | `npm run type-check:staged` (pre-commit hook) |
-| **setup-backup-storage.sh** | Setup backup directories | Manual (one-time) |
-| **test-email.ts** | Test Microsoft Graph email | `npx tsx scripts/dev/test-email.ts` |
-| **test-password-compatibility.ts** | Test password handling | `npx tsx scripts/dev/test-password-compatibility.ts` |
-| **debug-intune-graph.ts** | Debug Intune device sync | `npx tsx scripts/dev/debug-intune-graph.ts` |
+| Script                             | Purpose                     | Usage                                                |
+| ---------------------------------- | --------------------------- | ---------------------------------------------------- |
+| **reset-dev-environment.ts**       | Full reset: DB + cache      | `npm run reset`                                      |
+| **clear-cache.ts**                 | Clear all caches            | `npm run cache:clear`                                |
+| **restart-dev.sh**                 | Restart dev server          | `npm run dev:restart`                                |
+| **stop-services.sh**               | Stop all services           | `npm run stop` or `npm run stop:force`               |
+| **type-check-staged.sh**           | Fast staged file type-check | `npm run type-check:staged` (pre-commit hook)        |
+| **setup-backup-storage.sh**        | Setup backup directories    | Manual (one-time)                                    |
+| **test-email.ts**                  | Test Microsoft Graph email  | `npx tsx scripts/dev/test-email.ts`                  |
+| **test-password-compatibility.ts** | Test password handling      | `npx tsx scripts/dev/test-password-compatibility.ts` |
+| **debug-intune-graph.ts**          | Debug Intune device sync    | `npx tsx scripts/dev/debug-intune-graph.ts`          |
 
 ### Monitoring
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **bull-board-server.ts** | BullMQ queue monitoring UI | `npm run queues:board` |
-| **worker-health.ts** | Background worker diagnostics | `npm run worker:health` |
+| Script                   | Purpose                       | Usage                   |
+| ------------------------ | ----------------------------- | ----------------------- |
+| **bull-board-server.ts** | BullMQ queue monitoring UI    | `npm run queues:board`  |
+| **worker-health.ts**     | Background worker diagnostics | `npm run worker:health` |
 
 ### One-Time Fixes (Archive)
 
-| Script | Purpose | Status |
-|--------|---------|--------|
-| **fix-manifest-permissions.ts** | Fix route manifest permissions | Completed |
-| **fix-prisma-imports.ts** | Fix Prisma import paths | Completed |
-| **fix-network-asset-tags.ts** | Fix asset tag formatting | Completed |
-| **check-user-person-links.ts** | Diagnostic for user-person links | Utility |
-| **extract-lookup-values.ts** | Extract lookup values for debugging | Utility |
+| Script                          | Purpose                             | Status    |
+| ------------------------------- | ----------------------------------- | --------- |
+| **fix-manifest-permissions.ts** | Fix route manifest permissions      | Completed |
+| **fix-prisma-imports.ts**       | Fix Prisma import paths             | Completed |
+| **fix-network-asset-tags.ts**   | Fix asset tag formatting            | Completed |
+| **check-user-person-links.ts**  | Diagnostic for user-person links    | Utility   |
+| **extract-lookup-values.ts**    | Extract lookup values for debugging | Utility   |
 
 ## Common Workflows
 
 ### Production Deployment
 
 **Automatic (Production Server):**
+
 ```bash
 # Runs every 2 minutes via cron
 tail -f local/logs/auto-deploy-$(date +%Y%m).log
 ```
 
 **Manual Deployment:**
+
 ```bash
 npm run deploy                           # Standard deployment
 bash scripts/deploy/production-deploy.sh # Manual 8-stage pipeline
 ```
 
 **Rollback:**
+
 ```bash
 bash scripts/deploy/db-backup.sh restore  # Interactive backup selection
 ```
@@ -161,6 +172,7 @@ bash scripts/deploy/db-backup.sh restore  # Interactive backup selection
 ### Database Management
 
 **Schema Changes:**
+
 ```bash
 # 1. Edit .prisma files
 # 2. Create migration
@@ -170,6 +182,7 @@ npm run db:generate
 ```
 
 **Drift Detection & Fix:**
+
 ```bash
 npm run drift:check    # Detect drift
 npm run drift:fix      # Auto-fix with backup
@@ -177,6 +190,7 @@ npm run drift:rollback # Rollback if needed
 ```
 
 **Backup & Restore:**
+
 ```bash
 bash scripts/deploy/db-backup.sh backup --force   # Create backup
 bash scripts/deploy/db-backup.sh restore          # Interactive restore
@@ -235,37 +249,44 @@ npm run dev:restart    # Clear cache + restart dev server
 ### Common Errors
 
 **"BASH_SOURCE[0]: parameter not set"**
+
 - **Cause:** Script executed without bash
 - **Fix:** Use `bash scripts/deploy/db-backup.sh` (not `sh`)
 
 **"Migration drift detected"**
+
 - **Cause:** Database schema doesn't match migration history
 - **Fix:** Run `npm run drift:fix` (creates automatic backup)
 
 **"Prisma Client generation failed"**
+
 - **Cause:** Invalid schema or missing `@prisma/client`
 - **Fix:** Check schema syntax, run `npm install`
 
 **"Port 3000 already in use"**
+
 - **Cause:** Dev server or PM2 process running
 - **Fix:** Run `npm run stop:force` to kill all processes
 
 ## Production Cron Job
 
-**Location:** Production server only (`/home/opc/node-projects/barq-assets/`)
+**Location:** Production server only (`/home/opc/node-projects/techhub/`)
 
 **Cron Entry:**
+
 ```bash
-*/2 * * * * /home/opc/node-projects/barq-assets/scripts/deploy/git-auto-deploy.sh
+*/2 * * * * /home/opc/node-projects/techhub/scripts/deploy/git-auto-deploy.sh
 ```
 
 **Monitoring:**
+
 ```bash
 tail -f local/logs/auto-deploy-$(date +%Y%m).log
 tail -f local/logs/cron.log
 ```
 
 **Health Checks:**
+
 - Auto-deploy runs every 2 minutes
 - Performs 8-stage deployment (backup, dependencies, build, migrations, etc.)
 - Sends Pushover notifications on failure/recovery
@@ -283,6 +304,7 @@ tail -f local/logs/cron.log
 ## Maintenance
 
 **When adding new scripts:**
+
 1. Place in appropriate category folder
 2. Add entry to this README (category table)
 3. Add npm script to `package.json` if frequently used
@@ -290,6 +312,7 @@ tail -f local/logs/cron.log
 5. Follow technology standards above
 
 **Archive criteria:**
+
 - One-time migrations → `one-time/`
 - Completed fixes → `one-time/`
 - No longer used but keep for reference → `one-time/`

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Production deployment pipeline for barq-assets
+# Production deployment pipeline for techhub
 # Called by git-auto-deploy.sh when changes are detected
 #
 # Exit codes:
@@ -453,7 +453,7 @@ stage_backup() {
 
     # Retention policy: keep last 10 backups, remove older ones
     local retention_count=10
-    local backup_glob="$backup_dir/barq-assets-"*".sql"
+    local backup_glob="$backup_dir/techhub-"*".sql"
     # shellcheck disable=SC2206
     local backups=( $backup_glob )
     # If glob doesn't match, it returns the pattern itself; filter that out
@@ -480,7 +480,7 @@ stage_backup() {
     fi
 
     # Generate backup filename
-    local backup_file="$backup_dir/barq-assets-$(date +%Y%m%d_%H%M%S).sql"
+    local backup_file="$backup_dir/techhub-$(date +%Y%m%d_%H%M%S).sql"
 
     # Call existing db-backup.sh script
     log "Creating database backup: $(basename "$backup_file")"
@@ -501,7 +501,7 @@ stage_backup() {
     log_success "Database backup created: $(basename "$backup_file") (${backup_size})"
 
     # Store backup path for potential rollback
-    local last_backup_file="$tmp_dir/barq-last-backup.txt"
+    local last_backup_file="$tmp_dir/techhub-last-backup.txt"
     echo "$backup_file" > "$last_backup_file"
     log "Backup path saved for rollback: $last_backup_file"
 }
@@ -632,7 +632,7 @@ stage_migrations() {
 
     # Run migrations using prisma migrate deploy
     # This is the production-safe migration command (no schema changes, only applies pending migrations)
-    if ! run_command "Database migrations" npx dotenv -e .env.local -- prisma migrate deploy; then
+    if ! run_command "Database migrations" npx prisma migrate deploy; then
         log_error "Database migrations failed"
         log "CRITICAL: Deployment halted before PM2 reload. Old code still running."
         log "To rollback database: bash scripts/deploy/db-backup.sh restore"
@@ -676,7 +676,7 @@ try {
 }
 EOF
 
-    if cd "$ROOT_DIR" && npx dotenv -e .env.local -- node .cache-clear-temp.mjs >> "$DEPLOY_LOG" 2>&1; then
+    if cd "$ROOT_DIR" && node .cache-clear-temp.mjs >> "$DEPLOY_LOG" 2>&1; then
         log_success "Redis cache cleared"
     else
         log_warning "Redis cache clear failed (non-critical, continuing)"
@@ -686,7 +686,7 @@ EOF
 
     # Always run production seeder (idempotent)
     log "Running database seeding (production preset)..."
-    if ! run_command "Database seeding" npx dotenv -e .env.local -- npx tsx src/infrastructure/database/prisma/seed.ts production; then
+    if ! run_command "Database seeding" npx tsx src/infrastructure/database/prisma/seed.ts production; then
         log_warning "Database seeding failed (non-critical, continuing)"
     else
         log_success "Database seeded successfully"

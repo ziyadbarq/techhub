@@ -28,6 +28,7 @@ const handleAuthRequest = async (request: Request) => {
   try {
     const response = await getAuth().handler(request);
     const duration = Date.now() - startedAt;
+    const redirectLocation = response.headers.get("location");
 
     log.info("response", "Auth response", {
       method: request.method,
@@ -36,21 +37,50 @@ const handleAuthRequest = async (request: Request) => {
       status: response.status,
       ok: response.ok,
       durationMs: duration,
+      redirected: response.status >= 300 && response.status < 400,
+      redirectLocation,
     });
 
-    if (!response.ok) {
+    if (response.status >= 500) {
       let preview = "";
       try {
         preview = (await response.clone().text()).slice(0, 200);
       } catch {
         preview = "";
       }
-      log.warn("response", "Auth response not ok", {
+      log.error(
+        "response",
+        "Auth response server error",
+        new Error(preview || `HTTP ${response.status}`),
+        {
+          method: request.method,
+          path: url.pathname,
+          requestId,
+          status: response.status,
+          preview,
+        },
+      );
+    } else if (response.status >= 400) {
+      let preview = "";
+      try {
+        preview = (await response.clone().text()).slice(0, 200);
+      } catch {
+        preview = "";
+      }
+      log.warn("response", "Auth response client error", {
         method: request.method,
         path: url.pathname,
         requestId,
         status: response.status,
         preview,
+      });
+    } else if (response.status >= 300) {
+      log.info("response", "Auth response redirect", {
+        method: request.method,
+        path: url.pathname,
+        requestId,
+        status: response.status,
+        redirectLocation,
       });
     }
 

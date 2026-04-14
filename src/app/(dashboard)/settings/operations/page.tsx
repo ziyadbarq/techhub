@@ -153,8 +153,8 @@ export default function OperationsSettingsPage() {
           <ShieldCheck className="h-4 w-4" />
           <AlertTitle>Configuration scope</AlertTitle>
           <AlertDescription>
-            These controls apply across the Barq Assets platform. Changes are
-            logged in audit trails and mirrored to downstream services when
+            These controls apply across the TechHub platform. Changes are logged
+            in audit trails and mirrored to downstream services when
             synchronization is enabled.
           </AlertDescription>
         </Alert>

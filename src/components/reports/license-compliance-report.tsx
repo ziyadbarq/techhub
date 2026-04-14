@@ -44,17 +44,24 @@ interface ReportData {
 export function LicenseComplianceReport() {
   const [data, setData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
+        setError(null);
         const result = await getLicenseComplianceReportAction();
-        if (result.success && result.data) {
+        if (result.success) {
           setData(result.data);
+        } else {
+          setData(null);
+          setError(result.error ?? "Unable to load license compliance report.");
         }
       } catch {
         toast.error("Failed to load license compliance report");
+        setData(null);
+        setError("Failed to load license compliance report.");
       } finally {
         setLoading(false);
       }
@@ -113,6 +120,22 @@ export function LicenseComplianceReport() {
         <CardHeader>
           <CardTitle>License Compliance</CardTitle>
           <CardDescription>Loading report...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-blue-500" />
+            License Compliance
+          </CardTitle>
+          <CardDescription className="text-destructive">
+            {error}
+          </CardDescription>
         </CardHeader>
       </Card>
     );

@@ -25,6 +25,7 @@ import { bindTwoFactorDependencies } from "./modules/two-factor.module";
 import { bindSystemSetupDependencies } from "./modules/system-setup.module";
 import { bindDatabaseBackupDependencies } from "./modules/database-backup.module";
 import { bindFeatureFlagsDependencies } from "./modules/feature-flags.module";
+import { bindSettingsDependencies } from "./modules/settings.module";
 import { bindFoundationDependencies } from "./modules/foundation.module";
 import { bindMicrosoftGraphDependencies } from "./modules/ms-graph.module";
 import { bindAssetDependencies } from "./modules/asset.module";
@@ -46,6 +47,7 @@ import { bindCSVServiceDependencies } from "./modules/csv.module";
 import { bindRealtimeDependencies } from "./modules/realtime.module";
 import { bindQueueDependencies } from "./modules/queue.module";
 import { bindEmailDependencies } from "./modules/email.module";
+import { bindReportsDependencies } from "./modules/reports.module";
 
 // Import health check utilities
 import { createMicrosoftGraphHealthCheck } from "./health-checks/microsoft-graph.health";
@@ -185,6 +187,18 @@ export const FEATURE_FLAGS_MODULE: DIModule = {
   isLoaded: false,
   bindFunction: (container: Container) => {
     bindFeatureFlagsDependencies(container);
+  },
+};
+
+export const SETTINGS_MODULE: DIModule = {
+  name: "settings",
+  displayName: "System Settings",
+  tier: ModuleTier.CORE,
+  description: "Database-backed application settings with env fallback",
+  dependencies: ["logger", "database"],
+  isLoaded: false,
+  bindFunction: (container: Container) => {
+    bindSettingsDependencies(container);
   },
 };
 
@@ -379,6 +393,20 @@ export const SEARCH_MODULE: DIModule = {
   },
 };
 
+export const REPORTS_MODULE: DIModule = {
+  name: "reports",
+  displayName: "Reports & Analytics",
+  tier: ModuleTier.DASHBOARD,
+  description:
+    "Pre-defined reports with PDF export and scheduled email delivery",
+  featureFlag: "REPORTS",
+  dependencies: ["logger", "database", "foundation"],
+  isLoaded: false,
+  bindFunction: (container: Container) => {
+    bindReportsDependencies(container);
+  },
+};
+
 /**
  * HEAVY TIER MODULES
  * Lazy loaded on demand - external APIs and heavy dependencies
@@ -500,6 +528,7 @@ export const ALL_MODULES: DIModule[] = [
   SYSTEM_SETUP_MODULE,
   DATABASE_BACKUP_MODULE,
   FEATURE_FLAGS_MODULE,
+  SETTINGS_MODULE,
   FOUNDATION_MODULE,
   EMAIL_MODULE,
   REALTIME_MODULE,
@@ -517,6 +546,7 @@ export const ALL_MODULES: DIModule[] = [
   ASSET_KITS_MODULE,
   RESERVATIONS_MODULE,
   SEARCH_MODULE,
+  REPORTS_MODULE,
   USE_CASES_MODULE,
 
   // HEAVY tier (lazy loaded)

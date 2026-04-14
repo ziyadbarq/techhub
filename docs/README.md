@@ -1,6 +1,6 @@
 # Documentation Index
 
-Welcome to the comprehensive documentation for Barq Assets. This index provides quick access to all documentation resources organized by category.
+Welcome to the comprehensive documentation for TechHub. This index provides quick access to all documentation resources organized by category.
 
 ## 🚀 Start Here
 
@@ -34,6 +34,8 @@ End-user documentation for barq TechHub users:
 Developer-facing documentation for building with the assets app:
 
 - [Developer Guide](./guides/DEVELOPER_GUIDE.md) - Comprehensive development guide and best practices
+- [GitLab CLI on macOS](./guides/GITLAB_CLI_MACBOOK.md) - Install, authenticate, and use `glab` against the internal GitLab instance from a Barq MacBook
+- [Versioning And Releases](./guides/VERSIONING_AND_RELEASES.md) - Conventional commit enforcement, CI-calculated semver, bootstrap tagging, and deployed build metadata
 - [Refactoring Patterns](./guides/REFACTORING_PATTERNS.md) - Proven refactoring patterns for maintaining clean, maintainable code (component, configuration, logic, and module extraction)
 
 ### Data Migration & Initial Setup
@@ -118,7 +120,6 @@ Cross-cutting features and utilities:
 - [Build Optimization Guide](./guides/BUILD_OPTIMIZATION.md) - Build performance optimization and bundle analysis
 - Email Service Integration - Microsoft Graph email via `MicrosoftGraphEmailService`, test with `scripts/dev/test-email.ts`
 - **[MISSING]** File Storage System - File upload/download, storage backends, and metadata management
-- **[MISSING]** AI Infrastructure - OpenAI integration, prompt management, caching, and structured outputs (currently disabled)
 
 #### Authentication & Security
 

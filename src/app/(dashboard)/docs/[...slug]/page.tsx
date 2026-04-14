@@ -65,13 +65,13 @@ export async function generateMetadata({ params }: DocPageProps) {
   try {
     const { frontmatter } = getDocContent(fullSlug);
     return {
-      title: `${frontmatter.title} | Barq Assets Documentation`,
+      title: `${frontmatter.title} | TechHub Documentation`,
       description: frontmatter.description,
     };
   } catch {
     return {
-      title: "Documentation | Barq Assets",
-      description: "Barq Assets documentation",
+      title: "Documentation | TechHub",
+      description: "TechHub documentation",
     };
   }
 }

@@ -245,7 +245,6 @@ The live `techhub` container has these environment variables present:
 - `DATABASE_URL`
 - `ENCRYPTION_KEY`
 - `REDIS_URL`
-- `OPENAI_API_KEY`
 - `NEXT_PUBLIC_APP_URL`
 - `HOST`
 

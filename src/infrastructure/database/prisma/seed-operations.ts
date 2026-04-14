@@ -309,7 +309,7 @@ export async function initializeCodeSequences(
 export async function seedExampleTasks(prisma: PrismaClient): Promise<number> {
   const exampleTasks = [
     {
-      title: "Welcome to Barq Assets!",
+      title: "Welcome to TechHub!",
       description:
         "This is an example task demonstrating the Clean Architecture pattern. " +
         "Explore the Task entity, repository, and use cases to understand how the architecture works.",
@@ -319,9 +319,8 @@ export async function seedExampleTasks(prisma: PrismaClient): Promise<number> {
       title: "Set up your development environment",
       description:
         "1. Configure your DATABASE_URL in .env.local\n" +
-        "2. Add your OPENAI_API_KEY\n" +
-        "3. Run npm run db:migrate\n" +
-        "4. Run npm run dev",
+        "2. Run npm run db:migrate\n" +
+        "3. Run npm run dev",
       status: TaskStatus.COMPLETED,
     },
     {

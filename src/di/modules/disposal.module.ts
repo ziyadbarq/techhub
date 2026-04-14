@@ -76,64 +76,64 @@ export function loadDisposalModule(container: Container): void {
   container
     .bind<CreateAssetDisposalUseCase>(DI_TOKENS.CreateAssetDisposalUseCase)
     .to(CreateAssetDisposalUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<GetAssetDisposalUseCase>(DI_TOKENS.GetAssetDisposalUseCase)
     .to(GetAssetDisposalUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<ListAssetDisposalsUseCase>(DI_TOKENS.ListAssetDisposalsUseCase)
     .to(ListAssetDisposalsUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<ApproveDisposalUseCase>(DI_TOKENS.ApproveDisposalUseCase)
     .to(ApproveDisposalUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<RejectDisposalUseCase>(DI_TOKENS.RejectDisposalUseCase)
     .to(RejectDisposalUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<StartDisposalUseCase>(DI_TOKENS.StartDisposalUseCase)
     .to(StartDisposalUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<CompleteSanitizationUseCase>(DI_TOKENS.CompleteSanitizationUseCase)
     .to(CompleteSanitizationUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<CompleteDisposalUseCase>(DI_TOKENS.CompleteDisposalUseCase)
     .to(CompleteDisposalUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<GenerateCertificateUseCase>(DI_TOKENS.GenerateCertificateUseCase)
     .to(GenerateCertificateUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<GenerateDisposalCertificatePDFUseCase>(
       DI_TOKENS.GenerateDisposalCertificatePDFUseCase,
     )
     .to(GenerateDisposalCertificatePDFUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<CancelDisposalUseCase>(DI_TOKENS.CancelDisposalUseCase)
     .to(CancelDisposalUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   container
     .bind<DeleteAssetDisposalUseCase>(DI_TOKENS.DeleteAssetDisposalUseCase)
     .to(DeleteAssetDisposalUseCase)
-    .inSingletonScope();
+    .inTransientScope();
 
   diLogger.debug("loadDisposalModule", "Disposal module loaded successfully");
 }

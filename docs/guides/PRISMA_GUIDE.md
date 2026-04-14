@@ -80,7 +80,7 @@ schema/
 ├── attachments.prisma     # Layer 3: AttachmentType, Attachment
 ├── services.prisma        # Layer 3: Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure
 ├── intune.prisma          # Integration: IntuneDevice, IntuneComplianceHistory, IntuneSyncLog
-├── system.prisma          # System: Task, PromptBlock, FeatureFlag models
+├── system.prisma          # System: Task, FeatureFlag models
 └── migrations/            # Migration files (next to datasource per Prisma convention)
 ```
 

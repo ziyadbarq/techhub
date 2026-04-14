@@ -1,6 +1,6 @@
 # Foundation Layer - Entity Reference
 
-Quick reference for all Foundation Layer entities in the Barq Assets CMDB/ITAM system.
+Quick reference for all Foundation Layer entities in the TechHub CMDB/ITAM system.
 
 ---
 
@@ -1445,4 +1445,4 @@ const cpuCoresField = await createFieldDefinitionAction({
 
 **Document Version**: 1.0
 **Last Updated**: November 2025
-**Maintained By**: Barq Assets Development Team
+**Maintained By**: TechHub Development Team

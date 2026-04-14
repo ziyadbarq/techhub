@@ -14,6 +14,7 @@ import { Client } from "@microsoft/microsoft-graph-client";
 import type { TokenCredentialAuthenticationProvider } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 import type { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import type { IConfigService } from "@/core/services/config.service.interface";
 import { DI_TOKENS } from "@/di/types";
 import {
   GraphUserSchema,
@@ -99,27 +100,66 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
   private client: Client | null = null;
   private readonly logger: ILoggerService;
 
-  constructor(@inject(DI_TOKENS.ILoggerService) logger: ILoggerService) {
+  constructor(
+    @inject(DI_TOKENS.ILoggerService) logger: ILoggerService,
+    @inject(DI_TOKENS.IConfigService)
+    private readonly configService: IConfigService,
+  ) {
     this.logger = logger.child({ service: "MicrosoftGraphService" });
+  }
+
+  private createProbeError(prefix: string, error: unknown): Error {
+    if (error instanceof Error) {
+      return new Error(`${prefix}: ${error.message}`);
+    }
+
+    if (error && typeof error === "object") {
+      const message =
+        "message" in error && typeof error.message === "string"
+          ? error.message
+          : "Unknown error";
+      const statusCode =
+        "statusCode" in error && typeof error.statusCode === "number"
+          ? error.statusCode
+          : undefined;
+      const code =
+        "code" in error && typeof error.code === "string"
+          ? error.code
+          : undefined;
+
+      const details = [statusCode ? `HTTP ${statusCode}` : null, code]
+        .filter((part): part is string => part !== null)
+        .join(", ");
+
+      return new Error(
+        details
+          ? `${prefix}: ${message} (${details})`
+          : `${prefix}: ${message}`,
+      );
+    }
+
+    return new Error(
+      `${prefix}: ${typeof error === "string" ? error : "Unknown error"}`,
+    );
   }
 
   /**
    * Lazy initialization of Graph client
    * Allows service to be instantiated even if env vars are missing
    */
-  private getClient(): Client {
+  private async getClient(): Promise<Client> {
     if (this.client) {
       return this.client;
     }
 
-    const tenantId = process.env.AZURE_TENANT_ID;
-    const clientId = process.env.AZURE_CLIENT_ID;
-    const clientSecret = process.env.AZURE_CLIENT_SECRET;
+    const tenantId = await this.configService.get("AZURE_TENANT_ID");
+    const clientId = await this.configService.get("AZURE_CLIENT_ID");
+    const clientSecret = await this.configService.get("AZURE_CLIENT_SECRET");
 
     if (!tenantId || !clientId || !clientSecret) {
       throw new Error(
-        "Missing Microsoft Graph configuration. Required environment variables: " +
-          "AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET",
+        "Missing Microsoft Graph configuration. " +
+          "Set AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET via System Settings or environment.",
       );
     }
 
@@ -152,7 +192,7 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
    * Fetches all users from Microsoft Graph API with pagination
    */
   async fetchAllUsers(options?: FetchUsersOptions): Promise<GraphUser[]> {
-    const client = this.getClient();
+    const client = await this.getClient();
     const allUsers: GraphUser[] = [];
     let nextLink: string | undefined;
     let pageCount = 0;
@@ -236,7 +276,7 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
    * Fetches a specific user by Azure AD ID
    */
   async fetchUser(userId: string): Promise<GraphUser | null> {
-    const client = this.getClient();
+    const client = await this.getClient();
 
     try {
       const user = await client
@@ -272,7 +312,7 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
    * Fetches the manager for a specific user
    */
   async fetchUserManager(userId: string): Promise<GraphManagerResponse | null> {
-    const client = this.getClient();
+    const client = await this.getClient();
 
     try {
       const manager = await client
@@ -354,17 +394,18 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
    */
   async testConnection(): Promise<boolean> {
     try {
-      const client = this.getClient();
+      const client = await this.getClient();
       // Try to fetch a minimal amount of data to verify connection
       await client.api("/users").select("id").top(1).get();
       this.logger.info("Graph API connection successful");
       return true;
     } catch (error) {
-      this.logger.error(
-        "Graph API connection failed",
-        error instanceof Error ? error : new Error(String(error)),
+      const probeError = this.createProbeError(
+        "Failed to connect to Microsoft Graph",
+        error,
       );
-      return false;
+      this.logger.error("Graph API connection failed", probeError);
+      throw probeError;
     }
   }
 
@@ -385,7 +426,7 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
   async fetchAllManagedDevices(
     options?: FetchDevicesOptions,
   ): Promise<GraphIntuneDevice[]> {
-    const client = this.getClient();
+    const client = await this.getClient();
     const allDevices: GraphIntuneDevice[] = [];
     let nextLink: string | undefined;
     let pageCount = 0;
@@ -479,7 +520,7 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
   async fetchManagedDevice(
     deviceId: string,
   ): Promise<GraphIntuneDevice | null> {
-    const client = this.getClient();
+    const client = await this.getClient();
 
     try {
       const device = await client
@@ -516,7 +557,7 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
    */
   async testIntuneConnection(): Promise<boolean> {
     try {
-      const client = this.getClient();
+      const client = await this.getClient();
       // Try to fetch a minimal amount of data to verify Intune access
       await client
         .api("/deviceManagement/managedDevices")
@@ -526,11 +567,12 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
       this.logger.info("Intune API connection successful");
       return true;
     } catch (error) {
-      this.logger.error(
-        "Intune API connection failed",
-        error instanceof Error ? error : new Error(String(error)),
+      const probeError = this.createProbeError(
+        "Failed to connect to Intune via Microsoft Graph",
+        error,
       );
-      return false;
+      this.logger.error("Intune API connection failed", probeError);
+      throw probeError;
     }
   }
 }

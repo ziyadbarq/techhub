@@ -6,6 +6,7 @@ import type { IAssetRepository } from "@/core/repositories/asset.repository.inte
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { IEmailService } from "@/core/services/email.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import type { IConfigService } from "@/core/services/config.service.interface";
 
 export interface SendReminderNotificationsRequest {
   daysBeforeStart: number;
@@ -34,6 +35,8 @@ export class SendReminderNotificationsUseCase {
     private readonly emailService: IEmailService,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.IConfigService)
+    private readonly configService: IConfigService,
   ) {}
 
   async execute(
@@ -97,7 +100,7 @@ export class SendReminderNotificationsUseCase {
             startDate: format(reservation.startDate, "PPP"),
             endDate: format(reservation.endDate, "PPP"),
             purpose: reservation.purpose || "Not specified",
-            reservationLink: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/asset-reservations`,
+            reservationLink: `${(await this.configService.get("NEXT_PUBLIC_APP_URL")) ?? "http://localhost:3000"}/asset-reservations`,
           },
         );
 

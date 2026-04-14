@@ -238,7 +238,7 @@ envFrom:
 ```bash
 git add manifests/techhub/
 git commit -m "feat: Add TechHub Helm values for all environments"
-git push origin main
+git push github main
 ```
 
 ---
@@ -367,7 +367,7 @@ Create a feature branch and push:
 ```bash
 git checkout -b test/pipeline-validation
 git commit --allow-empty -m "test: Trigger pipeline validation"
-git push origin test/pipeline-validation
+git push github test/pipeline-validation
 ```
 
 **Expected**:
@@ -382,7 +382,7 @@ Push to `dev` branch:
 ```bash
 git checkout dev
 git merge test/pipeline-validation
-git push origin dev
+git push github dev
 ```
 
 **Expected**:
@@ -430,7 +430,7 @@ Push to `main` branch (or merge PR):
 ```bash
 git checkout main
 git merge develop
-git push origin main
+git push github main
 ```
 
 **Expected**:
@@ -584,7 +584,7 @@ error building image: error building stage: failed to execute command
 
 3. Check git push output:
    ```bash
-   git push origin -o ci.skip HEAD:main
+   git push github -o ci.skip HEAD:main
    # Should show: branch main -> main
    ```
 

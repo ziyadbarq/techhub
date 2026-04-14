@@ -47,6 +47,7 @@ export const FEATURE_FLAGS = {
   SERVICE_HEALTH_SLA: "SERVICE_HEALTH_SLA",
   INTUNE: "INTUNE",
   OCI_SYNC: "OCI_SYNC",
+  REPORTS: "REPORTS",
 } as const;
 
 /**

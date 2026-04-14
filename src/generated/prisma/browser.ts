@@ -358,6 +358,11 @@ export type AuditLog = Prisma.AuditLogModel
  */
 export type CodeSequence = Prisma.CodeSequenceModel
 /**
+ * Model ReportSchedule
+ * 
+ */
+export type ReportSchedule = Prisma.ReportScheduleModel
+/**
  * Model AssetReservation
  * 
  */
@@ -413,21 +418,6 @@ export type ServiceSlaMetric = Prisma.ServiceSlaMetricModel
  */
 export type Task = Prisma.TaskModel
 /**
- * Model PromptBlock
- * 
- */
-export type PromptBlock = Prisma.PromptBlockModel
-/**
- * Model PromptComposition
- * 
- */
-export type PromptComposition = Prisma.PromptCompositionModel
-/**
- * Model PromptCompositionBlock
- * 
- */
-export type PromptCompositionBlock = Prisma.PromptCompositionBlockModel
-/**
  * Model FeatureFlag
  * 
  */
@@ -437,3 +427,8 @@ export type FeatureFlag = Prisma.FeatureFlagModel
  * 
  */
 export type FeatureFlagAuditLog = Prisma.FeatureFlagAuditLogModel
+/**
+ * Model SystemSetting
+ * 
+ */
+export type SystemSetting = Prisma.SystemSettingModel

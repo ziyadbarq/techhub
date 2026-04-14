@@ -122,12 +122,15 @@ export class AssetDisposal {
     this.props.updatedAt = new Date();
   }
 
-  reject(): void {
+  reject(reason?: string): void {
     if (this.props.status !== "PENDING_APPROVAL") {
       throw new Error("Can only reject disposal in PENDING_APPROVAL status");
     }
 
     this.props.status = "REJECTED";
+    if (reason) {
+      this.props.note = reason;
+    }
     this.props.updatedAt = new Date();
   }
 
@@ -197,12 +200,15 @@ export class AssetDisposal {
     return this.props.certificateNumber;
   }
 
-  cancel(): void {
+  cancel(reason?: string): void {
     if (this.props.status === "COMPLETED") {
       throw new Error("Cannot cancel completed disposal");
     }
 
     this.props.status = "CANCELLED";
+    if (reason) {
+      this.props.note = reason;
+    }
     this.props.updatedAt = new Date();
   }
 

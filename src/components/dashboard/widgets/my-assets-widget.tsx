@@ -82,7 +82,7 @@ export function MyAssetsWidget() {
       headerAction={
         assets.length > 0 && (
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/assets/assignments">
+            <Link href="/asset-assignments">
               <ExternalLink className="mr-1 h-3 w-3" />
               View All
             </Link>

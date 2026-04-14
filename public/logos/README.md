@@ -1,6 +1,6 @@
 # Barq Logos
 
-Official barq branding assets for the Barq Assets.
+Official barq branding assets for the TechHub.
 
 ## Files
 

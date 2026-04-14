@@ -7,10 +7,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import {
-  getFeatureFlagsPollInterval,
-  isFeatureFlagsPollingEnabled,
-} from "@/config/feature-flags.config";
+import { useClientSetting } from "@/hooks/use-client-settings";
 import { useFeatureFlagsContext } from "@/contexts/feature-flags-context";
 import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 
@@ -28,6 +25,15 @@ interface FeatureFlagsState {
  */
 export function useFeatureFlags(): FeatureFlagsState {
   const router = useRouter();
+  const pollIntervalSetting = useClientSetting(
+    "NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL",
+  );
+  const pollIntervalMs = pollIntervalSetting
+    ? parseInt(pollIntervalSetting, 10)
+    : 30000;
+  const effectivePollInterval =
+    !Number.isNaN(pollIntervalMs) && pollIntervalMs > 0 ? pollIntervalMs : 0;
+
   const [state, setState] = useState<FeatureFlagsState>({
     enabledFeatures: new Set(),
     isLoading: true,
@@ -82,11 +88,10 @@ export function useFeatureFlags(): FeatureFlagsState {
 
     // Setup polling if enabled
     let pollInterval: NodeJS.Timeout | undefined;
-    if (isFeatureFlagsPollingEnabled()) {
-      const interval = getFeatureFlagsPollInterval();
+    if (effectivePollInterval > 0) {
       pollInterval = setInterval(() => {
         fetchFeatures();
-      }, interval);
+      }, effectivePollInterval);
     }
 
     // Refetch when tab becomes visible (user returns to tab)
@@ -104,7 +109,7 @@ export function useFeatureFlags(): FeatureFlagsState {
       }
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [fetchFeatures]);
+  }, [fetchFeatures, effectivePollInterval]);
 
   return state;
 }

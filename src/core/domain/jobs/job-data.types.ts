@@ -279,3 +279,19 @@ export interface OciSyncJobData extends BaseJobData {
    */
   triggeredBy?: string;
 }
+
+/**
+ * Data for checking due report schedules
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface CheckDueReportSchedulesJobData extends BaseJobData {}
+
+/**
+ * Data for generating and sending a scheduled report
+ */
+export interface GenerateAndSendReportJobData extends BaseJobData {
+  /** The report schedule ID to execute */
+  scheduleId: string;
+  /** Original due timestamp claimed by the scheduler, serialized as ISO string */
+  claimedNextSendAt?: string | null;
+}

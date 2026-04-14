@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers working with hierarchical entities in the Barq Assets CMDB/ITAM system. The Foundation layer includes two primary hierarchical structures: **OrganizationUnit** (organizational hierarchy) and **Location** (geographical hierarchy).
+This guide covers working with hierarchical entities in the TechHub CMDB/ITAM system. The Foundation layer includes two primary hierarchical structures: **OrganizationUnit** (organizational hierarchy) and **Location** (geographical hierarchy).
 
 Both use self-referencing parent-child relationships, enabling flexible tree structures of unlimited depth.
 
@@ -1199,4 +1199,4 @@ async function checkAllForCircularRefs() {
 
 **Document Version**: 1.0
 **Last Updated**: November 2025
-**Maintained By**: Barq Assets Development Team
+**Maintained By**: TechHub Development Team

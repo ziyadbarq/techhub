@@ -223,11 +223,11 @@ export const MODULE_METADATA: Record<SeedModule, SeedModuleMetadata> = {
 
   [SeedModule.AI_PROMPTS_TASKS]: {
     key: SeedModule.AI_PROMPTS_TASKS,
-    name: "AI Prompts & Tasks",
-    description: "Example prompts and tasks for testing",
+    name: "Example Tasks",
+    description: "Example tasks for testing",
     estimatedTime: 1,
     dependencies: [SeedModule.RBAC, SeedModule.FOUNDATION],
-    tables: ["Task", "AIPrompt"],
+    tables: ["Task"],
   },
 };
 

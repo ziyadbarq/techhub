@@ -5,6 +5,7 @@ import type {
   AssetDisposal,
   DisposalStatus,
 } from "@/core/domain/entities/asset-disposal.entity";
+import { LogExecution } from "@/lib/decorators/log-execution.decorator";
 
 export interface ListAssetDisposalsRequest {
   status?: DisposalStatus;
@@ -22,6 +23,7 @@ export class ListAssetDisposalsUseCase {
     private readonly assetDisposalRepository: IAssetDisposalRepository,
   ) {}
 
+  @LogExecution("disposal.list")
   async execute(request: ListAssetDisposalsRequest): Promise<AssetDisposal[]> {
     // If filtering by status
     if (request.status) {

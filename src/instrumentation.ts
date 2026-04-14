@@ -16,7 +16,15 @@ export async function register() {
     try {
       await import("./infrastructure/config/cloud-config-init");
       console.log(
-        "[instrumentation] cloud-config loaded, initializing DI container...",
+        "[instrumentation] cloud-config loaded, hydrating restart-required DB settings...",
+      );
+
+      const { hydrateSettingsIntoEnv } =
+        await import("./infrastructure/config/hydrate-settings");
+      await hydrateSettingsIntoEnv();
+
+      console.log(
+        "[instrumentation] settings hydrated, initializing DI container...",
       );
       const { initContainer } = await import("./di/container");
       await initContainer();

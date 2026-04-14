@@ -79,6 +79,9 @@ export type {
   SendEmailResult,
 } from "./email.service.interface";
 
+// Report Services
+export type { IReportDataService } from "./report-data.service.interface";
+
 // Code Generator Service
 export type {
   ICodeGeneratorService,
