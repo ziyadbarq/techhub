@@ -105,7 +105,9 @@ kubectl get pods -n horizontal-services -l app=techhub    # GCP development
 - OCI Cloud: `istio-dev` namespace (production, auto-deploy from main)
 - GCP Cloud: `horizontal-services` namespace (development, auto-deploy from dev)
 
-**UI-Selectable Variables**: type (build_only/build_and_deploy), CLOUD (oci/gcp), npm_migration (true/false)
+**UI-Selectable Variables**: type (build_only/build_and_deploy), CLOUD (oci/gcp)
+
+**Prisma Migrations**: Run unconditionally at pod startup via `docker-start.mjs` (Spring Cloud Config → migrate → conditional seed → Next.js). There is no UI flag or separate migrate Job — deploying a new image applies any pending migrations before the server accepts traffic.
 
 See **[docs/deployment/LOCAL_DOCKER_TESTING.md](docs/deployment/LOCAL_DOCKER_TESTING.md)** for local Docker testing, **[docs/deployment/GITLAB_CI_SETUP.md](docs/deployment/GITLAB_CI_SETUP.md)** for CI/CD setup, [docs/deployment/BUILD_STEPS.md](docs/deployment/BUILD_STEPS.md) for build process, [docs/deployment/KUBERNETES_OPERATIONS.md](docs/deployment/KUBERNETES_OPERATIONS.md) for K8s operations, [docs/deployment/ARGOCD_TECHHUB_APPLICATION.md](docs/deployment/ARGOCD_TECHHUB_APPLICATION.md) for the verified live Argo CD application wiring, and **[docs/deployment/COOLIFY_API_GUIDE.md](docs/deployment/COOLIFY_API_GUIDE.md)** for Coolify API endpoints, working curl commands, and resource UUIDs.
 

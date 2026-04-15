@@ -179,7 +179,6 @@ git push origin main  # ← Immediate build_and_deploy to production
 #   - Branch: dev
 #   - CLOUD: gcp
 #   - type: build_only
-#   - npm_migration: false
 ```
 
 ---
