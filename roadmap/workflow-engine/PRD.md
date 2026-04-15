@@ -33,6 +33,7 @@ These principles govern behavior throughout the system. They take priority when 
 4. **Full transparency.** Every action, every decision, every comment, every field change is permanently recorded and visible to anyone with access to the request.
 5. **Configurability without code.** Admins can build forms, define workflows, set routing rules, configure SLAs, and design email templates without a software deployment.
 6. **IT operations focus.** The engine is generic, but the product is purpose-built for IT operations. Change Management is a first-class feature, not an afterthought.
+7. **Three-field state model.** Every request carries three state fields at all times: Status (where it is in the process), Outcome (what happened when it ended), and Hold Reason (why it is paused). These three together give a complete, unambiguous picture of any request at any point in time.
 
 ---
 
@@ -265,7 +266,7 @@ Confirms the assignee has seen the notification. The workflow advances. If the s
 
 ### Reject
 Available on: Approval steps.
-Stops the current path. The rejector provides a reason and configures the **re-approval scope** — see Section 10.
+Stops the current path. The rejector provides a reason and configures the re-approval scope — see Section 11.
 
 ### Request More Info
 Available on: Approval and Execution steps.
@@ -283,9 +284,150 @@ Returns full control of the request to the requestor. All fields become editable
 Available on: Any active step.
 Transfers the step to a different assignee. The original assignee loses the task. Full audit record of the reassignment is kept.
 
+### Put On Hold
+Available on: Any step, by the form owner, workflow admin, or configured roles.
+Pauses the request. A Hold Reason must be selected. The SLA clock stops. See Section 10.3.
+
 ---
 
-## 10. Rejection and Resubmission Model
+## 10. Status, Outcome, and Hold Reason
+
+Every request carries three state fields at all times. Together they give a complete, unambiguous picture of where a request is and what happened to it.
+
+---
+
+### 10.1 Status — Where Is It Right Now?
+
+Status tracks the request's current position in its lifecycle. It changes every time the request moves forward, is paused, or reaches a final state.
+
+**Generic status values** — apply to every form type in the system:
+
+| Status | Meaning |
+|---|---|
+| DRAFT | Being filled out by the requestor; not yet submitted |
+| SUBMITTED | Submitted; workflow is starting |
+| IN_REVIEW | The workflow is running; pending human decisions |
+| ON_HOLD | Paused; waiting for something external to the workflow |
+| IN_PROGRESS | Active work is being performed by the implementor |
+| PENDING_REVIEW | Work is done; awaiting a formal post-work review |
+| CLOSED | Final; no further action possible |
+| CANCELLED | Stopped before reaching a final state; permanent |
+
+**Module-specific intermediate statuses** can be inserted between the generic ones. Each module declares which generic status its intermediates extend:
+
+| Module | Intermediate Status | Sits Between |
+|---|---|---|
+| Change Management | APPROVED | IN_REVIEW → IN_PROGRESS |
+| Change Management | SCHEDULED | APPROVED → IN_PROGRESS |
+| Change Management | FAILED | IN_PROGRESS → PENDING_REVIEW or CLOSED |
+| Change Management | ROLLED_BACK | FAILED → CLOSED |
+| Change Management | PIR_PENDING | replaces PENDING_REVIEW |
+
+This way every module speaks the same generic language for cross-module reporting, while retaining the domain-specific granularity needed for operations.
+
+---
+
+### 10.2 Outcome — What Happened When It Ended?
+
+Outcome is set once, at the moment a request reaches CLOSED or CANCELLED. It is required — a request cannot be closed without selecting an outcome. It answers: *"Why is this closed, and was it successful?"*
+
+**Generic outcomes** — available to all form types:
+
+| Outcome | Meaning | Applies When |
+|---|---|---|
+| SUCCESSFUL | Completed as intended, no issues | CLOSED |
+| SUCCESSFUL_WITH_ISSUES | Completed but with deviations or known gaps | CLOSED |
+| UNSUCCESSFUL | Did not achieve the intended result | CLOSED |
+| WITHDRAWN | Requestor cancelled it before completion | CANCELLED |
+| REJECTED | Approver rejected it and requestor did not resubmit | CANCELLED |
+| SUPERSEDED | Replaced or made redundant by another request | CANCELLED |
+| ABANDONED | Went stale; no activity for an extended period | CANCELLED |
+| EXPIRED | Auto-closed by the system (SLA or policy rule) | CANCELLED |
+
+**Module-specific outcomes** extend the generic list for domain-specific conclusions. Change Management adds:
+
+| Outcome | Meaning |
+|---|---|
+| ROLLED_BACK | Implementation failed and was fully reversed |
+| PARTIALLY_ROLLED_BACK | Some components rolled back, others kept |
+| DEFERRED | Approved but deliberately postponed to a future window |
+
+Each form type declares which outcomes are valid for it. A procurement form does not need ROLLED_BACK. An HR form does not need DEFERRED. The system only presents relevant options at close time.
+
+**Outcome Notes** — a free-text field set alongside the outcome code. Required when outcome is anything other than SUCCESSFUL. Provides the human-language explanation of what happened. This is separate from the audit trail (which records mechanical facts) — outcome notes record the *narrative*.
+
+**Outcome display rules:**
+- In the request list: outcome column is shown only for CLOSED and CANCELLED rows
+- In the request detail header: outcome badge appears alongside status once the request is final
+- In reports and dashboards: always filterable and groupable by outcome
+
+---
+
+### 10.3 On Hold — Why Is It Paused?
+
+ON_HOLD is a first-class status. Any request in a non-final, non-cancelled state can be placed on hold by an authorized user (form owner, workflow admin, or a role configured per form).
+
+**When placed on hold:**
+- A Hold Reason must be selected (see below)
+- The SLA clock pauses immediately
+- All step assignees are notified
+- The request header shows ON_HOLD prominently alongside the hold reason
+- No workflow steps advance while the request is on hold
+
+**Hold Reason values:**
+
+| Reason | Meaning |
+|---|---|
+| AWAITING_REQUESTOR | Waiting for information or action from the requestor |
+| AWAITING_THIRD_PARTY | Waiting on a vendor, supplier, or external system |
+| AWAITING_DEPENDENCY | Waiting for another request or change to complete first |
+| AWAITING_RESOURCE | The required team or person is unavailable |
+| AWAITING_WINDOW | Holding for the next available maintenance window |
+| PENDING_DECISION | Escalated; waiting for a senior or executive decision |
+| OTHER | Free text description required when selected |
+
+**When resumed:**
+- The actor selects "Resume" and optionally adds a note
+- The SLA clock restarts from where it paused (elapsed time before hold is preserved)
+- The previous status is restored
+- The resume action, actor, timestamp, and note are recorded in the audit trail
+
+**On Hold history:** every hold and resume cycle is visible in the request timeline — including who put it on hold, what reason they selected, who resumed it, and how long it was paused.
+
+---
+
+### 10.4 How the Three Fields Work Together
+
+```
+At any point in time, a request can be fully described as:
+
+  Status:      IN_PROGRESS
+  On Hold:     —
+  Outcome:     (not yet set)
+
+  or:
+
+  Status:      ON_HOLD
+  Hold Reason: AWAITING_THIRD_PARTY
+  Outcome:     (not yet set)
+
+  or:
+
+  Status:      CLOSED
+  Hold Reason: —
+  Outcome:     ROLLED_BACK
+  Notes:       "Deployment caused service degradation; rolled back at 02:14"
+```
+
+For reporting, the combination unlocks precise queries without any text parsing:
+- All changes that closed successfully this quarter
+- All requests currently on hold waiting for a third party
+- All emergency changes that ended in rollback in the last 6 months
+- Average time-to-close by outcome type, by department, by form
+
+---
+
+## 11. Rejection and Resubmission Model
 
 Rejection is not the end of a request. The system treats it as a correction cycle.
 
@@ -305,13 +447,17 @@ After rejection:
 3. Makes changes (all fields unlocked per the form's default state, unless the workflow definition restricts certain fields)
 4. Resubmits
 
+### Outcome and Rejection
+
+An intermediate rejection — one that the requestor responds to and resubmits — is a workflow event, not a final outcome. The outcome is only written when the request truly ends. If a request is rejected and the requestor never resubmits, the final status is CANCELLED and the outcome is REJECTED.
+
 ### Request Identity
 
 The request is the same record throughout its entire lifecycle — submission, rejection, resubmission, re-rejection. Every version of every field value is preserved in history. The change number does not change. There is no concept of "request v2" — just a single request with a complete edit history.
 
 ---
 
-## 11. Assignment Strategies
+## 12. Assignment Strategies
 
 Step assignees are resolved at runtime using rules, not hardcoded names. Available strategies:
 
@@ -331,11 +477,11 @@ Multiple strategies can be combined on a single step. All resolved users are co-
 
 ---
 
-## 12. SLA System
+## 13. SLA System
 
 SLA in this system has two independent parts: the business calendar and the escalation policy.
 
-### 12.1 Business Calendar
+### 13.1 Business Calendar
 
 Each step can be configured with a business calendar. The calendar defines which hours and days count toward SLA time. Non-business time is excluded from the elapsed time calculation — the SLA clock stops outside business hours and resumes when business hours begin.
 
@@ -347,7 +493,7 @@ A calendar specifies:
 
 Multiple calendars can be defined (e.g., Riyadh standard, 24/7, custom department hours). Each step selects which calendar to use. Emergency change steps always use 24/7.
 
-### 12.2 SLA Escalation Policy
+### 13.2 SLA Escalation Policy
 
 Each step can have an SLA escalation policy — a set of actions that trigger automatically based on how long a step has been pending. Actions are time-based and configurable:
 
@@ -361,18 +507,28 @@ Each step can have an SLA escalation policy — a set of actions that trigger au
 
 Multiple escalation rules can be stacked with different time thresholds. Example: remind at 24h, add manager at 48h, auto-approve at 72h.
 
-The SLA clock pauses when "Request More Info" is used and resumes when the requestor responds.
+### 13.3 SLA Clock Pause Rules
+
+The SLA clock pauses automatically in these situations:
+
+| Situation | Clock Behavior |
+|---|---|
+| Request More Info action taken | Pauses until requestor responds |
+| Request placed ON_HOLD | Pauses until request is resumed |
+| Step waiting on a parallel branch | Not paused — each parallel branch has its own clock |
+
+When the clock resumes, elapsed time before the pause is preserved. The deadline is recalculated from the point of resumption.
 
 ---
 
-## 13. Notifications
+## 14. Notifications
 
-### 13.1 Channels
+### 14.1 Channels
 
 - **In-app** — notifications appear within TechHub, visible in the notification center
 - **Email** — sent to the user's registered email address
 
-### 13.2 Email Action Buttons
+### 14.2 Email Action Buttons
 
 Approval notification emails contain live action buttons (e.g., Approve, Reject, Acknowledge). Clicking a button triggers the corresponding workflow action without requiring the user to log into TechHub.
 
@@ -382,7 +538,7 @@ Security:
 - Expired or already-used tokens are rejected with a clear message
 - Token-based actions are logged in the audit trail with a note that the action was taken via email
 
-### 13.3 Email Template Builder
+### 14.3 Email Template Builder
 
 Admins can create and manage email templates used across workflow events.
 
@@ -398,30 +554,30 @@ Admins can create and manage email templates used across workflow events.
 - Light and dark mode styling (adapts to recipient's email client)
 
 **Dynamic variables** — replaced at send time:
-`{{request_id}}`, `{{request_number}}`, `{{request_title}}`, `{{form_name}}`, `{{current_step}}`, `{{assignee_name}}`, `{{requestor_name}}`, `{{action_taken}}`, `{{rejection_reason}}`, `{{sla_deadline}}`, `{{request_url}}`, `{{action_url_approve}}`, `{{action_url_reject}}`, and more.
+`{{request_id}}`, `{{request_number}}`, `{{request_title}}`, `{{form_name}}`, `{{current_step}}`, `{{assignee_name}}`, `{{requestor_name}}`, `{{action_taken}}`, `{{rejection_reason}}`, `{{sla_deadline}}`, `{{hold_reason}}`, `{{outcome}}`, `{{request_url}}`, `{{action_url_approve}}`, `{{action_url_reject}}`, and more.
 
 **Action button embedding:**
 Email templates can include one or more action buttons. Each button maps to a workflow action and embeds the secure token URL automatically at send time.
 
 ---
 
-## 14. Comments
+## 15. Comments
 
 There are two distinct comment surfaces on every request.
 
-### 14.1 Action Comments
+### 15.1 Action Comments
 
 When a user takes a workflow action (approve, reject, request info, etc.), they can attach a comment. This comment is part of the formal audit trail — it is permanently tied to the action, timestamped, and cannot be edited or deleted.
 
-### 14.2 General Comment Thread
+### 15.2 General Comment Thread
 
 A separate, Jira-style comment thread exists on every request. Any TechHub user with access to the request can read and write general comments. General comments do not trigger any workflow state change — they are a conversation space for context, questions, and coordination.
 
-General comments can include file attachments. They are also permanently preserved and cannot be deleted, but they are clearly separate from the formal audit record.
+General comments can include file attachments. They are permanently preserved and cannot be deleted, but they are clearly separate from the formal audit record.
 
 ---
 
-## 15. Attachments
+## 16. Attachments
 
 File attachments are supported in two places:
 
@@ -432,7 +588,7 @@ Attachments are stored centrally and linked to the request. They are accessible 
 
 ---
 
-## 16. Audit Trail
+## 17. Audit Trail
 
 Every action taken on a request is permanently recorded:
 
@@ -443,6 +599,7 @@ Every action taken on a request is permanently recorded:
 - Any comment attached to the action
 - Whether it was taken via the TechHub UI or via email token
 - If via delegation: who the original assignee was and who acted on their behalf
+- For On Hold events: who placed it on hold, the hold reason, who resumed it, and how long it was paused
 
 Field-level history is also tracked:
 - Which fields changed
@@ -453,7 +610,7 @@ The audit trail is append-only. Nothing can be edited or deleted from it. It is 
 
 ---
 
-## 17. Workflow Definition Administration
+## 18. Workflow Definition Administration
 
 Admins manage workflow definitions through the Workflow Definitions admin area.
 
@@ -481,7 +638,7 @@ Admins manage workflow definitions through the Workflow Definitions admin area.
 
 ---
 
-## 18. Overview
+## 19. Overview
 
 Change Management is the first module built on the Workflow Engine. It implements an ITIL-aligned process for managing all changes to Barq's IT environment — from initial request through approval, implementation, and formal closure.
 
@@ -489,7 +646,7 @@ It is tightly coupled to the Workflow Engine. The engine provides the step execu
 
 ---
 
-## 19. Request Types
+## 20. Request Types
 
 There are seven types of IT change requests. Each has a distinct purpose and different rules.
 
@@ -522,7 +679,7 @@ Rules:
 
 ---
 
-## 20. Change Classification
+## 21. Change Classification
 
 Every request is classified by change type. This determines which workflow runs and what rules apply.
 
@@ -537,7 +694,9 @@ Urgent work to resolve or prevent a major incident. Bypasses normal scheduling r
 
 ---
 
-## 21. Full Status Lifecycle
+## 22. Full Status Lifecycle
+
+The diagram below shows the complete lifecycle of a change request. Generic engine statuses are shown in **bold**. Change Management-specific intermediate statuses are shown in *italics*.
 
 ```
 DRAFT
@@ -546,55 +705,78 @@ DRAFT
 SUBMITTED ──► workflow starts automatically
   │
   ▼
-IN WORKFLOW
-  ├──► (workflow approved) ──────► APPROVED
-  │                                  │  Schedule
-  │                                  ▼
-  │                              SCHEDULED
-  │                                  │  Start Implementation
-  │                                  ▼
-  │                              IN PROGRESS
-  │                                  ├──► Complete ──────────► COMPLETED
-  │                                  │                           │
-  │                                  │          STANDARD ────────► CLOSED
-  │                                  │          NORMAL/EMERGENCY ─► PIR PENDING
-  │                                  │                                 │  Submit PIR
-  │                                  │                                 ▼
-  │                                  │                              CLOSED
-  │                                  │
-  │                                  ├──► Fail ───────────────► FAILED
-  │                                  │                           │  Execute Rollback
-  │                                  │                           ▼
-  │                                  │                       ROLLED BACK ──► CLOSED
-  │                                  │
-  └──► (workflow rejected) ──────► REJECTED
-                                     │  Edit & Resubmit
-                                     └──────────────────────► back to SUBMITTED
+IN_REVIEW
+  ├──► (workflow approved) ──────► *APPROVED*
+  │                                   │  Schedule
+  │                                   ▼
+  │                              *SCHEDULED*
+  │                                   │  Start Implementation
+  │                                   ▼
+  ├──────────────────────────────► IN_PROGRESS
+  │                                   │
+  │                                   ├──► Complete ──► *PIR_PENDING* (Normal/Emergency)
+  │                                   │                      │  Submit PIR
+  │                                   │                      ▼
+  │                                   │                   CLOSED + Outcome
+  │                                   │
+  │                                   ├──► Complete ──► CLOSED + Outcome  (Standard)
+  │                                   │
+  │                                   ├──► Fail ──────► *FAILED*
+  │                                   │                    │  Execute Rollback
+  │                                   │                    ▼
+  │                                   │                *ROLLED_BACK* ──► CLOSED + Outcome
+  │                                   │
+  │                                   └──► [On Hold] ◄──────────────────────┐
+  │                                              │  Resume                  │
+  │                                              └──────────────────────────┘
+  │
+  └──► (workflow rejected) ──────► Edit & Resubmit ──► back to SUBMITTED
+                                   (or)
+                                   No resubmission ──► CANCELLED + Outcome: REJECTED
 
-Any non-final state ──► CANCELLED (final)
+Any non-final state ──► CANCELLED + Outcome (WITHDRAWN / SUPERSEDED / ABANDONED / EXPIRED)
 ```
 
-### Status Definitions
+### Status Reference
 
-| Status | Meaning |
+| Status | Generic or CM-Specific | Meaning |
+|---|---|---|
+| DRAFT | Generic | Being filled out; not yet submitted |
+| SUBMITTED | Generic | Submitted; workflow starting |
+| IN_REVIEW | Generic | Approval workflow is running |
+| ON_HOLD | Generic | Paused; waiting for something external |
+| APPROVED | CM-Specific | All approvals received; authorized to proceed |
+| SCHEDULED | CM-Specific | Implementation date and window assigned |
+| IN_PROGRESS | Generic | Implementation underway |
+| FAILED | CM-Specific | Implementation encountered a problem |
+| ROLLED_BACK | CM-Specific | Failed change has been reversed |
+| PIR_PENDING | CM-Specific | Awaiting Post-Implementation Review |
+| CLOSED | Generic | Fully complete; no further action |
+| CANCELLED | Generic | Stopped before completion; permanent |
+
+### Outcome Reference — Change Management
+
+Outcome is set when a change reaches CLOSED or CANCELLED. Valid outcomes for Change Management:
+
+| Outcome | When Set |
 |---|---|
-| DRAFT | Being filled out; not yet visible to anyone else |
-| SUBMITTED | Submitted; workflow starting |
-| IN WORKFLOW | Approval process running |
-| APPROVED | All approvals received; authorized to implement |
-| REJECTED | Rejected by an approver; requestor can edit and resubmit |
-| SCHEDULED | Assigned a specific date/time for implementation |
-| IN PROGRESS | Implementation underway |
-| COMPLETED | Implementation finished successfully |
-| FAILED | Implementation encountered a problem |
-| ROLLED BACK | Failed change was reversed |
-| PIR PENDING | Awaiting Post-Implementation Review before closure |
-| CLOSED | Fully complete; no further action possible |
-| CANCELLED | Stopped before a final state; permanent |
+| SUCCESSFUL | Change implemented as planned |
+| SUCCESSFUL_WITH_ISSUES | Implemented with deviations or minor problems |
+| ROLLED_BACK | Implementation failed and was fully reversed |
+| PARTIALLY_ROLLED_BACK | Some components rolled back, others kept |
+| DEFERRED | Approved but postponed to a future window |
+| UNSUCCESSFUL | Completed but did not achieve intended result |
+| WITHDRAWN | Requestor cancelled before completion |
+| REJECTED | Approver rejected; requestor did not resubmit |
+| SUPERSEDED | Replaced by another change request |
+| ABANDONED | Went stale; no activity for too long |
+| EXPIRED | Auto-closed by system policy |
+
+For Normal and Emergency changes, the PIR outcome (Successful / Partial / Failed / Rolled Back) automatically populates the change's outcome field when the PIR is submitted. The Change Manager can override it before final closure.
 
 ---
 
-## 22. The Change Request Form
+## 23. The Change Request Form
 
 ### Creation Wizard — Steps
 
@@ -626,7 +808,7 @@ The form saves automatically at every step navigation. If the requestor closes t
 
 ---
 
-## 23. Risk Assessment
+## 24. Risk Assessment
 
 ### Scoring
 
@@ -649,7 +831,7 @@ The risk score, level, assessor name, and notes are shown on the change detail p
 
 ---
 
-## 24. SLA by Change Type
+## 25. SLA by Change Type
 
 Each change type has a default SLA configuration. These use the SLA system defined in Part One.
 
@@ -661,15 +843,18 @@ Each change type has a default SLA configuration. These use the SLA system defin
 
 ### Normal Change — Step SLAs
 - Risk Assessment step: 48 business hours
-- Change Manager Approval step: 48 business hours; auto-escalates to manager at 48h; auto-escalation adds manager as co-assignee
+- Change Manager Approval step: 48 business hours; adds manager as co-assignee at 48h breach
 
 ### Emergency Change — Step SLAs
 - Each parallel approval step: 4 calendar hours
 - Auto-approve (each step): at 6 calendar hours if no response
 
+### On Hold and SLA
+Placing a change ON_HOLD pauses the SLA clock regardless of hold reason. The clock resumes when the change is taken off hold. Time spent on hold is excluded from SLA calculations and is reported separately.
+
 ---
 
-## 25. Scheduling
+## 26. Scheduling
 
 ### Maintenance Windows
 
@@ -695,7 +880,7 @@ A monthly calendar view shows all scheduled changes on their planned dates, main
 
 ---
 
-## 26. Implementation
+## 27. Implementation
 
 **Starting:** The implementor marks the change as In Progress. The system records the exact start time automatically.
 
@@ -709,7 +894,7 @@ A monthly calendar view shows all scheduled changes on their planned dates, main
 
 ---
 
-## 27. Post-Implementation Review (PIR)
+## 28. Post-Implementation Review (PIR)
 
 PIR is mandatory for Normal and Emergency changes before closure. Standard changes close directly without a PIR.
 
@@ -725,6 +910,16 @@ PIR is mandatory for Normal and Emergency changes before closure. Standard chang
 | Customer impact | Yes / No |
 | Customer impact description | Required if customer impact = Yes |
 
+### PIR Outcome → Request Outcome
+
+When the PIR is submitted, its outcome field automatically sets the change request's Outcome field:
+- PIR: Successful → Request Outcome: SUCCESSFUL
+- PIR: Partial → Request Outcome: SUCCESSFUL_WITH_ISSUES
+- PIR: Failed → Request Outcome: UNSUCCESSFUL
+- PIR: Rolled Back → Request Outcome: ROLLED_BACK
+
+The Change Manager can override the auto-populated outcome before final closure. The override is recorded in the audit trail.
+
 ### PIR Reminders
 
 The system automatically sends reminders to the implementor (assignedTo):
@@ -737,7 +932,7 @@ The system automatically sends reminders to the implementor (assignedTo):
 
 ---
 
-## 28. Emergency Change Process
+## 29. Emergency Change Process
 
 Emergency changes are designed to move from submission to approval in under 8 hours without sacrificing accountability.
 
@@ -753,7 +948,7 @@ Both must approve. If either rejects, the change is rejected. If either fails to
 
 ---
 
-## 29. Delegation
+## 30. Delegation
 
 An approver going on leave can delegate their approval authority to a colleague.
 
@@ -767,42 +962,45 @@ When the delegation expires, it has no further effect. The delegator's access re
 
 ---
 
-## 30. Dashboard
+## 31. Dashboard
 
 The Change Management dashboard gives the Change Manager and senior leadership a live operational view.
 
 **Widgets:**
 - **Pipeline funnel** — count of changes in each status (DRAFT → CLOSED), clickable to filtered list
+- **Outcome breakdown** — for CLOSED changes in the last 30 days: SUCCESSFUL / SUCCESSFUL_WITH_ISSUES / ROLLED_BACK / UNSUCCESSFUL counts; clickable to filtered list
 - **My pending approvals** — changes waiting for my action, with SLA countdown per item
+- **Currently on hold** — changes in ON_HOLD status grouped by hold reason; includes time-on-hold
 - **SLA health** — on-track / at-risk / breached counts for the last 30 days
 - **Change volume** — bar chart of monthly change counts for the last 12 months
 - **Type breakdown** — donut chart of CR / AR / IR / CFR / OTHER proportions
 - **CAB queue** — Emergency changes currently awaiting parallel approval
-- **Recent failures** — FAILED and ROLLED_BACK changes in the last 30 days
+- **Recent failures** — changes closed with outcome ROLLED_BACK or UNSUCCESSFUL in the last 30 days
 - **Upcoming scheduled** — changes scheduled in the next 7 days with their maintenance window
 
 ---
 
-## 31. Change List View
+## 32. Change List View
 
 The main list of change requests. Filterable by:
 
-- Status, change type, request type, priority, assigned to, date range
+- Status, outcome, hold reason, change type, request type, priority, assigned to, date range
 - "My changes" toggle — only requests I created
 - "My approvals" toggle — only requests where I have a pending action
+- "On hold" toggle — only requests currently in ON_HOLD status
 
-Sortable columns: change number, title, type badges, status badge, priority, requestor, assignee, scheduled date, SLA indicator, current workflow step.
+Sortable columns: change number, title, type badges, status badge, outcome badge (shown for closed/cancelled rows), priority, requestor, assignee, scheduled date, SLA indicator, current workflow step.
 
-The list is exportable to Excel. A badge in the sidebar shows the count of requests awaiting my approval and the count of SLA breaches.
+The list is exportable to Excel. A badge in the sidebar shows the count of requests awaiting my approval, the count of SLA breaches, and the count of requests currently on hold.
 
 ---
 
-## 32. Change Detail View
+## 33. Change Detail View
 
 Two-column layout.
 
 **Left — the request itself:**
-- Header: change number, title, type badges, status, SLA ribbon (green / amber / red)
+- Header: change number, title, type badges, status badge, outcome badge (when closed/cancelled), hold reason badge (when on hold), SLA ribbon (green / amber / red)
 - Description and justification
 - Test plan, rollback plan, implementation plan (collapsible)
 - Affected CIs panel
@@ -812,18 +1010,18 @@ Two-column layout.
 - General comment thread
 
 **Right — the process:**
-- Workflow timeline (see Section 33)
+- Workflow timeline (see Section 34)
 - Action panel (visible only to users with a pending task on the active step)
 - Risk matrix (if risk assessed)
 - Scheduling block (if APPROVED or SCHEDULED)
 - People: requestor, assignee, risk assessor, closer
 
 **Actions bar** — contextual, shown based on status and permissions:
-Submit · Schedule · Start Implementation · Complete · Fail · Rollback · Submit PIR · Close · Cancel
+Submit · Schedule · Start Implementation · Complete · Fail · Rollback · Submit PIR · Put On Hold · Resume · Close · Cancel
 
 ---
 
-## 33. Workflow Timeline
+## 34. Workflow Timeline
 
 The timeline is the full story of the request from submission to current state. Visible to all users with view access.
 
@@ -835,9 +1033,11 @@ For each step, the timeline shows:
 - For parallel steps: both branches shown simultaneously with their individual statuses
 - SLA bar: time elapsed vs. deadline, color-coded
 
+On Hold events appear as timeline entries between steps — showing when the hold was placed, by whom, the reason, when it was resumed, and how long the request was paused.
+
 ---
 
-## 34. Change Number Format
+## 35. Change Number Format
 
 Every request gets a unique reference number generated automatically at creation:
 
@@ -855,7 +1055,7 @@ Counter is per type per day, padded to 5 digits.
 
 ---
 
-## 35. Business Rules — Change Management
+## 36. Business Rules — Change Management
 
 These are enforced unconditionally by the system. No user action can bypass them.
 
@@ -869,9 +1069,13 @@ These are enforced unconditionally by the system. No user action can bypass them
 8. A change with a Critical risk score (21–25) is held at an acknowledgement gate until the Change Manager explicitly confirms awareness.
 9. A cancelled change cannot be restarted. A new request must be created.
 10. The implementation start time is recorded automatically by the system. It cannot be manually edited.
-11. The audit trail is append-only. Actions, comments, and field history cannot be edited or deleted.
+11. The audit trail is append-only. Actions, comments, field history, on-hold events, and outcome records cannot be edited or deleted.
 12. A rejected change can be edited and resubmitted by the requestor on the same request record.
 13. The rejector determines whether prior approvals need to be re-collected on resubmission.
+14. An Outcome must be selected before a request can be closed or cancelled.
+15. Outcome Notes are required when the outcome is anything other than SUCCESSFUL.
+16. Placing a request ON_HOLD requires a Hold Reason. No request can be put on hold without one.
+17. The SLA clock pauses while a request is ON_HOLD and resumes from the same point when the hold is lifted.
 
 ---
 
@@ -881,7 +1085,7 @@ These are enforced unconditionally by the system. No user action can bypass them
 
 ---
 
-## 36. Permissions
+## 37. Permissions
 
 ### Workflow Engine Permissions
 
@@ -905,11 +1109,12 @@ These are enforced unconditionally by the system. No user action can bypass them
 | CHANGES_APPROVE | Approve, reject, or request more info on a workflow step |
 | CHANGES_SCHEDULE | Set scheduled start/end date and maintenance window |
 | CHANGES_IMPLEMENT | Mark implementation as started, completed, failed, or rolled back |
-| CHANGES_CLOSE | Close a change |
+| CHANGES_HOLD | Place a change on hold or resume it |
+| CHANGES_CLOSE | Close a change (requires selecting an outcome) |
 | CHANGES_CANCEL | Cancel a change in any non-final state |
 | CHANGES_PIR_CREATE | Submit a PIR |
 | CHANGES_PIR_VIEW | View PIR records |
-| CHANGES_MANAGE | Admin: reassign steps, override decisions, force state transitions |
+| CHANGES_MANAGE | Admin: reassign steps, override decisions, force state transitions, override outcome |
 | CHANGES_DASHBOARD | Access the executive dashboard |
 | MAINTENANCE_WINDOWS_VIEW | View maintenance windows and blackout periods |
 | MAINTENANCE_WINDOWS_MANAGE | Create, edit, and delete maintenance windows and blackouts |
@@ -921,12 +1126,12 @@ These are enforced unconditionally by the system. No user action can bypass them
 | System Administrator | All permissions |
 | Change Manager | All CHANGES_* + MAINTENANCE_WINDOWS_MANAGE + WORKFLOW_INSTANCES_VIEW |
 | CAB Member | CHANGES_VIEW + CHANGES_APPROVE + CHANGES_DASHBOARD |
-| IT Staff | CHANGES_VIEW + CHANGES_CREATE + CHANGES_SUBMIT + CHANGES_IMPLEMENT + CHANGES_PIR_CREATE + CHANGES_PIR_VIEW + CHANGES_CANCEL + MAINTENANCE_WINDOWS_VIEW |
+| IT Staff | CHANGES_VIEW + CHANGES_CREATE + CHANGES_SUBMIT + CHANGES_IMPLEMENT + CHANGES_HOLD + CHANGES_PIR_CREATE + CHANGES_PIR_VIEW + CHANGES_CANCEL + MAINTENANCE_WINDOWS_VIEW |
 | Viewer | CHANGES_VIEW + CHANGES_PIR_VIEW + MAINTENANCE_WINDOWS_VIEW |
 
 ---
 
-## 37. Notifications Reference — Change Management
+## 38. Notifications Reference — Change Management
 
 | Event | Recipients |
 |---|---|
@@ -940,18 +1145,20 @@ These are enforced unconditionally by the system. No user action can bypass them
 | Implementation started | Requestor + CI owners |
 | Completed | Requestor + approvers |
 | Failed | Requestor + assignee + approvers |
+| Request placed on hold | Requestor + step assignees (with hold reason) |
+| Request resumed from hold | Requestor + step assignees |
 | SLA warning | Step assignees |
 | SLA breach | Step assignees + their manager |
 | PIR reminder (24h) | Assignee (implementor) |
 | PIR escalation (72h) | Assignee + their manager |
 | PIR escalation (7 days) | Assignee + Change Manager role |
-| Closed | Requestor |
+| Closed | Requestor (with outcome) |
 | Emergency submitted | All CAB members + all CI owners + Change Manager |
 | Emergency approved | Requestor + assignee + service owners |
 
 ---
 
-## 38. Out of Scope
+## 39. Out of Scope
 
 The following are not included in this system:
 
