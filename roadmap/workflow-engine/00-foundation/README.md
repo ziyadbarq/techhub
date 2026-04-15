@@ -22,6 +22,9 @@
 ## Key Documents
 
 - [`database-schema.md`](./database-schema.md) — entity-by-entity schema reference, aligned to the sealed PRD
+- [`database-triggers.md`](./database-triggers.md) — append-only triggers, published-version immutability, state-model CHECK constraints, linked-request gate enforcement
+- [`../reference/glossary.md`](../reference/glossary.md) — canonical terminology
+- [`../reference/techhub-integration-map.md`](../reference/techhub-integration-map.md) — DI module placement, permissions, feature flag, Prisma schema file, patterns to reuse
 - [PRD §5–§6](../PRD.md) — forms, fields, workflow definitions
 - [PRD §10](../PRD.md) — three-field state model and its invariants
 - [PRD §22](../PRD.md) — engine invariants that must be enforced at the data layer

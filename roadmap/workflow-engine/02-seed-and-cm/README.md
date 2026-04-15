@@ -8,7 +8,7 @@
 
 1. **Seed runner** — a generic system that loads forms, workflows, calendars, maintenance windows, blackout periods, hold reasons, rejection policies, email templates, permissions, and roles from declarative seed data. Idempotent (safe to re-run).
 2. **Seed factories** — one per entity type. Compose into a complete seed set.
-3. **Built-in business calendars** — Saudi Standard, 24/7. Per [`workflow-seed.md`](../workflow-seed.md) §2.
+3. **Built-in business calendars** — Saudi Standard, 24/7. Per [`workflow-seed.md`](./workflow-seed.md) §2.
 4. **Built-in maintenance windows** — Weekly Standard Window, Monthly Extended Window. Per workflow-seed.md §3.
 5. **Built-in blackout periods** — Ramadan Freeze, Year-End Freeze, Hajj Freeze. Per workflow-seed.md §4.
 6. **Built-in hold reasons** — the generic list from PRD §10.3 / workflow-seed.md §5.
@@ -30,7 +30,9 @@
 
 ## Key Documents
 
-- [`workflow-seed.md`](../workflow-seed.md) — **the source of truth** for everything in this phase. If a question isn't answered there, the answer is "follow the engine defaults."
+- [`workflow-seed.md`](./workflow-seed.md) — **the source of truth** for everything in this phase. If a question isn't answered there, the answer is "follow the engine defaults."
+- [`seed-idempotency.md`](./seed-idempotency.md) — the upsert pattern, deterministic IDs, and how seeds interact with version-pinning on in-flight Requests
+- [`../reference/techhub-integration-map.md`](../reference/techhub-integration-map.md) §6 — how engine seeding plugs into the existing TechHub seed system
 - [PRD §23](../PRD.md) — Change Management overview, intermediate statuses, intermediate outcomes
 - [PRD §10.1](../PRD.md) — module-declared intermediate statuses mechanism
 - [PRD §22](../PRD.md) — engine invariants the seeded data must respect

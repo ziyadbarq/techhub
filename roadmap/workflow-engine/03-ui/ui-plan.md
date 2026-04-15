@@ -233,7 +233,7 @@ A dashboard is a configured collection of widgets. Each widget is one of a small
 | `recent_failures` | requests closed with a non-successful outcome over a window |
 | `upcoming_scheduled` | requests with a scheduled start in the next N days |
 
-Built-in dashboards are rows in a `dashboard` table seeded with widget configurations. The seed file [`workflow-seed.md`](../workflow-seed.md) defines the CM executive dashboard as one such row. Custom dashboards are created in Phase 05 via an admin UI.
+Built-in dashboards are rows in a `dashboard` table seeded with widget configurations. The seed file [`workflow-seed.md`](../02-seed-and-cm/workflow-seed.md) defines the CM executive dashboard as one such row. Custom dashboards are created in Phase 05 via an admin UI.
 
 In Phase 03, the dashboard renderer ships with all widget types implemented. Only seeded dashboards can be viewed; admin composition comes in Phase 05.
 

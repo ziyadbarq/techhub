@@ -1,24 +1,22 @@
 # Workflow Engine — Planning Index
 
-A **native enterprise workflow engine** inside TechHub, plus **Change Management** as its first consumer. The engine is fully generic; Change Management is just seed data on top of it.
+A **native enterprise workflow engine** inside TechHub, plus **Change Management** as its first consumer. The engine is fully generic; Change Management is just seed data on top of it. Heavily influenced by ServiceNow, Jira, and GravityForms/GravityFlow.
 
 ---
 
-## Documents at this Level
+## Read in This Order
 
-| File | What's In It |
-|---|---|
-| **[PRD.md](./PRD.md)** | The product spec — what the engine does, how it should behave, the rules it enforces. **Sealed** — no further changes. The single source of truth for engine behavior. |
-| **[workflow-seed.md](./workflow-seed.md)** | The complete reference for what ships inside the box on day one — every built-in form, workflow, calendar, window, blackout, rejection policy, email template, permission, and role. The source of truth for "what is Change Management." |
-| **[access-request-pilot.md](./access-request-pilot.md)** | Validation pilot proving the engine generalizes beyond Change Management. Read this if you want to understand why CM is "just seed data" and not a privileged module. |
-
-Read PRD.md first. workflow-seed.md is the companion. The pilot is optional but reassuring.
+1. **[reference/glossary.md](./reference/glossary.md)** — canonical definitions. Read first so every other doc means the same thing.
+2. **[PRD.md](./PRD.md)** — the sealed product spec. Source of truth for what the engine does and the rules it enforces. No further changes.
+3. **[reference/techhub-integration-map.md](./reference/techhub-integration-map.md)** — how the engine maps onto TechHub's 5-layer Clean Architecture, DI tiers, permissions, feature flags, and existing modules. Read before Phase 00 starts.
+4. **Phase folders, in order** — each phase folder has its own `README.md` with scope, dependencies, key documents, and acceptance criteria.
+5. **[reference/access-request-pilot.md](./reference/access-request-pilot.md)** — validation pilot proving the engine generalizes beyond Change Management. Optional but reassuring.
 
 ---
 
 ## Phase Map
 
-The project is organized into six phases, one per subfolder. Each phase has its own README with scope, dependencies, key documents, and acceptance criteria.
+Six phases, one subfolder each. Scope/acceptance criteria live inside every phase's `README.md`.
 
 | # | Phase | Folder | One-line Goal |
 |---|---|---|---|
@@ -31,6 +29,47 @@ The project is organized into six phases, one per subfolder. Each phase has its 
 
 **Hard ordering:** 00 → 01 → 02 must be sequential. 03 can start once 02 is shippable. 04 is post-MVP. 05 should not start until everything else is stable in production.
 
+**MVP = Phases 00 → 03.** Change Management is production-ready at the end of Phase 03.
+
+---
+
+## Folder Layout
+
+```
+roadmap/workflow-engine/
+├── README.md                          # this file — index + reading order
+├── PRD.md                             # sealed product spec
+│
+├── 00-foundation/                     # data model, permissions, feature flag
+│   ├── README.md
+│   ├── database-schema.md
+│   └── database-triggers.md
+│
+├── 01-engine-core/                    # runtime: executors, services, DSL
+│   ├── README.md
+│   └── engine-core.md
+│
+├── 02-seed-and-cm/                    # CM as pure seed data
+│   ├── README.md
+│   ├── workflow-seed.md
+│   └── seed-idempotency.md
+│
+├── 03-ui/                             # generic read-side UI
+│   ├── README.md
+│   └── ui-plan.md
+│
+├── 04-advanced-engine/                # post-MVP: SLA cron, notifications, webhooks
+│   └── README.md
+│
+├── 05-builders/                       # no-code form + workflow builders
+│   └── README.md
+│
+└── reference/                         # cross-phase artifacts
+    ├── glossary.md
+    ├── techhub-integration-map.md
+    └── access-request-pilot.md
+```
+
 ---
 
 ## Architectural Principle
@@ -40,20 +79,3 @@ The project is organized into six phases, one per subfolder. Each phase has its 
 Every PRD section, every phase folder, and every implementation choice should be checked against this principle. If you find yourself writing a CM-specific entity, repository, or service, **stop** — the behavior belongs in the generic engine plus seed data, or it doesn't belong at all.
 
 The end state, several phases out: the engine supports access requests, vendor onboarding, purchase approvals, HR onboarding, compliance reviews, and anything else a Barq team wants to model — without any code changes, just new forms and workflows.
-
----
-
-## Cleanup History (April 2026)
-
-These files were deleted during the post-PRD-refactor cleanup because their content has been absorbed into PRD.md, workflow-seed.md, or per-phase READMEs:
-
-- `CHANGE_MANAGEMENT.md` — CM as a separate module. Now seed data; see PRD §23 and workflow-seed.md.
-- `WORKFLOW_DEFINITIONS.md` — built-in workflow JSON. Superseded by workflow-seed.md §7.
-- `PERMISSIONS.md` — RBAC tables. Engine permissions in PRD §24.1; CM permissions in workflow-seed.md §10.
-- `IMPLEMENTATION_PLAN.md` — master engineering plan. Replaced by per-phase READMEs in the numbered subfolders. Engine invariants previously listed here now live in PRD §22 (the canonical source). File-level implementation details will be added to per-phase READMEs as engineers actually start each phase, not before.
-
-Three supporting specs were moved into phase folders and rewritten against the sealed PRD:
-
-- `DATABASE_SCHEMA.md` → [`00-foundation/database-schema.md`](./00-foundation/database-schema.md)
-- `ENGINE_CORE.md` → [`01-engine-core/engine-core.md`](./01-engine-core/engine-core.md)
-- `UI_PLAN.md` → [`03-ui/ui-plan.md`](./03-ui/ui-plan.md)

@@ -12,7 +12,7 @@ This phase is **post-MVP**. Phase 03 should be usable in production for Change M
 2. **Notifications & email infrastructure** — generic email sender, template renderer with the dynamic variables from PRD §14.3, in-app notification center.
 3. **Watcher notification dispatch** (PRD §14.4) — the watcher *data model and resolution* are built in Phase 01; the actual notification fan-out to watchers (using their per-form `WatcherChannelPreference`) is implemented here as part of the dispatch pipeline. Watchers receive view-only notifications; only assignees receive action-button emails.
 4. **Email action tokens** (PRD §14.2) — single-use, expiring, audit-logged. Approve/Reject from the inbox without logging in.
-4. **Webhook step** — outgoing HTTP call with templated payload and response mapping back into form fields (per [`workflow-seed.md`](../workflow-seed.md) §13 future enhancements).
+4. **Webhook step** — outgoing HTTP call with templated payload and response mapping back into form fields (per [`workflow-seed.md`](../02-seed-and-cm/workflow-seed.md) §13 future enhancements).
 5. **Wait-for-event step** — incoming webhook / pause-until-callback.
 6. **Spawn sub-workflow step** — create a new request in another form from a step, optionally wait for its outcome.
 7. **Cross-branch QUORUM merge policy** for parallel barrier steps — e.g., "advance after any 3 of 5 parallel branches finish." Note: the *multi-assignee* QUORUM policy on a single step (PRD §12) is in scope for Phase 01; this is the cross-*branch* version that lives at the parallel-merge barrier (PRD §8).
@@ -39,7 +39,7 @@ This phase is **post-MVP**. Phase 03 should be usable in production for Change M
 - [PRD §13.2](../PRD.md) — SLA escalation policy (the cron implements this)
 - [PRD §14](../PRD.md) — notifications and email action tokens
 - [PRD §17](../PRD.md) — audit trail (admin override appends here)
-- [`workflow-seed.md`](../workflow-seed.md) §13 — Future Engine Enhancements (webhook, sub-workflow, OOO, bulk ops, entry automation are all listed there)
+- [`workflow-seed.md`](../02-seed-and-cm/workflow-seed.md) §13 — Future Engine Enhancements (webhook, sub-workflow, OOO, bulk ops, entry automation are all listed there)
 
 ## Acceptance Criteria
 

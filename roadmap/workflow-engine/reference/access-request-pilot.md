@@ -1,6 +1,6 @@
 # Access Request — Engine Validation Pilot
 **TechHub — Internal IT Platform**
-**Companion document to** [PRD.md](./PRD.md) **and** [workflow-seed.md](./workflow-seed.md)
+**Companion document to** [PRD.md](../PRD.md) **and** [workflow-seed.md](../02-seed-and-cm/workflow-seed.md)
 **Status:** Pilot · Not for production
 
 ---
@@ -142,7 +142,7 @@ The pilot also passes for the three optional extensions in §5, which collective
 
 ## 7. Gaps Found
 
-A small number of features came up during the walk-through that the sealed PRD does not fully address. None are blockers for v1 — they are either workaroundable, or known future enhancements already listed in [`workflow-seed.md`](./workflow-seed.md) §13. Listed here so they're not lost.
+A small number of features came up during the walk-through that the sealed PRD does not fully address. None are blockers for v1 — they are either workaroundable, or known future enhancements already listed in [`workflow-seed.md`](../02-seed-and-cm/workflow-seed.md) §13. Listed here so they're not lost.
 
 ### 7.1 Field-driven Delay duration (small gap)
 
@@ -176,13 +176,13 @@ A small number of features came up during the walk-through that the sealed PRD d
 
 **The case:** Granted access should be re-approved every quarter. If the recertification is not completed, access is automatically revoked.
 
-**Status:** This is a "scheduled rules acting on requests matching a filter" feature, listed in [`workflow-seed.md`](./workflow-seed.md) §13 future enhancements as "entry automation." Already known. Not in v1.
+**Status:** This is a "scheduled rules acting on requests matching a filter" feature, listed in [`workflow-seed.md`](../02-seed-and-cm/workflow-seed.md) §13 future enhancements as "entry automation." Already known. Not in v1.
 
 ### 7.5 Spawn sub-workflow (known future enhancement, not a new finding)
 
 **The case:** A Joiner/Mover/Leaver workflow that automatically creates one Access Request per system the user needs.
 
-**Status:** "Spawn sub-workflow step" — listed in [`workflow-seed.md`](./workflow-seed.md) §13 future enhancements. Already known. Not in v1.
+**Status:** "Spawn sub-workflow step" — listed in [`workflow-seed.md`](../02-seed-and-cm/workflow-seed.md) §13 future enhancements. Already known. Not in v1.
 
 ---
 

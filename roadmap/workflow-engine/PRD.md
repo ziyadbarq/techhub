@@ -865,7 +865,7 @@ Dashboards are configurable per form and per role. A dashboard is a collection o
 - **Recent failures** — requests closed with a non-successful outcome
 - **Upcoming scheduled** — requests with a scheduled start in the near future
 
-Widgets and their queries are admin-configurable. Built-in dashboards — for example, a Change Management executive dashboard — are just seeded dashboard configurations. See [`workflow-seed.md`](./workflow-seed.md).
+Widgets and their queries are admin-configurable. Built-in dashboards — for example, a Change Management executive dashboard — are just seeded dashboard configurations. See [`workflow-seed.md`](./02-seed-and-cm/workflow-seed.md).
 
 ---
 
@@ -925,7 +925,7 @@ Everything Change Management does — parent/child hierarchies, risk scoring, sc
 
 ### 23.1 Where the Built-in Configuration Lives
 
-The exact contents of the built-in Change Management configuration — every form's fields, every workflow's steps and SLAs, every default setting, every seeded calendar, window, blackout, email template, rejection policy, role, and permission — live in the companion reference document [`workflow-seed.md`](./workflow-seed.md). That file is the source of truth for "what ships inside the box on day one." Read the PRD for what the engine does; read the seed file for what Change Management *is*.
+The exact contents of the built-in Change Management configuration — every form's fields, every workflow's steps and SLAs, every default setting, every seeded calendar, window, blackout, email template, rejection policy, role, and permission — live in the companion reference document [`workflow-seed.md`](./02-seed-and-cm/workflow-seed.md). That file is the source of truth for "what ships inside the box on day one." Read the PRD for what the engine does; read the seed file for what Change Management *is*.
 
 ### 23.2 Module-Declared Intermediate Statuses
 
@@ -953,7 +953,7 @@ Change Management extends the generic outcome list (§10.2) with:
 
 ### 23.4 Illustrative Lifecycle
 
-The diagram below shows a representative path through a Normal or Emergency change — for orientation only. The actual sequence is defined by the built-in workflows in [`workflow-seed.md`](./workflow-seed.md) and is editable without a deployment.
+The diagram below shows a representative path through a Normal or Emergency change — for orientation only. The actual sequence is defined by the built-in workflows in [`workflow-seed.md`](./02-seed-and-cm/workflow-seed.md) and is editable without a deployment.
 
 ```
 DRAFT
@@ -994,7 +994,7 @@ Any non-final state ──► CANCELLED + Outcome (WITHDRAWN / SUPERSEDED / ABAN
 
 ### 23.5 Evolution
 
-As the Workflow Engine gains additional generic capabilities — richer computed and lookup fields, sub-request creation from a workflow step, populate-from-external-source, and similar features seen in the Gravity Flow ecosystem — more of this section will disappear into [`workflow-seed.md`](./workflow-seed.md), and the engine will support use cases well beyond Change Management: access requests, vendor onboarding, purchase approvals, HR onboarding, compliance reviews, and anything else any team at Barq wants to model.
+As the Workflow Engine gains additional generic capabilities — richer computed and lookup fields, sub-request creation from a workflow step, populate-from-external-source, and similar features seen in the Gravity Flow ecosystem — more of this section will disappear into [`workflow-seed.md`](./02-seed-and-cm/workflow-seed.md), and the engine will support use cases well beyond Change Management: access requests, vendor onboarding, purchase approvals, HR onboarding, compliance reviews, and anything else any team at Barq wants to model.
 
 ---
 
@@ -1031,11 +1031,11 @@ These permissions apply to the generic engine and are not specific to any module
 
 ### 24.2 Module-Specific Permissions
 
-Each module built on the engine declares its own permissions. Change Management's permissions (`CHANGES_VIEW`, `CHANGES_CREATE`, `CHANGES_APPROVE`, `CHANGES_IMPLEMENT`, etc.) and their default role mappings are defined in [`workflow-seed.md`](./workflow-seed.md). As more modules are added (access requests, vendor onboarding, etc.), each will declare its own permission set in the same pattern.
+Each module built on the engine declares its own permissions. Change Management's permissions (`CHANGES_VIEW`, `CHANGES_CREATE`, `CHANGES_APPROVE`, `CHANGES_IMPLEMENT`, etc.) and their default role mappings are defined in [`workflow-seed.md`](./02-seed-and-cm/workflow-seed.md). As more modules are added (access requests, vendor onboarding, etc.), each will declare its own permission set in the same pattern.
 
 ### 24.3 Default Role Assignments
 
-The seed file defines the default role → permission mappings for the built-in roles (System Administrator, Change Manager, CAB Member, IT Staff, Viewer). See [`workflow-seed.md`](./workflow-seed.md) Section 10.
+The seed file defines the default role → permission mappings for the built-in roles (System Administrator, Change Manager, CAB Member, IT Staff, Viewer). See [`workflow-seed.md`](./02-seed-and-cm/workflow-seed.md) Section 10.
 
 ---
 

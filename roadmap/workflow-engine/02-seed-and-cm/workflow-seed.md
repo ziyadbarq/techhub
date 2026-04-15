@@ -1,6 +1,6 @@
 # Workflow Engine — Built-in Seed Reference
 **TechHub — Internal IT Platform**
-**Companion document to** [PRD.md](./PRD.md)
+**Companion document to** [PRD.md](../PRD.md)
 **Status:** Draft · Internal use only
 
 ---
@@ -16,7 +16,7 @@ This document is a **high-level reference** for everything the Workflow Engine s
 
 Read it as *"this is the default configuration a fresh TechHub install comes with."*
 
-Every item described here is **editable by the appropriate admin without a deployment**. The only rules the engine enforces unconditionally are the Engine Invariants in [PRD §22](./PRD.md). Anything in this file can be renamed, re-numbered, re-targeted, or replaced.
+Every item described here is **editable by the appropriate admin without a deployment**. The only rules the engine enforces unconditionally are the Engine Invariants in [PRD §22](../PRD.md). Anything in this file can be renamed, re-numbered, re-targeted, or replaced.
 
 ### How this relates to the PRD
 
