@@ -131,6 +131,8 @@ Every field has a configurable state at each workflow step:
 
 This allows approver-specific fields — for example, a "Server credentials" field that is hidden during initial submission but becomes editable when it reaches the sysadmin approval step. It also allows locking down fields that should only be filled in at a specific stage.
 
+**Field state is stored as data, not code.** The (field × step) state matrix lives on the workflow definition and is edited through the no-code workflow builder. The runtime reads this matrix on every render and every write. No field behavior is hardcoded per form or per module. This is what allows the Rejection Policy's field-lock setting (§11.1), approver-specific fields, and future per-role visibility rules to all compose through a single mechanism.
+
 ### 5.6 Form Ownership
 
 Each form has one or more designated owners. Owners can:
@@ -175,7 +177,11 @@ Workflows have draft, published, and archived states:
 - **Published** — active and used for new submissions
 - **Archived** — retired, no longer used for new submissions
 
-When a published workflow is updated, the admin saves a new draft and publishes it. Requests already in progress continue on the version that was active when they were submitted. New submissions use the latest published version.
+**Published versions are immutable.** This is a hard rule, not a convention. Once a workflow version is published, its step graph, routing, SLAs, assignment rules, field states, and every other setting are frozen forever. Any change — even a typo fix — requires creating a new draft version and publishing it.
+
+**Running instances are pinned.** A request in progress is bound to the exact version of the workflow that was active at the moment it was submitted. Publishing a new version never affects running instances. Archiving a version never affects running instances. This pin is enforced at the engine level, not at the UI.
+
+New submissions always use the latest published version of their form's workflow.
 
 Built-in system workflows (Standard Change, Normal Change, Emergency Change) can be cloned and customized but not deleted.
 
@@ -325,6 +331,8 @@ Status tracks the request's current position in its lifecycle. It changes every 
 
 This way every module speaks the same generic language for cross-module reporting, while retaining the domain-specific granularity needed for operations.
 
+**Canonical status contract.** The statuses listed above (generic + module-declared intermediates) are the **only** values ever stored in the status field. No other value — from imports, integrations, bulk loads, or legacy migrations — is ever written directly. If an external source uses a different vocabulary, it is translated to a canonical value at exactly one named boundary (the workflow engine's write path). No query, UI, report, or business rule anywhere in the system branches on non-canonical values. A build-time contract test enforces this.
+
 ---
 
 ### 10.2 Outcome — What Happened When It Ended?
@@ -355,6 +363,8 @@ Outcome is set once, at the moment a request reaches CLOSED or CANCELLED. It is 
 Each form type declares which outcomes are valid for it. A procurement form does not need ROLLED_BACK. An HR form does not need DEFERRED. The system only presents relevant options at close time.
 
 **Outcome Notes** — a free-text field set alongside the outcome code. Required when outcome is anything other than SUCCESSFUL. Provides the human-language explanation of what happened. This is separate from the audit trail (which records mechanical facts) — outcome notes record the *narrative*.
+
+**Atomic closure.** Setting the outcome and transitioning to CLOSED (or CANCELLED) is a **single atomic operation**. There is no "close first, set outcome later" path, ever. The transition function requires outcome (and notes, when applicable) as inputs and fails if they are missing. A request cannot exist in a state of "closed without an outcome" even momentarily.
 
 **Outcome display rules:**
 - In the request list: outcome column is shown only for CLOSED and CANCELLED rows
@@ -419,6 +429,14 @@ At any point in time, a request can be fully described as:
   Notes:       "Deployment caused service degradation; rolled back at 02:14"
 ```
 
+**State invariants.** The three fields are not just conventions — they are constraints enforced at the data layer and by the state transition function. A request can never exist in a state that violates any of these:
+
+1. **Outcome is required** when status is CLOSED or CANCELLED, and forbidden otherwise. A request cannot be CLOSED without an outcome set in the same transaction.
+2. **Hold Reason is required** when status is ON_HOLD, and forbidden otherwise. A request cannot be placed ON_HOLD without a hold reason set in the same transaction.
+3. **Outcome is immutable once set.** Administrators with override authority can edit it, but only via an audited override action — never through a generic field edit.
+4. **Status transitions are atomic** with their required side effects. Moving to ON_HOLD sets the hold reason; moving to CLOSED sets the outcome; moving off ON_HOLD clears the hold reason. There is no two-step path.
+5. **Invalid combinations are impossible by construction** — the system rejects writes that would produce them, not just hides them in the UI.
+
 For reporting, the combination unlocks precise queries without any text parsing:
 - All changes that closed successfully this quarter
 - All requests currently on hold waiting for a third party
@@ -429,31 +447,56 @@ For reporting, the combination unlocks precise queries without any text parsing:
 
 ## 11. Rejection and Resubmission Model
 
-Rejection is not the end of a request. The system treats it as a correction cycle.
+Rejection is not the end of a request. The system treats it as a correction cycle. The *policy* that governs rejection — what scopes are allowed, how many attempts a requestor gets, which fields lock on resubmit, what reasons are valid — is configured at the **form level** by the form owner or system administrator. Individual rejectors operate within that policy; they do not set it per rejection.
 
-### What the Rejector Configures
+### 11.1 Rejection Policy (per form)
 
-When rejecting, the approver:
-1. Writes a rejection reason (shown to the requestor)
-2. Sets the **re-approval scope**: does the requestor need to collect prior approvals again, or can they resubmit and continue from this step?
-   - **Full restart** — the workflow starts from the beginning; all prior approvals must be obtained again
-   - **Resume from this step** — once the requestor edits and resubmits, the workflow returns to this approval step directly, skipping already-completed prior steps
+Every form declares a Rejection Policy. The policy is part of the form definition and is versioned alongside the form.
 
-### What the Requestor Does
+| Setting | Options | Notes |
+|---|---|---|
+| **Default re-approval scope** | Full restart · Resume from rejection step | The scope used when a rejector does not (or cannot) pick one |
+| **Rejector discretion** | Locked (always use default) · Choose from allowed list | Controls whether the rejector can override the default |
+| **Allowed scopes** | Subset of { Full restart, Resume from rejection step } | Only meaningful when discretion = "Choose from allowed list" |
+| **Max resubmissions** | Unlimited · N attempts | When the limit is reached, the next rejection automatically cancels the request with outcome REJECTED |
+| **Predefined rejection reasons** | Admin-managed list of structured reason codes | The rejector must pick one; free-text notes are always allowed in addition |
+| **Field lock on resubmit** | None · Lock specified fields · Lock all except specified fields | Locked fields become read-only for the requestor after the first submission; they cannot be changed during resubmission |
+
+**Scope definitions:**
+- **Full restart** — the workflow starts from the beginning; all prior approvals must be obtained again
+- **Resume from rejection step** — once the requestor edits and resubmits, the workflow returns to the rejection step directly, skipping already-completed prior steps
+
+### 11.2 What the Rejector Does at Runtime
+
+When taking the Reject action, the approver:
+1. Picks a rejection reason from the form's predefined list
+2. Writes free-text rejection notes (shown to the requestor)
+3. Picks the re-approval scope *only if* the form's policy allows discretion — otherwise the form's default is applied automatically
+
+The rejector never sees a scope picker on forms where discretion is locked.
+
+### 11.3 What the Requestor Does
 
 After rejection:
-1. Receives a notification with the reason
-2. Opens the request, which is now editable
-3. Makes changes (all fields unlocked per the form's default state, unless the workflow definition restricts certain fields)
-4. Resubmits
+1. Receives a notification with the reason and notes
+2. Opens the request; fields are editable *except* those frozen by the policy's field lock
+3. Makes changes and resubmits
+4. If the form has a max-resubmissions limit, the UI shows the remaining attempts
 
-### Outcome and Rejection
+### 11.4 Outcome and Rejection
 
-An intermediate rejection — one that the requestor responds to and resubmits — is a workflow event, not a final outcome. The outcome is only written when the request truly ends. If a request is rejected and the requestor never resubmits, the final status is CANCELLED and the outcome is REJECTED.
+An intermediate rejection — one the requestor responds to and resubmits — is a workflow event, not a final outcome. The outcome is only written when the request truly ends. A request becomes final with status CANCELLED and outcome REJECTED in exactly two cases:
+- The requestor never resubmits (the request goes stale and is cancelled via the configured abandonment policy), or
+- The requestor hits the form's max-resubmissions limit and receives a further rejection
 
-### Request Identity
+### 11.5 Request Identity
 
-The request is the same record throughout its entire lifecycle — submission, rejection, resubmission, re-rejection. Every version of every field value is preserved in history. The change number does not change. There is no concept of "request v2" — just a single request with a complete edit history.
+The request is the same record throughout its entire lifecycle — submission, rejection, resubmission, re-rejection, close. This is a hard invariant:
+- One row per request, lifetime-stable ID and reference number
+- Every version of every field value is preserved in history (append-only field versioning with who/when)
+- The reference number never changes
+- There is no concept of "request v2", no copy-on-rejection, no soft-delete-and-recreate
+- Attachments from prior submissions remain on the record even if later edits remove the field, because the audit trail references them
 
 ---
 
@@ -485,13 +528,17 @@ SLA in this system has two independent parts: the business calendar and the esca
 
 Each step can be configured with a business calendar. The calendar defines which hours and days count toward SLA time. Non-business time is excluded from the elapsed time calculation — the SLA clock stops outside business hours and resumes when business hours begin.
 
+**Calendars are first-class, shared entities**, not config blobs copied into step definitions. A calendar has its own name, is managed in a dedicated admin area, and is *referenced* by workflow steps. When an admin updates a calendar (for example, adding a new public holiday), every step that references it picks up the change on the next evaluation — without editing any workflow definitions and without affecting running instance immutability (the calendar reference is pinned, but the calendar's contents are authoritative at evaluation time).
+
 A calendar specifies:
+- A unique name
 - Working days (e.g., Sunday–Thursday)
 - Working hours (e.g., 08:00–17:00)
 - Timezone
-- Public holidays (optional list of excluded dates)
+- Public holidays (managed list of excluded dates)
+- Active/inactive status
 
-Multiple calendars can be defined (e.g., Riyadh standard, 24/7, custom department hours). Each step selects which calendar to use. Emergency change steps always use 24/7.
+Multiple calendars can be defined (e.g., Riyadh Standard, 24/7, custom department hours). Each step selects which calendar to use by reference. Emergency change steps always reference the 24/7 calendar.
 
 ### 13.2 SLA Escalation Policy
 
@@ -514,10 +561,15 @@ The SLA clock pauses automatically in these situations:
 | Situation | Clock Behavior |
 |---|---|
 | Request More Info action taken | Pauses until requestor responds |
-| Request placed ON_HOLD | Pauses until request is resumed |
-| Step waiting on a parallel branch | Not paused — each parallel branch has its own clock |
+| Request placed ON_HOLD | Pauses until request is resumed (all active branches pause, including parallel branches) |
+| Step waiting on a sibling parallel branch | Not paused — each parallel branch has its own clock |
 
-When the clock resumes, elapsed time before the pause is preserved. The deadline is recalculated from the point of resumption.
+**Pauses and resumes are recorded as events, not as deltas.** The system never stores a mutable "deadline" field that gets patched when a pause happens. Instead, every step records:
+- Its start timestamp
+- The business calendar reference it uses
+- An append-only log of pause/resume events (with timestamps, reason, and actor)
+
+The current deadline — and any historical "how much time did this spend paused vs ticking vs in business hours vs outside them" report — is always *computed* from these stored facts. This makes post-hoc analysis precise and eliminates entire classes of "the deadline is wrong" bugs.
 
 ---
 
@@ -584,7 +636,13 @@ File attachments are supported in two places:
 - **Form fields** — a form can include one or more file upload fields. Files uploaded here are part of the request record (e.g., deployment scripts, architecture diagrams, approval sign-offs).
 - **General comments** — files can be attached to any comment in the comment thread.
 
-Attachments are stored centrally and linked to the request. They are accessible to anyone with view access to the request.
+**Foundational rules for attachments:**
+
+1. **Immutability.** Once uploaded, a file is never modified in place. "Editing" an attachment means uploading a new version alongside the old one. Both versions remain permanently accessible through history.
+2. **Request scoping.** Every attachment belongs to exactly one request. There is no shared attachment pool across requests. Links from one request to another's attachments are not supported.
+3. **Retention.** Attachments on cancelled, rejected, or closed requests are retained indefinitely — not purged — because the audit trail, field history, and comment thread permanently reference them. Removing an attachment would break historical integrity.
+4. **Access.** Attachments inherit the view access of the request they belong to. Anyone who can view the request can view the attachment.
+5. **Removal.** Users cannot delete attachments. An attachment can be detached from an *active* form field (for example, the requestor replaces a file during editing), but the detached version remains recorded in field history and is still accessible through the audit trail.
 
 ---
 
@@ -598,15 +656,17 @@ Every action taken on a request is permanently recorded:
 - When (date and time, timezone)
 - Any comment attached to the action
 - Whether it was taken via the TechHub UI or via email token
-- If via delegation: who the original assignee was and who acted on their behalf
+- If via delegation: the full delegation chain that was active at the moment of the action — not the chain that exists when the record is later read
 - For On Hold events: who placed it on hold, the hold reason, who resumed it, and how long it was paused
 
-Field-level history is also tracked:
-- Which fields changed
-- The value before and after each change
-- Who made the change and when
+**Assignee resolution snapshots.** When a step activates, the system records *at that moment* which users resolved as assignees and via which strategy (role membership, form field, CI owner, etc.). This snapshot is immutable and is what the timeline and "who was supposed to act" reports read from. The system never re-resolves assignment rules later to answer historical questions — people leave, roles change, CI owners get reassigned, and reconstructing "who owned this in March" from current state is impossible. The snapshot removes that problem entirely.
 
-The audit trail is append-only. Nothing can be edited or deleted from it. It is exportable.
+**Field-level history** is also tracked:
+- Every version of every field value, with who wrote it and when
+- Append-only, never overwritten — "current value" is always the latest version
+- Enables queries like "what did the rollback plan look like at the moment the CM approved this change?"
+
+**The audit trail is append-only.** Nothing — actions, comments, field history, on-hold events, assignee snapshots, delegation chains, outcome records — can be edited or deleted. Administrative "override" actions (e.g., outcome override) are themselves recorded as new audit entries that reference the entry they override; they do not mutate the original. The trail is exportable.
 
 ---
 
@@ -648,7 +708,7 @@ It is tightly coupled to the Workflow Engine. The engine provides the step execu
 
 ## 20. Request Types
 
-There are seven types of IT change requests. Each has a distinct purpose and different rules.
+Change Management covers four request types. Each has a distinct purpose and different rules.
 
 | Code | Full Name | Purpose | Requires Parent CR? |
 |---|---|---|---|
@@ -656,9 +716,8 @@ There are seven types of IT change requests. Each has a distinct purpose and dif
 | AR | Application Release | Software or application deployment | Yes |
 | IR | Infrastructure Release | Infrastructure or network change | Yes |
 | CFR | Config/Firewall Release | Configuration or firewall rule change | Yes |
-| ACCESS | Access Request | User access provisioning or revocation | No |
-| FIREWALL | Firewall Request | Standalone firewall rule | No |
-| OTHER | Other Request | Any IT request that doesn't fit above | No |
+
+**Out of scope for this module.** Access requests, standalone firewall requests, and other general IT requests are built on the generic Workflow Engine (Part One) as ordinary forms. They are not part of the Change Management module, do not share its status lifecycle, and do not participate in the CR parent/child hierarchy. Each such request type is its own form with its own workflow.
 
 ### The CR Hierarchy
 
@@ -671,11 +730,14 @@ Change Request (CR)            ← parent, created first
   └── Config/Firewall Release (CFR)
 ```
 
-Rules:
-- AR, IR, and CFR cannot be submitted without a parent CR
-- The parent CR cannot be closed while any child request is in a non-final state
+Rules (enforced as hard constraints, not UI conventions):
+- AR, IR, and CFR cannot exist without a valid parent CR link; the link is a required relational constraint at the data layer
+- AR, IR, and CFR cannot be submitted unless their parent CR is in a non-final state
+- The parent CR cannot transition to CLOSED while any child request is in a non-final state; the transition function enforces this, not the UI
 - Each sub-request has its own independent workflow and approval process
 - The parent CR detail view shows the current status of all children at a glance
+
+**Parent cancellation cascade.** When a parent CR is cancelled or withdrawn, every child request in a non-final state is automatically cancelled in the same operation with outcome **SUPERSEDED** and a system-generated outcome note referencing the parent. Children that already reached a final state are unaffected.
 
 ---
 
@@ -781,8 +843,8 @@ For Normal and Emergency changes, the PIR outcome (Successful / Partial / Failed
 ### Creation Wizard — Steps
 
 **Step 1 — What kind of request?**
-- Select request type (CR / AR / IR / CFR / ACCESS / FIREWALL / OTHER) — shown as icon cards
-- Select change type (STANDARD / NORMAL / EMERGENCY) — shown only for CR, AR, IR, CFR
+- Select request type (CR / AR / IR / CFR) — shown as icon cards
+- Select change type (STANDARD / NORMAL / EMERGENCY)
 - If request type is AR, IR, or CFR: required parent CR picker (typeahead search of open CRs)
 
 **Step 2 — Details**
@@ -825,9 +887,11 @@ For Normal changes, the Change Manager fills in a risk assessment:
 | 6–10 | Medium | No action |
 | 11–15 | High | Warning shown to the approver on the approval step |
 | 16–20 | Very High | System suggests converting to an Emergency change |
-| 21–25 | Critical | Workflow pauses; Change Manager must explicitly acknowledge before proceeding |
+| 21–25 | Critical | Workflow routes to a Critical Risk Acknowledgement step; an authorized acknowledger must explicitly confirm before the workflow advances |
 
 The risk score, level, assessor name, and notes are shown on the change detail page as a 5×5 visual grid.
+
+**The Critical Risk Acknowledgement gate is a real workflow step, not hardcoded engine behavior.** The built-in Normal Change workflow ships with a conditional branch after risk assessment: if the score is ≥ 21, the workflow routes to a Critical Risk Acknowledgement approval step; otherwise it skips straight to the next gate. This step is visible in the workflow definition admin area and is fully configurable like any other step — admins who clone the Normal Change workflow can move it, change its assignee, add escalation rules, or replace it entirely. Modeling the gate as data (not code) preserves the "no deployment required to change workflow behavior" principle.
 
 ---
 
@@ -946,6 +1010,8 @@ Both must approve. If either rejects, the change is rejected. If either fails to
 
 **No maintenance window required.** A warning is shown if scheduled during a blackout period, but scheduling is not blocked.
 
+**Rollback plan is mandatory.** Emergency changes require a completed rollback plan before submission. This is enforced at the module level — an Emergency change cannot leave DRAFT without a rollback plan, regardless of form configuration. Emergencies are the changes most likely to need rollback, and the worst time to discover a missing plan is mid-incident.
+
 ---
 
 ## 30. Delegation
@@ -973,7 +1039,7 @@ The Change Management dashboard gives the Change Manager and senior leadership a
 - **Currently on hold** — changes in ON_HOLD status grouped by hold reason; includes time-on-hold
 - **SLA health** — on-track / at-risk / breached counts for the last 30 days
 - **Change volume** — bar chart of monthly change counts for the last 12 months
-- **Type breakdown** — donut chart of CR / AR / IR / CFR / OTHER proportions
+- **Type breakdown** — donut chart of CR / AR / IR / CFR proportions
 - **CAB queue** — Emergency changes currently awaiting parallel approval
 - **Recent failures** — changes closed with outcome ROLLED_BACK or UNSUCCESSFUL in the last 30 days
 - **Upcoming scheduled** — changes scheduled in the next 7 days with their maintenance window
@@ -1047,11 +1113,8 @@ Every request gets a unique reference number generated automatically at creation
 | AR | AR-YYYYMMDD-NNNNN | AR-20260414-00001 |
 | IR | IR-YYYYMMDD-NNNNN | IR-20260414-00003 |
 | CFR | CFR-YYYYMMDD-NNNNN | CFR-20260414-00001 |
-| ACCESS | ACC-YYYYMMDD-NNNNN | ACC-20260414-00007 |
-| FIREWALL | FW-YYYYMMDD-NNNNN | FW-20260414-00002 |
-| OTHER | OTH-YYYYMMDD-NNNNN | OTH-20260414-00001 |
 
-Counter is per type per day, padded to 5 digits.
+Counter is per type per day, padded to 5 digits. Date boundaries are evaluated in Asia/Riyadh. Forms built on the generic Workflow Engine manage their own reference number format independently of Change Management.
 
 ---
 
@@ -1059,23 +1122,27 @@ Counter is per type per day, padded to 5 digits.
 
 These are enforced unconditionally by the system. No user action can bypass them.
 
-1. AR, IR, and CFR requests cannot be submitted without a linked parent CR.
+1. AR, IR, and CFR requests cannot be submitted without a linked parent CR. The link is a required relational constraint at the data layer.
 2. A parent CR cannot be closed while any child request is in a non-final state.
-3. A Normal change cannot be scheduled during a blackout period.
-4. A Normal change must be scheduled within an active maintenance window.
-5. Emergency changes bypass maintenance window requirements; a warning is shown if during a blackout.
-6. Standard changes are auto-approved. No human approver can be added to a Standard change workflow.
-7. Normal and Emergency changes require a completed PIR before closure.
-8. A change with a Critical risk score (21–25) is held at an acknowledgement gate until the Change Manager explicitly confirms awareness.
-9. A cancelled change cannot be restarted. A new request must be created.
-10. The implementation start time is recorded automatically by the system. It cannot be manually edited.
-11. The audit trail is append-only. Actions, comments, field history, on-hold events, and outcome records cannot be edited or deleted.
-12. A rejected change can be edited and resubmitted by the requestor on the same request record.
-13. The rejector determines whether prior approvals need to be re-collected on resubmission.
-14. An Outcome must be selected before a request can be closed or cancelled.
-15. Outcome Notes are required when the outcome is anything other than SUCCESSFUL.
-16. Placing a request ON_HOLD requires a Hold Reason. No request can be put on hold without one.
-17. The SLA clock pauses while a request is ON_HOLD and resumes from the same point when the hold is lifted.
+3. When a parent CR is cancelled, all non-final children are automatically cancelled with outcome SUPERSEDED in the same operation.
+4. A Normal change cannot be scheduled during a blackout period.
+5. A Normal change must be scheduled within an active maintenance window.
+6. Emergency changes bypass maintenance window requirements; a warning is shown if during a blackout.
+7. Emergency changes require a completed rollback plan before submission. This is enforced at the module level and cannot be disabled via form configuration.
+8. Standard changes are auto-approved. No human approver can be added to a Standard change workflow.
+9. Normal and Emergency changes require a completed PIR before closure.
+10. A change with a Critical risk score (21–25) routes through the Critical Risk Acknowledgement step in the workflow definition before advancing. The gate is modeled as a workflow step, not hardcoded.
+11. A cancelled change cannot be restarted. A new request must be created.
+12. The implementation start time is recorded automatically by the system. It cannot be manually edited.
+13. The audit trail is append-only. Actions, comments, field history, on-hold events, assignee snapshots, delegation chains, and outcome records cannot be edited or deleted. Overrides are recorded as new entries, never as mutations.
+14. A rejected change can be edited and resubmitted by the requestor on the same request record. Request identity (ID and reference number) is preserved for the entire lifecycle.
+15. The form's Rejection Policy governs re-approval scope, max resubmissions, field locking, and predefined rejection reasons. Rejectors operate within the policy and cannot override it per rejection.
+16. An Outcome must be set in the same atomic transaction that transitions a request to CLOSED or CANCELLED. No request can exist in a "closed without outcome" state, even momentarily.
+17. Outcome Notes are required when the outcome is anything other than SUCCESSFUL.
+18. Placing a request ON_HOLD requires a Hold Reason set in the same atomic transaction. No request can be put on hold without one.
+19. The SLA clock pauses while a request is ON_HOLD. Pauses and resumes are stored as append-only events; deadlines are always computed from these events, never stored as mutable fields.
+20. Published workflow versions are immutable. Running instances are pinned to the version active at submission time and are never affected by later publishes or archives.
+21. The canonical status contract holds: only the status values declared in §10.1 (generic + module intermediates) are ever stored. All external values are normalized at a single named boundary.
 
 ---
 
@@ -1086,6 +1153,8 @@ These are enforced unconditionally by the system. No user action can bypass them
 ---
 
 ## 37. Permissions
+
+**Resource-scoped from day one.** Every permission check in the system is expressed as "does user X have permission P on resource R?" — never just "does user X have permission P?". Even when v1 uses only global role-based flags (where R is "any"), the check interface accepts a resource argument. This makes future form-scoped, service-scoped, or CI-scoped permissions an additive change rather than a rework of every call site.
 
 ### Workflow Engine Permissions
 
