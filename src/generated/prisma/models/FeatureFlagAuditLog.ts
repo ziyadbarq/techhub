@@ -172,7 +172,7 @@ export type FeatureFlagAuditLogGroupByOutputType = {
   _max: FeatureFlagAuditLogMaxAggregateOutputType | null
 }
 
-type GetFeatureFlagAuditLogGroupByPayload<T extends FeatureFlagAuditLogGroupByArgs> = Prisma.PrismaPromise<
+export type GetFeatureFlagAuditLogGroupByPayload<T extends FeatureFlagAuditLogGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<FeatureFlagAuditLogGroupByOutputType, T['by']> &
       {
@@ -1014,6 +1014,11 @@ export type FeatureFlagAuditLogFindManyArgs<ExtArgs extends runtime.Types.Extens
    * Skip the first `n` FeatureFlagAuditLogs.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of FeatureFlagAuditLogs.
+   */
   distinct?: Prisma.FeatureFlagAuditLogScalarFieldEnum | Prisma.FeatureFlagAuditLogScalarFieldEnum[]
 }
 

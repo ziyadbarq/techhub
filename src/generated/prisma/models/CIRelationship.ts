@@ -193,7 +193,7 @@ export type CIRelationshipGroupByOutputType = {
   _max: CIRelationshipMaxAggregateOutputType | null
 }
 
-type GetCIRelationshipGroupByPayload<T extends CIRelationshipGroupByArgs> = Prisma.PrismaPromise<
+export type GetCIRelationshipGroupByPayload<T extends CIRelationshipGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<CIRelationshipGroupByOutputType, T['by']> &
       {
@@ -1604,6 +1604,11 @@ export type CIRelationshipFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Skip the first `n` CIRelationships.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of CIRelationships.
+   */
   distinct?: Prisma.CIRelationshipScalarFieldEnum | Prisma.CIRelationshipScalarFieldEnum[]
 }
 

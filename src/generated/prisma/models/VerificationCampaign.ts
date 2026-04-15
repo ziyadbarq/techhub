@@ -189,7 +189,7 @@ export type VerificationCampaignGroupByOutputType = {
   _max: VerificationCampaignMaxAggregateOutputType | null
 }
 
-type GetVerificationCampaignGroupByPayload<T extends VerificationCampaignGroupByArgs> = Prisma.PrismaPromise<
+export type GetVerificationCampaignGroupByPayload<T extends VerificationCampaignGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<VerificationCampaignGroupByOutputType, T['by']> &
       {
@@ -1424,6 +1424,11 @@ export type VerificationCampaignFindManyArgs<ExtArgs extends runtime.Types.Exten
    * Skip the first `n` VerificationCampaigns.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of VerificationCampaigns.
+   */
   distinct?: Prisma.VerificationCampaignScalarFieldEnum | Prisma.VerificationCampaignScalarFieldEnum[]
 }
 

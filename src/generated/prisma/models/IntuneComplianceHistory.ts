@@ -179,7 +179,7 @@ export type IntuneComplianceHistoryGroupByOutputType = {
   _max: IntuneComplianceHistoryMaxAggregateOutputType | null
 }
 
-type GetIntuneComplianceHistoryGroupByPayload<T extends IntuneComplianceHistoryGroupByArgs> = Prisma.PrismaPromise<
+export type GetIntuneComplianceHistoryGroupByPayload<T extends IntuneComplianceHistoryGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<IntuneComplianceHistoryGroupByOutputType, T['by']> &
       {
@@ -1227,6 +1227,11 @@ export type IntuneComplianceHistoryFindManyArgs<ExtArgs extends runtime.Types.Ex
    * Skip the first `n` IntuneComplianceHistories.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of IntuneComplianceHistories.
+   */
   distinct?: Prisma.IntuneComplianceHistoryScalarFieldEnum | Prisma.IntuneComplianceHistoryScalarFieldEnum[]
 }
 

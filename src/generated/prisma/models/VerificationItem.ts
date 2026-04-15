@@ -193,7 +193,7 @@ export type VerificationItemGroupByOutputType = {
   _max: VerificationItemMaxAggregateOutputType | null
 }
 
-type GetVerificationItemGroupByPayload<T extends VerificationItemGroupByArgs> = Prisma.PrismaPromise<
+export type GetVerificationItemGroupByPayload<T extends VerificationItemGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<VerificationItemGroupByOutputType, T['by']> &
       {
@@ -1458,6 +1458,11 @@ export type VerificationItemFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` VerificationItems.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of VerificationItems.
+   */
   distinct?: Prisma.VerificationItemScalarFieldEnum | Prisma.VerificationItemScalarFieldEnum[]
 }
 

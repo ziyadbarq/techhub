@@ -252,7 +252,7 @@ export type ConfigurationItemGroupByOutputType = {
   _max: ConfigurationItemMaxAggregateOutputType | null
 }
 
-type GetConfigurationItemGroupByPayload<T extends ConfigurationItemGroupByArgs> = Prisma.PrismaPromise<
+export type GetConfigurationItemGroupByPayload<T extends ConfigurationItemGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ConfigurationItemGroupByOutputType, T['by']> &
       {
@@ -3621,6 +3621,11 @@ export type ConfigurationItemFindManyArgs<ExtArgs extends runtime.Types.Extensio
    * Skip the first `n` ConfigurationItems.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ConfigurationItems.
+   */
   distinct?: Prisma.ConfigurationItemScalarFieldEnum | Prisma.ConfigurationItemScalarFieldEnum[]
 }
 

@@ -216,7 +216,7 @@ export type LifecycleTransitionGroupByOutputType = {
   _max: LifecycleTransitionMaxAggregateOutputType | null
 }
 
-type GetLifecycleTransitionGroupByPayload<T extends LifecycleTransitionGroupByArgs> = Prisma.PrismaPromise<
+export type GetLifecycleTransitionGroupByPayload<T extends LifecycleTransitionGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<LifecycleTransitionGroupByOutputType, T['by']> &
       {
@@ -2001,6 +2001,11 @@ export type LifecycleTransitionFindManyArgs<ExtArgs extends runtime.Types.Extens
    * Skip the first `n` LifecycleTransitions.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of LifecycleTransitions.
+   */
   distinct?: Prisma.LifecycleTransitionScalarFieldEnum | Prisma.LifecycleTransitionScalarFieldEnum[]
 }
 

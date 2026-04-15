@@ -308,7 +308,7 @@ export type PersonGroupByOutputType = {
   _max: PersonMaxAggregateOutputType | null
 }
 
-type GetPersonGroupByPayload<T extends PersonGroupByArgs> = Prisma.PrismaPromise<
+export type GetPersonGroupByPayload<T extends PersonGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<PersonGroupByOutputType, T['by']> &
       {
@@ -24954,6 +24954,11 @@ export type PersonFindManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Skip the first `n` People.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of People.
+   */
   distinct?: Prisma.PersonScalarFieldEnum | Prisma.PersonScalarFieldEnum[]
 }
 

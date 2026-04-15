@@ -276,7 +276,7 @@ export type StockMovementGroupByOutputType = {
   _max: StockMovementMaxAggregateOutputType | null
 }
 
-type GetStockMovementGroupByPayload<T extends StockMovementGroupByArgs> = Prisma.PrismaPromise<
+export type GetStockMovementGroupByPayload<T extends StockMovementGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<StockMovementGroupByOutputType, T['by']> &
       {
@@ -2366,6 +2366,11 @@ export type StockMovementFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` StockMovements.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of StockMovements.
+   */
   distinct?: Prisma.StockMovementScalarFieldEnum | Prisma.StockMovementScalarFieldEnum[]
 }
 

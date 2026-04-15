@@ -220,7 +220,7 @@ export type DisposalDocumentGroupByOutputType = {
   _max: DisposalDocumentMaxAggregateOutputType | null
 }
 
-type GetDisposalDocumentGroupByPayload<T extends DisposalDocumentGroupByArgs> = Prisma.PrismaPromise<
+export type GetDisposalDocumentGroupByPayload<T extends DisposalDocumentGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DisposalDocumentGroupByOutputType, T['by']> &
       {
@@ -1450,6 +1450,11 @@ export type DisposalDocumentFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` DisposalDocuments.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of DisposalDocuments.
+   */
   distinct?: Prisma.DisposalDocumentScalarFieldEnum | Prisma.DisposalDocumentScalarFieldEnum[]
 }
 

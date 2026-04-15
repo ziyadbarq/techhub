@@ -304,7 +304,7 @@ export type IntuneSyncLogGroupByOutputType = {
   _max: IntuneSyncLogMaxAggregateOutputType | null
 }
 
-type GetIntuneSyncLogGroupByPayload<T extends IntuneSyncLogGroupByArgs> = Prisma.PrismaPromise<
+export type GetIntuneSyncLogGroupByPayload<T extends IntuneSyncLogGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<IntuneSyncLogGroupByOutputType, T['by']> &
       {
@@ -1632,6 +1632,11 @@ export type IntuneSyncLogFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` IntuneSyncLogs.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of IntuneSyncLogs.
+   */
   distinct?: Prisma.IntuneSyncLogScalarFieldEnum | Prisma.IntuneSyncLogScalarFieldEnum[]
 }
 

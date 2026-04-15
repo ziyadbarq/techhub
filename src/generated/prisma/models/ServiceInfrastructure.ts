@@ -224,7 +224,7 @@ export type ServiceInfrastructureGroupByOutputType = {
   _max: ServiceInfrastructureMaxAggregateOutputType | null
 }
 
-type GetServiceInfrastructureGroupByPayload<T extends ServiceInfrastructureGroupByArgs> = Prisma.PrismaPromise<
+export type GetServiceInfrastructureGroupByPayload<T extends ServiceInfrastructureGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ServiceInfrastructureGroupByOutputType, T['by']> &
       {
@@ -1470,6 +1470,11 @@ export type ServiceInfrastructureFindManyArgs<ExtArgs extends runtime.Types.Exte
    * Skip the first `n` ServiceInfrastructures.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ServiceInfrastructures.
+   */
   distinct?: Prisma.ServiceInfrastructureScalarFieldEnum | Prisma.ServiceInfrastructureScalarFieldEnum[]
 }
 

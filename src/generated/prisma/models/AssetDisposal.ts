@@ -300,7 +300,7 @@ export type AssetDisposalGroupByOutputType = {
   _max: AssetDisposalMaxAggregateOutputType | null
 }
 
-type GetAssetDisposalGroupByPayload<T extends AssetDisposalGroupByArgs> = Prisma.PrismaPromise<
+export type GetAssetDisposalGroupByPayload<T extends AssetDisposalGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AssetDisposalGroupByOutputType, T['by']> &
       {
@@ -2735,6 +2735,11 @@ export type AssetDisposalFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` AssetDisposals.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of AssetDisposals.
+   */
   distinct?: Prisma.AssetDisposalScalarFieldEnum | Prisma.AssetDisposalScalarFieldEnum[]
 }
 

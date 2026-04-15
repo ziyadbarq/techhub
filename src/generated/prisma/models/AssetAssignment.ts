@@ -242,7 +242,7 @@ export type AssetAssignmentGroupByOutputType = {
   _max: AssetAssignmentMaxAggregateOutputType | null
 }
 
-type GetAssetAssignmentGroupByPayload<T extends AssetAssignmentGroupByArgs> = Prisma.PrismaPromise<
+export type GetAssetAssignmentGroupByPayload<T extends AssetAssignmentGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AssetAssignmentGroupByOutputType, T['by']> &
       {
@@ -1550,6 +1550,11 @@ export type AssetAssignmentFindManyArgs<ExtArgs extends runtime.Types.Extensions
    * Skip the first `n` AssetAssignments.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of AssetAssignments.
+   */
   distinct?: Prisma.AssetAssignmentScalarFieldEnum | Prisma.AssetAssignmentScalarFieldEnum[]
 }
 

@@ -230,7 +230,7 @@ export type CIClassFieldGroupByOutputType = {
   _max: CIClassFieldMaxAggregateOutputType | null
 }
 
-type GetCIClassFieldGroupByPayload<T extends CIClassFieldGroupByArgs> = Prisma.PrismaPromise<
+export type GetCIClassFieldGroupByPayload<T extends CIClassFieldGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<CIClassFieldGroupByOutputType, T['by']> &
       {
@@ -1532,6 +1532,11 @@ export type CIClassFieldFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` CIClassFields.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of CIClassFields.
+   */
   distinct?: Prisma.CIClassFieldScalarFieldEnum | Prisma.CIClassFieldScalarFieldEnum[]
 }
 

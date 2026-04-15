@@ -224,7 +224,7 @@ export type VendorContactGroupByOutputType = {
   _max: VendorContactMaxAggregateOutputType | null
 }
 
-type GetVendorContactGroupByPayload<T extends VendorContactGroupByArgs> = Prisma.PrismaPromise<
+export type GetVendorContactGroupByPayload<T extends VendorContactGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<VendorContactGroupByOutputType, T['by']> &
       {
@@ -1466,6 +1466,11 @@ export type VendorContactFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` VendorContacts.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of VendorContacts.
+   */
   distinct?: Prisma.VendorContactScalarFieldEnum | Prisma.VendorContactScalarFieldEnum[]
 }
 

@@ -200,7 +200,7 @@ export type AuditLogEntryGroupByOutputType = {
   _max: AuditLogEntryMaxAggregateOutputType | null
 }
 
-type GetAuditLogEntryGroupByPayload<T extends AuditLogEntryGroupByArgs> = Prisma.PrismaPromise<
+export type GetAuditLogEntryGroupByPayload<T extends AuditLogEntryGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AuditLogEntryGroupByOutputType, T['by']> &
       {
@@ -1488,6 +1488,11 @@ export type AuditLogEntryFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` AuditLogEntries.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of AuditLogEntries.
+   */
   distinct?: Prisma.AuditLogEntryScalarFieldEnum | Prisma.AuditLogEntryScalarFieldEnum[]
 }
 

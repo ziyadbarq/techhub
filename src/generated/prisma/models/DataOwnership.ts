@@ -186,7 +186,7 @@ export type DataOwnershipGroupByOutputType = {
   _max: DataOwnershipMaxAggregateOutputType | null
 }
 
-type GetDataOwnershipGroupByPayload<T extends DataOwnershipGroupByArgs> = Prisma.PrismaPromise<
+export type GetDataOwnershipGroupByPayload<T extends DataOwnershipGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DataOwnershipGroupByOutputType, T['by']> &
       {
@@ -1838,6 +1838,11 @@ export type DataOwnershipFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` DataOwnerships.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of DataOwnerships.
+   */
   distinct?: Prisma.DataOwnershipScalarFieldEnum | Prisma.DataOwnershipScalarFieldEnum[]
 }
 
