@@ -11,6 +11,7 @@ A **native enterprise workflow engine** inside TechHub, plus **Change Management
 3. **[reference/techhub-integration-map.md](./reference/techhub-integration-map.md)** — how the engine maps onto TechHub's 5-layer Clean Architecture, DI tiers, permissions, feature flags, and existing modules. Read before Phase 00 starts.
 4. **Phase folders, in order** — each phase folder has its own `README.md` with scope, dependencies, key documents, and acceptance criteria.
 5. **[reference/access-request-pilot.md](./reference/access-request-pilot.md)** — validation pilot proving the engine generalizes beyond Change Management. Optional but reassuring.
+6. **[reference/techhub-feature-integration.md](./reference/techhub-feature-integration.md)** — *forward-looking.* Which TechHub features benefit from the engine, the "action gating" gap (hold an action in DRAFT until approved, then replay it), and a sketch of a future Phase 06 — Action Gateway. **Not part of the sealed PRD.**
 
 ---
 
