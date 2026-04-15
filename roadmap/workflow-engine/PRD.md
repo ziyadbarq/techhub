@@ -1,614 +1,965 @@
 # Product Requirements Document
 ## Workflow Engine & Change Management
 **TechHub — Internal IT Platform**
-**Status:** Draft · For internal use only
+**Prepared by:** Abdullah Alzuwayed
+**Input from:** Ziyad Almaghrebi, Asrar Alsahli (BRD v2.1)
+**Status:** Draft · Internal use only
 
 ---
 
 ## 1. Purpose
 
-This document describes what the Workflow Engine and Change Management module must do — the features, the rules, and the expected behavior from the perspective of every person who will use it. It does not describe how any of it is built.
+This document describes what the Workflow Engine and Change Management modules must do — the features, the rules, and the expected behavior from the perspective of every person who will use them. It does not describe how any of it is built.
 
-The goal is to have a single reference that answers: *"What does this system do, and how should it behave in every situation?"*
+The goal is a single reference that answers: *"What does this system do, and how should it behave in every situation?"*
 
 ---
 
 ## 2. Background
 
-Barq's IT team today handles change requests through a mix of email threads, spreadsheets, and manual approvals. There is no audit trail, no consistent process, and no visibility into where a request is in its lifecycle. This creates risk: changes go to production without proper approval, approvers are not notified, and post-mortems are never written.
+Barq's IT team currently manages change requests through a combination of email threads, spreadsheets, and WordPress forms (Gravity Forms + Gravity Flow). This stack has no unified audit trail, no consistent approval process, and no visibility into where a request stands in its lifecycle. Changes reach production without proper approval, approvers miss notifications, and post-mortems are rarely written.
 
-This module introduces an ITIL-aligned change management process with a native approval workflow engine built directly into TechHub. Every change request goes through a defined, trackable, auditable process from creation to closure.
+This system replaces that stack with a native, fully auditable workflow engine built into TechHub. The engine is general purpose — any team can use it to model any kind of request process. Change Management is the first and primary module built on top of it, implementing a full ITIL-aligned change lifecycle.
 
 ---
 
-## 3. Goals
+## 3. Design Principles
 
-1. Every change to Barq's IT environment is logged, tracked, and approved before it goes live.
-2. Approvers always know what needs their attention and by when.
-3. The full history of every decision — who approved, who rejected, what they said, when — is permanently visible.
-4. The process is enforced by the system, not by people remembering to follow it.
-5. Emergency changes can move fast (hours, not days) without sacrificing accountability.
-6. The workflow logic itself is configurable by admins without requiring a software deployment.
+These principles govern behavior throughout the system. They take priority when two requirements conflict.
+
+1. **Approval is not completion.** An approved request still needs implementation work. The workflow ends only when every step — including execution steps — is marked done. Reaching the final approval step does not auto-close the request.
+2. **Rejection is not death.** A rejected request can be edited and resubmitted. The same request is updated in place. Every version of every field is preserved in history.
+3. **The process is enforced by the system, not by people remembering.** Rules, deadlines, assignments, and routing are all configured — not assumed.
+4. **Full transparency.** Every action, every decision, every comment, every field change is permanently recorded and visible to anyone with access to the request.
+5. **Configurability without code.** Admins can build forms, define workflows, set routing rules, configure SLAs, and design email templates without a software deployment.
+6. **IT operations focus.** The engine is generic, but the product is purpose-built for IT operations. Change Management is a first-class feature, not an afterthought.
 
 ---
 
 ## 4. Who Uses This
 
-### Requestor (IT Staff)
-Any employee who needs to make a change to an IT system, deploy software, modify infrastructure, or request access. They create change requests, track their status, and carry out the actual implementation work.
+### Requestor
+Any employee submitting a request — a change, an access request, a deployment. They fill in the form, track status, respond to questions from approvers, carry out implementation work, and write the post-implementation review.
+
+### Approver
+Anyone assigned to a workflow step that requires a decision. Depending on the step, they approve, reject, complete a task, acknowledge, or ask for more information. An approver is defined by role or named directly — it is not a fixed job title.
 
 ### Change Manager
-The person or team responsible for the change process. They review risks, approve or reject change requests, manage the scheduling calendar, and handle escalations. They have the highest operational authority in the system.
+The person responsible for the IT change process. They assess risk, approve or reject Normal changes, manage the maintenance calendar, handle escalations, and have admin authority over the Change Management module.
 
 ### CAB Member (Change Advisory Board)
-A designated group of senior reviewers who approve Emergency changes. They are notified immediately when an emergency request is submitted and must respond within tight deadlines.
+A designated group of senior reviewers for Emergency changes. They are alerted immediately on emergency submissions and must respond within tight deadlines.
 
 ### CI Owner
-A person designated as the owner of one or more Configuration Items (servers, applications, network devices, etc.). They are included in the approval of any change that touches their CI.
+A named owner of a Configuration Item (server, application, device). They are pulled into approvals for any change that touches their CI.
 
 ### Service Owner
-A person responsible for a business service. They are notified when a change affects their service.
+A named owner of a business service. They are notified when changes affect their service.
 
-### Viewer
-Read-only access. Can see change requests, their status, and the full workflow history but cannot take any action.
+### Form Owner
+An admin who has been given management rights over a specific form. They can edit the form definition, view all requests submitted through it, and enable or disable the form.
 
 ### System Administrator
-Full access to everything including workflow configuration, role assignments, and admin overrides.
+Full access to everything — all forms, all workflows, all requests, all admin settings.
+
+### Viewer
+Read-only access. Can see requests and their full history but cannot take any action.
 
 ---
 
-## 5. Change Request Types
+---
 
-There are seven types of requests in this system. Each has a different purpose and different rules.
+# PART ONE: WORKFLOW ENGINE
 
-### 5.1 Type Overview
+---
 
-| Type | Short Code | Purpose | Needs a Parent CR? |
+## 5. Forms and Request Types
+
+### 5.1 What a Form Is
+
+A form is a request type. It defines what information is collected from the requestor and which workflow processes the request after submission. Every request in the system belongs to exactly one form.
+
+Any team can define their own forms. Examples: IT change request, access request, vendor onboarding, purchase approval, HR onboarding checklist. The system does not restrict what a form can represent.
+
+### 5.2 Form Builder
+
+Admins build forms through a no-code interface. A form has:
+- A name and description
+- An owner list (users who can manage this form)
+- An active/inactive toggle (inactive forms do not accept new submissions)
+- A list of fields
+- An associated workflow definition
+
+### 5.3 Field Types
+
+Available field types for form builders:
+
+| Type | Description |
+|---|---|
+| Short text | Single line of text |
+| Long text | Multi-line text area |
+| Number | Numeric input |
+| Date / Date-time | Date picker or date + time |
+| Dropdown | Single selection from a list |
+| Multi-select | Multiple selections from a list |
+| Checkbox | Yes / No toggle |
+| File upload | One or more file attachments |
+| User picker | Single user selected from the directory |
+| Multi-user picker | Multiple users selected from the directory |
+| Section header | Visual grouping — not a data field |
+| Computed field | Value calculated from other fields (read-only) |
+
+### 5.4 Conditional Field Visibility
+
+Each field can have visibility conditions. A condition is a rule based on the value of another field. If the condition is met, the field appears. If not, it is hidden. Multiple conditions can be combined.
+
+Examples:
+- Show "Emergency justification" only when Change Type = Emergency
+- Show "Rollback procedure" only when field "Has rollback plan" = Yes
+- Show "Parent CR number" only when Request Type = AR, IR, or CFR
+
+### 5.5 Per-Step Field State
+
+Every field has a configurable state at each workflow step:
+
+| State | Meaning |
+|---|---|
+| Editable | The step's assignee can fill in or change this field |
+| Visible (read-only) | Shown but cannot be changed at this step |
+| Hidden | Not shown at this step |
+
+This allows approver-specific fields — for example, a "Server credentials" field that is hidden during initial submission but becomes editable when it reaches the sysadmin approval step. It also allows locking down fields that should only be filled in at a specific stage.
+
+### 5.6 Form Ownership
+
+Each form has one or more designated owners. Owners can:
+- Edit the form definition (fields, layout, conditional rules)
+- View all requests submitted through the form
+- Enable or disable the form
+- Manage the form's associated workflow
+
+System administrators can assign anyone as a form owner.
+
+### 5.7 Form Activation
+
+A form can be set to inactive by its owner or a system admin. Inactive forms are not visible to requestors and do not accept new submissions. In-progress requests on an inactive form continue until they close.
+
+---
+
+## 6. Workflow Definitions
+
+### 6.1 What a Workflow Is
+
+A workflow is a sequence of steps that a request follows after submission. Each step is a task assigned to someone (or someones) who must take an action before the request advances.
+
+A workflow is associated with a form. When a request is submitted, its workflow starts automatically.
+
+### 6.2 Admin Configurability
+
+Admins configure workflows through a no-code interface. Everything below can be changed by an admin without a code deployment:
+
+- The steps in a workflow and their order
+- The type of each step (approval, execution, info, automation, notification, conditional, delay)
+- Which actions are available at each step
+- Who is assigned to each step (by name, role, or dynamic rule)
+- Which fields are editable, visible, or hidden at each step
+- What the SLA is for each step and what happens when it expires
+- The routing logic between steps (what happens on each possible action outcome)
+- Conditional branching (skip steps or route differently based on field values)
+
+### 6.3 Workflow Versioning
+
+Workflows have draft, published, and archived states:
+- **Draft** — being configured, not yet active
+- **Published** — active and used for new submissions
+- **Archived** — retired, no longer used for new submissions
+
+When a published workflow is updated, the admin saves a new draft and publishes it. Requests already in progress continue on the version that was active when they were submitted. New submissions use the latest published version.
+
+Built-in system workflows (Standard Change, Normal Change, Emergency Change) can be cloned and customized but not deleted.
+
+---
+
+## 7. Step Types
+
+Every step in a workflow has a type. The type defines what the assignee is expected to do and what actions are available.
+
+### 7.1 Approval Step
+
+The assignee must make a formal decision. They are accountable for the outcome. Typically used for review gates, authorization checkpoints, and compliance sign-offs.
+
+Default available actions: Approve, Reject, Request More Info, Return to Previous Step, Send to Requestor.
+
+The form definition controls which of these actions are enabled for each specific step.
+
+### 7.2 Execution Step
+
+The assignee must perform a task — create accounts, run a script, deploy something, configure a system, or complete any hands-on work. There is no approval decision. They mark the step complete when the task is done.
+
+Default available actions: Complete, Request More Info, Return to Previous Step.
+
+### 7.3 Info / Acknowledgment Step
+
+The assignee is notified and may acknowledge. This step does not block the workflow — it can be configured to auto-skip if the assignee does not respond within the SLA, or to require an explicit acknowledgment before advancing.
+
+Default available actions: Acknowledge, Skip.
+
+### 7.4 Automation Step
+
+The system performs an action automatically with no human involvement. Examples: calculate a risk score, generate a reference number, update a field value, trigger an external webhook, send a batch notification.
+
+No assignee. Runs immediately when activated. On success or failure, routes to the configured next step.
+
+### 7.5 Notification Step
+
+Sends a message to configured recipients and advances automatically. No action required from recipients. Used to keep stakeholders informed at key points in the workflow.
+
+### 7.6 Conditional Branch Step
+
+Evaluates a rule against the current field values of the request and routes to one of several possible next steps. No human action required.
+
+Examples:
+- If risk score ≥ 21 → route to Critical Risk Acknowledgement
+- If change type = Emergency → skip Normal approval, go to CAB
+- If a user field is empty → skip CI Owner approval
+
+### 7.7 Delay Step
+
+Pauses the workflow for a configured duration before automatically advancing to the next step. Useful for scheduling constraints, cool-down periods, or timed follow-ups.
+
+---
+
+## 8. Step Policy — Single and Parallel
+
+Every step is configured with one of two execution policies:
+
+**Single:** The step runs alone. The workflow waits for it to complete before moving on.
+
+**Parallel:** The step runs at the same time as other consecutive parallel steps. When the workflow activates a parallel step, it continues activating all following parallel steps until it reaches the next Single step. The next Single step acts as a synchronization barrier — it waits for all preceding parallel steps to complete before it activates.
+
+Example sequence:
+```
+Step 1 (Single) → Step 2 (Parallel) → Step 3 (Parallel) → Step 4 (Single)
+```
+Execution: Step 1 completes → Steps 2 and 3 activate simultaneously → Step 4 waits for both → Step 4 activates.
+
+Parallel steps with an approval policy can be configured with: **Any** (first approver to decide advances the step) or **All** (every assignee must decide before the step advances).
+
+---
+
+## 9. Actions Reference
+
+These are the actions available to assignees on a workflow step. Which actions appear on a given step is configured in the step definition.
+
+### Approve
+Available on: Approval steps.
+Marks the step approved. The workflow advances to the configured next step.
+
+### Complete
+Available on: Execution steps.
+Marks the task done. The workflow advances to the configured next step.
+
+### Acknowledge / Skip
+Available on: Info steps.
+Confirms the assignee has seen the notification. The workflow advances. If the step is configured as skippable, it may auto-advance without requiring this action.
+
+### Reject
+Available on: Approval steps.
+Stops the current path. The rejector provides a reason and configures the **re-approval scope** — see Section 10.
+
+### Request More Info
+Available on: Approval and Execution steps.
+Pauses the SLA clock on the current step. Sends a message (with the question) to the requestor. The clock resumes and the step returns to the assignee when the requestor responds.
+
+### Return to Previous Step
+Available on: Approval and Execution steps.
+Routes the request back to a specific earlier step in the workflow. The target step is configured per step definition (not open-ended). The request does not restart from scratch — only the specified step is reactivated.
+
+### Send to Requestor
+Available on: Approval and Execution steps.
+Returns full control of the request to the requestor. All fields become editable. The requestor reviews, makes changes, and resubmits. The workflow restarts from the beginning of the workflow (or from a configured entry point).
+
+### Reassign
+Available on: Any active step.
+Transfers the step to a different assignee. The original assignee loses the task. Full audit record of the reassignment is kept.
+
+---
+
+## 10. Rejection and Resubmission Model
+
+Rejection is not the end of a request. The system treats it as a correction cycle.
+
+### What the Rejector Configures
+
+When rejecting, the approver:
+1. Writes a rejection reason (shown to the requestor)
+2. Sets the **re-approval scope**: does the requestor need to collect prior approvals again, or can they resubmit and continue from this step?
+   - **Full restart** — the workflow starts from the beginning; all prior approvals must be obtained again
+   - **Resume from this step** — once the requestor edits and resubmits, the workflow returns to this approval step directly, skipping already-completed prior steps
+
+### What the Requestor Does
+
+After rejection:
+1. Receives a notification with the reason
+2. Opens the request, which is now editable
+3. Makes changes (all fields unlocked per the form's default state, unless the workflow definition restricts certain fields)
+4. Resubmits
+
+### Request Identity
+
+The request is the same record throughout its entire lifecycle — submission, rejection, resubmission, re-rejection. Every version of every field value is preserved in history. The change number does not change. There is no concept of "request v2" — just a single request with a complete edit history.
+
+---
+
+## 11. Assignment Strategies
+
+Step assignees are resolved at runtime using rules, not hardcoded names. Available strategies:
+
+| Strategy | How It Works |
+|---|---|
+| Specific user | A named person, set in the step definition |
+| Specific role | All users who hold a given role at the time the step activates |
+| Form field — single user | Pulls the user from a User Picker field on the form |
+| Form field — multiple users | Pulls all users from a Multi-User Picker field on the form |
+| CI owner | Resolves to the owner(s) of the affected Configuration Items |
+| Service owner | Resolves to the owner(s) of the affected Services |
+| Requestor's manager | Looks up the direct manager of the person who submitted |
+| Round-robin | Distributes across a role's members, one person at a time in rotation |
+| Least busy | Assigns to the role member with the fewest active pending tasks |
+
+Multiple strategies can be combined on a single step. All resolved users are co-assignees; the step's approval policy (Any or All) determines when it advances.
+
+---
+
+## 12. SLA System
+
+SLA in this system has two independent parts: the business calendar and the escalation policy.
+
+### 12.1 Business Calendar
+
+Each step can be configured with a business calendar. The calendar defines which hours and days count toward SLA time. Non-business time is excluded from the elapsed time calculation — the SLA clock stops outside business hours and resumes when business hours begin.
+
+A calendar specifies:
+- Working days (e.g., Sunday–Thursday)
+- Working hours (e.g., 08:00–17:00)
+- Timezone
+- Public holidays (optional list of excluded dates)
+
+Multiple calendars can be defined (e.g., Riyadh standard, 24/7, custom department hours). Each step selects which calendar to use. Emergency change steps always use 24/7.
+
+### 12.2 SLA Escalation Policy
+
+Each step can have an SLA escalation policy — a set of actions that trigger automatically based on how long a step has been pending. Actions are time-based and configurable:
+
+| Action | What It Does |
+|---|---|
+| Send reminder | Notifies the current assignees that the step is pending |
+| Remind on schedule | Sends repeat reminders every x hours/days until the step is resolved |
+| Add assignee | Adds a specified user or role (e.g., manager) as an additional assignee |
+| Reassign | Transfers the step to a different assignee (e.g., escalate to manager) |
+| Auto-advance | Marks the step with a specified auto-decision (e.g., auto-approve, auto-skip) and advances the workflow |
+
+Multiple escalation rules can be stacked with different time thresholds. Example: remind at 24h, add manager at 48h, auto-approve at 72h.
+
+The SLA clock pauses when "Request More Info" is used and resumes when the requestor responds.
+
+---
+
+## 13. Notifications
+
+### 13.1 Channels
+
+- **In-app** — notifications appear within TechHub, visible in the notification center
+- **Email** — sent to the user's registered email address
+
+### 13.2 Email Action Buttons
+
+Approval notification emails contain live action buttons (e.g., Approve, Reject, Acknowledge). Clicking a button triggers the corresponding workflow action without requiring the user to log into TechHub.
+
+Security:
+- Each button uses a unique, single-use token embedded in the URL
+- Tokens expire after a configured time (e.g., 72 hours)
+- Expired or already-used tokens are rejected with a clear message
+- Token-based actions are logged in the audit trail with a note that the action was taken via email
+
+### 13.3 Email Template Builder
+
+Admins can create and manage email templates used across workflow events.
+
+**Template management:**
+- Create, edit, duplicate, and delete templates
+- Assign templates to workflow events (step activated, approved, rejected, reminder, escalation, etc.)
+- Preview rendered output before saving
+
+**Template composition:**
+- HTML code editor (visual editor in a future version)
+- Configurable header, body, and footer sections
+- Branding: logo, colors, font settings
+- Light and dark mode styling (adapts to recipient's email client)
+
+**Dynamic variables** — replaced at send time:
+`{{request_id}}`, `{{request_number}}`, `{{request_title}}`, `{{form_name}}`, `{{current_step}}`, `{{assignee_name}}`, `{{requestor_name}}`, `{{action_taken}}`, `{{rejection_reason}}`, `{{sla_deadline}}`, `{{request_url}}`, `{{action_url_approve}}`, `{{action_url_reject}}`, and more.
+
+**Action button embedding:**
+Email templates can include one or more action buttons. Each button maps to a workflow action and embeds the secure token URL automatically at send time.
+
+---
+
+## 14. Comments
+
+There are two distinct comment surfaces on every request.
+
+### 14.1 Action Comments
+
+When a user takes a workflow action (approve, reject, request info, etc.), they can attach a comment. This comment is part of the formal audit trail — it is permanently tied to the action, timestamped, and cannot be edited or deleted.
+
+### 14.2 General Comment Thread
+
+A separate, Jira-style comment thread exists on every request. Any TechHub user with access to the request can read and write general comments. General comments do not trigger any workflow state change — they are a conversation space for context, questions, and coordination.
+
+General comments can include file attachments. They are also permanently preserved and cannot be deleted, but they are clearly separate from the formal audit record.
+
+---
+
+## 15. Attachments
+
+File attachments are supported in two places:
+
+- **Form fields** — a form can include one or more file upload fields. Files uploaded here are part of the request record (e.g., deployment scripts, architecture diagrams, approval sign-offs).
+- **General comments** — files can be attached to any comment in the comment thread.
+
+Attachments are stored centrally and linked to the request. They are accessible to anyone with view access to the request.
+
+---
+
+## 16. Audit Trail
+
+Every action taken on a request is permanently recorded:
+
+- Who took the action (or: system, if automated)
+- What action was taken
+- Which step it was on
+- When (date and time, timezone)
+- Any comment attached to the action
+- Whether it was taken via the TechHub UI or via email token
+- If via delegation: who the original assignee was and who acted on their behalf
+
+Field-level history is also tracked:
+- Which fields changed
+- The value before and after each change
+- Who made the change and when
+
+The audit trail is append-only. Nothing can be edited or deleted from it. It is exportable.
+
+---
+
+## 17. Workflow Definition Administration
+
+Admins manage workflow definitions through the Workflow Definitions admin area.
+
+**Actions available:**
+- View any definition and its step graph
+- Create a new definition (starts as Draft)
+- Clone an existing definition (creates a Draft copy)
+- Edit a Draft definition
+- Publish a Draft (makes it the active version for new submissions)
+- Archive a Published definition (retires it; existing in-progress requests are unaffected)
+
+**Built-in definitions** (system-provided) are read-only. They can be cloned but not edited or deleted.
+
+**Instance management** (for system administrators):
+- View all running and completed workflow instances
+- Force-advance a stuck step
+- Reassign a step to a different user
+- Cancel a running workflow instance
+
+---
+
+---
+
+# PART TWO: CHANGE MANAGEMENT
+
+---
+
+## 18. Overview
+
+Change Management is the first module built on the Workflow Engine. It implements an ITIL-aligned process for managing all changes to Barq's IT environment — from initial request through approval, implementation, and formal closure.
+
+It is tightly coupled to the Workflow Engine. The engine provides the step execution, approvals, SLA, and audit trail. Change Management provides the domain model: the request types, classification rules, risk assessment, maintenance windows, and business rules that govern IT changes specifically.
+
+---
+
+## 19. Request Types
+
+There are seven types of IT change requests. Each has a distinct purpose and different rules.
+
+| Code | Full Name | Purpose | Requires Parent CR? |
 |---|---|---|---|
-| Change Request | CR | A coordinated release that contains multiple sub-requests | No — it is the parent |
-| Application Release | AR | A software or application deployment | Yes — must link to a CR |
-| Infrastructure Release | IR | An infrastructure or network change | Yes — must link to a CR |
-| Config/Firewall Release | CFR | A configuration or firewall rule change | Yes — must link to a CR |
-| Access Request | ACCESS | Granting or revoking user access | No |
-| Firewall Request | FIREWALL | A standalone firewall rule change | No |
-| Other Request | OTHER | Anything that doesn't fit the above | No |
+| CR | Change Request | Parent container for a coordinated release | No — it is the parent |
+| AR | Application Release | Software or application deployment | Yes |
+| IR | Infrastructure Release | Infrastructure or network change | Yes |
+| CFR | Config/Firewall Release | Configuration or firewall rule change | Yes |
+| ACCESS | Access Request | User access provisioning or revocation | No |
+| FIREWALL | Firewall Request | Standalone firewall rule | No |
+| OTHER | Other Request | Any IT request that doesn't fit above | No |
 
-### 5.2 The CR Hierarchy
+### The CR Hierarchy
 
-A Change Request (CR) acts as the parent container for a coordinated release. It cannot do work on its own — its purpose is to group related sub-requests together so they can be tracked as a unit.
+A Change Request (CR) groups related sub-requests into a coordinated release. AR, IR, and CFR requests must be linked to a parent CR before they can be submitted.
 
-- An Application Release, Infrastructure Release, or Config/Firewall Release must always be linked to a parent CR before it can be submitted.
-- The parent CR cannot be closed until every sub-request under it has reached a final state (approved and closed, rejected, or cancelled).
-- The CR detail view shows the current status of all its sub-requests at a glance.
-- Each sub-request has its own independent approval process.
+```
+Change Request (CR)            ← parent, created first
+  ├── Application Release (AR)
+  ├── Infrastructure Release (IR)
+  └── Config/Firewall Release (CFR)
+```
+
+Rules:
+- AR, IR, and CFR cannot be submitted without a parent CR
+- The parent CR cannot be closed while any child request is in a non-final state
+- Each sub-request has its own independent workflow and approval process
+- The parent CR detail view shows the current status of all children at a glance
 
 ---
 
-## 6. Change Classification
+## 20. Change Classification
 
-Every request is classified by **change type**, which determines how urgently it moves and how many approvals it needs.
+Every request is classified by change type. This determines which workflow runs and what rules apply.
 
 ### Standard Change
-A pre-approved, low-risk, routine change. The system approves it automatically — no human review needed. Examples: scheduled nightly backups, pre-approved software patches, routine certificate renewals.
+Pre-approved, low-risk, routine work. The system approves it automatically — no human review. Examples: scheduled patches, pre-approved routine maintenance.
 
 ### Normal Change
-A planned, non-urgent change that needs human review. It goes through a risk assessment, then a single Change Manager approval. Examples: new software deployments, infrastructure upgrades, database schema changes.
+Planned, non-urgent work requiring human review. Goes through risk assessment, then Change Manager approval. Examples: new deployments, infrastructure upgrades, database changes.
 
 ### Emergency Change
-An urgent change needed to resolve or prevent a major incident. It bypasses the normal scheduling rules and goes through a fast parallel approval process. Examples: hotfix for a production outage, emergency security patch.
+Urgent work to resolve or prevent a major incident. Bypasses normal scheduling rules. Goes through a fast parallel approval process. Examples: production hotfix, emergency security patch.
 
 ---
 
-## 7. The Full Lifecycle of a Change Request
-
-A change request moves through a fixed set of stages. Each stage has a clear meaning and clear rules for what can happen next.
+## 21. Full Status Lifecycle
 
 ```
-DRAFT → SUBMITTED → IN WORKFLOW → APPROVED → SCHEDULED → IN PROGRESS → COMPLETED → CLOSED
-                                           ↘ REJECTED                  ↘ FAILED → ROLLED BACK → CLOSED
-                                                                                                ↗
-                                                               (NORMAL/EMERGENCY) → PIR PENDING → CLOSED
+DRAFT
+  │  Submit
+  ▼
+SUBMITTED ──► workflow starts automatically
+  │
+  ▼
+IN WORKFLOW
+  ├──► (workflow approved) ──────► APPROVED
+  │                                  │  Schedule
+  │                                  ▼
+  │                              SCHEDULED
+  │                                  │  Start Implementation
+  │                                  ▼
+  │                              IN PROGRESS
+  │                                  ├──► Complete ──────────► COMPLETED
+  │                                  │                           │
+  │                                  │          STANDARD ────────► CLOSED
+  │                                  │          NORMAL/EMERGENCY ─► PIR PENDING
+  │                                  │                                 │  Submit PIR
+  │                                  │                                 ▼
+  │                                  │                              CLOSED
+  │                                  │
+  │                                  ├──► Fail ───────────────► FAILED
+  │                                  │                           │  Execute Rollback
+  │                                  │                           ▼
+  │                                  │                       ROLLED BACK ──► CLOSED
+  │                                  │
+  └──► (workflow rejected) ──────► REJECTED
+                                     │  Edit & Resubmit
+                                     └──────────────────────► back to SUBMITTED
 
-Any non-final stage → CANCELLED
+Any non-final state ──► CANCELLED (final)
 ```
 
-### DRAFT
-The requestor is filling out the form. The request is not yet visible to anyone else. It is saved automatically so it can be resumed later.
+### Status Definitions
 
-### SUBMITTED
-The requestor has finished the form and clicked Submit. The system begins processing the request and starts the appropriate approval workflow automatically.
-
-### IN WORKFLOW
-The approval process is running. The change is moving through review steps. The requestor can watch its progress in real time.
-
-### APPROVED
-All required approvals have been received. The change is authorized to proceed to implementation.
-
-### REJECTED
-One or more approvers rejected the request. This is a final state — a rejected change cannot be re-submitted. A new request must be created.
-
-### SCHEDULED
-The change has been given a specific date and time for implementation, and (for Normal changes) a maintenance window has been assigned.
-
-### IN PROGRESS
-Implementation has begun. The requestor is actively making the change.
-
-### COMPLETED
-Implementation finished successfully.
-
-### FAILED
-Something went wrong during implementation. The team must decide whether to roll back.
-
-### ROLLED BACK
-The change failed and was reversed. The system is back to its state before the change.
-
-### PIR PENDING
-The change is complete (or rolled back) but requires a Post-Implementation Review before it can be formally closed. Applies to Normal and Emergency changes only.
-
-### CLOSED
-The change is fully done. No further action can be taken.
-
-### CANCELLED
-The change was stopped before reaching a final state. This is a final state — a cancelled change cannot be restarted.
+| Status | Meaning |
+|---|---|
+| DRAFT | Being filled out; not yet visible to anyone else |
+| SUBMITTED | Submitted; workflow starting |
+| IN WORKFLOW | Approval process running |
+| APPROVED | All approvals received; authorized to implement |
+| REJECTED | Rejected by an approver; requestor can edit and resubmit |
+| SCHEDULED | Assigned a specific date/time for implementation |
+| IN PROGRESS | Implementation underway |
+| COMPLETED | Implementation finished successfully |
+| FAILED | Implementation encountered a problem |
+| ROLLED BACK | Failed change was reversed |
+| PIR PENDING | Awaiting Post-Implementation Review before closure |
+| CLOSED | Fully complete; no further action possible |
+| CANCELLED | Stopped before a final state; permanent |
 
 ---
 
-## 8. The Approval Workflow
+## 22. The Change Request Form
 
-### 8.1 How Workflows Are Selected
+### Creation Wizard — Steps
 
-When a request is submitted, the system automatically selects the right approval process based on the change type:
-- Standard → instant auto-approval, no humans involved
-- Normal → risk assessment, then a Change Manager reviews and approves
-- Emergency → simultaneous approval from a CAB member and the CI owner
+**Step 1 — What kind of request?**
+- Select request type (CR / AR / IR / CFR / ACCESS / FIREWALL / OTHER) — shown as icon cards
+- Select change type (STANDARD / NORMAL / EMERGENCY) — shown only for CR, AR, IR, CFR
+- If request type is AR, IR, or CFR: required parent CR picker (typeahead search of open CRs)
 
-Admins can define custom workflows for specific situations. A workflow is just a sequence of steps — each step is a task that someone must complete before the next one begins.
+**Step 2 — Details**
+- Title and description
+- Priority (LOW / MEDIUM / HIGH / CRITICAL)
+- Justification
+- Test plan (required for most types)
+- Rollback plan (required for most types)
+- Implementation plan
 
-### 8.2 Step Types
+**Step 3 — Scope and Impact**
+- Affected Configuration Items: multi-select from CMDB; each selected CI requires an impact description
+- Affected Services: multi-select from the Services catalog; each selected service requires an impact description
 
-**Approval step:** A person (or group of people) must decide: Approve, Reject, or Request More Information.
+**Step 4 — Review and Submit**
+- Full summary of all entered fields
+- Validation errors shown here before submission
+- Submit triggers workflow start
 
-**Input step:** A person must fill in a form. For example: the risk assessment form asking the Change Manager to rate likelihood and impact.
+### Auto-Save
 
-**Parallel step:** Multiple approval tasks run at the same time. The workflow waits for all (or a defined number) to complete before moving on.
-
-**Notification step:** The system sends a message to relevant people. No action required.
-
-**Branch step:** The workflow takes different paths based on information already collected. For example: if the risk score is high, route to an extra review; otherwise, go straight to approval.
-
-**Automation step:** The system performs a task automatically without human involvement. For example: calculating the risk score after the assessor fills in the form.
-
-**Delay step:** The workflow pauses for a set amount of time before continuing.
-
-**Escalation step:** If an approval step is not completed within a deadline, the system automatically adds the approver's manager to the task.
-
-### 8.3 Who Gets Assigned
-
-Approval steps are assigned to people based on rules, not hard-coded names. The system figures out at runtime who the right people are. Assignment methods include:
-
-- **A specific role** — all Change Managers, all CAB members
-- **The person who created the request**
-- **The CI owner** of the affected configuration items
-- **The service owner** of the affected services
-- **The manager of the requestor**
-- **Round-robin** across a group — distribute workload evenly
-- **Least busy** — assign to whoever has the fewest pending tasks
-
-### 8.4 What Approvers Can Do
-
-On an active approval step, the approver can:
-
-- **Approve** — confirms the change can proceed
-- **Reject** — stops the change; the requestor is notified with the reason
-- **Request More Information** — pauses the workflow clock and sends a question to the requestor; the clock resumes when the requestor responds
-
-### 8.5 Delegation
-
-An approver going on leave can delegate their approval authority to a colleague for a specific date range. While the delegation is active, the colleague can take approval actions on their behalf. The audit trail records who made the decision and notes that it was via delegation.
-
-### 8.6 Audit Trail
-
-Every single action taken on every step is permanently recorded:
-- Who took the action
-- What they decided
-- When
-- Any comment they added
-- Whether it was a manual action or an automated system action
-
-This record cannot be edited or deleted.
+The form saves automatically at every step navigation. If the requestor closes the browser mid-way, their progress is preserved. Returning to the form resumes exactly where they left off.
 
 ---
 
-## 9. Risk Assessment
+## 23. Risk Assessment
 
-### 9.1 How Risk Is Scored
+### Scoring
 
-For Normal changes, the Change Manager fills in two values:
-- **Likelihood** — How likely is this change to cause a problem? (1 = very unlikely, 5 = almost certain)
-- **Impact** — If something goes wrong, how severe would the damage be? (1 = minimal, 5 = catastrophic)
+For Normal changes, the Change Manager fills in a risk assessment:
+- **Likelihood** — How likely is something to go wrong? (1 = very unlikely → 5 = near certain)
+- **Impact** — If something goes wrong, how severe? (1 = minimal → 5 = catastrophic)
+- **Risk Score** = Likelihood × Impact (range: 1–25)
 
-Risk Score = Likelihood × Impact (range: 1–25)
-
-### 9.2 What Happens at Each Risk Level
+### Risk Levels and System Response
 
 | Score | Level | What the System Does |
 |---|---|---|
-| 1–5 | Low | No special action |
-| 6–10 | Medium | No special action |
-| 11–15 | High | Warning banner shown to the approver |
-| 16–20 | Very High | System suggests converting to an Emergency change for faster parallel review |
-| 21–25 | Critical | The workflow pauses. The Change Manager must explicitly acknowledge the risk before the normal approval step can proceed |
+| 1–5 | Low | No action |
+| 6–10 | Medium | No action |
+| 11–15 | High | Warning shown to the approver on the approval step |
+| 16–20 | Very High | System suggests converting to an Emergency change |
+| 21–25 | Critical | Workflow pauses; Change Manager must explicitly acknowledge before proceeding |
 
-### 9.3 Where Risk Is Shown
-
-The risk score, level, and the assessor's notes are shown on the change detail page. A visual 5×5 grid highlights the current position.
+The risk score, level, assessor name, and notes are shown on the change detail page as a 5×5 visual grid.
 
 ---
 
-## 10. SLA — Time Limits on Approvals
+## 24. SLA by Change Type
 
-Every approval step has a deadline. If the approver does not act before the deadline, the system escalates.
+Each change type has a default SLA configuration. These use the SLA system defined in Part One.
 
-### 10.1 SLA Behavior
+| Change Type | Total SLA | Calendar | SLA Model |
+|---|---|---|---|
+| Standard | N/A | N/A | Auto-approved instantly; no SLA |
+| Normal | 5 business days | Saudi standard (Sun–Thu, 08:00–17:00 AST) | Per-step sub-SLAs; escalates to manager on breach |
+| Emergency | 8 calendar hours | 24/7 | Tight per-step SLAs; auto-approves at timeout |
 
-1. The clock starts when the approval task is assigned.
-2. The clock **pauses** if the approver requests more information and **resumes** when the requestor responds.
-3. When the deadline is approaching, the approver receives a warning notification.
-4. When the deadline passes, the system escalates: it adds the approver's manager to the task as an additional approver.
-5. If a step is configured with an auto-decision, the system takes that action automatically at a second deadline (e.g., auto-approve an Emergency change if no CAB member responds within 6 hours).
+### Normal Change — Step SLAs
+- Risk Assessment step: 48 business hours
+- Change Manager Approval step: 48 business hours; auto-escalates to manager at 48h; auto-escalation adds manager as co-assignee
 
-### 10.2 Business Hours
-
-SLA clocks can be configured to count only business hours (Sunday–Thursday, 08:00–17:00 Riyadh time) or to count 24/7. Emergency changes always use 24/7 time.
-
-### 10.3 SLA for Each Change Type
-
-- **Standard:** No SLA (instant auto-approval)
-- **Normal:** 5 business days total; individual steps have their own sub-deadlines
-- **Emergency:** 8 calendar hours total; individual steps have 4-hour deadlines
+### Emergency Change — Step SLAs
+- Each parallel approval step: 4 calendar hours
+- Auto-approve (each step): at 6 calendar hours if no response
 
 ---
 
-## 11. Scheduling
+## 25. Scheduling
 
-### 11.1 What Scheduling Means
+### Maintenance Windows
 
-After a Normal or Emergency change is approved, the implementor must pick a date and time to perform the work. This is the scheduled implementation window.
+Maintenance windows are time slots pre-defined by the Change Manager during which Normal changes are permitted. Windows are recurring and configurable.
 
-### 11.2 Maintenance Windows
+A window defines: name, recurrence (weekly / biweekly / monthly / custom), day, start time, end time, timezone, effective date range, and active/inactive status.
 
-Maintenance windows are pre-defined time slots during which IT changes are permitted. The IT team defines these in advance (e.g., every Tuesday night from 10 PM to 4 AM, every Saturday).
+### Blackout Periods
 
-**Rules by change type:**
+Blackout periods are date ranges during which Normal changes cannot be scheduled. Examples: Ramadan freeze, year-end freeze, major go-live periods. Each blackout has a name, reason, start, end, and an active toggle.
 
-| Change Type | Maintenance Window Required? | Blackout Periods |
+### Scheduling Rules by Change Type
+
+| Change Type | Maintenance Window | Blackout Periods |
 |---|---|---|
-| Standard | No | Ignored |
-| Normal | Yes — must be scheduled within an active window | Cannot schedule during a blackout |
-| Emergency | No | A warning is shown but scheduling is not blocked |
+| Standard | Not required | Ignored |
+| Normal | Required — must schedule within an active window | Blocks scheduling |
+| Emergency | Not required | Warning shown; does not block |
 
-### 11.3 Blackout Periods
+### Scheduling Calendar
 
-Certain times of year are designated as change freezes — no Normal changes can be scheduled during these periods. Examples: the Ramadan freeze, year-end, or the days before a major system go-live. The Change Manager creates and manages blackout periods.
-
-### 11.4 The Scheduling Calendar
-
-A calendar view shows all scheduled changes on their planned dates. It also shows when maintenance windows are open (highlighted in green) and when blackout periods are active (shown in red). This gives the team a clear picture of what is changing when.
+A monthly calendar view shows all scheduled changes on their planned dates, maintenance windows highlighted in green, and blackout periods shown in red. Click a change to see a summary and link to its detail page.
 
 ---
 
-## 12. Implementation
+## 26. Implementation
 
-### 12.1 Starting Work
+**Starting:** The implementor marks the change as In Progress. The system records the exact start time automatically.
 
-When it is time to perform the change, the implementor marks it as "In Progress." The system records the exact time work began.
+**During:** Implementation notes can be added at any time while the change is in progress. Notes are visible to all users with access.
 
-### 12.2 During Implementation
-
-The implementor can add notes as they go. These notes are saved to the change record and are visible to everyone with access.
-
-### 12.3 Finishing Work
-
-When the implementor is done, they mark the change as either:
+**Completing:** The implementor marks the change as either:
 - **Completed** — everything went as planned
-- **Failed** — something went wrong
+- **Failed** — something went wrong; the implementor documents what happened
 
-### 12.4 When It Fails
-
-If a change fails, the implementor documents what went wrong. They then have the option to:
-- **Execute a rollback** — reverse the change and restore the system to its previous state. The system records the time the rollback was performed and any notes.
+**Rollback:** If failed, the implementor can execute a rollback. The system records the rollback time and captures rollback notes.
 
 ---
 
-## 13. Post-Implementation Review (PIR)
+## 27. Post-Implementation Review (PIR)
 
-### 13.1 When a PIR Is Required
+PIR is mandatory for Normal and Emergency changes before closure. Standard changes close directly without a PIR.
 
-A PIR is mandatory for every Normal and Emergency change before it can be closed. Standard changes go straight to Closed with no PIR needed.
+### PIR Fields
 
-### 13.2 What the PIR Captures
+| Field | Notes |
+|---|---|
+| Outcome | SUCCESSFUL / PARTIAL / FAILED / ROLLED_BACK |
+| What actually happened | Compared to what was planned |
+| Planned vs. actual notes | Where reality differed from the plan |
+| Lessons learned | What to do differently next time |
+| Follow-up actions | Remaining tasks with named owners |
+| Customer impact | Yes / No |
+| Customer impact description | Required if customer impact = Yes |
 
-The implementor fills in:
+### PIR Reminders
 
-- **Outcome** — Did the change succeed fully, partially, fail, or was it rolled back?
-- **What actually happened** — Description of the actual impact, compared to what was planned
-- **Planned vs. actual notes** — Where did the reality differ from the plan?
-- **Lessons learned** — What would be done differently next time?
-- **Follow-up actions** — Any remaining tasks, with owners
-- **Customer impact** — Yes or No: did end users experience any disruption?
-- **Customer impact description** — If yes, describe what happened (required when customer impact is Yes)
+The system automatically sends reminders to the implementor (assignedTo):
 
-### 13.3 PIR Reminders
-
-The system automatically reminds the implementor to complete the PIR:
-- 24 hours after the change completed: first reminder to the implementor
-- 72 hours: reminder escalated to include the implementor's manager
-- 7 days: escalated to the Change Manager role
-
-### 13.4 Closing After PIR
-
-Once the PIR is submitted, the change can be formally closed.
+| Time After Completion | Action |
+|---|---|
+| 24 hours | First reminder to implementor |
+| 72 hours | Reminder escalated to include implementor's manager |
+| 7 days | Escalated to the Change Manager role |
 
 ---
 
-## 14. Emergency Changes — Special Rules
+## 28. Emergency Change Process
 
-Emergency changes are designed to move as fast as possible while still maintaining accountability.
+Emergency changes are designed to move from submission to approval in under 8 hours without sacrificing accountability.
 
-- Two approvals run simultaneously: one from a CAB member and one from the CI owner. Both must approve.
-- If either approver does not respond within 6 hours, the system auto-approves on their behalf and records it as a timed-out auto-approval.
-- Emergency changes do not require a maintenance window, but a warning is shown if they are scheduled during a blackout period.
-- The total process is designed to complete within 8 hours from submission to approval.
-- CAB members are alerted by notification the moment an emergency request is submitted.
+**On submission:** CAB members, CI owners, and the Change Manager are notified immediately.
 
----
+**Parallel approval:** Two approval steps run simultaneously:
+1. A CAB member (any member of the cab-member role)
+2. The CI owner of the primary affected CI
 
-## 15. The Change Request Form
+Both must approve. If either rejects, the change is rejected. If either fails to respond within 6 hours, the system auto-approves on their behalf and records it as a timed-out auto-approval.
 
-### 15.1 Creating a Request
-
-The form is a step-by-step wizard:
-
-**Step 1 — What kind of request is this?**
-The requestor picks the request type and change type. If the type is AR, IR, or CFR, they must search for and link a parent CR before proceeding.
-
-**Step 2 — Details**
-The requestor fills in: title, description, justification for the change, and (where required by the change type) a test plan, rollback plan, and implementation plan.
-
-**Step 3 — What does this change affect?**
-The requestor selects:
-- Which configuration items (servers, databases, devices, etc.) are affected, and for each one, a brief description of what the change does to it
-- Which business services are affected, and for each one, a brief description of the impact
-
-**Step 4 — Review and Submit**
-A summary of everything entered. If anything is missing or invalid, the errors are shown here. The requestor clicks Submit to start the workflow.
-
-### 15.2 Auto-Save
-
-The form saves automatically at every step. If the requestor closes the browser or loses connection, their progress is not lost. They can return and pick up where they left off.
+**No maintenance window required.** A warning is shown if scheduled during a blackout period, but scheduling is not blocked.
 
 ---
 
-## 16. The Change List
+## 29. Delegation
 
-The main page shows all change requests the user has access to see. It can be filtered by:
-- Status
-- Change type (Standard, Normal, Emergency)
-- Request type (CR, AR, IR, etc.)
-- Priority
-- Assigned to
-- Date range
-- "My changes" — show only requests I created
-- "My approvals" — show only requests awaiting my action
+An approver going on leave can delegate their approval authority to a colleague.
 
-The list can be exported to Excel.
+A delegation specifies: who is delegating, who receives authority, the active date range, and an optional reason.
 
-Alongside the list, a count shows how many requests are currently waiting for my approval action and how many changes have breached their SLA.
+While active:
+- The delegatee can take approval actions on the delegator's assigned steps
+- The audit trail records the decision as: "Action by [delegatee] on behalf of [delegator] (delegation active)"
+
+When the delegation expires, it has no further effect. The delegator's access returns to normal automatically.
 
 ---
 
-## 17. The Change Detail Page
+## 30. Dashboard
 
-When a user opens a change request, they see a two-panel view.
+The Change Management dashboard gives the Change Manager and senior leadership a live operational view.
 
-### Left Side — The Change Itself
-- Change number, title, type, status, and how much time is left on the SLA
+**Widgets:**
+- **Pipeline funnel** — count of changes in each status (DRAFT → CLOSED), clickable to filtered list
+- **My pending approvals** — changes waiting for my action, with SLA countdown per item
+- **SLA health** — on-track / at-risk / breached counts for the last 30 days
+- **Change volume** — bar chart of monthly change counts for the last 12 months
+- **Type breakdown** — donut chart of CR / AR / IR / CFR / OTHER proportions
+- **CAB queue** — Emergency changes currently awaiting parallel approval
+- **Recent failures** — FAILED and ROLLED_BACK changes in the last 30 days
+- **Upcoming scheduled** — changes scheduled in the next 7 days with their maintenance window
+
+---
+
+## 31. Change List View
+
+The main list of change requests. Filterable by:
+
+- Status, change type, request type, priority, assigned to, date range
+- "My changes" toggle — only requests I created
+- "My approvals" toggle — only requests where I have a pending action
+
+Sortable columns: change number, title, type badges, status badge, priority, requestor, assignee, scheduled date, SLA indicator, current workflow step.
+
+The list is exportable to Excel. A badge in the sidebar shows the count of requests awaiting my approval and the count of SLA breaches.
+
+---
+
+## 32. Change Detail View
+
+Two-column layout.
+
+**Left — the request itself:**
+- Header: change number, title, type badges, status, SLA ribbon (green / amber / red)
 - Description and justification
-- Test plan, rollback plan, implementation plan (collapsed by default, expandable)
-- The list of affected CIs and services
-- Implementation notes (editable while the change is In Progress)
-- The PIR form (visible once the change is Complete or has been rolled back)
+- Test plan, rollback plan, implementation plan (collapsible)
+- Affected CIs panel
+- Affected Services panel
+- Implementation notes (editable while IN_PROGRESS)
+- PIR form (visible when PIR_PENDING)
+- General comment thread
 
-### Right Side — The Process
-- **The workflow timeline** — every step from start to end. Completed steps show who acted, what they decided, what they said, and when. The current active step is highlighted. Pending future steps are shown dimmed.
-- **The action panel** — if the current user has a pending task on the active step, this panel shows the approve/reject/request-info buttons and a comment field. If the user has no pending task, this panel is not shown.
-- Risk assessment result (if risk has been assessed)
-- Scheduling details (once a date is set)
-- People: who created the request, who is assigned to implement it, who assessed the risk
+**Right — the process:**
+- Workflow timeline (see Section 33)
+- Action panel (visible only to users with a pending task on the active step)
+- Risk matrix (if risk assessed)
+- Scheduling block (if APPROVED or SCHEDULED)
+- People: requestor, assignee, risk assessor, closer
 
-### Actions Bar
-A row of buttons at the top that changes based on where the request is in its lifecycle and what permissions the current user has:
-- Submit (while in Draft)
-- Schedule (once Approved)
-- Start Implementation (once Approved or Scheduled)
-- Mark Complete / Mark Failed / Execute Rollback (while In Progress)
-- Submit PIR (while PIR Pending)
-- Close (when eligible)
-- Cancel (in any non-final state)
+**Actions bar** — contextual, shown based on status and permissions:
+Submit · Schedule · Start Implementation · Complete · Fail · Rollback · Submit PIR · Close · Cancel
 
 ---
 
-## 18. The Workflow Timeline (Detail)
+## 33. Workflow Timeline
 
-The timeline is the heart of the transparency goal. It shows the complete story of a change request from beginning to end.
+The timeline is the full story of the request from submission to current state. Visible to all users with view access.
 
-For each step:
-- The step's name and what kind of step it is (approval, input, automated, etc.)
-- Whether it is done, active, pending, or was skipped
-- For approval steps: who was assigned, and what each person decided (if they have acted)
-- For completed steps: the decision, any comment left, and the timestamp
-- For parallel steps: both branches are shown side by side with their individual statuses
-- A time bar showing how much of the step's SLA has elapsed
-
-Any user with view access can see the full timeline, including all decisions and comments. Nothing is hidden after a step is complete.
+For each step, the timeline shows:
+- Step name and type
+- Status (pending / active / completed / skipped / failed)
+- Assigned users (with their individual decision status for multi-assignee steps)
+- For completed steps: who acted, what they decided, their comment, and the timestamp
+- For parallel steps: both branches shown simultaneously with their individual statuses
+- SLA bar: time elapsed vs. deadline, color-coded
 
 ---
 
-## 19. The Dashboard
+## 34. Change Number Format
 
-The dashboard is for the Change Manager and senior leadership. It gives a live operational picture of the change process.
+Every request gets a unique reference number generated automatically at creation:
 
-It shows:
-- **The pipeline** — how many changes are in each status right now, from Draft to Closed. Clicking a status opens the filtered list.
-- **My pending approvals** — changes that need my action, with SLA countdowns
-- **SLA health** — for the last 30 days: how many changes completed on time, how many were at risk, and how many breached
-- **Change volume** — a bar chart of how many changes happened each month over the last 12 months
-- **Breakdown by type** — a chart showing the proportion of CR vs AR vs IR vs other types
-- **The CAB queue** — Emergency changes currently waiting for parallel approval
-- **Recent failures** — changes that failed or were rolled back in the last 30 days
-- **Coming up** — changes scheduled to happen in the next 7 days
+| Type | Format | Example |
+|---|---|---|
+| CR | CR-YYYYMMDD-NNNNN | CR-20260414-00042 |
+| AR | AR-YYYYMMDD-NNNNN | AR-20260414-00001 |
+| IR | IR-YYYYMMDD-NNNNN | IR-20260414-00003 |
+| CFR | CFR-YYYYMMDD-NNNNN | CFR-20260414-00001 |
+| ACCESS | ACC-YYYYMMDD-NNNNN | ACC-20260414-00007 |
+| FIREWALL | FW-YYYYMMDD-NNNNN | FW-20260414-00002 |
+| OTHER | OTH-YYYYMMDD-NNNNN | OTH-20260414-00001 |
 
----
-
-## 20. Maintenance Windows Management
-
-The Change Manager can define, edit, and deactivate maintenance windows.
-
-A maintenance window has:
-- A name
-- A recurrence pattern: weekly (same day every week), bi-weekly, monthly, or custom
-- A day of week or day of month
-- A start time and end time (24-hour format)
-- A timezone (defaults to Riyadh)
-- An effective from and effective to date (optional end)
-- Active/inactive toggle
-
-**Blackout periods** are separate from windows. A blackout has a name, a reason, a start date/time, an end date/time, and an active toggle. Blackouts block Normal change scheduling for their entire duration.
+Counter is per type per day, padded to 5 digits.
 
 ---
 
-## 21. Workflow Definition Management
+## 35. Business Rules — Change Management
 
-Administrators can view the workflow definitions that drive the approval process. Three built-in definitions come with the system (Standard, Normal, Emergency) and cannot be deleted or edited — they can only be viewed and cloned.
+These are enforced unconditionally by the system. No user action can bypass them.
 
-Admins can:
-- Clone a built-in or custom definition to create their own variant
-- Edit a cloned definition
-- Publish a definition to make it available for use
-- Archive a definition to retire it
-
-A workflow definition that is actively being used by running change requests is never altered. When a new version is published, only new requests use it. Existing requests continue on the version that was active when they were submitted.
+1. AR, IR, and CFR requests cannot be submitted without a linked parent CR.
+2. A parent CR cannot be closed while any child request is in a non-final state.
+3. A Normal change cannot be scheduled during a blackout period.
+4. A Normal change must be scheduled within an active maintenance window.
+5. Emergency changes bypass maintenance window requirements; a warning is shown if during a blackout.
+6. Standard changes are auto-approved. No human approver can be added to a Standard change workflow.
+7. Normal and Emergency changes require a completed PIR before closure.
+8. A change with a Critical risk score (21–25) is held at an acknowledgement gate until the Change Manager explicitly confirms awareness.
+9. A cancelled change cannot be restarted. A new request must be created.
+10. The implementation start time is recorded automatically by the system. It cannot be manually edited.
+11. The audit trail is append-only. Actions, comments, and field history cannot be edited or deleted.
+12. A rejected change can be edited and resubmitted by the requestor on the same request record.
+13. The rejector determines whether prior approvals need to be re-collected on resubmission.
 
 ---
 
-## 22. Notifications
+---
 
-The system sends a notification to the relevant people at each key moment:
+# PART THREE: ACCESS AND ADMINISTRATION
 
-| When | Who Gets Notified |
+---
+
+## 36. Permissions
+
+### Workflow Engine Permissions
+
+| Permission | What It Allows |
+|---|---|
+| WORKFLOW_DEFINITIONS_VIEW | View published workflow definitions and step graphs |
+| WORKFLOW_DEFINITIONS_MANAGE | Create, edit, publish, archive, and clone workflow definitions |
+| WORKFLOW_INSTANCES_VIEW | View any running or completed workflow instance and its audit trail |
+| WORKFLOW_INSTANCES_MANAGE | Admin: force-advance steps, reassign tasks, cancel stuck instances |
+
+### Change Management Permissions
+
+| Permission | What It Allows |
+|---|---|
+| CHANGES_VIEW | View change requests, detail, timeline |
+| CHANGES_CREATE | Create new change requests |
+| CHANGES_UPDATE | Edit a request in DRAFT or SUBMITTED status |
+| CHANGES_DELETE | Delete a request in DRAFT status only |
+| CHANGES_SUBMIT | Submit a request to start the workflow |
+| CHANGES_ASSESS_RISK | Fill in or update the risk assessment |
+| CHANGES_APPROVE | Approve, reject, or request more info on a workflow step |
+| CHANGES_SCHEDULE | Set scheduled start/end date and maintenance window |
+| CHANGES_IMPLEMENT | Mark implementation as started, completed, failed, or rolled back |
+| CHANGES_CLOSE | Close a change |
+| CHANGES_CANCEL | Cancel a change in any non-final state |
+| CHANGES_PIR_CREATE | Submit a PIR |
+| CHANGES_PIR_VIEW | View PIR records |
+| CHANGES_MANAGE | Admin: reassign steps, override decisions, force state transitions |
+| CHANGES_DASHBOARD | Access the executive dashboard |
+| MAINTENANCE_WINDOWS_VIEW | View maintenance windows and blackout periods |
+| MAINTENANCE_WINDOWS_MANAGE | Create, edit, and delete maintenance windows and blackouts |
+
+### Default Role Assignments
+
+| Role | Permissions |
+|---|---|
+| System Administrator | All permissions |
+| Change Manager | All CHANGES_* + MAINTENANCE_WINDOWS_MANAGE + WORKFLOW_INSTANCES_VIEW |
+| CAB Member | CHANGES_VIEW + CHANGES_APPROVE + CHANGES_DASHBOARD |
+| IT Staff | CHANGES_VIEW + CHANGES_CREATE + CHANGES_SUBMIT + CHANGES_IMPLEMENT + CHANGES_PIR_CREATE + CHANGES_PIR_VIEW + CHANGES_CANCEL + MAINTENANCE_WINDOWS_VIEW |
+| Viewer | CHANGES_VIEW + CHANGES_PIR_VIEW + MAINTENANCE_WINDOWS_VIEW |
+
+---
+
+## 37. Notifications Reference — Change Management
+
+| Event | Recipients |
 |---|---|
 | Request submitted | Requestor |
-| An approval step is assigned to someone | Each assignee |
-| Approved | Requestor + the assigned implementor |
-| Rejected | Requestor (with rejection reason) |
-| Approver requests more information | Requestor |
-| Requestor provides the requested information | The approvers waiting |
+| Approval step assigned | Each assignee |
+| Approved | Requestor + assignee |
+| Rejected | Requestor (with reason) |
+| More info requested | Requestor |
+| Info provided by requestor | Step assignees |
 | Scheduled | Requestor + assignee |
 | Implementation started | Requestor + CI owners |
 | Completed | Requestor + approvers |
 | Failed | Requestor + assignee + approvers |
-| SLA approaching deadline | The approvers on the active step |
-| SLA breached | Approvers + their manager |
-| PIR reminder (24h) | Assignee |
+| SLA warning | Step assignees |
+| SLA breach | Step assignees + their manager |
+| PIR reminder (24h) | Assignee (implementor) |
 | PIR escalation (72h) | Assignee + their manager |
-| PIR escalation (7 days) | Assignee + Change Manager |
+| PIR escalation (7 days) | Assignee + Change Manager role |
 | Closed | Requestor |
-| Emergency change submitted | All CAB members + all CI owners |
-| Emergency change approved | Requestor + assignee + service owners |
+| Emergency submitted | All CAB members + all CI owners + Change Manager |
+| Emergency approved | Requestor + assignee + service owners |
 
 ---
 
-## 23. Business Rules
+## 38. Out of Scope
 
-These are the rules the system must enforce unconditionally. No user action can bypass them.
-
-1. An Application Release, Infrastructure Release, or Config/Firewall Release cannot be submitted unless it is linked to a parent CR.
-2. A parent CR cannot be closed while any of its sub-requests is in an active (non-final) state.
-3. A Normal change cannot be scheduled during a blackout period.
-4. A Normal change must be scheduled within an active maintenance window.
-5. An Emergency change bypasses maintenance window requirements but shows a warning if scheduled during a blackout.
-6. Standard changes are always auto-approved. No human can be added as an approver to a Standard change workflow.
-7. Normal and Emergency changes require a Post-Implementation Review before they can be closed.
-8. A change with a Critical risk score (21–25) cannot proceed to the approval step until the Change Manager explicitly acknowledges the risk.
-9. A rejected change cannot be resubmitted. A new request must be created.
-10. Only the person who created the request, or a user with the Cancel permission, can cancel a change.
-11. Cancellation is permanent — a cancelled change cannot be restarted.
-12. The implementation start time is recorded automatically by the system when Start Implementation is clicked. The implementor cannot manually edit it.
-13. A delegation only applies while it is active (within the date range). Expired delegations have no effect.
-14. The audit trail is append-only. No action, comment, or decision can be modified or deleted after it is recorded.
-
----
-
-## 24. Change Number Format
-
-Every request gets a unique reference number generated automatically at creation. The format identifies the type and date:
-
-| Type | Format | Example |
-|---|---|---|
-| Change Request | CR-YYYYMMDD-NNNNN | CR-20260414-00042 |
-| Application Release | AR-YYYYMMDD-NNNNN | AR-20260414-00001 |
-| Infrastructure Release | IR-YYYYMMDD-NNNNN | IR-20260414-00003 |
-| Config/Firewall Release | CFR-YYYYMMDD-NNNNN | CFR-20260414-00001 |
-| Access Request | ACC-YYYYMMDD-NNNNN | ACC-20260414-00007 |
-| Firewall Request | FW-YYYYMMDD-NNNNN | FW-20260414-00002 |
-| Other Request | OTH-YYYYMMDD-NNNNN | OTH-20260414-00001 |
-
-The counter resets daily per type and is padded to 5 digits.
-
----
-
-## 25. Permissions Summary
-
-Access is controlled by what role a user has been assigned. The key permission levels are:
-
-| What a user can do | Permission needed |
-|---|---|
-| View any change request | CHANGES_VIEW |
-| Create a new change request | CHANGES_CREATE |
-| Edit a request while it is in Draft or Submitted | CHANGES_UPDATE |
-| Delete a Draft request | CHANGES_DELETE |
-| Submit a request to start the workflow | CHANGES_SUBMIT |
-| Fill in or update the risk assessment | CHANGES_ASSESS_RISK |
-| Approve, reject, or request more info | CHANGES_APPROVE |
-| Set the scheduled date and maintenance window | CHANGES_SCHEDULE |
-| Mark implementation as started, completed, failed, or rolled back | CHANGES_IMPLEMENT |
-| Close a change | CHANGES_CLOSE |
-| Cancel a change | CHANGES_CANCEL |
-| Submit a PIR | CHANGES_PIR_CREATE |
-| View a PIR | CHANGES_PIR_VIEW |
-| Admin overrides: re-assign steps, force decisions | CHANGES_MANAGE |
-| View the executive dashboard | CHANGES_DASHBOARD |
-| View maintenance windows and blackouts | MAINTENANCE_WINDOWS_VIEW |
-| Create, edit, delete windows and blackouts | MAINTENANCE_WINDOWS_MANAGE |
-
-Default role presets:
-- **System Administrator** — everything
-- **Change Manager** — all change permissions + manage maintenance windows + view workflow instances
-- **CAB Member** — view changes + approve + view dashboard
-- **IT Staff** — view + create + submit + implement + PIR + cancel + view windows
-- **Viewer** — view changes + view PIR + view windows
-
----
-
-## 26. Out of Scope
-
-The following are explicitly not part of this module:
+The following are not included in this system:
 
 - Integration with external ticketing systems (ServiceNow, Jira, etc.)
 - Customer-facing change notifications
-- Change request templates stored per CI type
-- Automated implementation (the system tracks the work; a human does it)
+- Automated implementation (the system tracks work; humans perform it)
 - Cost tracking or budget approval for changes
-- Change impact simulation
-- SLA reporting to external regulatory bodies
-- Mobile app or dedicated API for third-party consumers
+- SMS, WhatsApp, or Teams notification channels
+- Mobile application
+- Third-party API for external consumers
+- AI-assisted risk scoring or change classification
