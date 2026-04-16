@@ -175,7 +175,7 @@ export type BusinessProcessGroupByOutputType = {
   _max: BusinessProcessMaxAggregateOutputType | null
 }
 
-type GetBusinessProcessGroupByPayload<T extends BusinessProcessGroupByArgs> = Prisma.PrismaPromise<
+export type GetBusinessProcessGroupByPayload<T extends BusinessProcessGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<BusinessProcessGroupByOutputType, T['by']> &
       {
@@ -1180,6 +1180,11 @@ export type BusinessProcessFindManyArgs<ExtArgs extends runtime.Types.Extensions
    * Skip the first `n` BusinessProcesses.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of BusinessProcesses.
+   */
   distinct?: Prisma.BusinessProcessScalarFieldEnum | Prisma.BusinessProcessScalarFieldEnum[]
 }
 

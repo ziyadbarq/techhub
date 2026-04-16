@@ -179,7 +179,7 @@ export type LicenseAddonGroupByOutputType = {
   _max: LicenseAddonMaxAggregateOutputType | null
 }
 
-type GetLicenseAddonGroupByPayload<T extends LicenseAddonGroupByArgs> = Prisma.PrismaPromise<
+export type GetLicenseAddonGroupByPayload<T extends LicenseAddonGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<LicenseAddonGroupByOutputType, T['by']> &
       {
@@ -1358,6 +1358,11 @@ export type LicenseAddonFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` LicenseAddons.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of LicenseAddons.
+   */
   distinct?: Prisma.LicenseAddonScalarFieldEnum | Prisma.LicenseAddonScalarFieldEnum[]
 }
 

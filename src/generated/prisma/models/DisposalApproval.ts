@@ -172,7 +172,7 @@ export type DisposalApprovalGroupByOutputType = {
   _max: DisposalApprovalMaxAggregateOutputType | null
 }
 
-type GetDisposalApprovalGroupByPayload<T extends DisposalApprovalGroupByArgs> = Prisma.PrismaPromise<
+export type GetDisposalApprovalGroupByPayload<T extends DisposalApprovalGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DisposalApprovalGroupByOutputType, T['by']> &
       {
@@ -1334,6 +1334,11 @@ export type DisposalApprovalFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` DisposalApprovals.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of DisposalApprovals.
+   */
   distinct?: Prisma.DisposalApprovalScalarFieldEnum | Prisma.DisposalApprovalScalarFieldEnum[]
 }
 

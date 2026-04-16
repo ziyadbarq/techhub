@@ -196,7 +196,7 @@ export type AssetKitGroupByOutputType = {
   _max: AssetKitMaxAggregateOutputType | null
 }
 
-type GetAssetKitGroupByPayload<T extends AssetKitGroupByArgs> = Prisma.PrismaPromise<
+export type GetAssetKitGroupByPayload<T extends AssetKitGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AssetKitGroupByOutputType, T['by']> &
       {
@@ -1585,6 +1585,11 @@ export type AssetKitFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Skip the first `n` AssetKits.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of AssetKits.
+   */
   distinct?: Prisma.AssetKitScalarFieldEnum | Prisma.AssetKitScalarFieldEnum[]
 }
 

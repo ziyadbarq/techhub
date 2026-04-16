@@ -203,7 +203,7 @@ export type ServiceRelationshipGroupByOutputType = {
   _max: ServiceRelationshipMaxAggregateOutputType | null
 }
 
-type GetServiceRelationshipGroupByPayload<T extends ServiceRelationshipGroupByArgs> = Prisma.PrismaPromise<
+export type GetServiceRelationshipGroupByPayload<T extends ServiceRelationshipGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ServiceRelationshipGroupByOutputType, T['by']> &
       {
@@ -1534,6 +1534,11 @@ export type ServiceRelationshipFindManyArgs<ExtArgs extends runtime.Types.Extens
    * Skip the first `n` ServiceRelationships.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ServiceRelationships.
+   */
   distinct?: Prisma.ServiceRelationshipScalarFieldEnum | Prisma.ServiceRelationshipScalarFieldEnum[]
 }
 

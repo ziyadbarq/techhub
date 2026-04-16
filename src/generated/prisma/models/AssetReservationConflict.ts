@@ -165,7 +165,7 @@ export type AssetReservationConflictGroupByOutputType = {
   _max: AssetReservationConflictMaxAggregateOutputType | null
 }
 
-type GetAssetReservationConflictGroupByPayload<T extends AssetReservationConflictGroupByArgs> = Prisma.PrismaPromise<
+export type GetAssetReservationConflictGroupByPayload<T extends AssetReservationConflictGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AssetReservationConflictGroupByOutputType, T['by']> &
       {
@@ -1283,6 +1283,11 @@ export type AssetReservationConflictFindManyArgs<ExtArgs extends runtime.Types.E
    * Skip the first `n` AssetReservationConflicts.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of AssetReservationConflicts.
+   */
   distinct?: Prisma.AssetReservationConflictScalarFieldEnum | Prisma.AssetReservationConflictScalarFieldEnum[]
 }
 

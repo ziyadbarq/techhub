@@ -268,7 +268,7 @@ export type WarrantyGroupByOutputType = {
   _max: WarrantyMaxAggregateOutputType | null
 }
 
-type GetWarrantyGroupByPayload<T extends WarrantyGroupByArgs> = Prisma.PrismaPromise<
+export type GetWarrantyGroupByPayload<T extends WarrantyGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<WarrantyGroupByOutputType, T['by']> &
       {
@@ -1962,6 +1962,11 @@ export type WarrantyFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Skip the first `n` Warranties.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Warranties.
+   */
   distinct?: Prisma.WarrantyScalarFieldEnum | Prisma.WarrantyScalarFieldEnum[]
 }
 

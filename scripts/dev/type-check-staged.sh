@@ -23,7 +23,10 @@ echo ""
 
 # Build a temporary tsconfig that extends the project config but scopes to staged files
 TMP_TSCONFIG=$(mktemp)
-ROOT_TSCONFIG="$(pwd -P)/tsconfig.json"
+# Resolve with Node so extends path works on Windows (Git Bash gives /c/... which tsc.exe may not read)
+ROOT_TSCONFIG="$(
+  node -e "const p=require('path');console.log(p.resolve('tsconfig.json').replace(/\\\\/g,'/'))"
+)"
 cleanup() {
   rm -f "$TMP_TSCONFIG"
 }

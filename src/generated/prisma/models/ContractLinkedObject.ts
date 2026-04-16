@@ -165,7 +165,7 @@ export type ContractLinkedObjectGroupByOutputType = {
   _max: ContractLinkedObjectMaxAggregateOutputType | null
 }
 
-type GetContractLinkedObjectGroupByPayload<T extends ContractLinkedObjectGroupByArgs> = Prisma.PrismaPromise<
+export type GetContractLinkedObjectGroupByPayload<T extends ContractLinkedObjectGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ContractLinkedObjectGroupByOutputType, T['by']> &
       {
@@ -1157,6 +1157,11 @@ export type ContractLinkedObjectFindManyArgs<ExtArgs extends runtime.Types.Exten
    * Skip the first `n` ContractLinkedObjects.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ContractLinkedObjects.
+   */
   distinct?: Prisma.ContractLinkedObjectScalarFieldEnum | Prisma.ContractLinkedObjectScalarFieldEnum[]
 }
 

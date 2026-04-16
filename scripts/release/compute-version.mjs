@@ -244,22 +244,26 @@ function emit(result, outputFormat) {
   }
 
   if (outputFormat === "env") {
-    process.stdout.write(`APP_VERSION=${toEnvValue(result.appVersion)}\n`);
-    process.stdout.write(`RELEASE_TYPE=${toEnvValue(result.releaseType)}\n`);
     process.stdout.write(
-      `RELEASE_NEEDED=${toEnvValue(result.releaseNeeded)}\n`,
+      `export APP_VERSION=${toEnvValue(result.appVersion)}\n`,
     );
     process.stdout.write(
-      `VERSION_SOURCE_TAG=${toEnvValue(result.versionSourceTag)}\n`,
+      `export RELEASE_TYPE=${toEnvValue(result.releaseType)}\n`,
     );
     process.stdout.write(
-      `VERSION_SOURCE_BASE=${toEnvValue(result.versionSourceBase)}\n`,
+      `export RELEASE_NEEDED=${toEnvValue(result.releaseNeeded)}\n`,
     );
     process.stdout.write(
-      `VERSION_EXACT_TAG=${toEnvValue(result.versionExactTag)}\n`,
+      `export VERSION_SOURCE_TAG=${toEnvValue(result.versionSourceTag)}\n`,
     );
     process.stdout.write(
-      `VERSION_COMMITS_ANALYZED=${toEnvValue(result.versionCommitsAnalyzed)}\n`,
+      `export VERSION_SOURCE_BASE=${toEnvValue(result.versionSourceBase)}\n`,
+    );
+    process.stdout.write(
+      `export VERSION_EXACT_TAG=${toEnvValue(result.versionExactTag)}\n`,
+    );
+    process.stdout.write(
+      `export VERSION_COMMITS_ANALYZED=${toEnvValue(result.versionCommitsAnalyzed)}\n`,
     );
     return;
   }

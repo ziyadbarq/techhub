@@ -186,7 +186,7 @@ export type AssetCategoryGroupByOutputType = {
   _max: AssetCategoryMaxAggregateOutputType | null
 }
 
-type GetAssetCategoryGroupByPayload<T extends AssetCategoryGroupByArgs> = Prisma.PrismaPromise<
+export type GetAssetCategoryGroupByPayload<T extends AssetCategoryGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AssetCategoryGroupByOutputType, T['by']> &
       {
@@ -2068,6 +2068,11 @@ export type AssetCategoryFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` AssetCategories.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of AssetCategories.
+   */
   distinct?: Prisma.AssetCategoryScalarFieldEnum | Prisma.AssetCategoryScalarFieldEnum[]
 }
 

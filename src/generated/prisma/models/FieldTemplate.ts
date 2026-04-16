@@ -210,7 +210,7 @@ export type FieldTemplateGroupByOutputType = {
   _max: FieldTemplateMaxAggregateOutputType | null
 }
 
-type GetFieldTemplateGroupByPayload<T extends FieldTemplateGroupByArgs> = Prisma.PrismaPromise<
+export type GetFieldTemplateGroupByPayload<T extends FieldTemplateGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<FieldTemplateGroupByOutputType, T['by']> &
       {
@@ -1541,6 +1541,11 @@ export type FieldTemplateFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` FieldTemplates.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of FieldTemplates.
+   */
   distinct?: Prisma.FieldTemplateScalarFieldEnum | Prisma.FieldTemplateScalarFieldEnum[]
 }
 

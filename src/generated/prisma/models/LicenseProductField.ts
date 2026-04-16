@@ -216,7 +216,7 @@ export type LicenseProductFieldGroupByOutputType = {
   _max: LicenseProductFieldMaxAggregateOutputType | null
 }
 
-type GetLicenseProductFieldGroupByPayload<T extends LicenseProductFieldGroupByArgs> = Prisma.PrismaPromise<
+export type GetLicenseProductFieldGroupByPayload<T extends LicenseProductFieldGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<LicenseProductFieldGroupByOutputType, T['by']> &
       {
@@ -1450,6 +1450,11 @@ export type LicenseProductFieldFindManyArgs<ExtArgs extends runtime.Types.Extens
    * Skip the first `n` LicenseProductFields.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of LicenseProductFields.
+   */
   distinct?: Prisma.LicenseProductFieldScalarFieldEnum | Prisma.LicenseProductFieldScalarFieldEnum[]
 }
 

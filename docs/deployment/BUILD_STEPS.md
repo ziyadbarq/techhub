@@ -178,10 +178,8 @@ chmod +x /usr/local/bin/yq
 
 # Update image name in values-dev.yaml
 export IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
-export NPM_MIGRATION="${npm_migration}"
 
 yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_OCI_VALUES}
-yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_OCI_VALUES}
 
 # 4. Commit and push changes to trigger ArgoCD sync
 git add manifests/${PROJECT}/${DEV_OCI_VALUES}
@@ -194,7 +192,7 @@ git push github -o ci.skip HEAD:main
 - **GitOps**: CI only updates configuration (values.yaml), ArgoCD handles deployment
 - **ArgoCD**: Monitors deployment-configs repo and automatically syncs changes to Kubernetes
 - **Separation of Concerns**: Build pipeline doesn't need kubectl/helm access
-- **Prisma Migrations**: Controlled via `npm_migration` UI variable → sets `jobs.migrate.enabled` in values.yaml
+- **Prisma Migrations**: Run unconditionally on pod startup inside `docker-start.mjs` — no UI flag, no separate K8s Job
 - **Release Tagging**: Successful `main` deployments create the next `vX.Y.Z` Git tag automatically, using the CI-calculated version
 
 **Values File**: `manifests/techhub/values-dev.yaml`
@@ -322,10 +320,7 @@ git push github -o ci.skip HEAD:main
 - `oci` - Oracle Cloud Infrastructure
 - `gcp` - Google Cloud Platform
 
-**npm_migration**: Prisma migration flag
-
-- `true` - Enable migrations (sets `jobs.migrate.enabled=true` in values.yaml)
-- `false` - Skip migrations (default)
+> **Prisma migrations**: There is no UI flag. Migrations run automatically at pod startup in `docker-start.mjs` before the Next.js server accepts traffic.
 
 ### Pipeline Variables (Configured in .gitlab-ci.yml)
 

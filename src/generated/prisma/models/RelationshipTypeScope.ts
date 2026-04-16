@@ -172,7 +172,7 @@ export type RelationshipTypeScopeGroupByOutputType = {
   _max: RelationshipTypeScopeMaxAggregateOutputType | null
 }
 
-type GetRelationshipTypeScopeGroupByPayload<T extends RelationshipTypeScopeGroupByArgs> = Prisma.PrismaPromise<
+export type GetRelationshipTypeScopeGroupByPayload<T extends RelationshipTypeScopeGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<RelationshipTypeScopeGroupByOutputType, T['by']> &
       {
@@ -1463,6 +1463,11 @@ export type RelationshipTypeScopeFindManyArgs<ExtArgs extends runtime.Types.Exte
    * Skip the first `n` RelationshipTypeScopes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of RelationshipTypeScopes.
+   */
   distinct?: Prisma.RelationshipTypeScopeScalarFieldEnum | Prisma.RelationshipTypeScopeScalarFieldEnum[]
 }
 

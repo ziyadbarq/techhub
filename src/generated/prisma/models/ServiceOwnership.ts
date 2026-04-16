@@ -172,7 +172,7 @@ export type ServiceOwnershipGroupByOutputType = {
   _max: ServiceOwnershipMaxAggregateOutputType | null
 }
 
-type GetServiceOwnershipGroupByPayload<T extends ServiceOwnershipGroupByArgs> = Prisma.PrismaPromise<
+export type GetServiceOwnershipGroupByPayload<T extends ServiceOwnershipGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ServiceOwnershipGroupByOutputType, T['by']> &
       {
@@ -1335,6 +1335,11 @@ export type ServiceOwnershipFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` ServiceOwnerships.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ServiceOwnerships.
+   */
   distinct?: Prisma.ServiceOwnershipScalarFieldEnum | Prisma.ServiceOwnershipScalarFieldEnum[]
 }
 

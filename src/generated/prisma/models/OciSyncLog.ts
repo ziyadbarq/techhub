@@ -310,7 +310,7 @@ export type OciSyncLogGroupByOutputType = {
   _max: OciSyncLogMaxAggregateOutputType | null
 }
 
-type GetOciSyncLogGroupByPayload<T extends OciSyncLogGroupByArgs> = Prisma.PrismaPromise<
+export type GetOciSyncLogGroupByPayload<T extends OciSyncLogGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<OciSyncLogGroupByOutputType, T['by']> &
       {
@@ -1442,6 +1442,11 @@ export type OciSyncLogFindManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Skip the first `n` OciSyncLogs.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of OciSyncLogs.
+   */
   distinct?: Prisma.OciSyncLogScalarFieldEnum | Prisma.OciSyncLogScalarFieldEnum[]
 }
 

@@ -383,7 +383,7 @@ export type DatabaseBackupGroupByOutputType = {
   _max: DatabaseBackupMaxAggregateOutputType | null
 }
 
-type GetDatabaseBackupGroupByPayload<T extends DatabaseBackupGroupByArgs> = Prisma.PrismaPromise<
+export type GetDatabaseBackupGroupByPayload<T extends DatabaseBackupGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DatabaseBackupGroupByOutputType, T['by']> &
       {
@@ -2351,6 +2351,11 @@ export type DatabaseBackupFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Skip the first `n` DatabaseBackups.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of DatabaseBackups.
+   */
   distinct?: Prisma.DatabaseBackupScalarFieldEnum | Prisma.DatabaseBackupScalarFieldEnum[]
 }
 

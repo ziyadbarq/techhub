@@ -354,7 +354,7 @@ export type IntuneDeviceGroupByOutputType = {
   _max: IntuneDeviceMaxAggregateOutputType | null
 }
 
-type GetIntuneDeviceGroupByPayload<T extends IntuneDeviceGroupByArgs> = Prisma.PrismaPromise<
+export type GetIntuneDeviceGroupByPayload<T extends IntuneDeviceGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<IntuneDeviceGroupByOutputType, T['by']> &
       {
@@ -2758,6 +2758,11 @@ export type IntuneDeviceFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` IntuneDevices.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of IntuneDevices.
+   */
   distinct?: Prisma.IntuneDeviceScalarFieldEnum | Prisma.IntuneDeviceScalarFieldEnum[]
 }
 

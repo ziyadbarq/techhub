@@ -255,7 +255,7 @@ export type LicenseEntitlementGroupByOutputType = {
   _max: LicenseEntitlementMaxAggregateOutputType | null
 }
 
-type GetLicenseEntitlementGroupByPayload<T extends LicenseEntitlementGroupByArgs> = Prisma.PrismaPromise<
+export type GetLicenseEntitlementGroupByPayload<T extends LicenseEntitlementGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<LicenseEntitlementGroupByOutputType, T['by']> &
       {
@@ -2124,6 +2124,11 @@ export type LicenseEntitlementFindManyArgs<ExtArgs extends runtime.Types.Extensi
    * Skip the first `n` LicenseEntitlements.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of LicenseEntitlements.
+   */
   distinct?: Prisma.LicenseEntitlementScalarFieldEnum | Prisma.LicenseEntitlementScalarFieldEnum[]
 }
 

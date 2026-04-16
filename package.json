@@ -83,6 +83,7 @@
     "docker:local": "npm run build:fast && docker compose -f docker-compose.local.yml up --build -d",
     "docker:local:logs": "docker compose -f docker-compose.local.yml logs app -f",
     "docker:local:down": "docker compose -f docker-compose.local.yml down",
+    "docker:local:reset": "docker compose -f docker-compose.local.yml down -v && npm run docker:local",
     "setup": "npm install && npm run db:migrate && npm run db:seed",
     "prepare": "husky"
   },
@@ -136,7 +137,7 @@
     "@types/qrcode": "^1.5.6",
     "@types/xlsx": "^0.0.35",
     "@xyflow/react": "^12.9.3",
-    "better-auth": "1.4.4",
+    "better-auth": "^1.6.4",
     "bullmq": "^5.63.2",
     "chalk": "^5.6.2",
     "class-variance-authority": "^0.7.1",

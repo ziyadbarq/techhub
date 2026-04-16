@@ -172,7 +172,7 @@ export type LifecycleModelGroupByOutputType = {
   _max: LifecycleModelMaxAggregateOutputType | null
 }
 
-type GetLifecycleModelGroupByPayload<T extends LifecycleModelGroupByArgs> = Prisma.PrismaPromise<
+export type GetLifecycleModelGroupByPayload<T extends LifecycleModelGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<LifecycleModelGroupByOutputType, T['by']> &
       {
@@ -1780,6 +1780,11 @@ export type LifecycleModelFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Skip the first `n` LifecycleModels.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of LifecycleModels.
+   */
   distinct?: Prisma.LifecycleModelScalarFieldEnum | Prisma.LifecycleModelScalarFieldEnum[]
 }
 

@@ -172,7 +172,7 @@ export type ServiceAssetGroupByOutputType = {
   _max: ServiceAssetMaxAggregateOutputType | null
 }
 
-type GetServiceAssetGroupByPayload<T extends ServiceAssetGroupByArgs> = Prisma.PrismaPromise<
+export type GetServiceAssetGroupByPayload<T extends ServiceAssetGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ServiceAssetGroupByOutputType, T['by']> &
       {
@@ -1335,6 +1335,11 @@ export type ServiceAssetFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` ServiceAssets.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ServiceAssets.
+   */
   distinct?: Prisma.ServiceAssetScalarFieldEnum | Prisma.ServiceAssetScalarFieldEnum[]
 }
 

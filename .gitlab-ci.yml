@@ -30,13 +30,6 @@ variables:
       - "gcp"
       - "oci"
 
-  npm_migration:
-    description: "Select the flag true to run Prisma migrations"
-    value: "true"
-    options:
-      - "true"
-      - "false"
-
   PROJECT: "techhub"
   DEV_ENV: dev
   UAT_ENV: uat
@@ -303,11 +296,9 @@ build-and-push-gcp-to-argo:
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
     - export FULL_IMAGE_NAME="${DEV_CNTNR_GCP_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - export IMAGE_NAME="${FULL_IMAGE_NAME}"
-    - export NPM_MIGRATION="${npm_migration}"
     - git clone --depth 1 http://${GITLAB_UN_VAL}:${GITLAB_TOKEN_VAL}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd.git
     - cd values-yaml-npd
     - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" ${PROJECT}/${DEV_GCP_VALUES}
-    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" ${PROJECT}/${DEV_GCP_VALUES}
     - export COMMIT_ID="${commit_id}" APP_VER="${version}" ITAG="${IMAGE_TAG}"
     - yq e -i '(.deployment.env[] | select(.name == "GIT_COMMIT")).value = strenv(COMMIT_ID)' ${PROJECT}/${DEV_GCP_VALUES}
     - yq e -i '(.deployment.env[] | select(.name == "APP_VERSION")).value = strenv(APP_VER)' ${PROJECT}/${DEV_GCP_VALUES}
@@ -395,13 +386,11 @@ build-and-push-oci-to-argo:
     - export IMAGE_TAG="${version}-${commit_id}-${CI_JOB_ID}"
     - export FULL_IMAGE_NAME="${DEV_CNTNR_OCI_REG_IMG_PREFIX}/${PROJECT}:${IMAGE_TAG}"
     - export IMAGE_NAME="${FULL_IMAGE_NAME}"
-    - export NPM_MIGRATION="${npm_migration}"
     - ORIGINAL_DIR=$(pwd)
     - cd deployment-configs && git checkout main
     - git config pull.rebase false
     - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" manifests/${PROJECT}/${DEV_OCI_VALUES}
-    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${DEV_OCI_VALUES}
     - export COMMIT_ID="${commit_id}" APP_VER="${version}" ITAG="${IMAGE_TAG}"
     - yq e -i '(.deployment.env[] | select(.name == "GIT_COMMIT")).value = strenv(COMMIT_ID)' manifests/${PROJECT}/${DEV_OCI_VALUES}
     - yq e -i '(.deployment.env[] | select(.name == "APP_VERSION")).value = strenv(APP_VER)' manifests/${PROJECT}/${DEV_OCI_VALUES}
@@ -549,9 +538,7 @@ tag-main-release-oci:
     - git config pull.rebase false
     - git pull http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - export IMAGE_NAME="${FULL_IMAGE_NAME}"
-    - export NPM_MIGRATION="${npm_migration}"
     - yq e -i ".deployment.imageName = strenv(FULL_IMAGE_NAME)" manifests/${PROJECT}/${VALUES_FILE}
-    - yq e -i ".jobs.migrate.enabled = ${NPM_MIGRATION}" manifests/${PROJECT}/${VALUES_FILE}
     - export PROMOTE_ITAG="${FULL_IMAGE_NAME##*:}"
     - export PROMOTE_VER=$(echo "$PROMOTE_ITAG" | cut -d'-' -f1)
     - export PROMOTE_COMMIT=$(echo "$PROMOTE_ITAG" | cut -d'-' -f2)

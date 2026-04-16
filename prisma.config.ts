@@ -1,10 +1,11 @@
 import { config } from "dotenv";
-import fs from "node:fs";
+import { existsSync } from "node:fs";
 import { defineConfig, env } from "prisma/config";
 
 // Load environment variables from .env.local if present, otherwise fall back to .env
-const envFile = fs.existsSync(".env.local") ? ".env.local" : ".env";
-config({ path: envFile });
+const envFile = existsSync(".env.local") ? ".env.local" : ".env";
+// override: so local DATABASE_URL etc. win over inherited process env (e.g. IDE-injected vars)
+config({ path: envFile, override: true });
 
 const dbUrl = env("DATABASE_URL");
 const shadowDbUrl =

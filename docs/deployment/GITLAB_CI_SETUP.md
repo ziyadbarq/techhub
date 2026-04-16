@@ -143,12 +143,10 @@ resources:
     cpu: 500m
     memory: 1Gi
 
-# Prisma migrations job (controlled by CI via npm_migration flag)
-jobs:
-  migrate:
-    enabled: false  # Set to true by CI when npm_migration=true
-    imageName: jed.ocir.io/axbp9ow0rohq/techhub:1.0.0-abc123-456789
-    command: ["npx", "prisma", "migrate", "deploy"]
+# Prisma migrations: run unconditionally at pod startup inside docker-start.mjs.
+# The values.yaml no longer needs a `jobs.migrate` block — if one exists in the
+# chart defaults it should be disabled/removed, since migrations are applied by
+# the app container before the Next.js server starts accepting traffic.
 
 # Environment variables (reference backend-configs ConfigMaps/Secrets)
 env:
@@ -339,9 +337,7 @@ When manually triggering pipeline via GitLab UI:
    - `oci` - Oracle Cloud Infrastructure
    - `gcp` - Google Cloud Platform
 
-3. **npm_migration**: Prisma migration flag
-   - `true` - Enable migrations (sets `jobs.migrate.enabled=true`)
-   - `false` - Skip migrations (default)
+> **Prisma migrations**: No UI flag. Migrations are applied unconditionally at pod startup by `docker-start.mjs` before the Next.js server starts.
 
 ---
 
@@ -414,7 +410,6 @@ Trigger pipeline manually via GitLab UI:
 3. Set variables:
    - `type`: `build_only`
    - `CLOUD`: `oci`
-   - `npm_migration`: `false`
 4. Click **Run pipeline**
 
 **Expected**:
@@ -636,34 +631,26 @@ kubectl get pods -n istio-dev
 **Symptoms**:
 - Deployed successfully
 - But database schema not updated
-- Migration job pod not created
 
-**Causes**:
-- `npm_migration` variable set to `false`
-- `jobs.migrate.enabled` not updated in values.yaml
-- Migration job failed
+**Context**: Migrations are applied unconditionally at pod startup by `docker-start.mjs` before the Next.js server starts. There is no separate migrate Job and no UI flag. If the pod is running and serving traffic, migrations have already been applied (otherwise startup would have exited non-zero).
 
-**Solutions**:
-1. Re-run pipeline with `npm_migration=true`:
-   - **CI/CD** > **Pipelines** > **Run pipeline**
-   - Set `npm_migration`: `true`
-
-2. Verify values.yaml was updated:
+**Diagnosis**:
+1. Check startup logs for the `[migrate]` lines:
    ```bash
-   cat manifests/techhub/values-dev.yaml | grep -A 3 "jobs:"
-   # Should show: enabled: true
+   kubectl logs -n istio-dev <pod-name> | grep '\[migrate\]'
+   # Expect either: "Database is up to date" or "N migration(s) applied successfully"
    ```
 
-3. Check migration job logs:
+2. If a pod is stuck in CrashLoopBackOff, inspect the previous container's logs:
    ```bash
-   kubectl get jobs -n istio-dev | grep techhub-migrate
-   kubectl logs job/techhub-migrate -n istio-dev
+   kubectl logs -n istio-dev <pod-name> --previous | grep -i migrat
    ```
 
-4. Run migrations manually:
+3. If needed, run migrations manually against the same DATABASE_URL:
    ```bash
-   kubectl exec -it <pod-name> -n istio-dev -- npx prisma migrate deploy
+   kubectl exec -it -n istio-dev <pod-name> -- node docker-start.mjs
    ```
+   (or run `npx prisma migrate deploy` locally against the target DB.)
 
 ---
 

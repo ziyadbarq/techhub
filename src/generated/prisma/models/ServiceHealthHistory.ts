@@ -245,7 +245,7 @@ export type ServiceHealthHistoryGroupByOutputType = {
   _max: ServiceHealthHistoryMaxAggregateOutputType | null
 }
 
-type GetServiceHealthHistoryGroupByPayload<T extends ServiceHealthHistoryGroupByArgs> = Prisma.PrismaPromise<
+export type GetServiceHealthHistoryGroupByPayload<T extends ServiceHealthHistoryGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ServiceHealthHistoryGroupByOutputType, T['by']> &
       {
@@ -1417,6 +1417,11 @@ export type ServiceHealthHistoryFindManyArgs<ExtArgs extends runtime.Types.Exten
    * Skip the first `n` ServiceHealthHistories.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ServiceHealthHistories.
+   */
   distinct?: Prisma.ServiceHealthHistoryScalarFieldEnum | Prisma.ServiceHealthHistoryScalarFieldEnum[]
 }
 

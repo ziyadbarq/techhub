@@ -256,7 +256,7 @@ export type AssetReservationGroupByOutputType = {
   _max: AssetReservationMaxAggregateOutputType | null
 }
 
-type GetAssetReservationGroupByPayload<T extends AssetReservationGroupByArgs> = Prisma.PrismaPromise<
+export type GetAssetReservationGroupByPayload<T extends AssetReservationGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AssetReservationGroupByOutputType, T['by']> &
       {
@@ -3207,6 +3207,11 @@ export type AssetReservationFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` AssetReservations.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of AssetReservations.
+   */
   distinct?: Prisma.AssetReservationScalarFieldEnum | Prisma.AssetReservationScalarFieldEnum[]
 }
 

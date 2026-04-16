@@ -280,7 +280,7 @@ export type MaintenanceScheduleGroupByOutputType = {
   _max: MaintenanceScheduleMaxAggregateOutputType | null
 }
 
-type GetMaintenanceScheduleGroupByPayload<T extends MaintenanceScheduleGroupByArgs> = Prisma.PrismaPromise<
+export type GetMaintenanceScheduleGroupByPayload<T extends MaintenanceScheduleGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<MaintenanceScheduleGroupByOutputType, T['by']> &
       {
@@ -2155,6 +2155,11 @@ export type MaintenanceScheduleFindManyArgs<ExtArgs extends runtime.Types.Extens
    * Skip the first `n` MaintenanceSchedules.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of MaintenanceSchedules.
+   */
   distinct?: Prisma.MaintenanceScheduleScalarFieldEnum | Prisma.MaintenanceScheduleScalarFieldEnum[]
 }
 

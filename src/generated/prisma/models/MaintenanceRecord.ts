@@ -265,7 +265,7 @@ export type MaintenanceRecordGroupByOutputType = {
   _max: MaintenanceRecordMaxAggregateOutputType | null
 }
 
-type GetMaintenanceRecordGroupByPayload<T extends MaintenanceRecordGroupByArgs> = Prisma.PrismaPromise<
+export type GetMaintenanceRecordGroupByPayload<T extends MaintenanceRecordGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<MaintenanceRecordGroupByOutputType, T['by']> &
       {
@@ -1921,6 +1921,11 @@ export type MaintenanceRecordFindManyArgs<ExtArgs extends runtime.Types.Extensio
    * Skip the first `n` MaintenanceRecords.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of MaintenanceRecords.
+   */
   distinct?: Prisma.MaintenanceRecordScalarFieldEnum | Prisma.MaintenanceRecordScalarFieldEnum[]
 }
 

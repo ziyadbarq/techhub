@@ -102,6 +102,7 @@ model TwoFactor {
   userId      String   @unique
   secret      String   @db.Text // Encrypted TOTP secret managed by Better Auth
   backupCodes String?  @db.Text // Encrypted backup codes JSON blob
+  verified    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

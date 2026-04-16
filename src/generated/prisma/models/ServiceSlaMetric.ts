@@ -260,7 +260,7 @@ export type ServiceSlaMetricGroupByOutputType = {
   _max: ServiceSlaMetricMaxAggregateOutputType | null
 }
 
-type GetServiceSlaMetricGroupByPayload<T extends ServiceSlaMetricGroupByArgs> = Prisma.PrismaPromise<
+export type GetServiceSlaMetricGroupByPayload<T extends ServiceSlaMetricGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ServiceSlaMetricGroupByOutputType, T['by']> &
       {
@@ -1475,6 +1475,11 @@ export type ServiceSlaMetricFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` ServiceSlaMetrics.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ServiceSlaMetrics.
+   */
   distinct?: Prisma.ServiceSlaMetricScalarFieldEnum | Prisma.ServiceSlaMetricScalarFieldEnum[]
 }
 
