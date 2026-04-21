@@ -8,6 +8,7 @@
 "use client";
 
 import * as React from "react";
+import { format, startOfToday } from "date-fns";
 import { Plus, X, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,14 +30,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Label } from "@/components/ui/label";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import {
   assignRoleToUserAction,
@@ -201,43 +196,23 @@ export function InlineRoleEditor({
             {/* Expiration Date Picker */}
             <div className="p-2">
               <Label className="text-xs">Expiration Date (Optional)</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className={cn(
-                      "mt-1 w-full justify-start text-left font-normal",
-                      !expirationDate && "text-muted-foreground",
-                    )}
-                  >
-                    {expirationDate ? (
-                      format(expirationDate, "PPP")
-                    ) : (
-                      <span>No expiration</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={expirationDate}
-                    onSelect={setExpirationDate}
-                    disabled={(date) => date < new Date()}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              {expirationDate && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setExpirationDate(undefined)}
-                  className="mt-1 h-auto w-full p-1 text-xs"
-                >
-                  Clear
-                </Button>
-              )}
+              <DatePicker
+                value={expirationDate}
+                onChange={setExpirationDate}
+                placeholder={<span>No expiration</span>}
+                buttonClassName={cn(
+                  "mt-1",
+                  !expirationDate && "text-muted-foreground",
+                )}
+                clearable
+                clearLabel="Clear"
+                clearButtonClassName="h-auto p-1 text-xs"
+                showIcon={false}
+                calendarProps={{
+                  disabled: (date) => date < startOfToday(),
+                  initialFocus: true,
+                }}
+              />
             </div>
 
             <DropdownMenuSeparator />

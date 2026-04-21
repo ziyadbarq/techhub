@@ -8,8 +8,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { startOfToday } from "date-fns";
 
 import {
   Dialog,
@@ -38,13 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   CreateVerificationCampaignSchema,
   type CreateVerificationCampaignDTO,
@@ -192,37 +185,17 @@ export function CreateVerificationCampaignDialog({
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Scheduled Start Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < new Date(new Date().setHours(0, 0, 0, 0))
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <FormControl>
+                    <DatePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      buttonClassName="pl-3"
+                      calendarProps={{
+                        disabled: (date) => date < startOfToday(),
+                        initialFocus: true,
+                      }}
+                    />
+                  </FormControl>
                   <FormDescription>
                     When the campaign should become active
                   </FormDescription>
@@ -237,37 +210,20 @@ export function CreateVerificationCampaignDialog({
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Scheduled End Date (Optional)</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date (optional)</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value || undefined}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < (form.watch("scheduledStart") || new Date())
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <FormControl>
+                    <DatePicker
+                      value={field.value || undefined}
+                      onChange={field.onChange}
+                      placeholder="Pick a date (optional)"
+                      buttonClassName="pl-3"
+                      calendarProps={{
+                        disabled: (date) =>
+                          date <
+                          (form.watch("scheduledStart") || startOfToday()),
+                        initialFocus: true,
+                      }}
+                    />
+                  </FormControl>
                   <FormDescription>
                     Optional deadline for campaign completion
                   </FormDescription>

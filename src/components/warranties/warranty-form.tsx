@@ -9,8 +9,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,12 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Select,
   SelectContent,
@@ -49,7 +42,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import type { WarrantyDTO } from "@/interface-adapters/presenters/warranty.presenter";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter";
@@ -323,34 +315,14 @@ export function WarrantyForm({
                       <FormLabel>
                         Start Date <span className="text-destructive">*</span>
                       </FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "pl-3 text-left font-normal",
-                                !dateValue && "text-muted-foreground",
-                              )}
-                            >
-                              {dateValue ? (
-                                format(dateValue, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={dateValue}
-                            onSelect={field.onChange}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      <FormControl>
+                        <DatePicker
+                          value={dateValue}
+                          onChange={field.onChange}
+                          buttonClassName="pl-3"
+                          calendarProps={{ initialFocus: true }}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   );
@@ -367,34 +339,14 @@ export function WarrantyForm({
                       <FormLabel>
                         End Date <span className="text-destructive">*</span>
                       </FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "pl-3 text-left font-normal",
-                                !dateValue && "text-muted-foreground",
-                              )}
-                            >
-                              {dateValue ? (
-                                format(dateValue, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={dateValue}
-                            onSelect={field.onChange}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      <FormControl>
+                        <DatePicker
+                          value={dateValue}
+                          onChange={field.onChange}
+                          buttonClassName="pl-3"
+                          calendarProps={{ initialFocus: true }}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   );

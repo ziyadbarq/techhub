@@ -8,9 +8,9 @@
 "use client";
 
 import * as React from "react";
-import { format } from "date-fns";
+import { startOfToday } from "date-fns";
 import { toast } from "sonner";
-import { Calendar as CalendarIcon, AlertTriangle, Users } from "lucide-react";
+import { AlertTriangle, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,12 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -439,47 +434,18 @@ export function BulkRoleAssignmentModal({
           {/* Expiration Date */}
           <div className="space-y-2">
             <Label>Expiration Date (Optional)</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-left font-normal"
-                  disabled={isAssigning}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {expirationDate ? (
-                    format(expirationDate, "PPP")
-                  ) : (
-                    <span className="text-muted-foreground">No expiration</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={expirationDate}
-                  onSelect={setExpirationDate}
-                  disabled={(date: Date) => {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    return date < today;
-                  }}
-                  initialFocus
-                />
-                {expirationDate && (
-                  <div className="border-t p-3">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setExpirationDate(undefined)}
-                      className="w-full"
-                    >
-                      Clear Date
-                    </Button>
-                  </div>
-                )}
-              </PopoverContent>
-            </Popover>
+            <DatePicker
+              value={expirationDate}
+              onChange={setExpirationDate}
+              placeholder={<span>No expiration</span>}
+              disabledTrigger={isAssigning}
+              iconPosition="start"
+              clearable
+              calendarProps={{
+                disabled: (date) => date < startOfToday(),
+                initialFocus: true,
+              }}
+            />
             <p className="text-muted-foreground text-xs">
               If set, all assigned roles will automatically expire on this date
             </p>
