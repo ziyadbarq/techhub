@@ -187,7 +187,7 @@ async function runSeedIfEmpty() {
       env: process.env,
     });
     console.log("[seed] Production seed completed.");
-  } catch (err) {
+  } catch {
     console.error("[seed] Seed failed — app will start but database may be missing reference data.");
     // Non-fatal: app can still start, admin can retry from /setup page
   }
