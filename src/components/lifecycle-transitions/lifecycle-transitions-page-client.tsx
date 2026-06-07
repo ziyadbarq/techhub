@@ -9,6 +9,8 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import type { LifecycleModelDTO } from "@/interface-adapters/presenters/lifecycle-model.presenter";
+import type { LifecycleStateDTO } from "@/interface-adapters/presenters/lifecycle-state.presenter";
 import type { LifecycleTransitionDTO } from "@/interface-adapters/presenters/lifecycle-transition.presenter";
 import { listLifecycleTransitionsAction } from "@/interface-adapters/controllers/lifecycle-transition.controller";
 import { LifecycleTransitionsTable } from "./lifecycle-transitions-table";
@@ -18,11 +20,15 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 interface LifecycleTransitionsPageClientProps {
   initialTransitions: LifecycleTransitionDTO[];
+  models?: LifecycleModelDTO[];
+  states?: LifecycleStateDTO[];
   modelId?: string;
 }
 
 export function LifecycleTransitionsPageClient({
   initialTransitions,
+  models = [],
+  states = [],
   modelId,
 }: LifecycleTransitionsPageClientProps) {
   const [transitions, setTransitions] =
@@ -99,6 +105,8 @@ export function LifecycleTransitionsPageClient({
         onSuccess={handleSuccess}
         transition={editingTransition}
         modelId={modelId ?? ""}
+        models={models}
+        states={states}
         fromStateId=""
         toStateId=""
       />

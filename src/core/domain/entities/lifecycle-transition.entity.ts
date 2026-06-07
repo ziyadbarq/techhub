@@ -38,6 +38,7 @@ export interface CreateLifecycleTransitionProps {
   approvalPolicy?: ApprovalPolicy | null;
   conditions?: Record<string, unknown> | null;
   isAutomated?: boolean;
+  isActive?: boolean;
   metadata?: Record<string, unknown> | null;
 }
 
@@ -66,7 +67,7 @@ export class LifecycleTransition {
       approvalPolicy: props.approvalPolicy || null,
       conditions: props.conditions || null,
       isAutomated: props.isAutomated ?? false,
-      isActive: true,
+      isActive: props.isActive ?? true,
       metadata: props.metadata || null,
       createdAt: now,
       updatedAt: now,
@@ -85,6 +86,7 @@ export class LifecycleTransition {
     approvalPolicy?: ApprovalPolicy | null;
     conditions?: Record<string, unknown> | null;
     isAutomated?: boolean;
+    isActive?: boolean;
     metadata?: Record<string, unknown> | null;
   }): void {
     if (props.name !== undefined) {
@@ -117,6 +119,10 @@ export class LifecycleTransition {
 
     if (props.isAutomated !== undefined) {
       this.props.isAutomated = props.isAutomated;
+    }
+
+    if (props.isActive !== undefined) {
+      this.props.isActive = props.isActive;
     }
 
     if (props.metadata !== undefined) {

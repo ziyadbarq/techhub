@@ -20,6 +20,7 @@ export interface UpdateLifecycleTransitionProps {
   approvalPolicy?: ApprovalPolicy | null;
   conditions?: Record<string, unknown> | null;
   isAutomated?: boolean;
+  isActive?: boolean;
   metadata?: Record<string, unknown> | null;
 }
 
@@ -60,6 +61,7 @@ export class UpdateLifecycleTransitionUseCase {
       approvalPolicy: props.approvalPolicy,
       conditions: props.conditions,
       isAutomated: props.isAutomated,
+      isActive: props.isActive,
       metadata: props.metadata,
     });
 
