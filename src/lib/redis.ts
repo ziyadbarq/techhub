@@ -12,7 +12,7 @@ let redis: Redis | null = null;
  * Get or create Redis client singleton
  */
 export function getRedis(): Redis {
-  if (!redis) {
+  if (!redis || redis.status === "end") {
     redis = new Redis(env.REDIS_URL, {
       connectTimeout: 500,
       enableOfflineQueue: false,
@@ -22,6 +22,9 @@ export function getRedis(): Redis {
 
     redis.on("error", () => {
       // Cache callers fall back to the database when Redis is unavailable.
+    });
+    redis.on("end", () => {
+      redis = null;
     });
   }
   return redis;

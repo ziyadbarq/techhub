@@ -15,6 +15,22 @@ import type { FeatureFlagKey } from "./feature-flag-keys";
 const CACHE_TTL = 300;
 const CACHE_PREFIX = "feature:";
 
+function isRedisUnavailableError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+
+  return (
+    error.message.includes("Connection is closed") ||
+    error.message.includes("ECONNREFUSED") ||
+    error.name === "MaxRetriesPerRequestError"
+  );
+}
+
+function getFeatureFlagRepository(): IFeatureFlagRepository {
+  return getContainer().get<IFeatureFlagRepository>(
+    DI_TOKENS.IFeatureFlagRepository,
+  );
+}
+
 /**
  * Get cached feature flag state or fetch from database
  */
@@ -44,11 +60,10 @@ async function getCachedFeatureState(featureName: string): Promise<boolean> {
     return isEnabled;
   } catch (error) {
     // Redis error - fall back to database
-    console.error(`Feature flag cache error for ${featureName}:`, error);
-    const container = getContainer();
-    const repo = container.get<IFeatureFlagRepository>(
-      DI_TOKENS.IFeatureFlagRepository,
-    );
+    if (!isRedisUnavailableError(error)) {
+      console.error(`Feature flag cache error for ${featureName}:`, error);
+    }
+    const repo = getFeatureFlagRepository();
     return await repo.isFeatureEnabled(upperName);
   }
 }
@@ -69,10 +84,12 @@ export async function invalidateFeatureCache(
     const redis = await getRedis();
     await redis.del(cacheKey);
   } catch (error) {
-    console.error(
-      `Failed to invalidate feature cache for ${featureName}:`,
-      error,
-    );
+    if (!isRedisUnavailableError(error)) {
+      console.error(
+        `Failed to invalidate feature cache for ${featureName}:`,
+        error,
+      );
+    }
   }
 }
 
@@ -173,11 +190,10 @@ export async function getEnabledFeatures(): Promise<Set<string>> {
     return features;
   } catch (error) {
     // Redis error - fall back to database
-    console.error("Feature flags cache error:", error);
-    const container = getContainer();
-    const repo = container.get<IFeatureFlagRepository>(
-      DI_TOKENS.IFeatureFlagRepository,
-    );
+    if (!isRedisUnavailableError(error)) {
+      console.error("Feature flags cache error:", error);
+    }
+    const repo = getFeatureFlagRepository();
     return await repo.getEnabledFeatureNames();
   }
 }
@@ -193,6 +209,8 @@ export async function invalidateAllFeaturesCache(): Promise<void> {
     const redis = await getRedis();
     await redis.del(cacheKey);
   } catch (error) {
-    console.error("Failed to invalidate all features cache:", error);
+    if (!isRedisUnavailableError(error)) {
+      console.error("Failed to invalidate all features cache:", error);
+    }
   }
 }
