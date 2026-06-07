@@ -13,6 +13,7 @@ export interface CurrencyInfo {
 }
 
 /**
+ *
  * Supported currencies in the system
  * All amounts are stored/converted relative to SAR (Saudi Riyal)
  */
