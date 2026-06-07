@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -31,6 +32,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import type { VendorContactDTO } from "@/interface-adapters/presenters/vendor-contact.presenter";
+import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter";
 import {
   createVendorContactAction,
   updateVendorContactAction,
@@ -46,6 +48,7 @@ interface VendorContactFormProps {
   onSuccess: () => void;
   contact?: VendorContactDTO | null;
   vendorId: string;
+  vendors?: VendorDTO[];
 }
 
 type VendorContactFormValues = z.input<typeof CreateVendorContactSchema>;
@@ -56,8 +59,15 @@ export function VendorContactForm({
   onSuccess,
   contact,
   vendorId,
+  vendors = [],
 }: VendorContactFormProps) {
   const isEditing = !!contact;
+  const showVendorSelect = !vendorId;
+  const vendorOptions = vendors.map((vendor) => ({
+    value: vendor.id,
+    label: `${vendor.name} (${vendor.code})`,
+    disabled: !vendor.isActive,
+  }));
 
   const form = useForm<
     VendorContactFormValues,
@@ -139,6 +149,32 @@ export function VendorContactForm({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {showVendorSelect && (
+              <FormField
+                control={form.control}
+                name="vendorId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Vendor <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <SearchableSelect
+                        options={vendorOptions}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Select vendor"
+                        searchPlaceholder="Search vendors..."
+                        emptyMessage="No vendors found."
+                        disabled={isEditing || vendorOptions.length === 0}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}

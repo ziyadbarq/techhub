@@ -13,7 +13,16 @@ let redis: Redis | null = null;
  */
 export function getRedis(): Redis {
   if (!redis) {
-    redis = new Redis(env.REDIS_URL);
+    redis = new Redis(env.REDIS_URL, {
+      connectTimeout: 500,
+      enableOfflineQueue: false,
+      maxRetriesPerRequest: 1,
+      retryStrategy: () => null,
+    });
+
+    redis.on("error", () => {
+      // Cache callers fall back to the database when Redis is unavailable.
+    });
   }
   return redis;
 }
