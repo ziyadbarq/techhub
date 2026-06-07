@@ -230,6 +230,9 @@ export async function createStockMovementAction(
       reason: validated.reason ?? undefined,
       performedById: validated.performedById,
       occurredAt: validated.occurredAt,
+      source: validated.source,
+      sourceReferenceType: validated.sourceReferenceType ?? undefined,
+      sourceReferenceId: validated.sourceReferenceId ?? undefined,
     });
 
     // Get asset tag for revalidation if asset is associated
@@ -449,6 +452,9 @@ export async function bulkCreateStockMovementsAction(
           reason: validated.reason ?? undefined,
           performedById: validated.performedById,
           occurredAt: validated.occurredAt,
+          source: validated.source,
+          sourceReferenceType: validated.sourceReferenceType ?? undefined,
+          sourceReferenceId: validated.sourceReferenceId ?? undefined,
         });
 
         results.successCount++;

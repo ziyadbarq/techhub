@@ -126,6 +126,9 @@ describe("CreateStockMovementUseCase", () => {
         quantity: 1,
         performedById: "user-1",
         reason: "Inventory correction",
+        source: "IMPORT" as const,
+        sourceReferenceType: "ImportBatch",
+        sourceReferenceId: "batch-1",
       };
 
       // Act
@@ -135,6 +138,9 @@ describe("CreateStockMovementUseCase", () => {
       expect(result.movementType).toBe("ADJUSTMENT");
       expect(result.stockLocationFromId).toBe("loc-1");
       expect(result.stockLocationToId).toBeNull();
+      expect(result.source).toBe("IMPORT");
+      expect(result.sourceReferenceType).toBe("ImportBatch");
+      expect(result.sourceReferenceId).toBe("batch-1");
     });
   });
 
