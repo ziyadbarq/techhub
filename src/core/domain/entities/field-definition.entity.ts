@@ -107,6 +107,7 @@ export interface CreateFieldDefinitionProps {
   displayOrder?: number;
   isSearchable?: boolean;
   isFilterable?: boolean;
+  isActive?: boolean;
   metadata?: Record<string, unknown> | null;
 }
 
@@ -155,7 +156,7 @@ export class FieldDefinition {
       displayOrder: props.displayOrder ?? 0,
       isSearchable: props.isSearchable ?? false,
       isFilterable: props.isFilterable ?? false,
-      isActive: true,
+      isActive: props.isActive ?? true,
       metadata: props.metadata || null,
       createdAt: now,
       updatedAt: now,
@@ -186,7 +187,9 @@ export class FieldDefinition {
    * Update field definition
    */
   update(props: {
+    name?: string;
     label?: string;
+    dataType?: FieldDataTypeEnum;
     description?: string | null;
     entityType?: string;
     isRequired?: boolean;
@@ -200,11 +203,27 @@ export class FieldDefinition {
     displayOrder?: number;
     isSearchable?: boolean;
     isFilterable?: boolean;
+    isActive?: boolean;
     metadata?: Record<string, unknown> | null;
   }): void {
+    if (props.name !== undefined) {
+      FieldDefinition.validateName(props.name);
+      this.props.name = props.name.trim().toLowerCase();
+    }
+
     if (props.label !== undefined) {
       FieldDefinition.validateLabel(props.label);
       this.props.label = props.label.trim();
+    }
+
+    if (props.dataType !== undefined) {
+      FieldDefinition.validateDataType(props.dataType);
+      if (props.dataType === FieldDataTypeEnum.ENUM) {
+        FieldDefinition.validateEnumOptions(
+          props.enumOptions ?? this.props.enumOptions,
+        );
+      }
+      this.props.dataType = props.dataType;
     }
 
     if (props.description !== undefined) {
@@ -267,6 +286,10 @@ export class FieldDefinition {
 
     if (props.isFilterable !== undefined) {
       this.props.isFilterable = props.isFilterable;
+    }
+
+    if (props.isActive !== undefined) {
+      this.props.isActive = props.isActive;
     }
 
     if (props.metadata !== undefined) {

@@ -98,6 +98,14 @@ export const UpdateFieldDefinitionSchema = z.object({
     .optional()
     .nullable(),
   dataType: z.nativeEnum(FieldDataTypeEnum).optional(),
+  entityType: z
+    .string()
+    .min(1, "Entity type is required")
+    .max(100, "Entity type must be 100 characters or less")
+    .refine((val) => getValidEntityKeys().includes(val), {
+      message: "Invalid entity type. Please select from the available options.",
+    })
+    .optional(),
   isRequired: z.boolean().optional(),
   isUnique: z.boolean().optional(),
   defaultValue: z.unknown().optional().nullable(),

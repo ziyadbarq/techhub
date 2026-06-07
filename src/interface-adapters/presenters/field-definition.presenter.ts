@@ -25,6 +25,7 @@ export interface FieldDefinitionDTO {
   isUnique: boolean;
   defaultValue: unknown;
   validationRules: Record<string, unknown> | null;
+  enumOptions: string[] | null;
   conditionalLogic: FieldConditionalLogic | null;
   displayOrder: number;
   isActive: boolean;
@@ -47,6 +48,7 @@ export function presentFieldDefinition(
     isUnique: field.isUnique,
     defaultValue: field.defaultValue,
     validationRules: field.validationRules,
+    enumOptions: field.enumOptions,
     conditionalLogic: field.conditionalLogic,
     displayOrder: field.displayOrder,
     isActive: field.isActive,
