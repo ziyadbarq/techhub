@@ -8,22 +8,7 @@ import { redirect } from "next/navigation";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IFeatureFlagRepository } from "@/core/repositories/feature-flag.repository.interface";
-import { getRedis } from "@/lib/redis";
 import type { FeatureFlagKey } from "./feature-flag-keys";
-
-// Cache TTL: 5 minutes (300 seconds)
-const CACHE_TTL = 300;
-const CACHE_PREFIX = "feature:";
-
-function isRedisUnavailableError(error: unknown): boolean {
-  if (!(error instanceof Error)) return false;
-
-  return (
-    error.message.includes("Connection is closed") ||
-    error.message.includes("ECONNREFUSED") ||
-    error.name === "MaxRetriesPerRequestError"
-  );
-}
 
 function getFeatureFlagRepository(): IFeatureFlagRepository {
   return getContainer().get<IFeatureFlagRepository>(
@@ -36,36 +21,8 @@ function getFeatureFlagRepository(): IFeatureFlagRepository {
  */
 async function getCachedFeatureState(featureName: string): Promise<boolean> {
   const upperName = featureName.toUpperCase();
-  const cacheKey = `${CACHE_PREFIX}${upperName}`;
-
-  try {
-    const redis = await getRedis();
-
-    // Try to get from cache
-    const cached = await redis.get(cacheKey);
-    if (cached !== null) {
-      return cached === "1";
-    }
-
-    // Not in cache, fetch from database
-    const container = getContainer();
-    const repo = container.get<IFeatureFlagRepository>(
-      DI_TOKENS.IFeatureFlagRepository,
-    );
-    const isEnabled = await repo.isFeatureEnabled(upperName);
-
-    // Cache the result
-    await redis.setex(cacheKey, CACHE_TTL, isEnabled ? "1" : "0");
-
-    return isEnabled;
-  } catch (error) {
-    // Redis error - fall back to database
-    if (!isRedisUnavailableError(error)) {
-      console.error(`Feature flag cache error for ${featureName}:`, error);
-    }
-    const repo = getFeatureFlagRepository();
-    return await repo.isFeatureEnabled(upperName);
-  }
+  const repo = getFeatureFlagRepository();
+  return await repo.isFeatureEnabled(upperName);
 }
 
 /**
@@ -75,22 +32,9 @@ async function getCachedFeatureState(featureName: string): Promise<boolean> {
  * @param featureName - Type-safe feature flag key
  */
 export async function invalidateFeatureCache(
-  featureName: FeatureFlagKey,
+  _featureName: FeatureFlagKey,
 ): Promise<void> {
-  const upperName = featureName.toUpperCase();
-  const cacheKey = `${CACHE_PREFIX}${upperName}`;
-
-  try {
-    const redis = await getRedis();
-    await redis.del(cacheKey);
-  } catch (error) {
-    if (!isRedisUnavailableError(error)) {
-      console.error(
-        `Failed to invalidate feature cache for ${featureName}:`,
-        error,
-      );
-    }
-  }
+  // Feature flags are read directly from the database in this runtime.
 }
 
 /**
@@ -161,41 +105,8 @@ export async function requireFeature(
  * Uses Redis cache to avoid full-table scans on every poll
  */
 export async function getEnabledFeatures(): Promise<Set<string>> {
-  const cacheKey = `${CACHE_PREFIX}all_enabled`;
-
-  try {
-    const redis = await getRedis();
-
-    // Try to get from cache
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      try {
-        const features = JSON.parse(cached) as string[];
-        return new Set(features);
-      } catch {
-        // Invalid JSON, fall through to fetch
-      }
-    }
-
-    // Not in cache, fetch from database
-    const container = getContainer();
-    const repo = container.get<IFeatureFlagRepository>(
-      DI_TOKENS.IFeatureFlagRepository,
-    );
-    const features = await repo.getEnabledFeatureNames();
-
-    // Cache the result as JSON array
-    await redis.setex(cacheKey, CACHE_TTL, JSON.stringify([...features]));
-
-    return features;
-  } catch (error) {
-    // Redis error - fall back to database
-    if (!isRedisUnavailableError(error)) {
-      console.error("Feature flags cache error:", error);
-    }
-    const repo = getFeatureFlagRepository();
-    return await repo.getEnabledFeatureNames();
-  }
+  const repo = getFeatureFlagRepository();
+  return await repo.getEnabledFeatureNames();
 }
 
 /**
@@ -203,14 +114,5 @@ export async function getEnabledFeatures(): Promise<Set<string>> {
  * Call this when toggling any feature flag
  */
 export async function invalidateAllFeaturesCache(): Promise<void> {
-  const cacheKey = `${CACHE_PREFIX}all_enabled`;
-
-  try {
-    const redis = await getRedis();
-    await redis.del(cacheKey);
-  } catch (error) {
-    if (!isRedisUnavailableError(error)) {
-      console.error("Failed to invalidate all features cache:", error);
-    }
-  }
+  // Feature flags are read directly from the database in this runtime.
 }
