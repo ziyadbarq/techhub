@@ -36,8 +36,43 @@ import type { Warranty } from "@/core/domain/entities/warranty.entity";
 import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
 import type { ListVendorsUseCase } from "@/core/use-cases/foundation/vendor";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import type { IStockMovementRepository } from "@/core/repositories/stock-movement.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+export interface WarrantyAssetOptionDTO {
+  id: string;
+  assetTag: string;
+  receivedDate: string | null;
+  stockLocationName?: string | null;
+}
+
+async function resolveAssetReceivedDate(
+  container: ReturnType<typeof getContainer>,
+  assetId: string,
+): Promise<Date> {
+  const stockMovementRepository = container.get<IStockMovementRepository>(
+    DI_TOKENS.IStockMovementRepository,
+  );
+  const assetRepository = container.get<IAssetRepository>(
+    DI_TOKENS.IAssetRepository,
+  );
+
+  const [receivingMovement] = await stockMovementRepository.findAll({
+    assetId,
+    movementType: "IN",
+    orderBy: "occurredAt",
+    order: "asc",
+    take: 1,
+  });
+
+  if (receivingMovement) {
+    return receivingMovement.occurredAt;
+  }
+
+  const asset = await assetRepository.findById(assetId);
+  return asset?.purchaseDate ?? asset?.createdAt ?? new Date();
+}
 
 /**
  * Enrich warranties with asset and vendor display data
@@ -117,6 +152,10 @@ export async function createWarrantyAction(
     const useCase = container.get<CreateWarrantyUseCase>(
       DI_TOKENS.CreateWarrantyUseCase,
     );
+    const startDate = await resolveAssetReceivedDate(
+      container,
+      validated.assetId,
+    );
 
     const warranty = await useCase.execute({
       assetId: validated.assetId,
@@ -125,7 +164,7 @@ export async function createWarrantyAction(
       coverageDetails: validated.coverageDetails ?? undefined,
       policyReference: validated.policyReference ?? undefined,
       slaDetails: validated.slaDetails ?? undefined,
-      startDate: validated.startDate,
+      startDate,
       endDate: validated.endDate,
       cost: validated.cost ?? undefined,
       currency: validated.currency ?? undefined,
@@ -153,6 +192,58 @@ export async function createWarrantyAction(
       error,
       { function: "createWarrantyAction" },
       "Failed to create warranty",
+    );
+  }
+}
+
+export async function listWarrantyAssetOptionsAction(): Promise<
+  ActionResponse<WarrantyAssetOptionDTO[]>
+> {
+  try {
+    await requirePermission(PERMISSIONS.WARRANTIES_CREATE);
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const container = getContainer();
+    const listAssetsUseCase = container.get<ListAssetsUseCase>(
+      DI_TOKENS.ListAssetsUseCase,
+    );
+    const stockMovementRepository = container.get<IStockMovementRepository>(
+      DI_TOKENS.IStockMovementRepository,
+    );
+
+    const [assets, receivingMovements] = await Promise.all([
+      listAssetsUseCase.execute(),
+      stockMovementRepository.findAll({
+        movementType: "IN",
+        orderBy: "occurredAt",
+        order: "asc",
+      }),
+    ]);
+
+    const firstReceivedByAssetId = new Map<string, Date>();
+    for (const movement of receivingMovements) {
+      if (movement.assetId && !firstReceivedByAssetId.has(movement.assetId)) {
+        firstReceivedByAssetId.set(movement.assetId, movement.occurredAt);
+      }
+    }
+
+    return {
+      success: true,
+      data: assets.map((asset) => ({
+        id: asset.id,
+        assetTag: asset.assetTag,
+        receivedDate: (
+          firstReceivedByAssetId.get(asset.id) ??
+          asset.purchaseDate ??
+          asset.createdAt
+        ).toISOString(),
+      })),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "listWarrantyAssetOptionsAction" },
+      "Failed to list warranty asset options",
     );
   }
 }
@@ -411,6 +502,10 @@ export async function bulkCreateWarrantiesAction(
       const item = items[i];
       try {
         const validated = CreateWarrantySchema.parse(item);
+        const startDate = await resolveAssetReceivedDate(
+          container,
+          validated.assetId,
+        );
 
         await useCase.execute({
           assetId: validated.assetId,
@@ -419,7 +514,7 @@ export async function bulkCreateWarrantiesAction(
           coverageDetails: validated.coverageDetails ?? undefined,
           policyReference: validated.policyReference ?? undefined,
           slaDetails: validated.slaDetails ?? undefined,
-          startDate: validated.startDate,
+          startDate,
           endDate: validated.endDate,
           cost: validated.cost ?? undefined,
           currency: validated.currency ?? undefined,

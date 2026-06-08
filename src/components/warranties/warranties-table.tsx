@@ -7,6 +7,7 @@
 "use no memo";
 
 import * as React from "react";
+import Link from "next/link";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Shield } from "lucide-react";
 import { format } from "date-fns";
@@ -65,9 +66,16 @@ export function WarrantiesTable({
                 const warranty = row.original;
                 return (
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium">
-                      {warranty.assetTag || "N/A"}
-                    </span>
+                    {warranty.assetTag ? (
+                      <Link
+                        href={`/assets/${encodeURIComponent(warranty.assetTag)}`}
+                        className="font-medium text-primary hover:underline"
+                      >
+                        {warranty.assetTag}
+                      </Link>
+                    ) : (
+                      <span className="font-medium">N/A</span>
+                    )}
                   </div>
                 );
               },
