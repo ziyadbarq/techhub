@@ -24,7 +24,8 @@ export const CreateVerificationCampaignSchema = z.object({
   filterDefinition: z.record(z.string(), z.unknown()).optional().nullable(),
   scheduledStart: z.coerce.date(),
   scheduledEnd: z.coerce.date().optional().nullable(),
-  createdById: z.string().min(1, "Creator ID is required"),
+  // Server resolves this from the authenticated user's linked Person record.
+  createdById: z.string().optional(),
 });
 
 // Update VerificationCampaign DTO

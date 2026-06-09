@@ -14,9 +14,7 @@ import type { TargetObjectTypeEnum } from "@/core/domain/entities/verification-c
 import type { ILoggerService } from "@/core/services";
 
 @injectable()
-export class PrismaVerificationCampaignRepository
-  implements IVerificationCampaignRepository
-{
+export class PrismaVerificationCampaignRepository implements IVerificationCampaignRepository {
   constructor(
     @inject(DI_TOKENS.PrismaClient) private prisma: PrismaClient,
     @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService,
@@ -119,8 +117,14 @@ export class PrismaVerificationCampaignRepository
   async delete(id: string): Promise<void> {
     this.logger.debug("Deleting verification campaign", { id });
 
-    await this.prisma.verificationCampaign.delete({
-      where: { id },
+    await this.prisma.$transaction(async (tx) => {
+      await tx.verificationItem.deleteMany({
+        where: { verificationCampaignId: id },
+      });
+
+      await tx.verificationCampaign.delete({
+        where: { id },
+      });
     });
   }
 

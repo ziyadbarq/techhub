@@ -8,6 +8,7 @@
 import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
+import { getSession } from "@/lib/auth/session";
 import type {
   CreateVerificationCampaignUseCase,
   GetVerificationCampaignUseCase,
@@ -30,6 +31,110 @@ import {
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { TargetObjectTypeEnum } from "@/core/domain/entities/verification-campaign.entity";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
+import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
+import type { CreatePersonUseCase } from "@/core/use-cases/foundation/person/create-person.use-case";
+
+function getFallbackPersonName(user: {
+  name?: string | null;
+  email?: string | null;
+}) {
+  const displayName = user.name?.trim() || user.email?.split("@")[0] || "User";
+  const [firstName, ...rest] = displayName.split(/\s+/).filter(Boolean);
+
+  return {
+    firstName: firstName || "User",
+    lastName: rest.join(" ") || "Account",
+  };
+}
+
+async function resolveDefaultOrgUnitId(
+  container: ReturnType<typeof getContainer>,
+) {
+  const orgUnitRepository = container.get<IOrganizationUnitRepository>(
+    DI_TOKENS.IOrganizationUnitRepository,
+  );
+
+  const preferredOrgUnit =
+    (await orgUnitRepository.findByCode("TECH")) ||
+    (await orgUnitRepository.findByCode("BARQ"));
+
+  if (preferredOrgUnit?.isActive) {
+    return preferredOrgUnit.id;
+  }
+
+  const [activeOrgUnit] = await orgUnitRepository.findActive({ take: 1 });
+  return activeOrgUnit?.id ?? null;
+}
+
+async function resolveCurrentPersonId(
+  container: ReturnType<typeof getContainer>,
+) {
+  const { user } = await getSession();
+  if (!user) {
+    return { personId: null, error: "Not authenticated" };
+  }
+
+  const personRepository = container.get<IPersonRepository>(
+    DI_TOKENS.IPersonRepository,
+  );
+
+  const person =
+    (await personRepository.findByUserId(user.id)) ||
+    (user.email ? await personRepository.findByEmail(user.email) : null);
+
+  if (person) {
+    if (person.userId && person.userId !== user.id) {
+      return {
+        personId: null,
+        error:
+          "A person record with your email is already linked to a different user account.",
+      };
+    }
+
+    if (!person.userId) {
+      person.linkToUser(user.id);
+      const linkedPerson = await personRepository.update(person);
+      return { personId: linkedPerson.id, error: null };
+    }
+
+    return { personId: person.id, error: null };
+  }
+
+  if (!user.email) {
+    return {
+      personId: null,
+      error: "Your account does not have an email address.",
+    };
+  }
+
+  const orgUnitId = await resolveDefaultOrgUnitId(container);
+  if (!orgUnitId) {
+    return {
+      personId: null,
+      error:
+        "No active organization unit exists. Create an organization unit before creating verification campaigns.",
+    };
+  }
+
+  const createPersonUseCase = container.get<CreatePersonUseCase>(
+    DI_TOKENS.CreatePersonUseCase,
+  );
+  const { firstName, lastName } = getFallbackPersonName(user);
+  const createdPerson = await createPersonUseCase.execute({
+    userId: user.id,
+    firstName,
+    lastName,
+    email: user.email,
+    orgUnitId,
+    title: "TechHub User",
+    metadata: {
+      source: "verification-campaign-auto-provision",
+    },
+  });
+
+  return { personId: createdPerson.id, error: null };
+}
 
 /**
  * Create a new verification campaign
@@ -46,8 +151,16 @@ export async function createVerificationCampaign(
     // Validate input
     const validatedData = CreateVerificationCampaignSchema.parse(data);
 
-    // Get use case from DI container
     const container = getContainer();
+    const { personId, error } = await resolveCurrentPersonId(container);
+    if (!personId) {
+      return {
+        success: false,
+        error: error ?? "Unable to resolve current person",
+      };
+    }
+
+    // Get use case from DI container
     const useCase = container.get<CreateVerificationCampaignUseCase>(
       DI_TOKENS.CreateVerificationCampaignUseCase,
     );
@@ -56,6 +169,7 @@ export async function createVerificationCampaign(
     const campaign = await useCase.execute({
       ...validatedData,
       targetType: validatedData.targetType as TargetObjectTypeEnum,
+      createdById: personId,
     });
 
     // Revalidate relevant paths

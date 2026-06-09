@@ -303,7 +303,6 @@ export function VerificationCampaignsTable({
                 variant="ghost"
                 size="icon"
                 onClick={() => setDeletingCampaign(campaign)}
-                disabled={campaign.isActive || campaign.isCompleted}
                 title="Delete Campaign"
               >
                 <Trash2 className="h-4 w-4" />

@@ -64,6 +64,9 @@ export async function createVerificationItem(
 
     // Revalidate relevant paths
     revalidatePath("/verification-campaigns");
+    revalidatePath(
+      `/verification-campaigns/${validatedData.verificationCampaignId}/items`,
+    );
 
     return {
       success: true,
@@ -179,6 +182,9 @@ export async function updateVerificationItem(
 
     // Revalidate relevant paths
     revalidatePath("/verification-campaigns");
+    revalidatePath(
+      `/verification-campaigns/${verificationItem.verificationCampaignId}/items`,
+    );
 
     return {
       success: true,
@@ -205,14 +211,21 @@ export async function deleteVerificationItem(
     await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_MANAGE);
 
     const container = getContainer();
+    const getUseCase = container.get<GetVerificationItemUseCase>(
+      DI_TOKENS.GetVerificationItemUseCase,
+    );
     const useCase = container.get<DeleteVerificationItemUseCase>(
       DI_TOKENS.DeleteVerificationItemUseCase,
     );
 
+    const existing = await getUseCase.execute({ id });
     await useCase.execute({ id });
 
     // Revalidate relevant paths
     revalidatePath("/verification-campaigns");
+    revalidatePath(
+      `/verification-campaigns/${existing.verificationCampaignId}/items`,
+    );
 
     return { success: true };
   } catch (error) {
@@ -256,6 +269,9 @@ export async function verifyVerificationItem(
 
     // Revalidate relevant paths
     revalidatePath("/verification-campaigns");
+    revalidatePath(
+      `/verification-campaigns/${verificationItem.verificationCampaignId}/items`,
+    );
 
     return {
       success: true,
@@ -302,6 +318,9 @@ export async function flagExceptionVerificationItem(
 
     // Revalidate relevant paths
     revalidatePath("/verification-campaigns");
+    revalidatePath(
+      `/verification-campaigns/${verificationItem.verificationCampaignId}/items`,
+    );
 
     return {
       success: true,
