@@ -5,8 +5,30 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
+function parseDevOriginHosts(...values: Array<string | undefined>): string[] {
+  const hosts = values
+    .flatMap((value) => value?.split(",") ?? [])
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .map((value) => {
+      try {
+        return new URL(value).hostname;
+      } catch {
+        return value.replace(/^https?:\/\//, "").split(":")[0];
+      }
+    })
+    .filter(Boolean);
+
+  return Array.from(new Set(hosts));
+}
+
 const nextConfig: NextConfig = {
   output: "standalone",
+  allowedDevOrigins: parseDevOriginHosts(
+    process.env.TRUSTED_ORIGINS,
+    process.env.BETTER_AUTH_URL,
+    process.env.NEXT_PUBLIC_APP_URL,
+  ),
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   typescript: {
     ignoreBuildErrors: process.env.SKIP_TYPE_CHECK === "true",

@@ -9,10 +9,18 @@ import { env } from "@/config/env";
 let redis: Redis | null = null;
 
 /**
+ * Redis commands are safe only after ioredis reaches ready because this client
+ * disables the offline queue to fail fast when Redis is unavailable.
+ */
+export function isRedisReady(client: Redis): boolean {
+  return client.status === "ready";
+}
+
+/**
  * Get or create Redis client singleton
  */
 export function getRedis(): Redis {
-  if (!redis || redis.status === "end") {
+  if (!redis || redis.status === "end" || redis.status === "close") {
     redis = new Redis(env.REDIS_URL, {
       connectTimeout: 500,
       enableOfflineQueue: false,
