@@ -161,6 +161,13 @@ envFrom:
   - secretRef:
       name: techhub-secrets
 
+# URL configuration:
+# - BETTER_AUTH_URL and NEXT_PUBLIC_APP_URL must both be the canonical
+#   external app origin for this environment.
+# - NEXT_PUBLIC_APP_URL must also be available at build time because it is
+#   embedded in the client bundle.
+# - TRUSTED_ORIGINS is optional; set it only for extra exact browser origins.
+
 # Health checks
 livenessProbe:
   httpGet:

@@ -767,6 +767,9 @@ const createAuth = () =>
       },
     },
 
+    // Single-origin deployments can omit TRUSTED_ORIGINS; Better Auth then
+    // trusts the canonical BETTER_AUTH_URL. Set TRUSTED_ORIGINS only for
+    // additional exact browser origins such as aliases or transition URLs.
     trustedOrigins: process.env.TRUSTED_ORIGINS
       ? process.env.TRUSTED_ORIGINS.split(",").map((o) => o.trim())
       : [process.env.BETTER_AUTH_URL || "http://localhost:3000"],

@@ -362,6 +362,9 @@ Managed in backend-configs repository:
 
 - `DATABASE_URL` - PostgreSQL connection (GCP Cloud SQL)
 - `REDIS_URL` - Redis connection (GCP Memorystore)
+- `BETTER_AUTH_URL` - Canonical external app origin for Better Auth redirects and links
+- `NEXT_PUBLIC_APP_URL` - Same canonical external app origin, also required at build time because it is embedded in the client bundle
+- `TRUSTED_ORIGINS` - Optional comma-separated extra browser origins
 - `ENCRYPTION_KEY` - AES-256-GCM encryption key
 - `MICROSOFT_*` - Azure AD/Graph API credentials
 - `AZURE_*` - Intune integration credentials

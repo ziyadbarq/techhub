@@ -248,6 +248,11 @@ The live `techhub` container has these environment variables present:
 - `NEXT_PUBLIC_APP_URL`
 - `HOST`
 
+`NEXT_PUBLIC_APP_URL` should be the canonical external app origin for the
+environment. It must match `BETTER_AUTH_URL` from the runtime config source, and
+it must be present during build because the value is embedded in the client
+bundle.
+
 Important conclusions:
 
 - `CONFIG_SERVER_URL` is reaching the runtime container
@@ -439,8 +444,13 @@ If you need to verify Spring Cloud Config wiring, inspect the live `Deployment` 
 - `DATABASE_URL`
 - `REDIS_URL`
 - `BETTER_AUTH_URL`
+- `NEXT_PUBLIC_APP_URL`
 - `BETTER_AUTH_SECRET`
 - `ENCRYPTION_KEY`
+
+`BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL` must both point to the public app
+origin, not an internal service URL. `TRUSTED_ORIGINS` is optional and should
+only list additional exact browser origins such as temporary aliases.
 
 This is the most direct way to answer whether runtime variables are reaching the container.
 

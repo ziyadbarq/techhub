@@ -80,6 +80,7 @@ The following variables are validated at startup:
 - `DATABASE_URL`
 - `REDIS_URL`
 - `BETTER_AUTH_URL`
+- `NEXT_PUBLIC_APP_URL`
 - `BETTER_AUTH_SECRET`
 
 If any are missing after config loading, warnings/errors will be logged.
@@ -205,8 +206,11 @@ application container environment for each environment (see Part 3 of the migrat
 DATABASE_URL=postgresql://user:pass@host:5432/db
 REDIS_URL=redis://host:6379
 BETTER_AUTH_URL=https://app.example.com
+NEXT_PUBLIC_APP_URL=https://app.example.com
 BETTER_AUTH_SECRET=xxx
 ```
+
+`BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL` should be the same canonical external app origin. Do not set `BETTER_AUTH_URL` to an internal pod, service, or config-server URL; OAuth redirects and email links use the public auth URL. Set `TRUSTED_ORIGINS` only when additional exact browser origins must be accepted.
 
 **Phase 2: Hybrid (Both Sources)**
 ```yaml
@@ -236,8 +240,10 @@ CONFIG_SERVER_URL=http://config-server.baraq.com:8888
 2. Add required variables:
    - `DATABASE_URL` - PostgreSQL connection string
    - `REDIS_URL` - Redis connection string
-   - `BETTER_AUTH_URL` - Application URL
+   - `BETTER_AUTH_URL` - Canonical external application URL
+   - `NEXT_PUBLIC_APP_URL` - Same canonical external application URL, embedded into client-side app code
    - `BETTER_AUTH_SECRET` - Auth secret
+   - `TRUSTED_ORIGINS` - Optional comma-separated extra browser origins
    - Other app-specific variables
 
 #### Option 2: Use Spring Cloud Config Server (Future)

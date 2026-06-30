@@ -25,6 +25,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# NEXT_PUBLIC_APP_URL is embedded into the client bundle at build time.
+# Override this build arg with the environment's canonical external app origin.
 ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 

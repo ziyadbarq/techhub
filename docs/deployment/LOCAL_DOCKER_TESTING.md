@@ -180,17 +180,20 @@ The `docker-compose.yml` uses `.env.docker` for configuration. Key variables:
 # Required
 BETTER_AUTH_SECRET=your-secret-here    # Generate with: openssl rand -base64 32
 BETTER_AUTH_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-# Trusted origins (needed when accessing from multiple URLs)
-# Default in docker-compose.local.yml: http://localhost:3000,http://172.17.17.251:3000
-# Add your machine's network IP if accessing Docker from a different host/port
-TRUSTED_ORIGINS=http://localhost:3000,http://192.168.1.x:3000
+# Optional: only needed when accessing from additional browser origins
+# For single-origin local Docker, omit TRUSTED_ORIGINS so it falls back to BETTER_AUTH_URL.
+# Add your machine's network IP only if accessing Docker from a different host/port.
+# TRUSTED_ORIGINS=http://localhost:3000,http://YOUR_IP:3000
 
 # Optional
 LOG_LEVEL=info                         # debug, info, warn, error
 ```
 
-**`TRUSTED_ORIGINS`**: Controls which origins better-auth accepts auth requests from. Required when your browser accesses the app from a URL different from `BETTER_AUTH_URL` (e.g., a network IP or a different port). Without it, auth requests return `403 INVALID_ORIGIN`.
+**`BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL`**: Set both to the canonical public URL you use in the browser. For local Docker, the default is `http://localhost:3000`.
+
+**`TRUSTED_ORIGINS`**: Controls extra origins Better Auth accepts auth requests from. Leave it unset for a single-origin setup; set it only when your browser accesses the app from a URL different from `BETTER_AUTH_URL` (e.g., a network IP or a different port). Without a matching trusted origin, auth requests return `403 INVALID_ORIGIN`.
 
 ### Default Configuration
 
@@ -322,6 +325,8 @@ Then rebuild Docker: `npm run docker:local`
 ```yaml
 TRUSTED_ORIGINS: http://localhost:3000,http://YOUR_IP:3000
 ```
+
+Keep `BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL` set to the canonical URL for the environment. `TRUSTED_ORIGINS` is only for additional browser origins.
 
 ### Issue: Build fails with "bash: not found"
 
