@@ -12,8 +12,10 @@
 #   - OCI deploys remain manual
 #
 # Secrets:
-#   - Keep DATABASE_URL, ENCRYPTION_KEY, and auth/config values in GitLab CI/CD
-#     variables or the runtime config source. Do not hardcode them here.
+#   - Keep build-time values such as DATABASE_URL, ENCRYPTION_KEY, and
+#     NEXT_PUBLIC_APP_URL in GitLab CI/CD variables when the pipeline needs them.
+#   - Keep runtime app config in Spring Cloud Config or the deployment runtime
+#     source. Do not hardcode secrets here.
 
 variables:
   type:
@@ -48,12 +50,14 @@ variables:
   NPM_CONFIG_LOGLEVEL: "warn"
   NPM_CI_FLAGS: "--prefer-offline --cache $NPM_CACHE_DIR --legacy-peer-deps"
 
-  # CI variables such as DATABASE_URL, ENCRYPTION_KEY, BETTER_AUTH_URL,
-  # NEXT_PUBLIC_APP_URL, CONFIG_SERVER_URL, and Git credentials must be set
-  # in GitLab CI/CD settings or loaded from the runtime config source.
-  # BETTER_AUTH_URL and NEXT_PUBLIC_APP_URL should be the same canonical
-  # external app origin for the target environment. NEXT_PUBLIC_APP_URL is
-  # embedded in the client bundle at build time.
+  # CI variables such as GITLAB_UN, GITLAB_TOKEN, DATABASE_URL,
+  # ENCRYPTION_KEY, and build-time NEXT_PUBLIC_APP_URL must be set in GitLab
+  # CI/CD settings when the pipeline needs them. Runtime config such as
+  # BETTER_AUTH_URL and CONFIG_SERVER_URL must reach the deployed pod through
+  # Spring Cloud Config or the deployment/chart layer.
+  # For dev builds, NEXT_PUBLIC_APP_URL should be
+  # https://techhub.dev.barq.com because public Next.js vars can be embedded
+  # in the client bundle at build time.
 
   # OCI
   DEV_CNTNR_OCI_REG_IMG_PREFIX: "jed.ocir.io/axbp9ow0rohq"
@@ -123,6 +127,7 @@ build-gcp:
   variables:
     DOCKER_CONFIG: "/kaniko/.docker"
     BUILD_METRICS_FILE: "build-size-gcp.txt"
+    NEXT_PUBLIC_APP_URL: "https://techhub.dev.barq.com"
   cache:
     <<: *build_cache
   rules:
@@ -270,6 +275,7 @@ build-and-push-gcp-to-argo:
   stage: build_and_deploy
   variables:
     DOCKER_CONFIG: "/kaniko/.docker"
+    NEXT_PUBLIC_APP_URL: "https://techhub.dev.barq.com"
   cache:
     <<: *build_cache
   rules:

@@ -1,80 +1,95 @@
 # GitLab CI/CD Variables Setup
 
-## What lives where
+## What Lives Where
 
-| Variable | Where it lives | Why |
-|---|---|---|
-| `DATABASE_URL` | GitLab CI/CD project variables | Needed by `npx prisma validate` in the validate stage |
-| `ENCRYPTION_KEY` | GitLab CI/CD project variables | Needed by the validate stage format check |
-| Everything else | Spring Cloud Config (`techhub-dev.properties`) | Runtime — loaded by the pod at startup via `instrumentation.ts` |
+| Variable              | Where it lives                                              | Why                                                                      |
+| --------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `GITLAB_UN`           | GitLab CI/CD project variables                              | Pipeline writes updated image tags to the values repo                    |
+| `GITLAB_TOKEN`        | GitLab CI/CD project variables                              | Pipeline writes updated image tags to the values repo                    |
+| `DATABASE_URL`        | GitLab CI/CD project variables if needed                    | Prisma generation/validation may need a database URL shape at build time |
+| `ENCRYPTION_KEY`      | GitLab CI/CD project variables if needed                    | Validation may need the encryption key format                            |
+| `NEXT_PUBLIC_APP_URL` | GitLab CI/CD project variables for dev builds               | Next.js can inline public variables into the client bundle at build time |
+| Runtime app config    | Spring Cloud Config plus current K8s Secret/ConfigMap split | Loaded by the pod at startup through `docker-start.mjs`                  |
 
-The pipeline only needs 2 variables. All runtime config (Redis, auth, OAuth, AI keys, etc.) is served by Spring Cloud Config and never touches GitLab CI variables.
+For dev builds, set:
 
----
+```text
+NEXT_PUBLIC_APP_URL=https://techhub.dev.barq.com
+```
 
-## Add the 2 build-time variables
+`BETTER_AUTH_URL` and runtime `NEXT_PUBLIC_APP_URL` must also be
+`https://techhub.dev.barq.com` in Spring Cloud Config for the dev profiles.
 
-Go to: **GitLab UI > Project > Settings > CI/CD > Variables > Add variable**
+## Required Pipeline Variables
 
-| Variable | Value | Masked | Protected |
-|---|---|---|---|
-| `DATABASE_URL` | `postgresql://techhub:...@172.17.19.3:5432/techhub` | ✅ Yes | No |
-| `ENCRYPTION_KEY` | `0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc` | ✅ Yes | No |
+Go to **GitLab UI > Project > Settings > CI/CD > Variables > Add variable**.
 
-> Keep **Protected = No** so the variable is available on the `dev` branch (non-protected branches are blocked from protected variables).
+| Variable              | Masked |           Protected | Notes                                            |
+| --------------------- | -----: | ------------------: | ------------------------------------------------ |
+| `GITLAB_UN`           |    Yes |         Usually yes | Needs values repo write access                   |
+| `GITLAB_TOKEN`        |    Yes |         Usually yes | Needs `read_repository` and `write_repository`   |
+| `DATABASE_URL`        |    Yes | No for `dev` branch | Keep if Prisma generation/validation requires it |
+| `ENCRYPTION_KEY`      |    Yes | No for `dev` branch | Keep if validation requires it                   |
+| `NEXT_PUBLIC_APP_URL` |     No | No for `dev` branch | Set to `https://techhub.dev.barq.com`            |
 
----
+Keep **Protected = No** for variables needed by the non-protected `dev` branch.
 
-## Activate Spring Cloud Config (runtime)
+## Runtime Config Activation
 
-`CONFIG_SERVER_URL` must be in the **running pod's environment**, not in GitLab CI variables.
-
-Add it to `manifests/techhub/values-gcpdev.yaml` in the `deployment-configs` repo:
+`CONFIG_SERVER_URL` must be in the running pod environment, not only in GitLab
+CI/CD variables. For GCP dev, the values repo should inject:
 
 ```yaml
-CONFIG_SERVER_URL: "http://config-server.baraq.com:8888"
-SPRING_PROFILE: "dev"
+deployment:
+  env:
+    - name: CONFIG_SERVER_URL
+      value: "http://config-server-svc.horizontal-services.svc.cluster.local:8083"
+    - name: APPLICATION_NAME
+      value: "techhub"
+    - name: ENVIRONMENT_NAME
+      value: "gcpdev"
 ```
 
-Once the pod restarts you should see in logs:
-```
-=== Spring Cloud Config Integration ===
-✅ Config loaded from config-server: XX keys loaded
-✅ All critical environment variables are present
-```
+Once the pod restarts, logs from `docker-start.mjs` should show config loading
+before migrations:
 
-See [SPRING_CLOUD_CONFIG.md](./SPRING_CLOUD_CONFIG.md) for full details.
-
----
-
-## Verify the CI pipeline
-
-After adding the 2 variables, trigger a pipeline and check for:
-```
-✅ Critical environment variables are set
+```text
+[config] Fetching: GET http://config-server-svc.horizontal-services.svc.cluster.local:8083/techhub/gcpdev
+[config] Loaded ...
+[migrate] Running database migrations...
 ```
 
-If you see:
-```
-❌ ERROR DATABASE_URL not set
-```
-→ The variable is missing from GitLab CI/CD settings, or it's marked Protected but the branch isn't protected.
+## Verify
 
----
+From a VPN-enabled machine:
+
+```bash
+dotenv -e .env.local -- tsx scripts/config/verify-cloud-config.ts --profiles=gcpdev,dev --app-url=https://techhub.dev.barq.com
+kubectl exec -n horizontal-services deploy/techhub -c techhub -- env | grep -E 'CONFIG_SERVER_URL|APPLICATION_NAME|ENVIRONMENT_NAME|DATABASE_URL|REDIS_URL|ENCRYPTION_KEY|BETTER_AUTH_URL|BETTER_AUTH_SECRET|NEXT_PUBLIC_APP_URL'
+curl -fsS https://techhub.dev.barq.com/api/debug/env
+```
 
 ## Troubleshooting
 
-### Variables not picked up in pipeline
-- Confirm the variable exists on this project (not a group variable)
-- For the `dev` branch, keep variables **non-protected**
-- Re-run the pipeline after saving
+### Variables Not Picked Up In Pipeline
 
-### DATABASE_URL connection errors during validate
-The URL only needs to be a valid format for `prisma validate` — it does not need to be a reachable host. A real DB URL works fine; a dummy one also works.
+- Confirm the variable exists on the TechHub project, not only a different project.
+- Keep variables needed by `dev` as non-protected unless the branch is protected.
+- Re-run the pipeline after saving variables.
 
----
+### Runtime Config Missing In Pod
+
+- Check the rendered ArgoCD manifest or live Deployment/Pod, not just GitLab CI/CD variables.
+- Confirm `CONFIG_SERVER_URL` includes `http://` or `https://`.
+- Confirm `APPLICATION_NAME=techhub`.
+- Confirm `ENVIRONMENT_NAME=gcpdev` for GCP dev and `ENVIRONMENT_NAME=dev` for OCI dev.
+
+### `DATABASE_URL` Errors During CI
+
+The CI value only needs to satisfy the tools that run during build/generation.
+Runtime database connectivity is verified in the deployed pod.
 
 ## See Also
 
-- [SPRING_CLOUD_CONFIG.md](./SPRING_CLOUD_CONFIG.md) — config server setup and runtime vars
-- [GITLAB_CI_SETUP.md](../deployment/GITLAB_CI_SETUP.md) — full CI/CD pipeline docs
+- [SPRING_CLOUD_CONFIG.md](./SPRING_CLOUD_CONFIG.md) - runtime config setup and cleaned dev profile templates
+- [GITLAB_CI_SETUP.md](../deployment/GITLAB_CI_SETUP.md) - full CI/CD pipeline docs

@@ -6,7 +6,7 @@
  *
  * Execution flow:
  * 1. Check if CONFIG_SERVER_URL is set (feature flag)
- * 2. Determine Spring profile from NODE_ENV or SPRING_PROFILE
+ * 2. Determine Spring profile from ENVIRONMENT_NAME, SPRING_PROFILE, or NODE_ENV
  * 3. Load config from server with retry logic
  * 4. Merge config into process.env (server values override local)
  * 5. T3 Env validation runs on merged config (existing behavior)
@@ -23,18 +23,18 @@ import { loadCloudConfig } from "./cloud-config-loader";
  * Determines Spring profile from environment variables
  *
  * Priority:
- * 1. SPRING_PROFILE (explicit override)
- * 2. ENVIRONMENT_NAME (from values, e.g. gcpdev → loads techhub-gcpdev.properties)
+ * 1. ENVIRONMENT_NAME (from values, e.g. gcpdev -> loads techhub-gcpdev.properties)
+ * 2. SPRING_PROFILE (legacy explicit override)
  * 3. NODE_ENV mapping (production → prod, development/test → dev)
  *
  * @returns Spring profile name (dev, gcpdev, uat, prod, etc.)
  */
 function getSpringProfile(): string {
-  if (process.env.SPRING_PROFILE) {
-    return process.env.SPRING_PROFILE;
-  }
   if (process.env.ENVIRONMENT_NAME) {
     return process.env.ENVIRONMENT_NAME;
+  }
+  if (process.env.SPRING_PROFILE) {
+    return process.env.SPRING_PROFILE;
   }
   switch (process.env.NODE_ENV) {
     case "production":

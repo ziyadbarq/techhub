@@ -41,10 +41,10 @@ Day-to-day operations guide for TechHub deployments on Kubernetes (OCI and GCP c
 
 ### Kubernetes Clusters
 
-| Cloud | Namespace | Environment | URL |
-|-------|-----------|-------------|-----|
-| OCI | `istio-dev` | Production | https://techhub.baraq.com |
-| GCP | `horizontal-services` | Development | https://techhub-dev.baraq.com |
+| Cloud | Namespace             | Environment | URL                          |
+| ----- | --------------------- | ----------- | ---------------------------- |
+| OCI   | `istio-dev`           | Production  | https://techhub.baraq.com    |
+| GCP   | `horizontal-services` | Development | https://techhub.dev.barq.com |
 
 ### Container Registries
 
@@ -216,6 +216,7 @@ kubectl get hpa techhub -n istio-dev --watch
 ### Via GitLab CI (Recommended)
 
 **Automatic Method**:
+
 1. Push code to `main` or `dev` branch
 2. Pipeline builds new Docker image
 3. Trigger manual deployment (OCI) or automatic (GCP)

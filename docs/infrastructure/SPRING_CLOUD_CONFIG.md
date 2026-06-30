@@ -1,439 +1,196 @@
 # Spring Cloud Config Integration
 
-## Overview
+TechHub loads runtime configuration from Spring Cloud Config in Kubernetes. The
+Docker entrypoint, `docker-start.mjs`, fetches config before migrations, seed,
+and the Next.js standalone server start. The Next.js instrumentation hook also
+hydrates restart-required database settings and initializes the DI container, but
+Kubernetes runtime config does not depend on instrumentation as the first loader.
 
-TechHub integrates with Spring Cloud Config Server for centralized configuration management. This allows environment-specific configuration to be managed externally and loaded at application startup.
+## Runtime Flow
 
-**Key Features:**
-- ✅ Zero-breaking-changes integration with existing T3 Env validation
-- ✅ Graceful fallback to local `.env` files if config server is unavailable
-- ✅ Automatic profile detection from `NODE_ENV` (development→dev, production→prod)
-- ✅ Retry logic with exponential backoff (3 attempts, 5-second timeout)
-- ✅ Validation of critical environment variables
-- ✅ CI/CD support with environment detection
-
-## Architecture
-
-### Configuration Loading Flow
-
-```
-Next.js loads .env files
-  ↓
-instrumentation.ts (runs once at startup)
-  ├─ Check if CONFIG_SERVER_URL is set
-  ├─ Fetch from Spring Cloud Config Server
-  ├─ Merge with process.env (server takes precedence)
-  └─ Validate critical env vars
-  ↓
-T3 Env validates merged config (UNCHANGED)
-  ↓
-DI Container initializes (UNCHANGED)
-  ↓
-Application serves requests (UNCHANGED)
+```text
+Kubernetes injects bootstrap env
+  CONFIG_SERVER_URL
+  APPLICATION_NAME=techhub
+  ENVIRONMENT_NAME=gcpdev|dev|uat|prod
+      |
+      v
+docker-start.mjs fetches GET {CONFIG_SERVER_URL}/{APPLICATION_NAME}/{ENVIRONMENT_NAME}
+      |
+      v
+process.env is populated from Spring Cloud Config
+      |
+      v
+migrations run, production seed runs if needed, Next.js starts
 ```
 
-### Profile Mapping
+Profile resolution matches the deployment path:
 
-| NODE_ENV    | Spring Profile |
-|-------------|----------------|
-| production  | prod           |
-| development | dev            |
-| test        | dev            |
+1. `ENVIRONMENT_NAME`
+2. `SPRING_PROFILE`
+3. `NODE_ENV` mapping: `production -> prod`, everything else -> `dev`
 
-**Override:** Set `SPRING_PROFILE` environment variable to explicitly specify the profile.
+## Dev Profiles
 
-## Setup
+The active dev profiles are:
 
-### 1. Environment Variables
+- `techhub-gcpdev.properties` for GCP dev
+- `techhub-dev.properties` for OCI dev
 
-Add to your `.env.local`:
+Use `https://techhub.dev.barq.com` as the canonical dev browser origin. Keep
+`BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL` identical. Set `TRUSTED_ORIGINS`
+only for additional browser origins during a transition.
 
-```bash
-# Spring Cloud Config Server (optional)
-CONFIG_SERVER_URL=http://config-server.baraq.com:8888
+### `techhub-gcpdev.properties`
 
-# Optional: Override automatic profile detection
-SPRING_PROFILE=dev  # Options: dev, uat, prod
+```properties
+# TechHub - GCP Dev Environment
+# Spring Cloud Config profile: gcpdev
+
+NODE_ENV=production
+LOG_LEVEL=debug
+PORT=3000
+
+# --- Redis ---
+REDIS_URL=redis://redis.dev.barq.com:6379
+
+# --- Security ---
+ENCRYPTION_KEY=0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc
+
+# --- Auth ---
+BETTER_AUTH_URL=https://techhub.dev.barq.com
+BETTER_AUTH_SECRET=XmPMOa+T2AUH13vPJqJoAllUC6njO9RwkFdYJpYWdNE=
+TRUSTED_ORIGINS=https://techhub.dev.barq.com
+
+# --- Public/UI ---
+NEXT_PUBLIC_APP_URL=https://techhub.dev.barq.com
+NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION=true
+NEXT_PUBLIC_ENABLE_MS_AUTH=false
+NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL=30000
 ```
 
-**Feature Flag:** If `CONFIG_SERVER_URL` is not set, the integration is disabled and only local `.env` files are used.
+### `techhub-dev.properties`
 
-### 2. Config Server Setup
+```properties
+# TechHub - OCI Dev Environment
+# Spring Cloud Config profile: dev
 
-The config server should expose configuration for the `techhub` application:
+NODE_ENV=production
+LOG_LEVEL=info
+PORT=3000
 
+# --- Database ---
+DATABASE_URL=postgresql://techhub:YG%3C2KH%60r%29I%2CkHjMO@172.17.19.3:5432/techhub
+
+# --- Security ---
+ENCRYPTION_KEY=0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc
+
+# --- Better Auth ---
+BETTER_AUTH_URL=https://techhub.dev.barq.com
+BETTER_AUTH_SECRET=jpJlqIIKxyT1co5772FbiD+n7QMIlIS+bCjkfFpb970=
+TRUSTED_ORIGINS=https://techhub.dev.barq.com
+
+# --- Public/UI ---
+NEXT_PUBLIC_APP_URL=https://techhub.dev.barq.com
+NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION=true
+NEXT_PUBLIC_ENABLE_MS_AUTH=false
+NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL=30000
 ```
-GET http://config-server.baraq.com:8888/techhub/dev
-GET http://config-server.baraq.com:8888/techhub/uat
-GET http://config-server.baraq.com:8888/techhub/prod
+
+Do not keep commented credentials, old IP URLs, `<from-k8s>` placeholders,
+`ALLOW_ENV_DEBUG=true`, or `OPENAI_API_KEY=openai` in these files. The debug env
+endpoint is already enabled for `gcpdev` and `dev`, and `OPENAI_API_KEY` is not
+currently consumed by application code.
+
+## Deployment Bootstrap
+
+The values repo must inject only the bootstrap config needed to reach Spring
+Cloud Config plus any vars intentionally kept in Kubernetes Secret/ConfigMap by
+the current hybrid split.
+
+GCP dev:
+
+```yaml
+deployment:
+  env:
+    - name: CONFIG_SERVER_URL
+      value: "http://config-server-svc.horizontal-services.svc.cluster.local:8083"
+    - name: APPLICATION_NAME
+      value: "techhub"
+    - name: ENVIRONMENT_NAME
+      value: "gcpdev"
 ```
 
-Configuration format should use either:
-- Dot notation: `database.url=postgres://...`
-- Environment variable format: `DATABASE_URL=postgres://...`
+OCI dev:
 
-Both formats are automatically converted to uppercase-with-underscores format.
+```yaml
+deployment:
+  env:
+    - name: CONFIG_SERVER_URL
+      value: "http://config-server.baraq.com:8888"
+    - name: APPLICATION_NAME
+      value: "techhub"
+    - name: ENVIRONMENT_NAME
+      value: "dev"
+```
 
-### 3. Critical Environment Variables
+`CONFIG_SERVER_URL` must include the scheme. If `DATABASE_URL`, `REDIS_URL`, or
+another runtime value is absent from backend-configs by design, verify the live
+pod receives it from Kubernetes before removing any fallback.
 
-The following variables are validated at startup:
-- `DATABASE_URL`
-- `REDIS_URL`
-- `BETTER_AUTH_URL`
-- `NEXT_PUBLIC_APP_URL`
-- `BETTER_AUTH_SECRET`
+## GitLab CI/CD Variables
 
-If any are missing after config loading, warnings/errors will be logged.
+GitLab CI/CD variables are for the pipeline and build-time needs, not the final
+runtime pod environment unless the chart explicitly injects them.
+
+Keep:
+
+- `GITLAB_UN`
+- `GITLAB_TOKEN`
+- `DATABASE_URL` if Prisma generation/validation needs it
+- `ENCRYPTION_KEY` if validation needs it
+- `NEXT_PUBLIC_APP_URL=https://techhub.dev.barq.com` for dev builds, because
+  Next.js can inline public variables into the client bundle at build time
+
+Runtime values are verified in the rendered Deployment/Pod, not assumed from
+GitLab CI/CD variable presence.
 
 ## Verification
 
-### Quick Health Check
-
-Run the verification script to test your config server setup:
+From a VPN-enabled machine:
 
 ```bash
-npm run config:verify
+dotenv -e .env.local -- tsx scripts/config/verify-cloud-config.ts --profiles=gcpdev,dev --app-url=https://techhub.dev.barq.com
 ```
 
-This runs 5 checks:
-1. ✅ CONFIG_SERVER_URL is set
-2. ✅ CONFIG_SERVER_URL is valid URL
-3. ✅ Can connect to config server (health endpoint)
-4. ✅ Can load configuration for current profile
-5. ✅ Critical environment variables are present
+The verifier checks:
 
-**Test specific profile:**
+- `CONFIG_SERVER_URL` is present and has a valid URL scheme
+- config server health endpoint responds
+- both dev profiles load
+- required config keys are present in backend-configs
+- `BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL` match the canonical dev URL
+- junk keys and placeholders are absent
+
+After deployment:
+
 ```bash
-dotenv -e .env.local -- tsx scripts/config/verify-cloud-config.ts --profile=prod
+kubectl exec -n horizontal-services deploy/techhub -c techhub -- env | grep -E 'CONFIG_SERVER_URL|APPLICATION_NAME|ENVIRONMENT_NAME|DATABASE_URL|REDIS_URL|ENCRYPTION_KEY|BETTER_AUTH_URL|BETTER_AUTH_SECRET|NEXT_PUBLIC_APP_URL'
+curl -fsS https://techhub.dev.barq.com/api/debug/env
+curl -fsS https://techhub.dev.barq.com/api/health
 ```
 
-### Manual Testing
+Expected debug response highlights:
 
-**Test 1: Config server available**
-```bash
-export CONFIG_SERVER_URL=http://config-server.baraq.com:8888
-npm run dev
-```
-
-**Test 2: Config server unavailable (graceful fallback)**
-```bash
-export CONFIG_SERVER_URL=http://localhost:9999  # Non-existent server
-npm run dev  # Should fallback to .env.local
-```
-
-**Test 3: Config server disabled**
-```bash
-unset CONFIG_SERVER_URL
-npm run dev  # Should use .env.local only
-```
-
-## Startup Logs
-
-### Successful Load
-```
-=== Spring Cloud Config Integration ===
-📦 Application: techhub
-🏷️  Profile: dev
-🌐 Config Server: http://config-server.baraq.com:8888
-🔧 Loading config from Spring Cloud Config Server: http://config-server.baraq.com:8888/techhub/dev
-   Attempt 1/3...
-✅ Config loaded successfully from config server (42 keys)
-✅ Config loaded from config-server: 42 keys loaded
-   Profile: dev
-   Retry attempts: 1
-   Loaded at: 2025-01-11T20:00:00.000Z
-   Sample keys: DATABASE_URL, REDIS_URL, BETTER_AUTH_URL, BETTER_AUTH_SECRET...
-✅ All critical environment variables are present
-=======================================
-```
-
-### Graceful Fallback
-```
-=== Spring Cloud Config Integration ===
-📦 Application: techhub
-🏷️  Profile: dev
-🌐 Config Server: http://config-server.baraq.com:8888
-🔧 Loading config from Spring Cloud Config Server: http://config-server.baraq.com:8888/techhub/dev
-   Attempt 1/3...
-   ⚠️  Attempt 1/3 failed: connect ECONNREFUSED
-   ⏳ Retrying in 100ms...
-   Attempt 2/3...
-   ⚠️  Attempt 2/3 failed: connect ECONNREFUSED
-   ⏳ Retrying in 200ms...
-   Attempt 3/3...
-   ⚠️  Attempt 3/3 failed: connect ECONNREFUSED
-❌ Failed to load config from server after 3 attempts. Using local .env fallback.
-   Last error: connect ECONNREFUSED
-⚠️  Config server unavailable, using local .env files as fallback
-   Error: connect ECONNREFUSED
-   Retry attempts: 3
-✅ All critical environment variables found in local .env
-=======================================
-```
-
-### Disabled
-```
-ℹ️  CONFIG_SERVER_URL not set, using local .env files only
-```
-
-## Error Handling
-
-| Scenario                      | Behavior                                  |
-|-------------------------------|-------------------------------------------|
-| Config server unavailable     | Retry 3x, then fallback to .env          |
-| Network timeout (5s)          | Retry with exponential backoff           |
-| Invalid config values         | T3 Env validation fails → Stop startup   |
-| CONFIG_SERVER_URL not set     | Skip config server, use .env only        |
-| Missing critical env vars     | Log error, may fail T3 Env validation    |
-
-**Principle:** Graceful degradation for config server connectivity, strict validation for configuration values.
-
-## CI/CD Integration
-
-### Current Status
-
-The CI/CD pipeline no longer has hardcoded credentials in `.gitlab-ci.yml`.
-Build-time variables (`DATABASE_URL`, `ENCRYPTION_KEY`) are now in GitLab CI/CD project variables.
-
-To activate Spring Cloud Config at runtime, `CONFIG_SERVER_URL` must be present in the
-application container environment for each environment (see Part 3 of the migration steps below).
-
-### Migration Path
-
-**Phase 1: Current (Direct Variables)**
-```yaml
-# GitLab CI/CD Variables (current setup)
-DATABASE_URL=postgresql://user:pass@host:5432/db
-REDIS_URL=redis://host:6379
-BETTER_AUTH_URL=https://app.example.com
-NEXT_PUBLIC_APP_URL=https://app.example.com
-BETTER_AUTH_SECRET=xxx
-```
-
-`BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL` should be the same canonical external app origin. Do not set `BETTER_AUTH_URL` to an internal pod, service, or config-server URL; OAuth redirects and email links use the public auth URL. Set `TRUSTED_ORIGINS` only when additional exact browser origins must be accepted.
-
-**Phase 2: Hybrid (Both Sources)**
-```yaml
-# Add CONFIG_SERVER_URL alongside existing variables
-CONFIG_SERVER_URL=http://config-server.baraq.com:8888
-
-# Keep direct variables as fallback
-DATABASE_URL=postgresql://user:pass@host:5432/db
-...
-```
-
-**Phase 3: Config Server Only (Future)**
-```yaml
-# Only CONFIG_SERVER_URL needed
-CONFIG_SERVER_URL=http://config-server.baraq.com:8888
-
-# All other variables loaded from config server
-```
-
-### Setup Instructions
-
-#### Option 1: Use Direct Environment Variables (Current)
-
-**Recommended for now** until config server is deployed and tested.
-
-1. Go to GitLab UI > Project > Settings > CI/CD > Variables
-2. Add required variables:
-   - `DATABASE_URL` - PostgreSQL connection string
-   - `REDIS_URL` - Redis connection string
-   - `BETTER_AUTH_URL` - Canonical external application URL
-   - `NEXT_PUBLIC_APP_URL` - Same canonical external application URL, embedded into client-side app code
-   - `BETTER_AUTH_SECRET` - Auth secret
-   - `TRUSTED_ORIGINS` - Optional comma-separated extra browser origins
-   - Other app-specific variables
-
-#### Option 2: Use Spring Cloud Config Server (Future)
-
-**Prerequisites:**
-- Config server deployed and reachable from GitLab runners
-- Config server configured for `techhub` application
-- Config server provides all required environment variables
-
-**Steps:**
-
-1. **Deploy Config Server**
-   - Set up Spring Cloud Config Server at `http://config-server.baraq.com:8888`
-   - Configure server to serve `techhub` application
-   - Add profiles: `dev`, `uat`, `prod`
-
-2. **Configure Application in Config Server**
-
-   Create config files in your Git repo (or use Vault/etc.):
-   ```
-   techhub-dev.yml
-   techhub-uat.yml
-   techhub-prod.yml
-   ```
-
-   Example `techhub-dev.yml`:
-   ```yaml
-   database:
-     url: postgresql://user:pass@dev-db:5432/techhub_dev
-   redis:
-     url: redis://dev-redis:6379
-   better_auth:
-     url: https://dev.techhub.baraq.com
-     secret: dev_secret_here
-   ```
-
-3. **Test Config Server Manually**
-   ```bash
-   # Test from GitLab runner network
-   curl http://config-server.baraq.com:8888/techhub/dev
-   curl http://config-server.baraq.com:8888/actuator/health
-   ```
-
-4. **Expose `CONFIG_SERVER_URL` to the application runtime**
-   - Add `CONFIG_SERVER_URL=http://config-server.baraq.com:8888` wherever your deployment injects runtime environment variables
-   - This may be GitLab-driven, Helm/values-driven, or another Kubernetes mechanism depending on your DevOps setup
-   - Verify the variable is actually present inside the running pod before relying on config server loading
-
-5. **Gradual Migration**
-   - Keep direct variables alongside `CONFIG_SERVER_URL` initially
-   - Monitor CI pipeline logs for config loading success
-   - Once stable, remove direct variables one-by-one
-
-6. **Verify in CI**
-
-   Check pipeline logs for:
-   ```
-   === Spring Cloud Config Integration ===
-   📦 Application: techhub
-   🏷️  Profile: dev
-   🌐 Config Server: http://config-server.baraq.com:8888
-   ✅ Config loaded from config-server: 42 keys loaded
-   ✅ All critical environment variables are present
-   =======================================
-   ```
-
-### Profile Detection in CI
-
-| Branch      | NODE_ENV   | Spring Profile |
-|-------------|------------|----------------|
-| main        | production | prod           |
-| dev         | development| dev            |
-| feature/*   | development| dev            |
-
-Override with `SPRING_PROFILE` GitLab CI variable if needed.
-
-### Troubleshooting CI Issues
-
-**Error: "DATABASE_URL not set in CI environment"**
-
-This means neither direct variables nor config server provided `DATABASE_URL`.
-
-**Solutions:**
-1. Add `DATABASE_URL` directly to GitLab CI/CD variables (quick fix)
-2. Set up config server and ensure `CONFIG_SERVER_URL` reaches the runtime container
-3. Verify config server is reachable from GitLab runners
-4. Check config server logs for errors
-
-**Config Server Unreachable from CI**
-
-Common causes:
-- Config server not running
-- Network firewall blocking GitLab runners
-- Wrong URL in `CONFIG_SERVER_URL` variable
-- DNS resolution issues
-
-**Test from runner:**
-```yaml
-test-config-server:
-  stage: test
-  script:
-    - curl -v http://config-server.baraq.com:8888/actuator/health
-    - curl -v http://config-server.baraq.com:8888/techhub/dev
-```
-
-## Troubleshooting
-
-### Config server not loading
-
-1. Verify `CONFIG_SERVER_URL` is set:
-   ```bash
-   echo $CONFIG_SERVER_URL
-   ```
-
-2. Test config server health:
-   ```bash
-   curl http://config-server.baraq.com:8888/actuator/health
-   ```
-
-3. Test config endpoint:
-   ```bash
-   curl http://config-server.baraq.com:8888/techhub/dev
-   ```
-
-4. Run verification script:
-   ```bash
-   npm run config:verify
-   ```
-
-### Critical variables missing
-
-Check both sources:
-1. Config server response: `curl http://config-server.baraq.com:8888/techhub/dev`
-2. Local .env.local file
-
-Variables from config server override local .env, so ensure critical vars are present in one of these sources.
-
-### Wrong profile loaded
-
-Check profile detection:
-```bash
-# Explicit override
-export SPRING_PROFILE=prod
-
-# Or let it auto-detect from NODE_ENV
-export NODE_ENV=production  # → prod
-export NODE_ENV=development # → dev
-```
+- `configSource` is `config-server`
+- `ENVIRONMENT_NAME` is `gcpdev`
+- all critical `has*` fields are `true`
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| [instrumentation.ts](/instrumentation.ts) | Next.js instrumentation hook (entry point) |
-| [cloud-config-init.ts](/src/infrastructure/config/cloud-config-init.ts) | Orchestration and auto-execution |
-| [cloud-config-loader.ts](/src/infrastructure/config/cloud-config-loader.ts) | Core loading logic with retry |
-| [cloud-config.types.ts](/src/infrastructure/config/cloud-config.types.ts) | TypeScript interfaces |
-| [verify-cloud-config.ts](/scripts/config/verify-cloud-config.ts) | Verification script |
-
-## Performance
-
-| Scenario | Startup Time Impact |
-|----------|---------------------|
-| Config server available (same datacenter) | +50-100ms |
-| Config server available (network latency) | +100-200ms |
-| Config server timeout (3 retries) | +15 seconds |
-| Config server disabled | 0ms |
-
-**Typical case:** 100-200ms additional startup time, acceptable for production deployments.
-
-## Security
-
-**Current:** No authentication (config server is internal-only)
-
-**Future:** Add support for HTTP Basic Auth or token-based auth if needed:
-```typescript
-// In cloud-config-loader.ts
-const configData = await load({
-  endpoint: options.endpoint,
-  name: options.name,
-  profiles: options.profiles,
-  auth: {
-    user: process.env.CONFIG_SERVER_USER,
-    pass: process.env.CONFIG_SERVER_PASSWORD,
-  },
-});
-```
-
-## See Also
-
-- [T3 Env Documentation](./env.ts) - Environment variable validation
-- [Instrumentation Docs](https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation) - Next.js instrumentation hook
-- [Spring Cloud Config](https://cloud.spring.io/spring-cloud-config/) - Config server documentation
+| File                                                                        | Purpose                                                      |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| [docker-start.mjs](/docker-start.mjs)                                       | Kubernetes Docker entrypoint and first runtime config loader |
+| [instrumentation.ts](/src/instrumentation.ts)                               | Next.js startup hook for config hydration and DI bootstrap   |
+| [cloud-config-loader.ts](/src/infrastructure/config/cloud-config-loader.ts) | Spring Cloud Config REST client                              |
+| [verify-cloud-config.ts](/scripts/config/verify-cloud-config.ts)            | Dev profile verification script                              |

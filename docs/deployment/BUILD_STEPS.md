@@ -218,7 +218,7 @@ git push github -o ci.skip HEAD:main
 - Values file: `manifests/techhub/values-gcpdev.yaml`
 - Namespace: `horizontal-services`
 - Registry: GCP Artifact Registry
-- URL: https://techhub-dev.baraq.com
+- URL: https://techhub.dev.barq.com
 
 **Duration**: ~10-12 minutes
 
@@ -356,9 +356,10 @@ git push github -o ci.skip HEAD:main
 - `PUSHOVER_API_TOKEN` - Pushover app token
 - `PUSHOVER_USER_KEY` - Pushover user key
 
-### Runtime Variables (Kubernetes Secrets/ConfigMaps)
+### Runtime Variables (Spring Cloud Config + Kubernetes)
 
-Managed in backend-configs repository:
+Managed in backend-configs and, for the current hybrid split, selected
+Kubernetes Secrets/ConfigMaps:
 
 - `DATABASE_URL` - PostgreSQL connection (GCP Cloud SQL)
 - `REDIS_URL` - Redis connection (GCP Memorystore)
@@ -369,6 +370,9 @@ Managed in backend-configs repository:
 - `MICROSOFT_*` - Azure AD/Graph API credentials
 - `AZURE_*` - Intune integration credentials
 - `PORT` - Application port (default: 3000)
+- `CONFIG_SERVER_URL` - Bootstrap URL for Spring Cloud Config, including scheme
+- `APPLICATION_NAME` - `techhub`
+- `ENVIRONMENT_NAME` - `gcpdev` for GCP dev, `dev` for OCI dev
 
 **Reference**: http://gitlab.dev.baraq.com.internal/baraq-engineering/backend-shared/backend-configs
 

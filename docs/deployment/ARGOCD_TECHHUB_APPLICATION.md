@@ -264,22 +264,17 @@ For security reasons, this document intentionally does not repeat the raw secret
 
 ### Config Server Detail
 
-The live pod manifest shows:
+The live pod manifest should show:
 
-- `CONFIG_SERVER_URL=config-server-svc.horizontal-services.svc.cluster.local:8083`
+- `CONFIG_SERVER_URL=http://config-server-svc.horizontal-services.svc.cluster.local:8083`
+- `APPLICATION_NAME=techhub`
+- `ENVIRONMENT_NAME=gcpdev`
 
 Operational note:
 
 - This appears to reference an in-cluster config server service
-- The value is missing an explicit URL scheme in the manifest snippet you shared
-
-Important caveat:
-
-- The app code currently validates `CONFIG_SERVER_URL` as a URL in the verification script and passes it as an endpoint to the cloud-config loader
-- If the loader expects a full URL, the working runtime behavior suggests one of these is true:
-  - the loader tolerates scheme-less host values
-  - the actual effective value is normalized elsewhere
-  - config loading is not currently failing despite the format
+- `CONFIG_SERVER_URL` must include `http://` or `https://`; the verification script treats scheme-less values as invalid
+- `ENVIRONMENT_NAME=gcpdev` is what makes the app request `techhub-gcpdev.properties`
 
 This is worth verifying in application startup logs rather than assuming.
 
