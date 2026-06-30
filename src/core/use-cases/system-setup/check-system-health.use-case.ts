@@ -15,6 +15,104 @@ import type { SystemHealthCheckDto } from "@/core/dtos/system-setup.dto";
 import { QUEUE_NAMES } from "@/core/domain/jobs/job-names";
 import { LogExecution } from "@/lib/decorators";
 
+type ConfigReadiness = {
+  configured: boolean;
+  message?: string;
+  missingKeys: string[];
+  placeholderKeys: string[];
+};
+
+const PLACEHOLDER_PATTERNS = [
+  /^your[-_]/i,
+  /^change[-_]me/i,
+  /^example$/i,
+  /^placeholder$/i,
+  /yourdomain\.com/i,
+];
+
+function isPlaceholderValue(value: string): boolean {
+  const normalized = value.trim().replace(/^["']|["']$/g, "");
+  return PLACEHOLDER_PATTERNS.some((pattern) => pattern.test(normalized));
+}
+
+async function getConfigReadiness(
+  configService: IConfigService,
+  keys: string[],
+): Promise<ConfigReadiness> {
+  const values = await Promise.all(
+    keys.map(async (key) => [key, await configService.get(key)] as const),
+  );
+  const missingKeys = values
+    .filter(([, value]) => !value?.trim())
+    .map(([key]) => key);
+  const placeholderKeys = values
+    .filter(([, value]) => value !== undefined && isPlaceholderValue(value))
+    .map(([key]) => key);
+
+  const invalidKeys = [...missingKeys, ...placeholderKeys];
+
+  return {
+    configured: invalidKeys.length === 0,
+    missingKeys,
+    placeholderKeys,
+    message:
+      invalidKeys.length > 0
+        ? `Not configured (optional). Set ${invalidKeys.join(", ")} to real values to enable this integration.`
+        : undefined,
+  };
+}
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
+function stripProviderNoise(message: string): string {
+  return message
+    .replace(/\s*Trace ID:\s*[\w-]+/gi, "")
+    .replace(/\s*Correlation ID:\s*[\w-]+/gi, "")
+    .replace(/\s*Timestamp:\s*[\dT:.+-]+Z?/gi, "")
+    .replace(/\s*Error\(s\):\s*\d+\s*-\s*/gi, "")
+    .replace(/\s*Description:\s*/gi, "")
+    .replace(/\s+-\s+-\s*/g, " - ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function toIntegrationErrorMessage(error: unknown, integrationName: string) {
+  const rawMessage = getErrorMessage(error, `${integrationName} check failed`);
+  const message = stripProviderNoise(rawMessage);
+
+  if (/AADSTS900023/i.test(message) || /tenant identifier/i.test(message)) {
+    return `${integrationName} is configured with an invalid Microsoft tenant. Use a real tenant ID or verified tenant domain.`;
+  }
+
+  if (/invalid_client/i.test(message)) {
+    return `${integrationName} credentials were rejected. Verify the client ID and client secret.`;
+  }
+
+  if (/unauthorized_client|admin consent|consent_required/i.test(message)) {
+    return `${integrationName} is missing required Microsoft Graph permissions or admin consent.`;
+  }
+
+  if (/\b403\b|Forbidden/i.test(message)) {
+    return `${integrationName} permission denied by Microsoft Graph. Verify API permissions and admin consent.`;
+  }
+
+  if (/\b401\b|Unauthorized/i.test(message)) {
+    return `${integrationName} authentication failed. Verify the tenant, client ID, and client secret.`;
+  }
+
+  if (/ENOTFOUND|ECONNREFUSED|ETIMEDOUT|network|fetch failed/i.test(message)) {
+    return `${integrationName} could not reach Microsoft Graph. Check network connectivity and proxy/firewall settings.`;
+  }
+
+  if (/Missing .*configuration|Required environment variables/i.test(message)) {
+    return `${integrationName} is not fully configured. Add the required settings before enabling this integration.`;
+  }
+
+  return message || `${integrationName} check failed`;
+}
+
 @injectable()
 export class CheckSystemHealthUseCase {
   constructor(
@@ -168,22 +266,21 @@ export class CheckSystemHealthUseCase {
     let msGraphSSOError: string | undefined;
     let msGraphSSOResponseTime: number | undefined;
     try {
-      const clientId = await this.configService.get("MICROSOFT_CLIENT_ID");
-      const clientSecret = await this.configService.get(
+      const readiness = await getConfigReadiness(this.configService, [
+        "MICROSOFT_CLIENT_ID",
         "MICROSOFT_CLIENT_SECRET",
-      );
+      ]);
 
       // Better Auth falls back to "common" when tenant ID is not configured.
       // Treat client credentials as the real readiness signal here.
-      const hasCredentials = !!(clientId && clientSecret);
-      msGraphSSOConfigured = hasCredentials;
+      msGraphSSOConfigured = readiness.configured;
+      msGraphSSOError = readiness.message;
 
       // There is no dedicated server-side SSO probe today. Once credentials
       // are present, Better Auth can initialize successfully on restart.
-      msGraphSSOConnected = hasCredentials;
+      msGraphSSOConnected = readiness.configured;
     } catch (error) {
-      msGraphSSOError =
-        error instanceof Error ? error.message : "Unknown MS SSO error";
+      msGraphSSOError = toIntegrationErrorMessage(error, "Microsoft Graph SSO");
     }
 
     // Check Intune connection (uses AZURE_* credentials)
@@ -192,31 +289,31 @@ export class CheckSystemHealthUseCase {
     let intuneError: string | undefined;
     let intuneResponseTime: number | undefined;
     try {
-      const hasCredentials = !!(
-        (await this.configService.get("AZURE_TENANT_ID")) &&
-        (await this.configService.get("AZURE_CLIENT_ID")) &&
-        (await this.configService.get("AZURE_CLIENT_SECRET"))
-      );
-      intuneConfigured = hasCredentials;
+      const readiness = await getConfigReadiness(this.configService, [
+        "AZURE_TENANT_ID",
+        "AZURE_CLIENT_ID",
+        "AZURE_CLIENT_SECRET",
+      ]);
+      intuneConfigured = readiness.configured;
+      intuneError = readiness.message;
 
-      if (hasCredentials && !this.graphService) {
+      if (readiness.configured && !this.graphService) {
         intuneError =
-          "Microsoft Graph integration service is not loaded in this runtime";
+          "Microsoft Graph integration service is not loaded in this runtime.";
       }
 
-      if (hasCredentials && this.graphService) {
+      if (readiness.configured && this.graphService) {
         const intuneStart = performance.now();
         intuneConnected = await this.graphService.testIntuneConnection();
         intuneResponseTime = Math.round(performance.now() - intuneStart);
 
         if (!intuneConnected) {
           intuneError =
-            "Intune connectivity probe returned false without an error";
+            "Intune is configured, but the connectivity check did not succeed.";
         }
       }
     } catch (error) {
-      intuneError =
-        error instanceof Error ? error.message : "Unknown Intune error";
+      intuneError = toIntegrationErrorMessage(error, "Intune");
     }
 
     // Check Email service connection
@@ -225,22 +322,26 @@ export class CheckSystemHealthUseCase {
     let emailError: string | undefined;
     let emailResponseTime: number | undefined;
     try {
-      const hasCredentials = !!(
-        (await this.configService.get("AZURE_EMAIL_TENANT_ID")) &&
-        (await this.configService.get("AZURE_EMAIL_CLIENT_ID")) &&
-        (await this.configService.get("AZURE_EMAIL_CLIENT_SECRET")) &&
-        (await this.configService.get("AZURE_EMAIL_FROM"))
-      );
-      emailConfigured = hasCredentials;
+      const readiness = await getConfigReadiness(this.configService, [
+        "AZURE_EMAIL_TENANT_ID",
+        "AZURE_EMAIL_CLIENT_ID",
+        "AZURE_EMAIL_CLIENT_SECRET",
+        "AZURE_EMAIL_FROM",
+      ]);
+      emailConfigured = readiness.configured;
+      emailError = readiness.message;
 
-      if (hasCredentials && this.emailService) {
+      if (readiness.configured && !this.emailService) {
+        emailError = "Email integration service is not loaded in this runtime.";
+      }
+
+      if (readiness.configured && this.emailService) {
         const emailStart = performance.now();
         emailConnected = await this.emailService.testConnection();
         emailResponseTime = Math.round(performance.now() - emailStart);
       }
     } catch (error) {
-      emailError =
-        error instanceof Error ? error.message : "Unknown email error";
+      emailError = toIntegrationErrorMessage(error, "Email");
     }
 
     // Core services health (deployment gate - excludes worker)
@@ -320,7 +421,7 @@ export class CheckSystemHealthUseCase {
         connected: msGraphSSOConnected,
         error: msGraphSSOError,
         message: !msGraphSSOConfigured
-          ? "Not configured (optional)"
+          ? (msGraphSSOError ?? "Not configured (optional)")
           : msGraphSSOConnected
             ? "Configured (no active connectivity probe available)"
             : msGraphSSOError
@@ -333,7 +434,7 @@ export class CheckSystemHealthUseCase {
         connected: intuneConnected,
         error: intuneError,
         message: !intuneConfigured
-          ? "Not configured (optional)"
+          ? (intuneError ?? "Not configured (optional)")
           : intuneConnected
             ? "Connected"
             : intuneError
@@ -346,7 +447,7 @@ export class CheckSystemHealthUseCase {
         connected: emailConnected,
         error: emailError,
         message: !emailConfigured
-          ? "Not configured (optional)"
+          ? (emailError ?? "Not configured (optional)")
           : emailConnected
             ? "Connected"
             : emailError
