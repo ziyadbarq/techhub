@@ -53,7 +53,7 @@ async function loadConfig() {
       console.log(`[config] Profile: ${PROFILE}`);
 
       // Show which critical vars are set (no values, just presence)
-      const critical = ["DATABASE_URL", "REDIS_URL", "ENCRYPTION_KEY", "NEXT_PUBLIC_APP_URL"];
+      const critical = ["DATABASE_URL", "REDIS_URL", "ENCRYPTION_KEY", "NEXT_PUBLIC_APP_URL", "BETTER_AUTH_URL", "BETTER_AUTH_SECRET"];
       for (const k of critical) {
         console.log(`[config]   ${k}: ${process.env[k] ? "SET" : "MISSING"}`);
       }

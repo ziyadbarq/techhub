@@ -299,6 +299,68 @@ kubectl delete pod <pod-name> -n istio-dev
 
 ## Troubleshooting
 
+### GCP Dev — Finding the Right Pod
+
+**Important**: In the `horizontal-services` namespace, `-l app=techhub` does **not** match the actual pod labels. Use `kubectl get po` and look for the techhub pod by name prefix instead.
+
+```bash
+# WRONG — returns "No resources found"
+kubectl get pods -n horizontal-services -l app=techhub
+
+# CORRECT — list all pods and find the techhub one
+kubectl get po -n horizontal-services
+# Look for a pod named like: techhub-56f665fd4-gcdx8
+
+# Then use the pod name directly in all subsequent commands
+POD=techhub-56f665fd4-gcdx8
+```
+
+### GCP Dev — Reading Logs Correctly
+
+```bash
+# Startup logs (docker-start.mjs output — config loading, migrations, seed)
+# Always check this first to confirm env vars loaded correctly
+kubectl logs $POD -n horizontal-services | head -150
+
+# Tail recent logs (for live request activity)
+kubectl logs $POD -n horizontal-services -f
+
+# Filter for server-side errors only (structured JSON level 50 = error)
+kubectl logs $POD -n horizontal-services | grep '"level":50'
+
+# Filter for warnings and errors (level 40 = warn, 50 = error)
+kubectl logs $POD -n horizontal-services | grep -E '"level":(40|50)'
+
+# Logs from a crashed/restarted pod
+kubectl logs $POD -n horizontal-services --previous | head -150
+```
+
+**Log level reference** (structured JSON `level` field):
+- `20` = debug
+- `30` = info
+- `40` = warn
+- `50` = error
+
+**Note**: Client-side errors (React error boundaries) log to the **browser console**, not pod logs. If you see a generic "Something went wrong" UI but no pod-level errors, check browser DevTools → Console.
+
+### GCP Dev — Inspecting Environment Variables
+
+```bash
+# Check all env vars in the running pod (from Spring Cloud Config + K8s secrets)
+kubectl exec $POD -n horizontal-services -- env | sort
+
+# Check specific auth-critical vars
+kubectl exec $POD -n horizontal-services -- env | grep -iE "BETTER_AUTH|TRUSTED_ORIGINS"
+
+# Check database and infra vars
+kubectl exec $POD -n horizontal-services -- env | grep -iE "DATABASE|REDIS|ENCRYPTION"
+
+# Check app URL vars
+kubectl exec $POD -n horizontal-services -- env | grep -iE "APP_URL|PUBLIC"
+```
+
+**Common misconfiguration**: `BETTER_AUTH_URL` set to a Docker bridge IP (e.g. `http://172.17.17.x:3000`) instead of the public hostname. This causes silent session validation failures — users get a redirect loop (`/dashboard` → `/login` → `/dashboard`) with no server-side error logs. Fix: set `BETTER_AUTH_URL=https://techhub.dev.barq.com` and `TRUSTED_ORIGINS=https://techhub.dev.barq.com` in the Spring Cloud Config `gcpdev` profile.
+
 ### Pod Not Starting
 
 **Symptom**: Pods stuck in `Pending`, `ContainerCreating`, or `CrashLoopBackOff`
