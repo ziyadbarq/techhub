@@ -48,6 +48,9 @@ export const FEATURE_FLAGS = {
   INTUNE: "INTUNE",
   OCI_SYNC: "OCI_SYNC",
   REPORTS: "REPORTS",
+
+  // Workflow Engine (gates the entire /workflows module + cron jobs)
+  WORKFLOW_ENGINE: "WORKFLOW_ENGINE",
 } as const;
 
 /**

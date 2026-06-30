@@ -680,6 +680,56 @@ const BASE_PERMISSIONS: PermissionDefinition[] = [
     displayName: "Manage Reports",
     description: "Full reports management including deleting schedules",
   }),
+
+  // ==========================================
+  // Workflow Engine (Layer 3 — gated by WORKFLOW_ENGINE flag)
+  // ==========================================
+
+  // Forms (admin)
+  createPermission("workflows-forms", "view", { displayName: "View Forms", description: "View workflow form definitions" }),
+  createPermission("workflows-forms", "create", { displayName: "Create Forms", description: "Create new workflow form definitions" }),
+  createPermission("workflows-forms", "update", { displayName: "Update Forms", description: "Edit workflow form definitions (draft versions)" }),
+  createPermission("workflows-forms", "delete", { displayName: "Delete Forms", description: "Archive workflow form definitions" }),
+  createPermission("workflows-forms", "publish", { displayName: "Publish Forms", description: "Publish a draft form version (becomes immutable)" }),
+  createPermission("workflows-forms", "manage-notifications", { displayName: "Manage Form Notifications", description: "Configure per-form email notification bindings" }),
+
+  // Workflow definitions (admin)
+  createPermission("workflows-definitions", "view", { displayName: "View Workflow Definitions", description: "View workflow definitions" }),
+  createPermission("workflows-definitions", "create", { displayName: "Create Workflow Definitions", description: "Create new workflow definitions" }),
+  createPermission("workflows-definitions", "update", { displayName: "Update Workflow Definitions", description: "Edit workflow definitions (draft versions)" }),
+  createPermission("workflows-definitions", "delete", { displayName: "Delete Workflow Definitions", description: "Archive workflow definitions" }),
+  createPermission("workflows-definitions", "publish", { displayName: "Publish Workflow Definitions", description: "Publish a draft workflow version (becomes immutable)" }),
+
+  // Requests (everyday)
+  createPermission("workflows-requests", "view", { displayName: "View All Requests", description: "View all workflow requests across all forms" }),
+  createPermission("workflows-requests", "view:own", { displayName: "View Own Requests", description: "View requests the user submitted or is involved with" }),
+  createPermission("workflows-requests", "submit", { displayName: "Submit Requests", description: "Submit a new workflow request" }),
+  createPermission("workflows-requests", "act", { displayName: "Act on Requests", description: "Take action (approve/reject/complete/etc.) on assigned steps" }),
+  createPermission("workflows-requests", "comment", { displayName: "Comment on Requests", description: "Add comments to a request thread" }),
+  createPermission("workflows-requests", "attach", { displayName: "Attach Files to Requests", description: "Upload file attachments to a request" }),
+  createPermission("workflows-requests", "cancel", { displayName: "Cancel Any Request", description: "Cancel any request" }),
+  createPermission("workflows-requests", "cancel:own", { displayName: "Cancel Own Request", description: "Cancel a request the user submitted" }),
+  createPermission("workflows-requests", "hold", { displayName: "Hold / Resume Requests", description: "Place requests on hold or resume them" }),
+  createPermission("workflows-requests", "override", { displayName: "Override Request Outcomes", description: "Force-set a terminal outcome on a request (admin)" }),
+  createPermission("workflows-requests", "reassign", { displayName: "Reassign Step Instances", description: "Reassign a step to a different user (admin)" }),
+
+  // Inbox / Notifications / Analytics / Audit
+  createPermission("workflows-inbox", "view", { displayName: "View Workflow Inbox", description: "View grouped inbox of pending actions and watched requests" }),
+  createPermission("workflows-notifications", "view", { displayName: "View Workflow Notifications", description: "View in-app workflow notifications" }),
+  createPermission("workflows-analytics", "view", { displayName: "View Workflow Analytics", description: "View dashboards for workflow throughput, SLA, and outcomes" }),
+  createPermission("workflows-audit", "export", { displayName: "Export Workflow Audit", description: "Export workflow audit trail to CSV" }),
+
+  // Reference data (admin)
+  createPermission("workflows-calendars", "view", { displayName: "View Calendars", description: "View business calendars used by workflow SLA" }),
+  createPermission("workflows-calendars", "manage", { displayName: "Manage Calendars", description: "Create and edit business calendars" }),
+  createPermission("workflows-hold-reasons", "manage", { displayName: "Manage Hold Reasons", description: "Create and edit the hold reason catalog" }),
+  createPermission("workflows-outcome-codes", "manage", { displayName: "Manage Outcome Codes", description: "Create and edit module-specific outcome codes" }),
+  createPermission("workflows-rejection-policies", "manage", { displayName: "Manage Rejection Policies", description: "Create and edit rejection policies" }),
+  createPermission("workflows-email-templates", "manage", { displayName: "Manage Email Templates", description: "Create and edit workflow email templates" }),
+  createPermission("workflows-delegations", "manage", { displayName: "Manage Delegations", description: "Create and revoke user-to-user delegations" }),
+  createPermission("workflows-blackout-periods", "manage", { displayName: "Manage Blackout Periods", description: "Create and edit change-freeze periods" }),
+  createPermission("workflows-maintenance-windows", "manage", { displayName: "Manage Maintenance Windows", description: "Create and edit named maintenance windows" }),
+  createPermission("workflows-watchers", "manage", { displayName: "Manage Watcher Subscriptions", description: "Configure role-based watcher subscriptions per form" }),
 ] as const;
 
 const definedPermissionNames = new Set(
