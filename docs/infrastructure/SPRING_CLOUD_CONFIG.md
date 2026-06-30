@@ -30,6 +30,39 @@ Profile resolution matches the deployment path:
 2. `SPRING_PROFILE`
 3. `NODE_ENV` mapping: `production -> prod`, everything else -> `dev`
 
+## Configuration Source Priority
+
+Two sources supply env vars to the running pod. Understanding their priority prevents
+silent config bugs.
+
+| Source | Where it lives | When it applies |
+| ------ | -------------- | --------------- |
+| `values-gcpdev.yaml` (GitOps repo `values-yaml-npd`) | Applied by ArgoCD at pod start | Always — injects env vars before the app starts |
+| `techhub-gcpdev.properties` (Spring Cloud Config, `backend-configs` repo) | Fetched by `docker-start.mjs` at startup | Only for keys the config server actually returns |
+
+**Priority rule**: `docker-start.mjs` sets `process.env[key]` unconditionally for every
+key Spring Cloud Config returns, so **Spring Cloud Config wins** when both sources define
+the same key. For keys absent from Spring Cloud Config, the `values-gcpdev.yaml` value
+persists unchanged.
+
+**Practical split (in progress with DevOps)**:
+
+- Deployment-specific vars (public URLs, trusted origins, bootstrap pointers) live in
+  `values-gcpdev.yaml`, maintained by the DevOps team in `values-yaml-npd`
+  (`~/techhub/values-gcpdev.yaml` locally).
+- App-level vars (database connections, encryption keys, feature flags) live in
+  `techhub-gcpdev.properties`, managed in `backend-configs`.
+
+**When a pod has a wrong env var value**, check both:
+
+1. `kubectl exec -n horizontal-services <pod> -- env | grep VAR_NAME` — what the pod has now
+2. `backend-configs` → `techhub-gcpdev.properties` — does Spring Cloud Config provide this key?
+3. `values-yaml-npd` → `techhub/values-gcpdev.yaml` — does the chart inject it with a stale value?
+
+If the key is absent from Spring Cloud Config but has a wrong value in `values-gcpdev.yaml`,
+add the correct value to `techhub-gcpdev.properties` — it will override the chart value on the
+next pod start without needing a chart update.
+
 ## Dev Profiles
 
 The active dev profiles are:

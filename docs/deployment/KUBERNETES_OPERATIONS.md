@@ -361,6 +361,20 @@ kubectl exec $POD -n horizontal-services -- env | grep -iE "APP_URL|PUBLIC"
 
 **Common misconfiguration**: `BETTER_AUTH_URL` set to a Docker bridge IP (e.g. `http://172.17.17.x:3000`) instead of the public hostname. This causes silent session validation failures — users get a redirect loop (`/dashboard` → `/login` → `/dashboard`) with no server-side error logs. Fix: set `BETTER_AUTH_URL=https://techhub.dev.barq.com` and `TRUSTED_ORIGINS=https://techhub.dev.barq.com` in the Spring Cloud Config `gcpdev` profile.
 
+#### Env var has wrong value — check both sources
+
+A pod's env vars come from two places. When a value is wrong, check both before editing either:
+
+| Source | Repo | Local path | How to update |
+| ------ | ---- | ---------- | ------------- |
+| `values-gcpdev.yaml` | `values-yaml-npd` | `~/techhub/values-gcpdev.yaml` | Edit file → ArgoCD syncs on next commit |
+| `techhub-gcpdev.properties` | `backend-configs` | (remote only) | Edit properties file → pod restart picks it up |
+
+Spring Cloud Config **overrides** `values-gcpdev.yaml` for any key it returns. For keys
+not in Spring Cloud Config, `values-gcpdev.yaml` wins by default. The fastest fix for a
+wrong value that is only in `values-gcpdev.yaml`: add the correct value to
+`techhub-gcpdev.properties` — no chart update required, pod restart is enough.
+
 ### Pod Not Starting
 
 **Symptom**: Pods stuck in `Pending`, `ContainerCreating`, or `CrashLoopBackOff`

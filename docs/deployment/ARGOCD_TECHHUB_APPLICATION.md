@@ -61,6 +61,11 @@ That means the deployed `techhub` app is not defined only by this repository. Th
 - The `barq` Helm chart version `1.1.2`
 - The contents of `techhub/values-gcpdev.yaml` in the `values-yaml-npd` repo
 
+Env vars injected by `values-gcpdev.yaml` are baseline values. Spring Cloud Config
+(`techhub-gcpdev.properties` in `backend-configs`) overrides them at pod startup for
+any key it returns. See [SPRING_CLOUD_CONFIG.md](../infrastructure/SPRING_CLOUD_CONFIG.md#configuration-source-priority)
+for the full priority rules and which vars belong in each source.
+
 ## What This Means Operationally
 
 This repo controls application code and image production.
