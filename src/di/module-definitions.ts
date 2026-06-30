@@ -31,6 +31,7 @@ import { bindMicrosoftGraphDependencies } from "./modules/ms-graph.module";
 import { bindAssetDependencies } from "./modules/asset.module";
 import { bindInventoryDependencies } from "./modules/inventory.module";
 import { bindCMDBDependencies } from "./modules/cmdb.module";
+import { bindWorkflowDependencies } from "./modules/workflow.module";
 import { bindContractsDependencies } from "./modules/contracts.module";
 import { bindLicensesDependencies } from "./modules/licenses.module";
 import { bindGovernanceDependencies } from "./modules/governance.module";
@@ -247,6 +248,27 @@ export const QUEUE_MODULE: DIModule = {
   isLoaded: false,
   bindFunction: (container: Container) => {
     bindQueueDependencies(container);
+  },
+};
+
+export const WORKFLOW_MODULE: DIModule = {
+  name: "workflow",
+  displayName: "Workflow Engine",
+  tier: ModuleTier.CORE,
+  description:
+    "Generic configurable workflow engine for forms, requests, approvals, audit, and SLA. Gated by WORKFLOW_ENGINE feature flag.",
+  dependencies: [
+    "logger",
+    "database",
+    "rbac",
+    "foundation",
+    "email",
+    "queue",
+    "file-storage",
+  ],
+  isLoaded: false,
+  bindFunction: (container: Container) => {
+    bindWorkflowDependencies(container);
   },
 };
 
@@ -534,6 +556,7 @@ export const ALL_MODULES: DIModule[] = [
   REALTIME_MODULE,
   QUEUE_MODULE,
   CSV_MODULE,
+  WORKFLOW_MODULE,
 
   // DASHBOARD tier (loaded for dashboard users)
   ASSET_MODULE,

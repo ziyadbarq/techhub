@@ -1,0 +1,265 @@
+// ============================================
+// REQUESTS (Workflow Engine Runtime)
+// ============================================
+//
+// Models: Request, RequestFieldValue, StepInstance, RequestLink,
+//         RequestComment, RequestAttachment, SavedFilter
+// Enums:  RequestStatus, RequestOutcome, StepInstanceStatus, StepType,
+//         FieldType, VersionStatus, RejectionRestartMode
+// Layer:  Layer 3 / Workflow Engine
+// Related DI Module: workflow.module.ts
+// Feature Flag: WORKFLOW_ENGINE
+// ============================================
+
+enum VersionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+
+  @@map("version_status")
+}
+
+enum RequestStatus {
+  DRAFT
+  SUBMITTED
+  IN_REVIEW
+  ON_HOLD
+  IN_PROGRESS
+  PENDING_REVIEW
+  CLOSED
+  CANCELLED
+
+  @@map("request_status")
+}
+
+enum RequestOutcome {
+  SUCCESSFUL
+  SUCCESSFUL_WITH_ISSUES
+  UNSUCCESSFUL
+  WITHDRAWN
+  REJECTED
+  SUPERSEDED
+  ABANDONED
+  EXPIRED
+
+  @@map("request_outcome")
+}
+
+enum StepInstanceStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  SKIPPED
+  FAILED
+  CANCELLED
+
+  @@map("step_instance_status")
+}
+
+enum StepType {
+  APPROVAL
+  EXECUTION
+  INFO_ACK
+  AUTOMATION
+  NOTIFICATION
+  CONDITIONAL_BRANCH
+  DELAY
+  SCHEDULE
+  WEBHOOK
+  SUB_WORKFLOW
+  WAIT_FOR_EVENT
+
+  @@map("step_type")
+}
+
+enum FieldType {
+  SHORT_TEXT
+  LONG_TEXT
+  NUMBER
+  DATE
+  DATETIME
+  DROPDOWN
+  MULTI_SELECT
+  CHECKBOX
+  FILE
+  USER_PICKER
+  MULTI_USER_PICKER
+  REQUEST_LINK
+  SCORED_MATRIX
+  REPEATER
+  LOOKUP
+  SECTION_HEADER
+  COMPUTED
+
+  @@map("field_type")
+}
+
+enum RejectionRestartMode {
+  FULL_RESTART
+  RESUME_FROM_REJECTION_STEP
+
+  @@map("rejection_restart_mode")
+}
+
+model Request {
+  id                    String          @id @default(cuid())
+  referenceNumber       String
+  formId                String
+  formVersionId         String
+  workflowVersionId     String
+  requesterId           String
+  status                RequestStatus   @default(DRAFT)
+  outcome               RequestOutcome?
+  outcomeCodeId         String?
+  outcomeNotes          String?
+  holdReasonId          String?
+  currentStepInstanceId String?
+  submittedAt           DateTime?
+  closedAt              DateTime?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  form            Form                @relation(fields: [formId], references: [id], onDelete: Restrict)
+  formVersion     FormVersion         @relation("RequestPinnedFormVersion", fields: [formVersionId], references: [id], onDelete: Restrict)
+  workflowVersion WorkflowVersion     @relation("RequestPinnedWorkflowVersion", fields: [workflowVersionId], references: [id], onDelete: Restrict)
+  requester       User                @relation("RequestRequester", fields: [requesterId], references: [id], onDelete: Restrict)
+  holdReason      HoldReason?         @relation(fields: [holdReasonId], references: [id], onDelete: Restrict)
+  outcomeCode     OutcomeCode?        @relation(fields: [outcomeCodeId], references: [id], onDelete: SetNull)
+  fieldValues     RequestFieldValue[]
+  stepInstances   StepInstance[]
+  outboundLinks   RequestLink[]       @relation("LinkSource")
+  inboundLinks    RequestLink[]       @relation("LinkTarget")
+  fieldHistory    FieldHistoryEntry[]
+  watchers        Watcher[]
+  auditEntries    AuditEntry[]
+  notifications   Notification[]
+  comments        RequestComment[]
+  attachments     RequestAttachment[]
+
+  @@unique([formId, referenceNumber])
+  @@index([status, createdAt])
+  @@index([requesterId, createdAt])
+  @@map("requests")
+}
+
+model RequestFieldValue {
+  id            String   @id @default(cuid())
+  requestId     String
+  formVersionId String
+  fieldKey      String
+  valueJson     Json
+  updatedAt     DateTime @updatedAt
+
+  request     Request     @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  formVersion FormVersion @relation(fields: [formVersionId], references: [id], onDelete: Restrict)
+
+  @@unique([requestId, fieldKey])
+  @@map("request_field_values")
+}
+
+model StepInstance {
+  id                String             @id @default(cuid())
+  requestId         String
+  workflowVersionId String
+  stepKey           String
+  status            StepInstanceStatus @default(PENDING)
+  activatedAt       DateTime?
+  completedAt       DateTime?
+  outcomeJson       Json?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  request           Request            @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  workflowVersion   WorkflowVersion    @relation(fields: [workflowVersionId], references: [id], onDelete: Restrict)
+  snapshots         AssigneeSnapshot[]
+  slaEvents         SLAEvent[]
+  auditEntries      AuditEntry[]
+  notifications     Notification[]
+  emailActionTokens EmailActionToken[]
+  slaEscalationLogs SLAEscalationLog[]
+
+  @@index([requestId, status])
+  @@map("step_instances")
+}
+
+model RequestLink {
+  id              String   @id @default(cuid())
+  sourceRequestId String
+  targetRequestId String
+  linkType        String
+  sourceFieldKey  String
+  createdAt       DateTime @default(now())
+
+  source Request @relation("LinkSource", fields: [sourceRequestId], references: [id], onDelete: Cascade)
+  target Request @relation("LinkTarget", fields: [targetRequestId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceRequestId, targetRequestId, sourceFieldKey])
+  @@index([targetRequestId])
+  @@map("request_links")
+}
+
+/// General comment thread on a request — Jira-style. Distinct from action
+/// comments (which live on the AuditEntry payload). Append-only at the
+/// service layer; never editable / deletable by users.
+model RequestComment {
+  id        String   @id @default(cuid())
+  requestId String
+  authorId  String
+  body      String   @db.Text
+  createdAt DateTime @default(now())
+
+  request     Request             @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  author      User                @relation("RequestCommentAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  attachments RequestAttachment[]
+
+  @@index([requestId, createdAt])
+  @@map("request_comments")
+}
+
+/// File attachment metadata. The actual bytes live in the configured
+/// IFileStorage (local disk in dev, S3/R2 in prod). Per PRD §16:
+///   - immutable once uploaded
+///   - belongs to exactly one request
+///   - retention is forever (never deleted), even on close/cancel
+model RequestAttachment {
+  id           String  @id @default(cuid())
+  requestId    String
+  /// Source: form field key, OR comment id, OR null when standalone.
+  fieldKey     String?
+  commentId    String?
+  uploadedById String
+  filename     String
+  contentType  String
+  byteSize     Int
+  /// Storage path or URL (provider-prefixed: e.g., "local:abc123" or "s3:bucket/key").
+  storageRef   String
+  /// Optional supersedes link — when a "new version" is uploaded, both rows stay.
+  supersedesId String?
+  createdAt    DateTime @default(now())
+
+  request      Request             @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  uploadedBy   User                @relation("RequestAttachmentUploader", fields: [uploadedById], references: [id], onDelete: Restrict)
+  comment      RequestComment?     @relation(fields: [commentId], references: [id], onDelete: SetNull)
+  supersedes   RequestAttachment?  @relation("AttachmentVersion", fields: [supersedesId], references: [id], onDelete: SetNull)
+  supersededBy RequestAttachment[] @relation("AttachmentVersion")
+
+  @@index([requestId, createdAt])
+  @@index([commentId])
+  @@map("request_attachments")
+}
+
+model SavedFilter {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  /// Filter spec as JSON — scope, status, formId, search, sort.
+  filterJson Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("saved_filters")
+}

@@ -1,0 +1,198 @@
+// ============================================
+// WORKFLOWS (Forms, Workflow Definitions, Reference Templates)
+// ============================================
+//
+// Models: Form, FormVersion, FormField, FormNotificationBinding,
+//         WorkflowDefinition, WorkflowVersion, WorkflowStep,
+//         RejectionPolicy, EmailTemplate
+// Enums: FormNotificationRecipientKind
+// Layer: Layer 3 / Workflow Engine
+// Related DI Module: workflow.module.ts
+// Feature Flag: WORKFLOW_ENGINE
+// ============================================
+
+enum FormNotificationRecipientKind {
+  REQUESTER
+  STEP_ASSIGNEES
+  WATCHERS
+  ROLE
+
+  @@map("form_notification_recipient_kind")
+}
+
+model Form {
+  id                    String   @id @default(cuid())
+  name                  String
+  description           String?
+  isActive              Boolean  @default(true)
+  isBuiltIn             Boolean  @default(false)
+  referenceNumberFormat String   @default("REQ-{YYYY}-{seq:04}")
+  workflowDefinitionId  String
+  publishedVersionId    String?  @unique
+  nextSequence          Int      @default(1)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  workflowDefinition   WorkflowDefinition         @relation(fields: [workflowDefinitionId], references: [id], onDelete: Restrict)
+  publishedVersion     FormVersion?               @relation("FormPublishedVersion", fields: [publishedVersionId], references: [id], onDelete: SetNull)
+  versions             FormVersion[]              @relation("FormVersions")
+  requests             Request[]
+  watcherSubscriptions WatcherSubscription[]
+  channelPreferences   WatcherChannelPreference[]
+  outcomeCodes         OutcomeCode[]
+  notificationBindings FormNotificationBinding[]
+
+  @@unique([name])
+  @@index([isActive])
+  @@map("forms")
+}
+
+/// Per-form binding: when {event} happens on a request of this form, send
+/// an email using {emailTemplateKey} to the recipients defined by
+/// {recipientKind}.
+///
+/// Recipient kinds:
+///  - REQUESTER       — the user who submitted the request
+///  - STEP_ASSIGNEES  — the active step's snapshot
+///  - WATCHERS        — every watcher of this request
+///  - ROLE            — every member of {recipientRoleId}
+model FormNotificationBinding {
+  id               String                       @id @default(cuid())
+  formId           String
+  /// Stable event key (e.g., "request.submitted", "step.activated", "request.closed").
+  event            String
+  emailTemplateKey String
+  recipientKind    FormNotificationRecipientKind
+  recipientRoleId  String?
+  isActive         Boolean                      @default(true)
+  createdAt        DateTime                     @default(now())
+  updatedAt        DateTime                     @updatedAt
+
+  form Form  @relation(fields: [formId], references: [id], onDelete: Cascade)
+  role Role? @relation("FormNotificationBindingRole", fields: [recipientRoleId], references: [id], onDelete: SetNull)
+
+  @@index([formId, event])
+  @@map("form_notification_bindings")
+}
+
+model FormVersion {
+  id            String        @id @default(cuid())
+  formId        String
+  versionNumber Int
+  status        VersionStatus @default(DRAFT)
+  publishedAt   DateTime?
+  publishedById String?
+  schemaJson    Json
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  form         Form                @relation("FormVersions", fields: [formId], references: [id], onDelete: Cascade)
+  publishedBy  User?               @relation("FormVersionPublisher", fields: [publishedById], references: [id], onDelete: SetNull)
+  fields       FormField[]
+  requests     Request[]           @relation("RequestPinnedFormVersion")
+  fieldHistory FieldHistoryEntry[]
+  fieldValues  RequestFieldValue[]
+  publishedFor Form?               @relation("FormPublishedVersion")
+
+  @@unique([formId, versionNumber])
+  @@map("form_versions")
+}
+
+model FormField {
+  id              String    @id @default(cuid())
+  formVersionId   String
+  key             String
+  label           String
+  type            FieldType
+  required        Boolean   @default(false)
+  position        Int
+  config          Json?
+  visibilityRules Json?
+  computedFormula Json?
+  createdAt       DateTime  @default(now())
+
+  formVersion FormVersion @relation(fields: [formVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([formVersionId, key])
+  @@map("form_fields")
+}
+
+model WorkflowDefinition {
+  id                 String   @id @default(cuid())
+  name               String
+  description        String?
+  isBuiltIn          Boolean  @default(false)
+  publishedVersionId String?  @unique
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  publishedVersion WorkflowVersion?  @relation("WorkflowDefPublishedVersion", fields: [publishedVersionId], references: [id], onDelete: SetNull)
+  versions         WorkflowVersion[] @relation("WorkflowDefVersions")
+  forms            Form[]
+
+  @@unique([name])
+  @@map("workflow_definitions")
+}
+
+model WorkflowVersion {
+  id                   String        @id @default(cuid())
+  workflowDefinitionId String
+  versionNumber        Int
+  status               VersionStatus @default(DRAFT)
+  publishedAt          DateTime?
+  publishedById        String?
+  graphJson            Json
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  definition    WorkflowDefinition  @relation("WorkflowDefVersions", fields: [workflowDefinitionId], references: [id], onDelete: Cascade)
+  publishedBy   User?               @relation("WorkflowVersionPublisher", fields: [publishedById], references: [id], onDelete: SetNull)
+  steps         WorkflowStep[]
+  requests      Request[]           @relation("RequestPinnedWorkflowVersion")
+  stepInstances StepInstance[]
+  publishedFor  WorkflowDefinition? @relation("WorkflowDefPublishedVersion")
+
+  @@unique([workflowDefinitionId, versionNumber])
+  @@map("workflow_versions")
+}
+
+model WorkflowStep {
+  id                String   @id @default(cuid())
+  workflowVersionId String
+  key               String
+  type              StepType
+  position          Int
+  config            Json?
+  createdAt         DateTime @default(now())
+
+  workflowVersion WorkflowVersion @relation(fields: [workflowVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([workflowVersionId, key])
+  @@map("workflow_steps")
+}
+
+model RejectionPolicy {
+  id                 String               @id @default(cuid())
+  name               String
+  restartMode        RejectionRestartMode @default(FULL_RESTART)
+  fieldLockRulesJson Json?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  @@unique([name])
+  @@map("rejection_policies")
+}
+
+model EmailTemplate {
+  id            String   @id @default(cuid())
+  key           String
+  subject       String
+  bodyHtml      String   @db.Text
+  bodyText      String?  @db.Text
+  variablesJson Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([key])
+  @@map("email_templates")
+}
