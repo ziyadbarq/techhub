@@ -361,6 +361,8 @@ kubectl exec $POD -n horizontal-services -- env | grep -iE "APP_URL|PUBLIC"
 
 **Common misconfiguration**: `BETTER_AUTH_URL` set to a Docker bridge IP (e.g. `http://172.17.17.x:3000`) instead of the public hostname. This causes silent session validation failures — users get a redirect loop (`/dashboard` → `/login` → `/dashboard`) with no server-side error logs. Fix: set `BETTER_AUTH_URL=https://techhub.dev.barq.com` and `TRUSTED_ORIGINS=https://techhub.dev.barq.com` in the Spring Cloud Config `gcpdev` profile.
 
+**Cookie name changes with the URL scheme**: Better Auth names the session cookie `better-auth.session_token` on http deployments but `__Secure-better-auth.session_token` on https (secure cookie prefix). App code that checks cookie presence must handle both names — see `src/lib/auth/cookie-names.ts`. After switching an environment between http and https, users may have stale cookies from the other scheme; clearing site cookies in the browser resolves leftover redirect weirdness.
+
 #### Env var has wrong value — check both sources
 
 A pod's env vars come from two places. When a value is wrong, check both before editing either:
