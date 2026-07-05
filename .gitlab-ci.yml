@@ -143,7 +143,6 @@ build-gcp:
     - echo fs.inotify.max_user_instances=512 | tee -a /etc/sysctl.conf
     - sysctl -p
   script:
-    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
     - npm ci $NPM_CI_FLAGS
     - npm run db:generate
@@ -216,7 +215,6 @@ build-oci:
   before_script:
     - echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
   script:
-    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
     - npm ci $NPM_CI_FLAGS
     - npm run db:generate
@@ -291,7 +289,6 @@ build-and-push-gcp-to-argo:
     - echo fs.inotify.max_user_instances=512 | tee -a /etc/sysctl.conf
     - sysctl -p
   script:
-    - git clone --depth 1 http://${GITLAB_UN}:${GITLAB_TOKEN}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs.git
     - cp /.npmrc .
     - npm ci $NPM_CI_FLAGS
     - npm run db:generate
@@ -315,7 +312,7 @@ build-and-push-gcp-to-argo:
     - yq e -i '(.deployment.env[] | select(.name == "IMAGE_TAG")).value = strenv(ITAG)' ${PROJECT}/${DEV_GCP_VALUES}
     - cat ${PROJECT}/${DEV_GCP_VALUES}
     - git config --global user.email "sdev@barq.com"
-    - git config --global user.name ${GITLAB_UN}
+    - git config --global user.name ${GITLAB_UN_VAL}
     - git remote set-url origin "http://${GITLAB_UN_VAL}:${GITLAB_TOKEN_VAL}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd.git"
     - git add ${PROJECT}/${DEV_GCP_VALUES}
     - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"

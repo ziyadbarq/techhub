@@ -4,8 +4,10 @@
 
 | Variable              | Where it lives                                              | Why                                                                      |
 | --------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `GITLAB_UN`           | GitLab CI/CD project variables                              | Pipeline writes updated image tags to the values repo                    |
-| `GITLAB_TOKEN`        | GitLab CI/CD project variables                              | Pipeline writes updated image tags to the values repo                    |
+| `GITLAB_UN`           | GitLab CI/CD project variables                              | OCI deploys/promotions write updated image tags to `deployment-configs`  |
+| `GITLAB_TOKEN`        | GitLab CI/CD project variables                              | OCI deploys/promotions write updated image tags to `deployment-configs`  |
+| `GITLAB_UN_VAL`       | GitLab CI/CD project variables                              | GCP deploys write updated image tags to `values-yaml-npd`                |
+| `GITLAB_TOKEN_VAL`    | GitLab CI/CD project variables                              | GCP deploys write updated image tags to `values-yaml-npd`                |
 | `DATABASE_URL`        | GitLab CI/CD project variables if needed                    | Prisma generation/validation may need a database URL shape at build time |
 | `ENCRYPTION_KEY`      | GitLab CI/CD project variables if needed                    | Validation may need the encryption key format                            |
 | `NEXT_PUBLIC_APP_URL` | GitLab CI/CD project variables for dev builds               | Next.js can inline public variables into the client bundle at build time |
@@ -24,13 +26,15 @@ NEXT_PUBLIC_APP_URL=https://techhub.dev.barq.com
 
 Go to **GitLab UI > Project > Settings > CI/CD > Variables > Add variable**.
 
-| Variable              | Masked |           Protected | Notes                                            |
-| --------------------- | -----: | ------------------: | ------------------------------------------------ |
-| `GITLAB_UN`           |    Yes |         Usually yes | Needs values repo write access                   |
-| `GITLAB_TOKEN`        |    Yes |         Usually yes | Needs `read_repository` and `write_repository`   |
-| `DATABASE_URL`        |    Yes | No for `dev` branch | Keep if Prisma generation/validation requires it |
-| `ENCRYPTION_KEY`      |    Yes | No for `dev` branch | Keep if validation requires it                   |
-| `NEXT_PUBLIC_APP_URL` |     No | No for `dev` branch | Set to `https://techhub.dev.barq.com`            |
+| Variable              | Masked |           Protected | Notes                                                   |
+| --------------------- | -----: | ------------------: | ------------------------------------------------------- |
+| `GITLAB_UN`           |    Yes |         Usually yes | Needs `deployment-configs` write access for OCI         |
+| `GITLAB_TOKEN`        |    Yes |         Usually yes | Needs `read_repository` and `write_repository` for OCI  |
+| `GITLAB_UN_VAL`       |    Yes |         Usually yes | Needs `values-yaml-npd` write access for GCP            |
+| `GITLAB_TOKEN_VAL`    |    Yes |         Usually yes | Needs `read_repository` and `write_repository` for GCP  |
+| `DATABASE_URL`        |    Yes | No for `dev` branch | Keep if Prisma generation/validation requires it        |
+| `ENCRYPTION_KEY`      |    Yes | No for `dev` branch | Keep if validation requires it                          |
+| `NEXT_PUBLIC_APP_URL` |     No | No for `dev` branch | Set to `https://techhub.dev.barq.com`                   |
 
 Keep **Protected = No** for variables needed by the non-protected `dev` branch.
 

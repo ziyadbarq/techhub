@@ -29,6 +29,7 @@ Before setting up the GitLab CI/CD pipeline, ensure you have:
 1. **GitLab Account** with Maintainer role on repositories:
    - **TechHub Repository**: http://gitlab.dev.baraq.com.internal/baraq-engineering/webdev/techhub
    - **Deployment-Configs Repository**: http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/deployment-configs
+   - **GCP Values Repository**: http://gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd
 
 2. **GitLab Runners** (configured by DevOps team):
    - **OCI Runner**: Tagged with `ocinode18`
@@ -60,10 +61,12 @@ Navigate to your GitLab project:
 
 #### Required Variables
 
-| Key            | Value                   | Type     | Protected | Masked | Description                                                                       |
-| -------------- | ----------------------- | -------- | --------- | ------ | --------------------------------------------------------------------------------- |
-| `GITLAB_UN`    | `<gitlab-username>`     | Variable | ✅        | ✅     | GitLab username for cloning deployment-configs                                    |
-| `GITLAB_TOKEN` | `<gitlab-access-token>` | Variable | ✅        | ✅     | GitLab personal access token with `read_repository` and `write_repository` scopes |
+| Key                | Value                   | Type     | Protected | Masked | Description                                                                       |
+| ------------------ | ----------------------- | -------- | --------- | ------ | --------------------------------------------------------------------------------- |
+| `GITLAB_UN`        | `<gitlab-username>`     | Variable | ✅        | ✅     | GitLab username for OCI updates to deployment-configs                             |
+| `GITLAB_TOKEN`     | `<gitlab-access-token>` | Variable | ✅        | ✅     | GitLab personal access token with `read_repository` and `write_repository` scopes |
+| `GITLAB_UN_VAL`    | `<gitlab-username>`     | Variable | ✅        | ✅     | GitLab username for GCP updates to values-yaml-npd                                |
+| `GITLAB_TOKEN_VAL` | `<gitlab-access-token>` | Variable | ✅        | ✅     | GitLab personal access token with `read_repository` and `write_repository` scopes |
 
 **How to create GitLab Access Token**:
 
@@ -98,7 +101,7 @@ Navigate to your GitLab project:
 
 - Container registry authentication is handled by GitLab runners (Kaniko pre-configured)
 - No Kubernetes credentials needed in CI (GitOps via ArgoCD)
-- Pipeline only needs Git access to update deployment-configs
+- Pipeline only needs Git access to update deployment values repositories
 
 ---
 
@@ -508,7 +511,9 @@ fatal: could not read Username for 'http://gitlab.dev.baraq.com.internal': No su
 
 **Causes**:
 
-- Missing `GITLAB_UN` or `GITLAB_TOKEN` variables
+- Missing Git credentials variables:
+  - OCI `deployment-configs`: `GITLAB_UN` or `GITLAB_TOKEN`
+  - GCP `values-yaml-npd`: `GITLAB_UN_VAL` or `GITLAB_TOKEN_VAL`
 - Token expired or has insufficient permissions
 - Token doesn't have `read_repository` and `write_repository` scopes
 
