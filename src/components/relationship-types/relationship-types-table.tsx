@@ -5,27 +5,9 @@
 "use client";
 "use no memo";
 
-import { useState } from "react";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
-} from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowRightLeft, ArrowRight, Check, X } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
+import { DataTable } from "@/components/ui/data-table";
 import type { RelationshipTypeDTO } from "@/interface-adapters/dtos/generated/relationship-type.dto";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { deleteRelationshipTypeAction } from "@/interface-adapters/controllers/relationship-type.controller";
@@ -48,9 +30,6 @@ export function RelationshipTypesTable({
   onEdit,
   onRefresh,
 }: RelationshipTypesTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
   // Use reusable delete dialog hook
   const deleteDialog = useDeleteDialog<RelationshipTypeDTO>({
     onDelete: (type) => deleteRelationshipTypeAction(type.id),
@@ -155,103 +134,19 @@ export function RelationshipTypesTable({
       columns,
     });
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: onVisibilityChange,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility: visibility,
-    },
-  });
-
   return (
     <>
-      <div className="space-y-4">
-        {/* Filters */}
-        <div className="flex flex-col gap-4 sm:flex-row">
-          <Input
-            placeholder="Search by name..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-          <Input
-            placeholder="Search by code..."
-            value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("code")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        </div>
-
-        {/* Table */}
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No relationship types found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-
-      {/* Delete Confirmation Dialog */}
+      <DataTable
+        columns={columns}
+        data={data}
+        loading={loading}
+        searchable
+        globalFilter
+        searchPlaceholder="Search by name or code..."
+        emptyMessage="No relationship types found"
+        controlledState={{ columnVisibility: visibility }}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
       <deleteDialog.DialogComponent />
     </>
   );

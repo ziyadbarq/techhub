@@ -7,25 +7,8 @@
 
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { DataTable } from "@/components/ui/data-table";
 import type { CIClassDTO } from "@/interface-adapters/presenters/ci-class.presenter";
 import { deleteCIClassAction } from "@/interface-adapters/controllers/ci-class.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -44,8 +27,6 @@ export function CIClassesTable({
   onEdit,
   onRefresh,
 }: CIClassesTableProps) {
-  const [globalFilter, setGlobalFilter] = React.useState("");
-
   // Use reusable delete dialog hook
   const deleteDialog = useDeleteDialog<CIClassDTO>({
     onDelete: (ciClass) => deleteCIClassAction(ciClass.id),
@@ -54,7 +35,7 @@ export function CIClassesTable({
     entityName: "CI Class",
   });
 
-  const baseColumns = React.useMemo<ColumnDef<CIClassDTO>[]>(
+  const columns = React.useMemo<ColumnDef<CIClassDTO>[]>(
     () => [
       buildSelectColumn<CIClassDTO>(),
       {
@@ -90,8 +71,7 @@ export function CIClassesTable({
         header: "Default Criticality",
         cell: ({ row }) => {
           const criticality = row.getValue("defaultCriticality") as
-            | string
-            | null;
+            string | null;
           if (!criticality)
             return <span className="text-muted-foreground">—</span>;
 
@@ -136,13 +116,6 @@ export function CIClassesTable({
           );
         },
       },
-    ],
-    [],
-  );
-
-  // Actions column using reusable builder
-  const actionsColumn = React.useMemo(
-    () =>
       buildActionsColumn<CIClassDTO>([
         {
           type: "edit",
@@ -159,129 +132,31 @@ export function CIClassesTable({
           onClick: deleteDialog.openDialog,
         },
       ]),
+    ],
     [onEdit, deleteDialog.openDialog],
   );
-
-  // Merge static columns + actions column
-  const allColumns = React.useMemo(() => {
-    return [...baseColumns, actionsColumn];
-  }, [baseColumns, actionsColumn]);
 
   // Column visibility with persistence
   const { visibility, onVisibilityChange } =
     useColumnVisibilityEnhanced<CIClassDTO>({
       storageKey: "ci-classes-table-columns",
-      columns: allColumns,
+      columns,
     });
-
-  const table = useReactTable({
-    data,
-    columns: allColumns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    onColumnVisibilityChange: onVisibilityChange,
-    state: {
-      globalFilter,
-      columnVisibility: visibility,
-    },
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      },
-    },
-  });
 
   return (
     <>
-      <div className="space-y-4">
-        {/* Search */}
-        <div className="flex items-center justify-between">
-          <Input
-            placeholder="Search CI classes..."
-            value={globalFilter ?? ""}
-            onChange={(event) => setGlobalFilter(event.target.value)}
-            className="max-w-sm"
-          />
-        </div>
-
-        {/* Table */}
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={allColumns.length}
-                    className="h-24 text-center"
-                  >
-                    No CI classes found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Pagination */}
-        <div className="flex items-center justify-end space-x-2">
-          <div className="text-muted-foreground flex-1 text-sm">
-            {table.getFilteredRowModel().rows.length} total CI class(es)
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-
-      {/* Delete Confirmation Dialog */}
+      <DataTable
+        columns={columns}
+        data={data}
+        selectable
+        searchable
+        globalFilter
+        searchPlaceholder="Search CI classes..."
+        emptyMessage="No CI classes found."
+        pagination={{ pageSize: 10 }}
+        controlledState={{ columnVisibility: visibility }}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
       <deleteDialog.DialogComponent />
     </>
   );
