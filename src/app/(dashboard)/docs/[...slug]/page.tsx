@@ -11,6 +11,7 @@
  */
 
 import { notFound } from "next/navigation";
+import { formatDate } from "@/lib/utils/date-format";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import {
   getDocContent,
@@ -197,14 +198,7 @@ export default async function DocPage({ params }: DocPageProps) {
               {lastModified && (
                 <div className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4" />
-                  <span>
-                    Updated{" "}
-                    {lastModified.toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
+                  <span>Updated {formatDate(lastModified)}</span>
                 </div>
               )}
             </div>

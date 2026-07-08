@@ -328,6 +328,31 @@ export default [
       "no-console": "error",
     },
   },
+  // Date rendering must go through the centralized formatters so every
+  // screen shows the same format regardless of browser locale.
+  // (toLocaleString is not restricted: it is predominantly used for number
+  // formatting; date usage of it is handled by convention/review.)
+  {
+    files: ["src/components/**/*.{ts,tsx}", "src/app/**/*.{ts,tsx}"],
+    ignores: ["**/__tests__/**", "**/*.test.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "CallExpression[callee.property.name='toLocaleDateString']",
+          message:
+            "Use formatDate/formatDateFull from @/lib/utils/date-format instead of toLocaleDateString.",
+        },
+        {
+          selector:
+            "CallExpression[callee.property.name='toLocaleTimeString']",
+          message:
+            "Use formatTime from @/lib/utils/date-format instead of toLocaleTimeString.",
+        },
+      ],
+    },
+  },
   // Client-side code may report failures via console.warn/error (the browser
   // console is the observability channel there); log/info/debug stay banned.
   {

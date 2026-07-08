@@ -15,6 +15,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatTime } from "@/lib/utils/date-format";
 import { useSSE } from "@/lib/hooks/useSSE";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,13 +83,6 @@ export function SSEDemo() {
    */
   const clearLog = () => {
     setEventLog([]);
-  };
-
-  /**
-   * Formats timestamp as readable time
-   */
-  const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString();
   };
 
   return (
@@ -177,7 +171,7 @@ export function SSEDemo() {
                     <div className="mb-2 flex items-center justify-between">
                       <Badge variant="outline">{entry.type}</Badge>
                       <span className="text-muted-foreground text-xs">
-                        {formatTime(entry.timestamp)}
+                        {formatTime(new Date(entry.timestamp))}
                       </span>
                     </div>
                     <pre className="overflow-x-auto text-xs">

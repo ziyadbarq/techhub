@@ -4,6 +4,7 @@
  */
 
 import Link from "next/link";
+import { formatDate } from "@/lib/utils/date-format";
 import { ClipboardList, Calendar, DollarSign } from "lucide-react";
 import { listMaintenanceRecordsAction } from "@/interface-adapters/controllers/maintenance-record.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -172,7 +173,7 @@ export default async function MaintenanceRecordsPage() {
                   <TableCell>
                     <div className="flex flex-col gap-1">
                       <span className="text-sm">
-                        {new Date(record.scheduledDate).toLocaleDateString()}
+                        {formatDate(record.scheduledDate)}
                       </span>
                       {record.isOverdue && !record.isComplete && (
                         <Badge
@@ -189,7 +190,7 @@ export default async function MaintenanceRecordsPage() {
                   <TableCell>
                     {record.completedDate ? (
                       <span className="text-sm">
-                        {new Date(record.completedDate).toLocaleDateString()}
+                        {formatDate(record.completedDate)}
                       </span>
                     ) : (
                       <span className="text-muted-foreground">-</span>
