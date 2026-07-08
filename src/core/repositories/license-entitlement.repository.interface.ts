@@ -16,6 +16,14 @@ export interface ILicenseEntitlementRepository {
   findById(id: string): Promise<LicenseEntitlement | null>;
 
   /**
+   * Find a license entitlement by ID, locking its row for the duration of
+   * the surrounding unit of work. Concurrent allocations against the same
+   * entitlement serialize on this lock, making seat-availability checks
+   * race-free. Behaves like findById outside a unit of work.
+   */
+  findByIdForUpdate(id: string): Promise<LicenseEntitlement | null>;
+
+  /**
    * Find all license entitlements
    */
   findAll(): Promise<LicenseEntitlement[]>;

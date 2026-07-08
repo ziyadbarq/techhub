@@ -205,7 +205,10 @@ export class LicenseEntitlement {
   }
 
   public hasAvailableQuantity(consumedQuantity: number): boolean {
-    return this.calculateAvailableQuantity(consumedQuantity) > 0;
+    // Callers pass the consumption AFTER the operation under validation, so
+    // exactly consuming the purchased quantity (available === 0) is allowed —
+    // otherwise the final seat could never be allocated.
+    return this.calculateAvailableQuantity(consumedQuantity) >= 0;
   }
 
   public linkToContract(contractId: string): void {

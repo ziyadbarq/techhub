@@ -14,9 +14,7 @@ import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { fromJsonValue, toJsonValue } from "./prisma-helpers";
 
 @injectable()
-export class PrismaLicenseEntitlementRepository
-  implements ILicenseEntitlementRepository
-{
+export class PrismaLicenseEntitlementRepository implements ILicenseEntitlementRepository {
   constructor(
     @inject(DI_TOKENS.PrismaClient) private prisma: PrismaClient,
     @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService,
@@ -51,6 +49,16 @@ export class PrismaLicenseEntitlementRepository
     });
 
     return data ? this.toDomain(data) : null;
+  }
+
+  async findByIdForUpdate(id: string): Promise<LicenseEntitlement | null> {
+    // Row lock serializes concurrent allocations against this entitlement
+    // for the duration of the surrounding transaction (no-op outside one).
+    await this.prisma.$queryRaw`
+      SELECT id FROM "license_entitlements" WHERE id = ${id} FOR UPDATE
+    `;
+
+    return this.findById(id);
   }
 
   async findAll(): Promise<LicenseEntitlement[]> {
