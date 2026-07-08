@@ -134,6 +134,12 @@ export const DI_TOKENS = {
   ILoggerService: Symbol.for("ILoggerService"),
 
   /**
+   * Token for IUnitOfWork
+   * Runs multi-write use case work inside a single database transaction
+   */
+  IUnitOfWork: Symbol.for("IUnitOfWork"),
+
+  /**
    * Token for IFileStorageService
    * Provides file system operations for debug artifacts and other files
    */
