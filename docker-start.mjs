@@ -72,7 +72,11 @@ async function runMigrations() {
   const { default: pg } = await import("pg");
   const { promises: fs } = await import("node:fs");
   const { join } = await import("node:path");
-  const { randomUUID } = await import("node:crypto");
+  const { randomUUID, createHash } = await import("node:crypto");
+
+  // Prisma records the sha256 hex digest of migration.sql; matching it keeps
+  // `prisma migrate status` / drift detection working against this table.
+  const checksumOf = (sql) => createHash("sha256").update(sql).digest("hex");
 
   const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -110,6 +114,29 @@ async function runMigrations() {
       return;
     }
 
+    // Backfill rows written by older versions of this runner, which recorded
+    // an empty checksum and broke Prisma's drift detection.
+    const { rows: emptyChecksumRows } = await pool.query(
+      `SELECT migration_name FROM "_prisma_migrations" WHERE checksum = ''`
+    );
+    for (const row of emptyChecksumRows) {
+      let sql;
+      try {
+        sql = await fs.readFile(
+          join(migrationsDir, row.migration_name, "migration.sql"),
+          "utf-8"
+        );
+      } catch {
+        continue; // migration files no longer shipped; leave the row as-is
+      }
+      await pool.query(
+        `UPDATE "_prisma_migrations" SET checksum = $1
+           WHERE migration_name = $2 AND checksum = ''`,
+        [checksumOf(sql), row.migration_name]
+      );
+      console.log(`[migrate] Backfilled checksum: ${row.migration_name}`);
+    }
+
     let count = 0;
     for (const dir of dirs) {
       if (applied.has(dir)) continue;
@@ -132,7 +159,7 @@ async function runMigrations() {
           `INSERT INTO "_prisma_migrations"
              (id, checksum, migration_name, started_at, finished_at, applied_steps_count)
            VALUES ($1, $2, $3, $4, $5, $6)`,
-          [randomUUID(), "", dir, startedAt, new Date(), 1]
+          [randomUUID(), checksumOf(sql), dir, startedAt, new Date(), 1]
         );
         await client.query("COMMIT");
         count++;
