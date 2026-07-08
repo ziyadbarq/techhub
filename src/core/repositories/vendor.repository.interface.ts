@@ -79,6 +79,11 @@ export interface IVendorRepository {
   hasAssets(id: string): Promise<boolean>;
 
   /**
+   * Check if vendor has contacts
+   */
+  hasContacts(id: string): Promise<boolean>;
+
+  /**
    * Check if vendor has contracts
    */
   hasContracts(id: string): Promise<boolean>;

@@ -12,9 +12,7 @@ import type { ILifecycleModelRepository } from "@/core/repositories/lifecycle-mo
 import { createRepositoryLogger } from "./repository-logger";
 
 @injectable()
-export class PrismaLifecycleModelRepository
-  implements ILifecycleModelRepository
-{
+export class PrismaLifecycleModelRepository implements ILifecycleModelRepository {
   private readonly logger = createRepositoryLogger("LifecycleModelRepository");
 
   constructor(
@@ -114,6 +112,23 @@ export class PrismaLifecycleModelRepository
     return transitionCount > 0;
   }
 
+  async isInUse(id: string): Promise<boolean> {
+    const [states, transitions, ciClasses, assetCategories, licenseProducts] =
+      await Promise.all([
+        this.prisma.lifecycleState.count({ where: { lifecycleModelId: id } }),
+        this.prisma.lifecycleTransition.count({
+          where: { lifecycleModelId: id },
+        }),
+        this.prisma.cIClass.count({ where: { lifecycleModelId: id } }),
+        this.prisma.assetCategory.count({ where: { lifecycleModelId: id } }),
+        this.prisma.licenseProduct.count({ where: { lifecycleModelId: id } }),
+      ]);
+
+    return (
+      states + transitions + ciClasses + assetCategories + licenseProducts > 0
+    );
+  }
+
   async update(lifecycleModel: LifecycleModel): Promise<LifecycleModel> {
     const timer = this.logger.startTimer();
 
@@ -151,14 +166,6 @@ export class PrismaLifecycleModelRepository
       this.logger.error("delete", "Failed to delete lifecycle model", error);
       throw error;
     }
-  }
-
-  async isInUse(id: string): Promise<boolean> {
-    const count = await this.prisma.lifecycleState.count({
-      where: { lifecycleModelId: id },
-    });
-
-    return count > 0;
   }
 
   async existsByName(name: string, excludeId?: string): Promise<boolean> {

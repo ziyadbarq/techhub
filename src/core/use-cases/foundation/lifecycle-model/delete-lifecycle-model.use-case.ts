@@ -34,14 +34,14 @@ export class DeleteLifecycleModelUseCase {
       );
     }
 
-    // Check if in use
-    // TODO: Implement isInUse method in repository
-    // const inUse = await this.lifecycleModelRepository.isInUse(id);
-    // if (inUse) {
-    //   throw new Error(
-    //     "Cannot delete lifecycle model because it is in use by lifecycle states",
-    //   );
-    // }
+    // Check if in use (states, transitions, CI classes, asset categories,
+    // or license products reference it)
+    const inUse = await this.lifecycleModelRepository.isInUse(id);
+    if (inUse) {
+      throw new Error(
+        "Cannot delete lifecycle model because it is in use. Remove its states, transitions, and references from CI classes, asset categories, and license products first.",
+      );
+    }
 
     await this.lifecycleModelRepository.delete(id);
   }
