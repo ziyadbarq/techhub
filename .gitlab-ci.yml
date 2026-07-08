@@ -135,6 +135,7 @@ workflow:
   - npm run db:generate
   - npm run type-check
   - npm run lint
+  - npm run check:guards
   - npx vitest --run
 
 validate-gcp:
