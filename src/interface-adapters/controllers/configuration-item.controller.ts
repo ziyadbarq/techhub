@@ -28,6 +28,8 @@ export async function createConfigurationItemAction(
   data: CreateConfigurationItemDTO,
 ): Promise<ActionResponse<ConfigurationItemDTO>> {
   try {
+    await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_CREATE);
+
     const container = getContainer();
     const useCase = container.get<CreateConfigurationItemUseCase>(
       DI_TOKENS.CreateConfigurationItemUseCase,
@@ -50,6 +52,8 @@ export async function getConfigurationItemAction(
   id: string,
 ): Promise<ActionResponse<ConfigurationItemDTO>> {
   try {
+    await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
+
     const container = getContainer();
     const useCase = container.get<GetConfigurationItemUseCase>(
       DI_TOKENS.GetConfigurationItemUseCase,
@@ -77,6 +81,8 @@ export async function listConfigurationItemsAction(filters?: {
   unlinked?: boolean;
 }): Promise<ActionResponse<ConfigurationItemDTO[]>> {
   try {
+    await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
+
     const container = getContainer();
     const useCase = container.get<ListConfigurationItemsUseCase>(
       DI_TOKENS.ListConfigurationItemsUseCase,
@@ -100,6 +106,8 @@ export async function updateConfigurationItemAction(
   updates: UpdateConfigurationItemDTO,
 ): Promise<ActionResponse<ConfigurationItemDTO>> {
   try {
+    await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_UPDATE);
+
     const container = getContainer();
     const useCase = container.get<UpdateConfigurationItemUseCase>(
       DI_TOKENS.UpdateConfigurationItemUseCase,
@@ -122,6 +130,8 @@ export async function deleteConfigurationItemAction(
   id: string,
 ): Promise<ActionResponse<void>> {
   try {
+    await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_DELETE);
+
     const container = getContainer();
     const useCase = container.get<DeleteConfigurationItemUseCase>(
       DI_TOKENS.DeleteConfigurationItemUseCase,

@@ -239,12 +239,23 @@ export async function listRolesWithPermissionsAction(): Promise<
 }
 
 /**
- * Get all permissions for a specific user (admin only)
+ * Get all permissions for a specific user (self, or admin for other users)
  */
 export async function getUserPermissionsAction(
   userId: string,
 ): Promise<ActionResponse<UserPermissionsResultDTO>> {
   try {
+    // Users may look up their own permissions; anything else requires
+    // user-management rights (previously any caller could enumerate any
+    // user's permissions).
+    const { user } = await getSession();
+    if (!user) {
+      return { success: false, error: "Not authenticated" };
+    }
+    if (user.id !== userId) {
+      await requirePermission(PERMISSIONS.USERS_VIEW);
+    }
+
     // Get use case from DI container
     const container = getContainer();
     const getUserPermissions = container.get<GetUserPermissionsUseCase>(

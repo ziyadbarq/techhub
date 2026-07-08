@@ -24,6 +24,13 @@ vi.mock("@/lib/auth/session", () => ({
       session: { id: "session-123" },
     }),
   ),
+  getCurrentUserId: vi.fn(() => Promise.resolve("system")),
+}));
+
+// Mock requirePermission (getUserPermissionsAction checks USERS_VIEW when
+// looking up a user other than the caller)
+vi.mock("@/lib/permissions/server", () => ({
+  requirePermission: vi.fn(),
 }));
 
 // Mock logger service
