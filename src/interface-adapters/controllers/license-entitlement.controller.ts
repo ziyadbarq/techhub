@@ -27,17 +27,14 @@ import type { GetLicenseEntitlementUseCase } from "@/core/use-cases/license-enti
 import type { ListLicenseEntitlementsUseCase } from "@/core/use-cases/license-entitlement/list-license-entitlements.use-case";
 import type { UpdateLicenseEntitlementUseCase } from "@/core/use-cases/license-entitlement/update-license-entitlement.use-case";
 import type { DeleteLicenseEntitlementUseCase } from "@/core/use-cases/license-entitlement/delete-license-entitlement.use-case";
-import type { BulkCreateResult } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 
 /**
  * Create a new license entitlement
  */
 export async function createLicenseEntitlement(
   data: CreateLicenseEntitlementDTO,
-): Promise<
-  | { success: true; data: LicenseEntitlementDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseEntitlementDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_CREATE);
 
@@ -82,10 +79,7 @@ export async function createLicenseEntitlement(
  */
 export async function getLicenseEntitlement(
   id: string,
-): Promise<
-  | { success: true; data: LicenseEntitlementDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseEntitlementDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
 
@@ -119,10 +113,7 @@ export async function listLicenseEntitlements(params?: {
   contractId?: string;
   activeOnly?: boolean;
   asOfDate?: Date;
-}): Promise<
-  | { success: true; data: LicenseEntitlementDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<LicenseEntitlementDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
 
@@ -153,10 +144,7 @@ export async function listLicenseEntitlements(params?: {
  */
 export async function updateLicenseEntitlement(
   data: UpdateLicenseEntitlementDTO,
-): Promise<
-  | { success: true; data: LicenseEntitlementDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseEntitlementDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_UPDATE);
 

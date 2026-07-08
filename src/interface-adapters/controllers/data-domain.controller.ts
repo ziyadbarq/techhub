@@ -6,6 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { ActionResponse } from "./types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type {
@@ -33,9 +34,7 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
  */
 export async function createDataDomain(
   data: CreateDataDomainDTO,
-): Promise<
-  { success: true; data: DataDomainDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<DataDomainDTO>> {
   try {
     await requirePermission(PERMISSIONS.DATA_DOMAINS_CREATE);
 
@@ -62,9 +61,7 @@ export async function createDataDomain(
     return {
       success: false,
       error:
-        error instanceof Error
-          ? error.message
-          : "Failed to create data domain",
+        error instanceof Error ? error.message : "Failed to create data domain",
     };
   }
 }
@@ -74,9 +71,7 @@ export async function createDataDomain(
  */
 export async function getDataDomain(
   id: string,
-): Promise<
-  { success: true; data: DataDomainDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<DataDomainDTO>> {
   try {
     await requirePermission(PERMISSIONS.DATA_DOMAINS_VIEW);
 
@@ -105,10 +100,7 @@ export async function getDataDomain(
  */
 export async function listDataDomains(options?: {
   activeOnly?: boolean;
-}): Promise<
-  | { success: true; data: DataDomainDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<DataDomainDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.DATA_DOMAINS_VIEW);
 
@@ -140,9 +132,7 @@ export async function listDataDomains(options?: {
 export async function updateDataDomain(
   id: string,
   data: UpdateDataDomainDTO,
-): Promise<
-  { success: true; data: DataDomainDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<DataDomainDTO>> {
   try {
     await requirePermission(PERMISSIONS.DATA_DOMAINS_UPDATE);
 
@@ -170,9 +160,7 @@ export async function updateDataDomain(
     return {
       success: false,
       error:
-        error instanceof Error
-          ? error.message
-          : "Failed to update data domain",
+        error instanceof Error ? error.message : "Failed to update data domain",
     };
   }
 }
@@ -201,9 +189,7 @@ export async function deleteDataDomain(
     return {
       success: false,
       error:
-        error instanceof Error
-          ? error.message
-          : "Failed to delete data domain",
+        error instanceof Error ? error.message : "Failed to delete data domain",
     };
   }
 }

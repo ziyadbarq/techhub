@@ -5,6 +5,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
 import { resolve, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
@@ -32,9 +33,7 @@ import type { DeleteLicenseAddonUseCase } from "@/core/use-cases/license-addon/d
  */
 export async function createLicenseAddon(
   data: CreateLicenseAddonDTO,
-): Promise<
-  { success: true; data: LicenseAddonDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAddonDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_UPDATE);
 
@@ -75,9 +74,7 @@ export async function createLicenseAddon(
  */
 export async function getLicenseAddon(
   id: string,
-): Promise<
-  { success: true; data: LicenseAddonDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAddonDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_VIEW);
 
@@ -116,9 +113,7 @@ export async function getLicenseAddon(
 export async function listLicenseAddons(params?: {
   licenseProductId?: string;
   activeOnly?: boolean;
-}): Promise<
-  { success: true; data: LicenseAddonDTO[] } | { success: false; error: string }
-> {
+}): Promise<ActionResponse<LicenseAddonDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_VIEW);
 
@@ -149,9 +144,7 @@ export async function listLicenseAddons(params?: {
  */
 export async function updateLicenseAddon(
   data: UpdateLicenseAddonDTO,
-): Promise<
-  { success: true; data: LicenseAddonDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAddonDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_UPDATE);
 

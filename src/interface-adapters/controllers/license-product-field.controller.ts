@@ -29,7 +29,7 @@ import {
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
-import type { BulkCreateResult } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 
 /**
@@ -37,10 +37,7 @@ import type { ILicenseProductFieldRepository } from "@/core/repositories/license
  */
 export async function createLicenseProductField(
   data: CreateLicenseProductFieldDTO,
-): Promise<
-  | { success: true; data: LicenseProductFieldDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductFieldDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_CREATE);
 
@@ -82,10 +79,7 @@ export async function createLicenseProductField(
  */
 export async function getLicenseProductField(
   id: string,
-): Promise<
-  | { success: true; data: LicenseProductFieldDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductFieldDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 
@@ -119,10 +113,7 @@ export async function getLicenseProductField(
  */
 export async function listLicenseProductFields(
   licenseProductId: string,
-): Promise<
-  | { success: true; data: LicenseProductFieldDTO[] }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductFieldDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 
@@ -157,10 +148,7 @@ export async function listLicenseProductFields(
 export async function updateLicenseProductField(
   id: string,
   data: UpdateLicenseProductFieldDTO,
-): Promise<
-  | { success: true; data: LicenseProductFieldDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductFieldDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_UPDATE);
 
@@ -305,10 +293,7 @@ export async function bulkCreateLicenseProductFieldsAction(
  */
 export async function listEnrichedLicenseProductFieldsAction(
   licenseProductId: string,
-): Promise<
-  | { success: true; data: EnrichedLicenseProductFieldDTO[] }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<EnrichedLicenseProductFieldDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 

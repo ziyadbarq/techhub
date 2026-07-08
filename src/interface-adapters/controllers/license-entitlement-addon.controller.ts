@@ -5,6 +5,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
 import { resolve, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
@@ -33,10 +34,7 @@ import type { CalculateEntitlementTotalCostUseCase } from "@/core/use-cases/lice
  */
 export async function attachAddonToEntitlement(
   data: AttachAddonToEntitlementDTO,
-): Promise<
-  | { success: true; data: LicenseEntitlementAddonDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseEntitlementAddonDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_UPDATE);
 
@@ -107,10 +105,7 @@ export async function detachAddonFromEntitlement(
  */
 export async function updateEntitlementAddon(
   data: UpdateEntitlementAddonDTO,
-): Promise<
-  | { success: true; data: LicenseEntitlementAddonDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseEntitlementAddonDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_UPDATE);
 
@@ -151,10 +146,7 @@ export async function updateEntitlementAddon(
 export async function listEntitlementAddons(params?: {
   licenseEntitlementId?: string;
   licenseAddonId?: string;
-}): Promise<
-  | { success: true; data: LicenseEntitlementAddonDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<LicenseEntitlementAddonDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
 
@@ -185,10 +177,7 @@ export async function listEntitlementAddons(params?: {
  */
 export async function calculateEntitlementTotalCost(
   entitlementId: string,
-): Promise<
-  | { success: true; data: EntitlementCostBreakdownDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<EntitlementCostBreakdownDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
 

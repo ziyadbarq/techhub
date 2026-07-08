@@ -103,9 +103,7 @@ async function enrichContracts(
  */
 export async function createContract(
   data: CreateContractDTO,
-): Promise<
-  { success: true; data: ContractDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<ContractDTO>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACTS_CREATE);
 
@@ -142,9 +140,7 @@ export async function createContract(
  */
 export async function getContract(
   id: string,
-): Promise<
-  { success: true; data: ContractDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<ContractDTO>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACTS_VIEW);
 
@@ -182,9 +178,7 @@ export async function listContracts(options?: {
   vendorId?: string;
   activeOnly?: boolean;
   asOfDate?: Date;
-}): Promise<
-  { success: true; data: ContractDTO[] } | { success: false; error: string }
-> {
+}): Promise<ActionResponse<ContractDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACTS_VIEW);
 
@@ -222,9 +216,7 @@ export async function listContracts(options?: {
 export async function updateContract(
   id: string,
   data: UpdateContractDTO,
-): Promise<
-  { success: true; data: ContractDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<ContractDTO>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACTS_UPDATE);
 

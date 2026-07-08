@@ -11,7 +11,7 @@ import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
-import type { BulkCreateResult } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import type {
   CreateLicenseAllocationDTO,
   UpdateLicenseAllocationDTO,
@@ -38,10 +38,7 @@ import type { AllocationTargetType } from "@/core/domain/entities/license-alloca
  */
 export async function createLicenseAllocation(
   data: CreateLicenseAllocationDTO,
-): Promise<
-  | { success: true; data: LicenseAllocationDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAllocationDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_CREATE);
 
@@ -82,10 +79,7 @@ export async function createLicenseAllocation(
  */
 export async function getLicenseAllocation(
   id: string,
-): Promise<
-  | { success: true; data: LicenseAllocationDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAllocationDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW);
 
@@ -119,10 +113,7 @@ export async function listLicenseAllocations(params?: {
   targetType?: AllocationTargetType;
   targetId?: string;
   activeOnly?: boolean;
-}): Promise<
-  | { success: true; data: LicenseAllocationDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<LicenseAllocationDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW);
 
@@ -153,10 +144,7 @@ export async function listLicenseAllocations(params?: {
  */
 export async function updateLicenseAllocation(
   data: UpdateLicenseAllocationDTO,
-): Promise<
-  | { success: true; data: LicenseAllocationDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAllocationDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_UPDATE);
 
@@ -226,10 +214,7 @@ export async function deleteLicenseAllocation(
  */
 export async function deallocateLicenseAllocation(
   data: DeallocateLicenseAllocationDTO,
-): Promise<
-  | { success: true; data: LicenseAllocationDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAllocationDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_DEALLOCATE);
 
@@ -268,10 +253,7 @@ export async function deallocateLicenseAllocation(
  */
 export async function reactivateLicenseAllocation(
   id: string,
-): Promise<
-  | { success: true; data: LicenseAllocationDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAllocationDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_REACTIVATE);
 

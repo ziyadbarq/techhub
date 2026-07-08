@@ -6,6 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { ActionResponse } from "./types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type {
@@ -40,10 +41,7 @@ import type { VerificationStatusEnum } from "@/core/domain/entities/verification
  */
 export async function createVerificationItem(
   data: CreateVerificationItemDTO,
-): Promise<
-  | { success: true; data: VerificationItemDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<VerificationItemDTO>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_MANAGE);
 
@@ -85,10 +83,7 @@ export async function createVerificationItem(
  */
 export async function getVerificationItem(
   id: string,
-): Promise<
-  | { success: true; data: VerificationItemDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<VerificationItemDTO>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_VIEW);
 
@@ -120,10 +115,7 @@ export async function getVerificationItem(
 export async function listVerificationItems(options?: {
   campaignId?: string;
   status?: VerificationStatusEnum;
-}): Promise<
-  | { success: true; data: VerificationItemDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<VerificationItemDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_VIEW);
 
@@ -158,10 +150,7 @@ export async function listVerificationItems(options?: {
 export async function updateVerificationItem(
   id: string,
   data: UpdateVerificationItemDTO,
-): Promise<
-  | { success: true; data: VerificationItemDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<VerificationItemDTO>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_UPDATE);
 
@@ -232,10 +221,7 @@ export async function deleteVerificationItem(
 export async function verifyVerificationItem(
   id: string,
   data: VerifyVerificationItemDTO,
-): Promise<
-  | { success: true; data: VerificationItemDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<VerificationItemDTO>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_VERIFY);
 
@@ -278,10 +264,7 @@ export async function verifyVerificationItem(
 export async function flagExceptionVerificationItem(
   id: string,
   data: FlagExceptionVerificationItemDTO,
-): Promise<
-  | { success: true; data: VerificationItemDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<VerificationItemDTO>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_FLAG_EXCEPTION);
 

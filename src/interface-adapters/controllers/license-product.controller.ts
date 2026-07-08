@@ -35,9 +35,7 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
  */
 export async function createLicenseProduct(
   data: CreateLicenseProductDTO,
-): Promise<
-  { success: true; data: LicenseProductDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_CREATE);
 
@@ -79,9 +77,7 @@ export async function createLicenseProduct(
  */
 export async function getLicenseProduct(
   id: string,
-): Promise<
-  { success: true; data: LicenseProductDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_VIEW);
 
@@ -115,10 +111,7 @@ export async function getLicenseProduct(
  */
 export async function listLicenseProducts(options?: {
   vendorId?: string;
-}): Promise<
-  | { success: true; data: LicenseProductDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<LicenseProductDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_VIEW);
 
@@ -155,9 +148,7 @@ export async function listLicenseProducts(options?: {
 export async function updateLicenseProduct(
   id: string,
   data: UpdateLicenseProductDTO,
-): Promise<
-  { success: true; data: LicenseProductDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_UPDATE);
 
