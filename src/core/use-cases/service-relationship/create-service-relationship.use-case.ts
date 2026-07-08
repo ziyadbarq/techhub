@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRelationshipRepository } from "../../repositories/service-relationship.repository.interface";
@@ -53,7 +54,7 @@ export class CreateServiceRelationshipUseCase {
       );
 
     if (exists) {
-      throw new Error(
+      throw new ConflictError(
         "Relationship already exists between these services with the same type",
       );
     }

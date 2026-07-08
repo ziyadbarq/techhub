@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
 
@@ -53,7 +54,7 @@ export class ConvertCurrencyUseCase {
     );
 
     if (!exchangeRate) {
-      throw new Error(
+      throw new ValidationError(
         `Active exchange rate for currency "${props.fromCurrency}" not found`,
       );
     }

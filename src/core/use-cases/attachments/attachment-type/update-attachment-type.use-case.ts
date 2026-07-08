@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAttachmentTypeRepository } from "@/core/repositories/attachment-type.repository.interface";
 import type { AttachmentType } from "@/core/domain/entities/attachment-type.entity";
@@ -41,7 +42,9 @@ export class UpdateAttachmentTypeUseCase {
         request.id,
       );
       if (existingByName) {
-        throw new Error("An attachment type with this name already exists");
+        throw new ConflictError(
+          "An attachment type with this name already exists",
+        );
       }
       attachmentType.name = request.name;
     }
@@ -53,7 +56,9 @@ export class UpdateAttachmentTypeUseCase {
         request.id,
       );
       if (existingByCode) {
-        throw new Error("An attachment type with this code already exists");
+        throw new ConflictError(
+          "An attachment type with this code already exists",
+        );
       }
       attachmentType.code = request.code;
     }

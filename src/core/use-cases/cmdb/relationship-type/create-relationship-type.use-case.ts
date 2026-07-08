@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IRelationshipTypeRepository } from "../../../repositories/relationship-type.repository.interface";
 import {
@@ -33,7 +34,9 @@ export class CreateRelationshipTypeUseCase {
     // Check if code already exists
     const exists = await this.relationshipTypeRepository.existsByCode(code);
     if (exists) {
-      throw new Error(`Relationship type with code already exists: ${code}`);
+      throw new ConflictError(
+        `Relationship type with code already exists: ${code}`,
+      );
     }
 
     const relationshipType = RelationshipType.create(

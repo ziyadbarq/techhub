@@ -7,6 +7,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.repository.interface";
@@ -59,7 +60,7 @@ export class LinkIntuneDeviceToPersonUseCase {
 
     // Check if device is already linked to a different person
     if (device.isLinkedToPerson() && device.linkedPersonId !== input.personId) {
-      throw new Error(
+      throw new ConflictError(
         `Device is already linked to person ${device.linkedPersonId}. Unlink first.`,
       );
     }

@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
@@ -31,7 +32,7 @@ export class DeleteExchangeRateUseCase {
 
     // Check if this is the SAR rate - cannot delete
     if (exchangeRate.isSAR()) {
-      throw new Error("Cannot delete the SAR base rate");
+      throw new ValidationError("Cannot delete the SAR base rate");
     }
 
     await this.exchangeRateRepository.delete(id);

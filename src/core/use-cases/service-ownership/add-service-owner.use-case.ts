@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { OwnershipType } from "@/generated/prisma";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
@@ -41,7 +42,7 @@ export class AddServiceOwnerUseCase {
       request.ownershipType,
     );
     if (existing) {
-      throw new Error(
+      throw new ConflictError(
         `Person is already a ${request.ownershipType} owner of this service`,
       );
     }

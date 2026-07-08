@@ -3,6 +3,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
@@ -33,7 +34,7 @@ export class CreateReportScheduleUseCase {
     // Validate report exists
     const definition = getReportDefinition(input.reportId);
     if (!definition) {
-      throw new Error(`Unknown report: ${input.reportId}`);
+      throw new ValidationError(`Unknown report: ${input.reportId}`);
     }
 
     const entity = ReportScheduleEntity.create(input, this.idGenerator);

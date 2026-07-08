@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IRelationshipTypeRepository } from "../../../repositories/relationship-type.repository.interface";
 import type { RelationshipType } from "../../../domain/entities/relationship-type.entity";
@@ -20,7 +21,7 @@ export class GetRelationshipTypeUseCase {
     request: GetRelationshipTypeRequest,
   ): Promise<RelationshipType> {
     if (!request.id && !request.code) {
-      throw new Error("Either id or code must be provided");
+      throw new ValidationError("Either id or code must be provided");
     }
 
     let relationshipType: RelationshipType | null = null;

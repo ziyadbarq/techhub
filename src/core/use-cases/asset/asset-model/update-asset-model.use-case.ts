@@ -3,6 +3,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { AssetModel } from "@/core/domain/entities/asset-model.entity";
 import type { IAssetModelRepository } from "@/core/repositories/asset-model.repository.interface";
@@ -38,7 +39,9 @@ export class UpdateAssetModelUseCase {
         props.id,
       );
       if (existsByCode) {
-        throw new Error(`Asset model with code "${props.code}" already exists`);
+        throw new ConflictError(
+          `Asset model with code "${props.code}" already exists`,
+        );
       }
     }
 

@@ -1,4 +1,5 @@
 import path from "node:path";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { format } from "date-fns";
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
@@ -42,13 +43,16 @@ export class CreateDatabaseBackupUseCase {
       limit: 1,
     });
     if (activeBackups.length > 0) {
-      throw new Error(
+      throw new ConflictError(
         "Another backup is already running or queued. Please wait.",
       );
     }
 
     const databaseUrl = process.env.DATABASE_URL;
     if (!databaseUrl) {
+      // Missing DATABASE_URL is a deployment misconfiguration, not a business
+      // rejection — it must surface at error severity in monitoring.
+      // eslint-disable-next-line no-restricted-syntax
       throw new Error("DATABASE_URL is not configured");
     }
 

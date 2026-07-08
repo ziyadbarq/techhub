@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetCategoryFieldRepository } from "@/core/repositories/asset-category-field.repository.interface";
 import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
@@ -60,7 +61,7 @@ export class CreateAssetCategoryFieldUseCase {
       request.fieldDefinitionId,
     );
     if (existing) {
-      throw new Error(
+      throw new ConflictError(
         "This field definition is already attached to this asset category",
       );
     }

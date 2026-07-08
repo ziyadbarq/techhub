@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import type { IServiceAssetRepository } from "@/core/repositories/service-asset.repository.interface";
@@ -45,7 +46,7 @@ export class LinkServiceToAssetUseCase {
         request.relationship,
       );
     if (existingLink) {
-      throw new Error(
+      throw new ConflictError(
         `Asset is already linked to this service with relationship ${request.relationship}`,
       );
     }

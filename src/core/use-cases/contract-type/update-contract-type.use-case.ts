@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IContractTypeRepository } from "@/core/repositories/contract-type.repository.interface";
 import type { ContractType } from "@/core/domain/entities/contract-type.entity";
@@ -37,7 +38,9 @@ export class UpdateContractTypeUseCase {
         request.id,
       );
       if (existingByName) {
-        throw new Error("A contract type with this name already exists");
+        throw new ConflictError(
+          "A contract type with this name already exists",
+        );
       }
     }
 
@@ -48,7 +51,9 @@ export class UpdateContractTypeUseCase {
         request.id,
       );
       if (existingByCode) {
-        throw new Error("A contract type with this code already exists");
+        throw new ConflictError(
+          "A contract type with this code already exists",
+        );
       }
     }
 

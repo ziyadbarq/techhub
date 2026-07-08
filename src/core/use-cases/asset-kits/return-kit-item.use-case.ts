@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitCheckoutItemRepository } from "@/core/repositories/asset-kit-checkout-item.repository.interface";
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
@@ -23,7 +24,7 @@ export class ReturnKitItemUseCase {
       request.checkoutItemId,
     );
     if (!item) {
-      throw new Error(
+      throw new ValidationError(
         `Checkout item with ID ${request.checkoutItemId} not found`,
       );
     }

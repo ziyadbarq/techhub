@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
 import type { IAssetKitItemRepository } from "@/core/repositories/asset-kit-item.repository.interface";
@@ -40,7 +41,7 @@ export class CreateKitCheckoutUseCase {
     // Validate kit exists and has items
     const kitItems = await this.kitItemRepository.findByKitId(request.kitId);
     if (kitItems.length === 0) {
-      throw new Error("Cannot checkout empty kit");
+      throw new ValidationError("Cannot checkout empty kit");
     }
 
     const assetIds = request.assetIds ?? [];
@@ -53,7 +54,7 @@ export class CreateKitCheckoutUseCase {
         0,
       );
       if (assetIds.length < requiredQuantity) {
-        throw new Error(
+        throw new ValidationError(
           `Kit requires ${requiredQuantity} assets, but only ${assetIds.length} provided`,
         );
       }

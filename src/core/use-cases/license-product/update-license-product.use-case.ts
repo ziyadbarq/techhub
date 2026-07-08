@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
@@ -59,7 +60,9 @@ export class UpdateLicenseProductUseCase {
         request.id,
       );
       if (existingByName) {
-        throw new Error("A license product with this name already exists");
+        throw new ConflictError(
+          "A license product with this name already exists",
+        );
       }
     }
 
@@ -70,7 +73,9 @@ export class UpdateLicenseProductUseCase {
         request.id,
       );
       if (existingByCode) {
-        throw new Error("A license product with this code already exists");
+        throw new ConflictError(
+          "A license product with this code already exists",
+        );
       }
     }
 

@@ -4,6 +4,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
@@ -33,7 +34,7 @@ export class CreateAssetAssignmentUseCase {
       );
 
     if (hasOverlap) {
-      throw new Error(
+      throw new ConflictError(
         "Cannot create assignment: Asset already has an overlapping assignment during this period",
       );
     }

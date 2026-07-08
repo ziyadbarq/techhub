@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { AssetCategory } from "@/core/domain/entities/asset-category.entity";
 import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
@@ -46,7 +47,7 @@ export class UpdateAssetCategoryUseCase {
         props.id,
       );
       if (existsByCode) {
-        throw new Error(
+        throw new ConflictError(
           `Asset category with code "${props.code}" already exists`,
         );
       }
@@ -59,7 +60,7 @@ export class UpdateAssetCategoryUseCase {
         props.id,
       );
       if (existsByName) {
-        throw new Error(
+        throw new ConflictError(
           `Asset category with name "${props.name}" already exists`,
         );
       }

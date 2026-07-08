@@ -6,6 +6,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IFeatureFlagRepository } from "@/core/repositories/feature-flag.repository.interface";
@@ -51,7 +52,7 @@ export class ExecuteScheduledReportUseCase {
     }
 
     if (!scheduleData.isActive) {
-      throw new Error("Schedule is inactive");
+      throw new ValidationError("Schedule is inactive");
     }
 
     const definition = getReportDefinition(scheduleData.reportId);

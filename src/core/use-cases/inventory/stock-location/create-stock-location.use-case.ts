@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import { StockLocation } from "@/core/domain/entities/stock-location.entity";
 import type { IStockLocationRepository } from "@/core/repositories/stock-location.repository.interface";
@@ -42,7 +43,9 @@ export class CreateStockLocationUseCase {
     // Check for duplicate code
     const existsByCode = await this.stockLocationRepository.existsByCode(code);
     if (existsByCode) {
-      throw new Error(`Stock location with code "${code}" already exists`);
+      throw new ConflictError(
+        `Stock location with code "${code}" already exists`,
+      );
     }
 
     const stockLocation = StockLocation.create({ ...props, code });

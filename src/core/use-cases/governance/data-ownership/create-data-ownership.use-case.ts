@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IDataOwnershipRepository } from "@/core/repositories/data-ownership.repository.interface";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
@@ -53,7 +54,7 @@ export class CreateDataOwnershipUseCase {
         : request.assetCategoryId
           ? "asset category"
           : "target";
-      throw new Error(
+      throw new ConflictError(
         `A data ownership already exists for this data domain and ${target}`,
       );
     }

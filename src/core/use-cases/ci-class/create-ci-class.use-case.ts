@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
 import {
@@ -46,12 +47,14 @@ export class CreateCIClassUseCase {
       request.name,
     );
     if (existingByName) {
-      throw new Error(`CI class with name "${request.name}" already exists`);
+      throw new ConflictError(
+        `CI class with name "${request.name}" already exists`,
+      );
     }
 
     const existingByCode = await this.ciClassRepository.existsByCode(code);
     if (existingByCode) {
-      throw new Error(`CI class with code "${code}" already exists`);
+      throw new ConflictError(`CI class with code "${code}" already exists`);
     }
 
     // Create CI class entity

@@ -3,6 +3,8 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseEntitlementAddonRepository } from "@/core/repositories/license-entitlement-addon.repository.interface";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
@@ -48,12 +50,14 @@ export class AttachAddonToEntitlementUseCase {
 
     // Validate addon is active
     if (!addon.isActive) {
-      throw new Error("Cannot attach inactive addon");
+      throw new ValidationError("Cannot attach inactive addon");
     }
 
     // Validate addon belongs to the same product as entitlement
     if (addon.licenseProductId !== entitlement.licenseProductId) {
-      throw new Error("Addon does not belong to the same license product");
+      throw new ValidationError(
+        "Addon does not belong to the same license product",
+      );
     }
 
     // Check if already attached
@@ -62,7 +66,7 @@ export class AttachAddonToEntitlementUseCase {
       request.licenseAddonId,
     );
     if (existing) {
-      throw new Error("Addon is already attached to this entitlement");
+      throw new ConflictError("Addon is already attached to this entitlement");
     }
 
     // Create attachment

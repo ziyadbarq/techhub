@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IReportDataService } from "@/core/services/report-data.service.interface";
@@ -31,7 +32,7 @@ export class GenerateReportDataUseCase {
   ): Promise<ReportResult> {
     const definition = getReportDefinition(reportId);
     if (!definition) {
-      throw new Error(`Unknown report: ${reportId}`);
+      throw new ValidationError(`Unknown report: ${reportId}`);
     }
 
     this.logger.info("Generating report data", {

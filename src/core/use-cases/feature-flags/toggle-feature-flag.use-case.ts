@@ -4,6 +4,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IFeatureFlagRepository } from "../../repositories/feature-flag.repository.interface";
 import type { FeatureFlag } from "../../domain/entities/feature-flag.entity";
@@ -56,7 +57,7 @@ export class ToggleFeatureFlagUseCase {
         featureFlag.getUnsatisfiedDependencies(enabledFeatures);
 
       if (unsatisfied.length > 0) {
-        throw new Error(
+        throw new ValidationError(
           `Cannot enable ${request.name}: missing dependencies: ${unsatisfied.join(", ")}. Enable dependencies first.`,
         );
       }
@@ -73,7 +74,7 @@ export class ToggleFeatureFlagUseCase {
         const dependentNames = enabledDependents
           .map((d) => d.displayName)
           .join(", ");
-        throw new Error(
+        throw new ValidationError(
           `Cannot disable ${featureFlag.displayName}: required by enabled features: ${dependentNames}. Disable dependents first.`,
         );
       }

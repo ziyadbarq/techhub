@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import type { Person } from "@/core/domain/entities/person.entity";
@@ -58,7 +59,9 @@ export class UpdatePersonUseCase {
         props.id,
       );
       if (existsByEmail) {
-        throw new Error(`Person with email "${props.email}" already exists`);
+        throw new ConflictError(
+          `Person with email "${props.email}" already exists`,
+        );
       }
     }
 
@@ -73,7 +76,7 @@ export class UpdatePersonUseCase {
         props.id,
       );
       if (existsByEmployeeId) {
-        throw new Error(
+        throw new ConflictError(
           `Person with employee ID "${props.employeeId}" already exists`,
         );
       }

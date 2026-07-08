@@ -1,4 +1,6 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
 import type { IAssetReservationConflictRepository } from "@/core/repositories/asset-reservation-conflict.repository.interface";
@@ -41,7 +43,7 @@ export class CreateReservationUseCase {
   async execute(request: CreateReservationRequest): Promise<AssetReservation> {
     // Business rule validation
     if (request.endDate <= request.startDate) {
-      throw new Error("End date must be after start date");
+      throw new ValidationError("End date must be after start date");
     }
 
     // The conflict checks and the insert run in one transaction, with a row
@@ -65,7 +67,7 @@ export class CreateReservationUseCase {
           activeAssignmentCount: activeAssignments.length,
         });
 
-        throw new Error(
+        throw new ValidationError(
           "This asset is currently assigned and cannot be reserved. Please return the asset to inventory before creating a reservation.",
         );
       }
@@ -93,7 +95,7 @@ export class CreateReservationUseCase {
           activeReservationCount: activeReservations.length,
         });
 
-        throw new Error(
+        throw new ConflictError(
           `This asset already has an active reservation and cannot be reserved again. Existing reservation: ${conflictDetails}`,
         );
       }

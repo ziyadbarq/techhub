@@ -6,6 +6,8 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { StockMovement } from "@/core/domain/entities/stock-movement.entity";
 import type { IStockMovementRepository } from "@/core/repositories/stock-movement.repository.interface";
@@ -35,7 +37,7 @@ export class VoidStockMovementUseCase {
   async execute(props: VoidStockMovementProps): Promise<StockMovement> {
     // Validate void reason
     if (!props.voidReason || props.voidReason.trim().length === 0) {
-      throw new Error("Void reason is required");
+      throw new ValidationError("Void reason is required");
     }
 
     // Find the movement
@@ -50,7 +52,7 @@ export class VoidStockMovementUseCase {
 
     // Check if already voided
     if (movement.isVoided()) {
-      throw new Error("Stock movement is already voided");
+      throw new ConflictError("Stock movement is already voided");
     }
 
     // Void the movement (entity method validates and sets properties)

@@ -3,6 +3,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetModelRepository } from "@/core/repositories/asset-model.repository.interface";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
@@ -23,7 +24,7 @@ export class DeleteAssetModelUseCase {
     const hasAssets = await this.assetModelRepository.hasAssets(id);
 
     if (!assetModel.canBeDeleted(hasAssets)) {
-      throw new Error(
+      throw new ValidationError(
         `Cannot delete asset model "${assetModel.name}" because it has assets. Remove them first.`,
       );
     }

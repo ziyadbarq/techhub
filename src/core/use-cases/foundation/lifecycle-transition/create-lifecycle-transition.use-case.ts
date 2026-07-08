@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import {
   LifecycleTransition,
@@ -55,7 +56,7 @@ export class CreateLifecycleTransitionUseCase {
         props.lifecycleModelId,
       );
     if (lifecycleTransition.isCircular(existingTransitions)) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot create transition: would create circular path in lifecycle model",
       );
     }

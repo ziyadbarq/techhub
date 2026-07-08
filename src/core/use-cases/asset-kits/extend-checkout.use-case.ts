@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
 import type { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.entity";
@@ -27,7 +28,7 @@ export class ExtendCheckoutUseCase {
     }
 
     if (checkout.status !== "CHECKED_OUT") {
-      throw new Error("Can only extend active checkouts");
+      throw new ValidationError("Can only extend active checkouts");
     }
 
     checkout.extendReturnDate(request.newExpectedReturnDate);

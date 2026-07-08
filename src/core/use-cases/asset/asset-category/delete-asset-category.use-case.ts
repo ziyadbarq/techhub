@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
@@ -39,7 +40,7 @@ export class DeleteAssetCategoryUseCase {
       if (hasAssetModels) reasons.push("asset models");
       if (hasAssets) reasons.push("assets");
 
-      throw new Error(
+      throw new ValidationError(
         `Cannot delete asset category "${assetCategory.name}" because it has ${reasons.join(" and ")}. Remove them first.`,
       );
     }

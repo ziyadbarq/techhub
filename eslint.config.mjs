@@ -324,6 +324,8 @@ export default [
     files: ["**/__tests__/**/*.{ts,tsx}", "**/*.test.{ts,tsx}"],
     rules: {
       "@typescript-eslint/no-restricted-imports": "off",
+      // Tests may throw plain Errors to simulate failures
+      "no-restricted-syntax": "off",
     },
   },
 ];

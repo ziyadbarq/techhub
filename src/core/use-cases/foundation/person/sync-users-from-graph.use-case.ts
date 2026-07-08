@@ -14,6 +14,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
@@ -539,7 +540,7 @@ export class SyncUsersFromGraphUseCase {
     // Get all org units and build code → ID map
     const allOrgUnits = await this.orgUnitRepository.findAll();
     if (allOrgUnits.length === 0) {
-      throw new Error(
+      throw new ValidationError(
         "No organization units found. Please create at least one organization unit before syncing.",
       );
     }
@@ -591,7 +592,7 @@ export class SyncUsersFromGraphUseCase {
     });
 
     if (allRoles.length === 0) {
-      throw new Error(
+      throw new ValidationError(
         "No roles found. Please create at least one role before syncing.",
       );
     }

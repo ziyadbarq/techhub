@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.repository.interface";
@@ -48,7 +49,7 @@ export class UnlinkIntuneDeviceFromPersonUseCase {
 
     // Check if device is linked to a person
     if (!device.isLinkedToPerson()) {
-      throw new Error("Device is not linked to any person");
+      throw new ValidationError("Device is not linked to any person");
     }
 
     const previousPersonId = device.linkedPersonId;

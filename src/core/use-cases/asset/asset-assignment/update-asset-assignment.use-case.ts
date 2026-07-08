@@ -4,6 +4,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
@@ -53,7 +54,7 @@ export class UpdateAssetAssignmentUseCase {
         );
 
       if (hasOverlap) {
-        throw new Error(
+        throw new ValidationError(
           "Cannot update assignment: This would create an overlapping assignment period",
         );
       }

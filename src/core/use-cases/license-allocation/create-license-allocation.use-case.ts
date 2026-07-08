@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseAllocationRepository } from "@/core/repositories/license-allocation.repository.interface";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
@@ -47,7 +48,9 @@ export class CreateLicenseAllocationUseCase {
 
       // Check if entitlement is active
       if (!entitlement.isActive()) {
-        throw new Error("Cannot allocate from an inactive entitlement");
+        throw new ValidationError(
+          "Cannot allocate from an inactive entitlement",
+        );
       }
 
       // Check if there's enough quantity available
@@ -63,7 +66,7 @@ export class CreateLicenseAllocationUseCase {
       ) {
         const available =
           entitlement.calculateAvailableQuantity(consumedQuantity);
-        throw new Error(
+        throw new ValidationError(
           `Insufficient quantity available. Requested: ${request.allocatedQuantity}, Available: ${available}`,
         );
       }

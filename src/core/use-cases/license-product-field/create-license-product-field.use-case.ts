@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
@@ -59,7 +60,7 @@ export class CreateLicenseProductFieldUseCase {
       request.fieldDefinitionId,
     );
     if (existing) {
-      throw new Error(
+      throw new ConflictError(
         "This field definition is already attached to this license product",
       );
     }

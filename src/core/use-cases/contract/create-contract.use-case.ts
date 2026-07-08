@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IContractRepository } from "@/core/repositories/contract.repository.interface";
 import type { IContractTypeRepository } from "@/core/repositories/contract-type.repository.interface";
@@ -65,7 +66,9 @@ export class CreateContractUseCase {
           request.contractNumber,
         );
       if (existingByNumber) {
-        throw new Error("A contract with this contract number already exists");
+        throw new ConflictError(
+          "A contract with this contract number already exists",
+        );
       }
     }
 

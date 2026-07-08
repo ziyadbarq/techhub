@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitRepository } from "@/core/repositories/asset-kit.repository.interface";
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
@@ -33,7 +34,7 @@ export class DeleteAssetKitUseCase {
         checkout.status === "PARTIALLY_RETURNED",
     );
     if (hasActiveCheckout) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete kit with active checkouts. Please return all items first.",
       );
     }

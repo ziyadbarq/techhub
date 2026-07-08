@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIClassFieldRepository } from "@/core/repositories/ci-class-field.repository.interface";
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
@@ -57,7 +58,7 @@ export class CreateCIClassFieldUseCase {
       request.fieldDefinitionId,
     );
     if (existing) {
-      throw new Error(
+      throw new ConflictError(
         "This field definition is already attached to this CI class",
       );
     }

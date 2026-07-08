@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import type { JobType } from "bullmq";
 import { DI_TOKENS } from "@/di/types";
 import {
@@ -39,7 +40,9 @@ export class CancelDatabaseBackupUseCase {
       backupData.status !== BackupStatus.RUNNING &&
       backupData.status !== BackupStatus.PENDING
     ) {
-      throw new Error("Only pending or running backups can be cancelled");
+      throw new ValidationError(
+        "Only pending or running backups can be cancelled",
+      );
     }
 
     await this.cancelQueueJob(input.backupId);

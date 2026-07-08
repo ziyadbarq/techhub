@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { jsPDF } from "jspdf";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
@@ -47,13 +48,13 @@ export class GenerateDisposalCertificatePDFUseCase {
     }
 
     if (disposal.status !== "COMPLETED") {
-      throw new Error(
+      throw new ValidationError(
         "Certificate can only be generated for completed disposals",
       );
     }
 
     if (!disposal.certificateNumber) {
-      throw new Error("Disposal must have a certificate number");
+      throw new ValidationError("Disposal must have a certificate number");
     }
 
     // Fetch asset details

@@ -5,6 +5,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
@@ -64,7 +65,7 @@ export class UpdateAssetUseCase {
         input.id,
       );
       if (existingByTag) {
-        throw new Error(
+        throw new ConflictError(
           `Asset tag "${input.assetTag}" already exists. Asset tags must be unique.`,
         );
       }
@@ -77,7 +78,7 @@ export class UpdateAssetUseCase {
         input.id,
       );
       if (existingBySerial) {
-        throw new Error(
+        throw new ConflictError(
           `Serial number "${input.serialNumber}" already exists. Serial numbers must be unique.`,
         );
       }

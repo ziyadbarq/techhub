@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IConfigurationItemRepository } from "../../../repositories/configuration-item.repository.interface";
@@ -34,7 +35,7 @@ export class UpdateConfigurationItemUseCase {
         request.updates.ciKey,
       );
       if (existing && existing.id !== request.id) {
-        throw new Error(
+        throw new ConflictError(
           `Configuration Item with CI key already exists: ${request.updates.ciKey}`,
         );
       }

@@ -7,6 +7,8 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { IUserRepository } from "@/core/repositories/user-repository.interface";
@@ -71,7 +73,7 @@ export class CreateUserForPersonUseCase {
     }
 
     if (person.userId) {
-      throw new Error(
+      throw new ConflictError(
         `Person is already linked to user account: ${person.userId}`,
       );
     }
@@ -79,7 +81,7 @@ export class CreateUserForPersonUseCase {
     // 2. Check if user already exists with this email
     const existingUser = await this.userRepository.findByEmail(person.email);
     if (existingUser) {
-      throw new Error(
+      throw new ConflictError(
         `User account already exists with email: ${person.email}`,
       );
     }
@@ -116,7 +118,7 @@ export class CreateUserForPersonUseCase {
     // 7. Assign default "viewer" role for system permissions
     const viewerRole = await this.roleRepository.findByName("viewer");
     if (!viewerRole) {
-      throw new Error(
+      throw new ValidationError(
         "Viewer role not found - database may not be seeded properly",
       );
     }

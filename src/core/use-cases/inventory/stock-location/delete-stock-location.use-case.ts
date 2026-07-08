@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IStockLocationRepository } from "@/core/repositories/stock-location.repository.interface";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
@@ -38,7 +39,7 @@ export class DeleteStockLocationUseCase {
       if (hasAssets) reasons.push("assets");
       if (hasMovements) reasons.push("stock movements");
 
-      throw new Error(
+      throw new ValidationError(
         `Cannot delete stock location "${stockLocation.name}" because it has ${reasons.join(" and ")}. Remove them first.`,
       );
     }

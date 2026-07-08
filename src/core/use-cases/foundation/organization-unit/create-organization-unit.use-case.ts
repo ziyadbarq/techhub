@@ -5,6 +5,8 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { OrganizationUnit } from "@/core/domain/entities/organization-unit.entity";
@@ -55,7 +57,9 @@ export class CreateOrganizationUnitUseCase {
     const existsByCode =
       await this.organizationUnitRepository.existsByCode(code);
     if (existsByCode) {
-      throw new Error(`Organization unit with code "${code}" already exists`);
+      throw new ConflictError(
+        `Organization unit with code "${code}" already exists`,
+      );
     }
 
     // Auto-calculate level based on parent hierarchy
@@ -69,7 +73,7 @@ export class CreateOrganizationUnitUseCase {
       }
       level = parent.level + 1;
       if (level > 10) {
-        throw new Error(
+        throw new ValidationError(
           "Maximum organization unit hierarchy depth (10 levels) exceeded",
         );
       }

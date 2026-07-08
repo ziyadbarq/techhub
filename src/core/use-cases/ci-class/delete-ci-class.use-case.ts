@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
@@ -32,7 +33,7 @@ export class DeleteCIClassUseCase {
       request.ciClassId,
     );
     if (childClasses.length > 0) {
-      throw new Error(
+      throw new ValidationError(
         `Cannot delete CI class "${ciClass.name}" because it has ${childClasses.length} child class(es)`,
       );
     }

@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseAddonRepository } from "@/core/repositories/license-addon.repository.interface";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
@@ -49,7 +50,7 @@ export class CreateLicenseAddonUseCase {
       code,
     );
     if (existingByCode) {
-      throw new Error(
+      throw new ConflictError(
         "An addon with this code already exists for this product",
       );
     }

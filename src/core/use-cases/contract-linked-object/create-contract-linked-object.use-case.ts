@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IContractLinkedObjectRepository } from "@/core/repositories/contract-linked-object.repository.interface";
 import type { IContractRepository } from "@/core/repositories/contract.repository.interface";
@@ -46,7 +47,7 @@ export class CreateContractLinkedObjectUseCase {
       request.targetId,
     );
     if (existing) {
-      throw new Error("This object is already linked to the contract");
+      throw new ConflictError("This object is already linked to the contract");
     }
 
     // Note: We don't validate targetId existence because it's polymorphic

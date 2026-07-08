@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import { ExchangeRate } from "@/core/domain/entities/exchange-rate.entity";
 import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
@@ -39,7 +40,7 @@ export class CreateExchangeRateUseCase {
       props.currency,
     );
     if (existingRate) {
-      throw new Error(
+      throw new ConflictError(
         `Exchange rate for currency "${props.currency}" already exists`,
       );
     }

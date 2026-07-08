@@ -5,6 +5,8 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import type { OrganizationUnit } from "@/core/domain/entities/organization-unit.entity";
@@ -59,7 +61,7 @@ export class UpdateOrganizationUnitUseCase {
         props.id,
       );
       if (existsByCode) {
-        throw new Error(
+        throw new ConflictError(
           `Organization unit with code "${props.code}" already exists`,
         );
       }
@@ -86,7 +88,7 @@ export class UpdateOrganizationUnitUseCase {
         }
         newLevel = newParent.level + 1;
         if (newLevel > 10) {
-          throw new Error(
+          throw new ValidationError(
             "Maximum organization unit hierarchy depth (10 levels) exceeded",
           );
         }
@@ -103,7 +105,7 @@ export class UpdateOrganizationUnitUseCase {
         for (const descendant of descendants) {
           const newDescendantLevel = descendant.level + levelDiff;
           if (newDescendantLevel > 10) {
-            throw new Error(
+            throw new ValidationError(
               `Moving this unit would exceed maximum hierarchy depth (10 levels) for descendant "${descendant.name}"`,
             );
           }

@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
@@ -26,7 +27,7 @@ export class DeletePermissionUseCase {
 
     // Check if permission can be deleted
     if (!permission.canBeDeleted()) {
-      throw new Error("Cannot delete system permission");
+      throw new ValidationError("Cannot delete system permission");
     }
 
     // Delete from database

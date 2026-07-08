@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
 import type { DataDomain } from "@/core/domain/entities/data-domain.entity";
@@ -38,7 +39,7 @@ export class UpdateDataDomainUseCase {
         request.id,
       );
       if (existingByName) {
-        throw new Error("A data domain with this name already exists");
+        throw new ConflictError("A data domain with this name already exists");
       }
       dataDomain.name = request.name;
     }
@@ -50,7 +51,7 @@ export class UpdateDataDomainUseCase {
         request.id,
       );
       if (existingByCode) {
-        throw new Error("A data domain with this code already exists");
+        throw new ConflictError("A data domain with this code already exists");
       }
       dataDomain.code = request.code;
     }

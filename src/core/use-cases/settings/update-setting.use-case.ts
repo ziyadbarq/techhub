@@ -4,6 +4,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { ISystemSettingRepository } from "@/core/repositories/system-setting.repository.interface";
@@ -44,13 +45,13 @@ export class UpdateSettingUseCase {
   @LogExecution("settings.update")
   async execute(request: UpdateSettingRequest): Promise<UpdateSettingResponse> {
     if (!isValidSettingKey(request.key)) {
-      throw new Error(`Unknown setting key: ${request.key}`);
+      throw new ValidationError(`Unknown setting key: ${request.key}`);
     }
 
     const definition = getSettingDefinition(request.key)!;
 
     if (!definition.isEditable) {
-      throw new Error(`Setting "${request.key}" is read-only`);
+      throw new ValidationError(`Setting "${request.key}" is read-only`);
     }
 
     // Validate value against definition
@@ -95,13 +96,13 @@ export class UpdateSettingUseCase {
     if (definition.valueType === "number") {
       const num = Number(value);
       if (Number.isNaN(num)) {
-        throw new Error(`Setting "${key}" must be a valid number`);
+        throw new ValidationError(`Setting "${key}" must be a valid number`);
       }
       if (
         definition.validation?.min !== undefined &&
         num < definition.validation.min
       ) {
-        throw new Error(
+        throw new ValidationError(
           `Setting "${key}" must be at least ${definition.validation.min}`,
         );
       }
@@ -109,7 +110,7 @@ export class UpdateSettingUseCase {
         definition.validation?.max !== undefined &&
         num > definition.validation.max
       ) {
-        throw new Error(
+        throw new ValidationError(
           `Setting "${key}" must be at most ${definition.validation.max}`,
         );
       }
@@ -117,13 +118,13 @@ export class UpdateSettingUseCase {
 
     if (definition.valueType === "boolean") {
       if (!["true", "false", "1", "0"].includes(value)) {
-        throw new Error(`Setting "${key}" must be true or false`);
+        throw new ValidationError(`Setting "${key}" must be true or false`);
       }
     }
 
     if (definition.valueType === "enum" && definition.enumOptions) {
       if (!definition.enumOptions.includes(value)) {
-        throw new Error(
+        throw new ValidationError(
           `Setting "${key}" must be one of: ${definition.enumOptions.join(", ")}`,
         );
       }
@@ -132,7 +133,7 @@ export class UpdateSettingUseCase {
     if (definition.validation?.pattern) {
       const regex = new RegExp(definition.validation.pattern);
       if (!regex.test(value)) {
-        throw new Error(
+        throw new ValidationError(
           definition.validation.patternMessage ??
             `Setting "${key}" has an invalid format`,
         );

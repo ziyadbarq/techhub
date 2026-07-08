@@ -1,4 +1,6 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIRelationshipRepository } from "../../../repositories/ci-relationship.repository.interface";
 import type { IRelationshipTypeRepository } from "../../../repositories/relationship-type.repository.interface";
@@ -28,7 +30,7 @@ export class CreateCIRelationshipUseCase {
       request.relationshipTypeId,
     );
     if (!relationshipType) {
-      throw new Error(
+      throw new ValidationError(
         `Relationship type not found: ${request.relationshipTypeId}`,
       );
     }
@@ -41,7 +43,7 @@ export class CreateCIRelationshipUseCase {
     );
 
     if (exists) {
-      throw new Error("Relationship already exists between these CIs");
+      throw new ConflictError("Relationship already exists between these CIs");
     }
 
     const relationship = CIRelationship.create(request, this.idGenerator);

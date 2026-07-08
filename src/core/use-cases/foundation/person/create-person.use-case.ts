@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Person } from "@/core/domain/entities/person.entity";
@@ -51,7 +52,9 @@ export class CreatePersonUseCase {
       props.email,
     );
     if (existsByEmail) {
-      throw new Error(`Person with email "${props.email}" already exists`);
+      throw new ConflictError(
+        `Person with email "${props.email}" already exists`,
+      );
     }
 
     // Check for duplicate employee ID if provided
@@ -60,7 +63,7 @@ export class CreatePersonUseCase {
         props.employeeId,
       );
       if (existsByEmployeeId) {
-        throw new Error(
+        throw new ConflictError(
           `Person with employee ID "${props.employeeId}" already exists`,
         );
       }

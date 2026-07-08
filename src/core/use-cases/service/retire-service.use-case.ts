@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import type { ILoggerService } from "@/core/services";
@@ -30,7 +31,7 @@ export class RetireServiceUseCase {
 
     // Check if service can be retired (business rule in entity)
     if (!service.canBeRetired()) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot retire service: Essential services in PRODUCTION status cannot be retired",
       );
     }

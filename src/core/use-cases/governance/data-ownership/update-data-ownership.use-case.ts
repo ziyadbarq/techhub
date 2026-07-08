@@ -3,6 +3,8 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IDataOwnershipRepository } from "@/core/repositories/data-ownership.repository.interface";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
@@ -72,13 +74,13 @@ export class UpdateDataOwnershipUseCase {
       targetAssetCategoryId !== null && targetAssetCategoryId !== undefined;
 
     if (!hasCIClass && !hasAssetCategory) {
-      throw new Error(
+      throw new ValidationError(
         "Data ownership must be assigned to either a CI class or an asset category",
       );
     }
 
     if (hasCIClass && hasAssetCategory) {
-      throw new Error(
+      throw new ValidationError(
         "Data ownership cannot be assigned to both a CI class and an asset category",
       );
     }
@@ -103,7 +105,7 @@ export class UpdateDataOwnershipUseCase {
           : targetAssetCategoryId
             ? "asset category"
             : "target";
-        throw new Error(
+        throw new ConflictError(
           `A data ownership already exists for this data domain and ${target}`,
         );
       }
@@ -133,7 +135,7 @@ export class UpdateDataOwnershipUseCase {
       targetOwnerOrgUnitId !== null && targetOwnerOrgUnitId !== undefined;
 
     if (hasOwnerPerson && hasOwnerOrgUnit) {
-      throw new Error(
+      throw new ValidationError(
         "Data ownership cannot have both a person and organizational unit as owner",
       );
     }

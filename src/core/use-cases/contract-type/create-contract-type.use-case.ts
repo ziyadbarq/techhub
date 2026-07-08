@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IContractTypeRepository } from "@/core/repositories/contract-type.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
@@ -39,13 +40,13 @@ export class CreateContractTypeUseCase {
       request.name,
     );
     if (existingByName) {
-      throw new Error("A contract type with this name already exists");
+      throw new ConflictError("A contract type with this name already exists");
     }
 
     // Check for duplicate code
     const existingByCode = await this.contractTypeRepository.existsByCode(code);
     if (existingByCode) {
-      throw new Error("A contract type with this code already exists");
+      throw new ConflictError("A contract type with this code already exists");
     }
 
     // Create entity

@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import type { IVendorRepository } from "@/core/repositories/vendor.repository.interface";
@@ -41,25 +42,25 @@ export class DeleteVendorUseCase {
       ]);
 
     if (hasContacts) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete vendor because it has associated contacts. Delete contacts first.",
       );
     }
 
     if (hasAssets) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete vendor because it is referenced by assets",
       );
     }
 
     if (hasContracts) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete vendor because it is referenced by contracts",
       );
     }
 
     if (hasLicenseProducts) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete vendor because it is referenced by license products",
       );
     }

@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { FieldTemplate } from "@/core/domain/entities/field-template.entity";
 import type { IFieldTemplateRepository } from "@/core/repositories/field-template.repository.interface";
@@ -52,7 +53,7 @@ export class UpdateFieldTemplateUseCase {
         input.id,
       );
       if (existsByName) {
-        throw new Error(
+        throw new ConflictError(
           `Field template with name "${input.name}" already exists`,
         );
       }

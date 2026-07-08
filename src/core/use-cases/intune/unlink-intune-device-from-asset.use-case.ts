@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.repository.interface";
@@ -48,7 +49,7 @@ export class UnlinkIntuneDeviceFromAssetUseCase {
 
     // Check if device is linked to an asset
     if (!device.isLinkedToAsset()) {
-      throw new Error("Device is not linked to any asset");
+      throw new ValidationError("Device is not linked to any asset");
     }
 
     const previousAssetId = device.linkedAssetId;

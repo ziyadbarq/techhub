@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import type { ILoggerService } from "@/core/services";
@@ -24,7 +25,7 @@ export class SearchServicesUseCase {
   @LogExecution("service.search")
   async execute(request: SearchServicesRequest): Promise<Service[]> {
     if (!request.query || request.query.trim().length === 0) {
-      throw new Error("Search query is required");
+      throw new ValidationError("Search query is required");
     }
 
     return this.serviceRepository.search(request.query, {

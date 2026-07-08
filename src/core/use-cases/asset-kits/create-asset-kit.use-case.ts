@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitRepository } from "@/core/repositories/asset-kit.repository.interface";
 import { AssetKit } from "@/core/domain/entities/asset-kit.entity";
@@ -35,7 +36,7 @@ export class CreateAssetKitUseCase {
     // Check if code already exists
     const codeExists = await this.assetKitRepository.codeExists(code);
     if (codeExists) {
-      throw new Error(`Asset kit with code ${code} already exists`);
+      throw new ConflictError(`Asset kit with code ${code} already exists`);
     }
 
     const kit = AssetKit.create(

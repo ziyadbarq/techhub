@@ -61,7 +61,7 @@ export class UpdateVendorUseCase {
     // if (props.code !== undefined && props.code !== vendor.code) {
     //   const existingVendor = await this.vendorRepository.findByCode(props.code);
     //   if (existingVendor) {
-    //     throw new Error(`Vendor with code "${props.code}" already exists`);
+    //     throw new ConflictError(`Vendor with code "${props.code}" already exists`);
     //   }
     // }
 

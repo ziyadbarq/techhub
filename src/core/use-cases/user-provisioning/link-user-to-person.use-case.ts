@@ -8,6 +8,8 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { IUserRepository } from "@/core/repositories/user-repository.interface";
@@ -76,26 +78,28 @@ export class LinkUserToPersonUseCase {
       request.userId,
     );
     if (existingPersonForUser) {
-      throw new Error(
+      throw new ConflictError(
         `This user is already linked to person: ${existingPersonForUser.fullName}`,
       );
     }
 
     // 4. Check if person is already linked to a user
     if (person.userId) {
-      throw new Error("This person is already linked to a user account");
+      throw new ConflictError(
+        "This person is already linked to a user account",
+      );
     }
 
     // 5. Validate email match (case-insensitive)
     if (user.email.toLowerCase() !== person.email.toLowerCase()) {
-      throw new Error(
+      throw new ValidationError(
         `Email addresses must match to link user and person. User email: ${user.email}, Person email: ${person.email}`,
       );
     }
 
     // 6. Check person is active
     if (!person.isActive) {
-      throw new Error("Cannot link to an inactive person");
+      throw new ValidationError("Cannot link to an inactive person");
     }
 
     // 7. Link person to user

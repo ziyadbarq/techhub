@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import {
@@ -30,7 +31,7 @@ export class DeleteDatabaseBackupUseCase {
     }
 
     if (backup.toJSON().status === BackupStatus.RUNNING) {
-      throw new Error("Cannot delete a backup while it is running");
+      throw new ValidationError("Cannot delete a backup while it is running");
     }
 
     await this.repository.softDelete(input.backupId, input.deletedById);

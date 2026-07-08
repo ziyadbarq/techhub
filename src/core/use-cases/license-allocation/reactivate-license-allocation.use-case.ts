@@ -4,6 +4,8 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseAllocationRepository } from "@/core/repositories/license-allocation.repository.interface";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
@@ -39,7 +41,7 @@ export class ReactivateLicenseAllocationUseCase {
       }
 
       if (allocation.isActive()) {
-        throw new Error("This allocation is already active");
+        throw new ConflictError("This allocation is already active");
       }
 
       const entitlement = await this.entitlementRepository.findByIdForUpdate(
@@ -61,7 +63,7 @@ export class ReactivateLicenseAllocationUseCase {
       ) {
         const available =
           entitlement.calculateAvailableQuantity(consumedQuantity);
-        throw new Error(
+        throw new ValidationError(
           `Insufficient quantity available to reactivate. Requested: ${allocation.allocatedQuantity}, Available: ${available}`,
         );
       }

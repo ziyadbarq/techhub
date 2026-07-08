@@ -4,6 +4,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IWarrantyRepository } from "@/core/repositories/warranty.repository.interface";
 import type { Warranty } from "@/core/domain/entities/warranty.entity";
@@ -51,7 +52,7 @@ export class UpdateWarrantyUseCase {
           props.id,
         );
       if (existingByPolicy) {
-        throw new Error(
+        throw new ConflictError(
           `Policy reference "${props.policyReference}" already exists. Policy references must be unique.`,
         );
       }
@@ -71,9 +72,7 @@ export class UpdateWarrantyUseCase {
         props.id,
       );
       if (hasConflict) {
-        throw new Error(
-          "A warranty with overlapping dates already exists for this asset.",
-        );
+        throw new ConflictError("A warranty with overlapping dates already exists for this asset.");
       }
     }
     */

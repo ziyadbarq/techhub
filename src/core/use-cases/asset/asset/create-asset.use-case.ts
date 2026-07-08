@@ -5,6 +5,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import {
@@ -44,7 +45,7 @@ export class CreateAssetUseCase {
     // Business Rule: Asset tag must be unique
     const existingByTag = await this.assetRepository.existsByAssetTag(assetTag);
     if (existingByTag) {
-      throw new Error(
+      throw new ConflictError(
         `Asset tag "${assetTag}" already exists. Asset tags must be unique.`,
       );
     }
@@ -55,7 +56,7 @@ export class CreateAssetUseCase {
         props.serialNumber,
       );
       if (existingBySerial) {
-        throw new Error(
+        throw new ConflictError(
           `Serial number "${props.serialNumber}" already exists. Serial numbers must be unique.`,
         );
       }

@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IConfigurationItemRepository } from "../../../repositories/configuration-item.repository.interface";
 import type { ConfigurationItem } from "../../../domain/entities/configuration-item.entity";
@@ -20,7 +21,7 @@ export class GetConfigurationItemUseCase {
     request: GetConfigurationItemRequest,
   ): Promise<ConfigurationItem> {
     if (!request.id && !request.ciKey) {
-      throw new Error("Either id or ciKey must be provided");
+      throw new ValidationError("Either id or ciKey must be provided");
     }
 
     let ci: ConfigurationItem | null = null;

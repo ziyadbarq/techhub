@@ -7,6 +7,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.repository.interface";
@@ -62,7 +63,7 @@ export class LinkIntuneDeviceToAssetUseCase {
 
     // Check if device is already linked to a different asset
     if (device.isLinkedToAsset() && device.linkedAssetId !== input.assetId) {
-      throw new Error(
+      throw new ConflictError(
         `Device is already linked to asset ${device.linkedAssetId}. Unlink first.`,
       );
     }
@@ -74,7 +75,7 @@ export class LinkIntuneDeviceToAssetUseCase {
       existingDeviceForAsset &&
       existingDeviceForAsset.id !== input.deviceId
     ) {
-      throw new Error(
+      throw new ConflictError(
         `Asset is already linked to device ${existingDeviceForAsset.intuneDeviceId}. Unlink that device first.`,
       );
     }

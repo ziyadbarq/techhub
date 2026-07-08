@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseAllocationRepository } from "@/core/repositories/license-allocation.repository.interface";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
@@ -66,7 +67,7 @@ export class UpdateLicenseAllocationUseCase {
           const available =
             entitlement.calculateAvailableQuantity(consumedQuantity) +
             allocation.allocatedQuantity;
-          throw new Error(
+          throw new ValidationError(
             `Insufficient quantity available. Requested: ${request.allocatedQuantity}, Available: ${available}`,
           );
         }

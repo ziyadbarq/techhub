@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IRelationshipTypeScopeRepository } from "@/core/repositories/relationship-type-scope.repository.interface";
 import type { IRelationshipTypeRepository } from "@/core/repositories/relationship-type.repository.interface";
@@ -64,7 +65,9 @@ export class CreateRelationshipTypeScopeUseCase {
       request.toCiClassId,
     );
     if (existing) {
-      throw new Error("This scope already exists for the relationship type");
+      throw new ConflictError(
+        "This scope already exists for the relationship type",
+      );
     }
 
     // Create entity

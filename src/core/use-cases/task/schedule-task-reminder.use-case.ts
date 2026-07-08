@@ -6,6 +6,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ITaskRepository } from "@/core/repositories/task.repository.interface";
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
@@ -62,14 +63,14 @@ export class ScheduleTaskReminderUseCase {
 
     // Don't schedule reminders for completed tasks
     if (task.status === "COMPLETED") {
-      throw new Error("Cannot schedule reminder for completed task");
+      throw new ValidationError("Cannot schedule reminder for completed task");
     }
 
     // Calculate delay until reminder should be sent
     const delay = reminderDate.getTime() - Date.now();
 
     if (delay < 0) {
-      throw new Error("Reminder date must be in the future");
+      throw new ValidationError("Reminder date must be in the future");
     }
 
     // Create job data

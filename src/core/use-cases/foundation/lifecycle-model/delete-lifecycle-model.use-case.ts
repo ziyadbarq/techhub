@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import type { ILifecycleModelRepository } from "@/core/repositories/lifecycle-model.repository.interface";
@@ -38,7 +39,7 @@ export class DeleteLifecycleModelUseCase {
     // or license products reference it)
     const inUse = await this.lifecycleModelRepository.isInUse(id);
     if (inUse) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete lifecycle model because it is in use. Remove its states, transitions, and references from CI classes, asset categories, and license products first.",
       );
     }
