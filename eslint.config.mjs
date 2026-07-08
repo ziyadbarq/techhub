@@ -178,6 +178,18 @@ export default [
   {
     files: ["src/core/use-cases/**/*.{ts,tsx}"],
     rules: {
+      // Business rejections thrown as plain Error are logged at error
+      // severity by the controller error handler; domain errors log at warn
+      // and keep 4xx/5xx semantics clean. Warn until the codemod sweep is
+      // complete, then flip to error.
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector: "ThrowStatement > NewExpression[callee.name='Error']",
+          message:
+            "Throw a domain error (ValidationError, NotFoundError, ...) from @/core/domain/errors instead of a plain Error.",
+        },
+      ],
       "@typescript-eslint/no-restricted-imports": [
         "warn",
         {
@@ -284,6 +296,27 @@ export default [
           ],
         },
       ],
+    },
+  },
+  // Structured logging policy: console.* bypasses the DI logger (no request
+  // context, no redaction). Warn until the sweep is complete, then flip to
+  // error. Logger internals and the Prisma bootstrap legitimately use console.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: [
+      "src/generated/**",
+      "src/infrastructure/services/logger/**",
+      "src/lib/logger.ts",
+      "src/lib/logger-state.ts",
+      "src/infrastructure/database/prisma/client.ts",
+      "src/infrastructure/database/prisma/transaction-context.ts",
+      "src/infrastructure/database/prisma/seed*.ts",
+      "src/app/global-error.tsx",
+      "**/__tests__/**",
+      "**/*.test.{ts,tsx}",
+    ],
+    rules: {
+      "no-console": "warn",
     },
   },
   // Relax boundary checks inside tests to allow direct imports for setup/mocking
