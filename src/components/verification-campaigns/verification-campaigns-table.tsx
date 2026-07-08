@@ -6,31 +6,13 @@
 "use no memo";
 
 import { useCallback, useEffect, useState } from "react";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
-} from "@tanstack/react-table";
+import { type ColumnDef, type ColumnFiltersState } from "@tanstack/react-table";
 import { Eye, Edit, Trash2, Play, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { formatDate } from "@/lib/utils/date-format";
 
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
+import { DataTable } from "@/components/ui/data-table";
 import {
   Select,
   SelectContent,
@@ -46,16 +28,7 @@ import { listVerificationItems } from "@/interface-adapters/controllers/verifica
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useColumnVisibilityEnhanced } from "@/hooks";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { useDeleteDialog } from "@/hooks/use-delete-dialog";
 
 interface VerificationCampaignsTableProps {
   data: VerificationCampaignDTO[];
@@ -71,6 +44,12 @@ interface CampaignWithProgress extends VerificationCampaignDTO {
   verifiedItems?: number;
 }
 
+const equalsOrAll = (
+  row: { getValue: (id: string) => unknown },
+  id: string,
+  value: string,
+) => value === "all" || row.getValue(id) === value;
+
 export function VerificationCampaignsTable({
   data,
   loading,
@@ -80,12 +59,28 @@ export function VerificationCampaignsTable({
   onRefresh,
 }: VerificationCampaignsTableProps) {
   const router = useRouter();
-  const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [campaignsWithProgress, setCampaignsWithProgress] =
     useState<CampaignWithProgress[]>(data);
-  const [deletingCampaign, setDeletingCampaign] =
-    useState<VerificationCampaignDTO | null>(null);
+
+  const getFilter = (id: string) =>
+    (columnFilters.find((f) => f.id === id)?.value as string) ?? "all";
+  const setFilter = (id: string, value: string) =>
+    setColumnFilters((prev) =>
+      value === "all"
+        ? prev.filter((f) => f.id !== id)
+        : [...prev.filter((f) => f.id !== id), { id, value }],
+    );
+
+  // Use reusable delete dialog hook
+  const deleteDialog = useDeleteDialog<VerificationCampaignDTO>({
+    onDelete: (campaign) => deleteVerificationCampaign(campaign.id),
+    onSuccess: onRefresh,
+    getItemName: (campaign) => campaign.name,
+    entityName: "Campaign",
+    description:
+      "This action cannot be undone and will delete all associated verification items.",
+  });
 
   // Load progress data for campaigns
   const loadProgressData = useCallback(async () => {
@@ -127,17 +122,6 @@ export function VerificationCampaignsTable({
       isMounted = false;
     };
   }, [loadProgressData]);
-
-  const handleDelete = async (campaign: VerificationCampaignDTO) => {
-    const result = await deleteVerificationCampaign(campaign.id);
-    if (result.success) {
-      toast.success("Campaign deleted successfully");
-      onRefresh();
-    } else {
-      toast.error(result.error);
-    }
-    setDeletingCampaign(null);
-  };
 
   const handleViewItems = (campaignId: string) => {
     router.push(`/verification-campaigns/${campaignId}/items`);
@@ -184,9 +168,7 @@ export function VerificationCampaignsTable({
           </Badge>
         );
       },
-      filterFn: (row, id, value) => {
-        return value === "all" || row.getValue(id) === value;
-      },
+      filterFn: equalsOrAll,
     },
     {
       accessorKey: "scheduledStart",
@@ -302,7 +284,7 @@ export function VerificationCampaignsTable({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setDeletingCampaign(campaign)}
+                onClick={() => deleteDialog.openDialog(campaign)}
                 disabled={campaign.isActive || campaign.isCompleted}
                 title="Delete Campaign"
               >
@@ -322,44 +304,23 @@ export function VerificationCampaignsTable({
       columns,
     });
 
-  const table = useReactTable({
-    data: campaignsWithProgress,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: onVisibilityChange,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility: visibility,
-    },
-  });
-
   return (
     <>
-      <div className="space-y-4">
-        {/* Filters */}
-        <div className="flex flex-wrap gap-4">
-          <Input
-            placeholder="Filter by name..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="max-w-xs"
-          />
-
+      <DataTable
+        columns={columns}
+        data={campaignsWithProgress}
+        loading={loading}
+        searchable
+        searchKey="name"
+        searchPlaceholder="Filter by name..."
+        emptyMessage="No campaigns found."
+        controlledState={{ columnFilters, columnVisibility: visibility }}
+        onColumnFiltersChange={setColumnFilters}
+        onColumnVisibilityChange={onVisibilityChange}
+        filtersSlot={
           <Select
-            value={
-              (table.getColumn("targetType")?.getFilterValue() as string) ??
-              "all"
-            }
-            onValueChange={(value) =>
-              table.getColumn("targetType")?.setFilterValue(value)
-            }
+            value={getFilter("targetType")}
+            onValueChange={(value) => setFilter("targetType", value)}
           >
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Filter by target type" />
@@ -370,90 +331,9 @@ export function VerificationCampaignsTable({
               <SelectItem value="ASSET">Assets</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-
-        {/* Table */}
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="text-center">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="text-center">
-                    No campaigns found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Pagination Info */}
-        <div className="text-muted-foreground text-sm">
-          Showing {table.getFilteredRowModel().rows.length} of {data.length}{" "}
-          campaign(s)
-        </div>
-      </div>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog
-        open={!!deletingCampaign}
-        onOpenChange={(open) => !open && setDeletingCampaign(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Campaign?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete "{deletingCampaign?.name}"? This
-              action cannot be undone and will delete all associated
-              verification items.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deletingCampaign && handleDelete(deletingCampaign)}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        }
+      />
+      <deleteDialog.DialogComponent />
     </>
   );
 }

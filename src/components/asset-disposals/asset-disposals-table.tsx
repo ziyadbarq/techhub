@@ -6,29 +6,12 @@
 "use no memo";
 
 import { useState } from "react";
-import { disposalStatusColors } from "@/lib/utils/status-colors";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
-} from "@tanstack/react-table";
+import { type ColumnDef, type ColumnFiltersState } from "@tanstack/react-table";
 import { Tag } from "lucide-react";
+import { disposalStatusColors } from "@/lib/utils/status-colors";
 import { formatDate } from "@/lib/utils/date-format";
 import { EntityDisplay } from "@/components/ui/entity-display";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
+import { DataTable } from "@/components/ui/data-table";
 import {
   Select,
   SelectContent,
@@ -59,14 +42,29 @@ const disposalTypeLabels: Record<string, string> = {
   OTHER: "Other",
 };
 
+// Column filterFn shared by the Select dropdowns: "all" passes everything.
+const equalsOrAll = (
+  row: { getValue: (id: string) => unknown },
+  id: string,
+  value: string,
+) => value === "all" || row.getValue(id) === value;
+
 export function AssetDisposalsTable({
   data,
   loading,
   onView,
   onRefresh,
 }: AssetDisposalsTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  const getFilter = (id: string) =>
+    (columnFilters.find((f) => f.id === id)?.value as string) ?? "all";
+  const setFilter = (id: string, value: string) =>
+    setColumnFilters((prev) =>
+      value === "all"
+        ? prev.filter((f) => f.id !== id)
+        : [...prev.filter((f) => f.id !== id), { id, value }],
+    );
 
   // Use reusable delete dialog hook
   const deleteDialog = useDeleteDialog<AssetDisposalDTO>({
@@ -84,9 +82,7 @@ export function AssetDisposalsTable({
       cell: ({ row }) => (
         <EntityDisplay name={row.original.assetTag} icon={Tag} />
       ),
-      meta: {
-        label: "Asset",
-      },
+      meta: { label: "Asset" },
     },
     {
       accessorKey: "disposalType",
@@ -97,12 +93,8 @@ export function AssetDisposalsTable({
             row.getValue<string>("disposalType")}
         </div>
       ),
-      filterFn: (row, id, value) => {
-        return value === "all" || row.getValue(id) === value;
-      },
-      meta: {
-        label: "Type",
-      },
+      filterFn: equalsOrAll,
+      meta: { label: "Type" },
     },
     {
       accessorKey: "status",
@@ -118,12 +110,8 @@ export function AssetDisposalsTable({
           </Badge>
         );
       },
-      filterFn: (row, id, value) => {
-        return value === "all" || row.getValue(id) === value;
-      },
-      meta: {
-        label: "Status",
-      },
+      filterFn: equalsOrAll,
+      meta: { label: "Status" },
     },
     {
       accessorKey: "reason",
@@ -133,10 +121,7 @@ export function AssetDisposalsTable({
           {row.getValue<string>("reason")}
         </div>
       ),
-      meta: {
-        label: "Reason",
-        hiddenByDefault: true,
-      },
+      meta: { label: "Reason", hiddenByDefault: true },
     },
     {
       accessorKey: "createdAt",
@@ -146,12 +131,8 @@ export function AssetDisposalsTable({
           {formatDate(row.getValue<string>("createdAt"))}
         </div>
       ),
-      meta: {
-        label: "Created",
-        hiddenByDefault: true,
-      },
+      meta: { label: "Created", hiddenByDefault: true },
     },
-    // Actions column using reusable builder
     buildActionsColumn<AssetDisposalDTO>([
       {
         type: "view",
@@ -169,153 +150,69 @@ export function AssetDisposalsTable({
     ]),
   ];
 
-  // Use enhanced column visibility hook with localStorage persistence
+  // Enhanced column visibility with localStorage persistence
   const { visibility, onVisibilityChange } =
     useColumnVisibilityEnhanced<AssetDisposalDTO>({
       storageKey: "asset-disposals-table-columns",
       columns,
     });
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: (updater) => {
-      const newVisibility =
-        typeof updater === "function" ? updater(visibility) : updater;
-      onVisibilityChange(newVisibility);
-    },
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility: visibility,
-    },
-  });
-
   return (
     <>
-      <div className="space-y-4">
-        {/* Filters */}
-        <div className="flex flex-wrap gap-4">
-          <Input
-            placeholder="Filter by asset ID..."
-            value={
-              (table.getColumn("assetId")?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn("assetId")?.setFilterValue(event.target.value)
-            }
-            className="max-w-xs"
-          />
+      <DataTable
+        columns={columns}
+        data={data}
+        loading={loading}
+        selectable
+        searchable
+        searchKey="assetId"
+        searchPlaceholder="Filter by asset ID..."
+        emptyMessage="No disposals found."
+        controlledState={{ columnFilters, columnVisibility: visibility }}
+        onColumnFiltersChange={setColumnFilters}
+        onColumnVisibilityChange={onVisibilityChange}
+        filtersSlot={
+          <>
+            <Select
+              value={getFilter("status")}
+              onValueChange={(value) => setFilter("status", value)}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="PENDING_APPROVAL">
+                  Pending Approval
+                </SelectItem>
+                <SelectItem value="APPROVED">Approved</SelectItem>
+                <SelectItem value="REJECTED">Rejected</SelectItem>
+                <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                <SelectItem value="SANITIZED">Sanitized</SelectItem>
+                <SelectItem value="COMPLETED">Completed</SelectItem>
+                <SelectItem value="CANCELLED">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Select
-            value={
-              (table.getColumn("status")?.getFilterValue() as string) ?? "all"
-            }
-            onValueChange={(value) =>
-              table.getColumn("status")?.setFilterValue(value)
-            }
-          >
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="PENDING_APPROVAL">Pending Approval</SelectItem>
-              <SelectItem value="APPROVED">Approved</SelectItem>
-              <SelectItem value="REJECTED">Rejected</SelectItem>
-              <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-              <SelectItem value="SANITIZED">Sanitized</SelectItem>
-              <SelectItem value="COMPLETED">Completed</SelectItem>
-              <SelectItem value="CANCELLED">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={
-              (table.getColumn("disposalType")?.getFilterValue() as string) ??
-              "all"
-            }
-            onValueChange={(value) =>
-              table.getColumn("disposalType")?.setFilterValue(value)
-            }
-          >
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Filter by type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="DONATION">Donation</SelectItem>
-              <SelectItem value="SALE">Sale</SelectItem>
-              <SelectItem value="RECYCLING">Recycling</SelectItem>
-              <SelectItem value="DESTRUCTION">Destruction</SelectItem>
-              <SelectItem value="OTHER">Other</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Table */}
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="text-center">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="text-center">
-                    No disposals found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Pagination Info */}
-        <div className="text-muted-foreground text-sm">
-          Showing {table.getFilteredRowModel().rows.length} of {data.length}{" "}
-          disposal(s)
-        </div>
-      </div>
-
-      {/* Delete Confirmation Dialog */}
+            <Select
+              value={getFilter("disposalType")}
+              onValueChange={(value) => setFilter("disposalType", value)}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Filter by type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="DONATION">Donation</SelectItem>
+                <SelectItem value="SALE">Sale</SelectItem>
+                <SelectItem value="RECYCLING">Recycling</SelectItem>
+                <SelectItem value="DESTRUCTION">Destruction</SelectItem>
+                <SelectItem value="OTHER">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </>
+        }
+      />
       <deleteDialog.DialogComponent />
     </>
   );
