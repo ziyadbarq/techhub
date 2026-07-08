@@ -5,6 +5,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { handleControllerError } from "./error-handler";
 import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
@@ -76,14 +77,11 @@ export async function createLicenseAllocation(
       data: LicenseAllocationPresenter.toDTO(allocation),
     };
   } catch (error) {
-    console.error("Error creating license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to create license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "createLicenseAllocation" },
+      "Failed to create license allocation",
+    );
   }
 }
 
@@ -113,14 +111,11 @@ export async function getLicenseAllocation(
       data: LicenseAllocationPresenter.toDTO(allocation),
     };
   } catch (error) {
-    console.error("Error getting license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to get license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "getLicenseAllocation" },
+      "Failed to get license allocation",
+    );
   }
 }
 
@@ -153,14 +148,11 @@ export async function listLicenseAllocations(params?: {
       data: LicenseAllocationPresenter.toDTOList(allocations),
     };
   } catch (error) {
-    console.error("Error listing license allocations:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to list license allocations",
-    };
+    return handleControllerError(
+      error,
+      { function: "listLicenseAllocations" },
+      "Failed to list license allocations",
+    );
   }
 }
 
@@ -199,14 +191,11 @@ export async function updateLicenseAllocation(
       data: LicenseAllocationPresenter.toDTO(allocation),
     };
   } catch (error) {
-    console.error("Error updating license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to update license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "updateLicenseAllocation" },
+      "Failed to update license allocation",
+    );
   }
 }
 
@@ -232,14 +221,11 @@ export async function deleteLicenseAllocation(
 
     return { success: true };
   } catch (error) {
-    console.error("Error deleting license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to delete license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "deleteLicenseAllocation" },
+      "Failed to delete license allocation",
+    );
   }
 }
 
@@ -277,14 +263,11 @@ export async function deallocateLicenseAllocation(
       data: LicenseAllocationPresenter.toDTO(allocation),
     };
   } catch (error) {
-    console.error("Error deallocating license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to deallocate license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "deallocateLicenseAllocation" },
+      "Failed to deallocate license allocation",
+    );
   }
 }
 
@@ -317,14 +300,11 @@ export async function reactivateLicenseAllocation(
       data: LicenseAllocationPresenter.toDTO(allocation),
     };
   } catch (error) {
-    console.error("Error reactivating license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to reactivate license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "reactivateLicenseAllocation" },
+      "Failed to reactivate license allocation",
+    );
   }
 }
 

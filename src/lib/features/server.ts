@@ -5,11 +5,14 @@
  */
 
 import { redirect } from "next/navigation";
+import { logger } from "@/lib/logger";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IFeatureFlagRepository } from "@/core/repositories/feature-flag.repository.interface";
 import { getRedis } from "@/lib/redis";
 import type { FeatureFlagKey } from "./feature-flag-keys";
+
+const moduleLogger = logger.scope("FeatureFlags");
 
 // Cache TTL: 5 minutes (300 seconds)
 const CACHE_TTL = 300;
@@ -44,7 +47,11 @@ async function getCachedFeatureState(featureName: string): Promise<boolean> {
     return isEnabled;
   } catch (error) {
     // Redis error - fall back to database
-    console.error(`Feature flag cache error for ${featureName}:`, error);
+    moduleLogger.error(
+      "handler",
+      `Feature flag cache error for ${featureName}:`,
+      error,
+    );
     const container = getContainer();
     const repo = container.get<IFeatureFlagRepository>(
       DI_TOKENS.IFeatureFlagRepository,
@@ -69,8 +76,9 @@ export async function invalidateFeatureCache(
     const redis = await getRedis();
     await redis.del(cacheKey);
   } catch (error) {
-    console.error(
-      `Failed to invalidate feature cache for ${featureName}:`,
+    moduleLogger.error(
+      "invalidateFeatureCache",
+      `Failed to invalidate feature cache for ${featureName}`,
       error,
     );
   }
@@ -173,7 +181,7 @@ export async function getEnabledFeatures(): Promise<Set<string>> {
     return features;
   } catch (error) {
     // Redis error - fall back to database
-    console.error("Feature flags cache error:", error);
+    moduleLogger.error("handler", "Feature flags cache error:", error);
     const container = getContainer();
     const repo = container.get<IFeatureFlagRepository>(
       DI_TOKENS.IFeatureFlagRepository,
@@ -193,6 +201,10 @@ export async function invalidateAllFeaturesCache(): Promise<void> {
     const redis = await getRedis();
     await redis.del(cacheKey);
   } catch (error) {
-    console.error("Failed to invalidate all features cache:", error);
+    moduleLogger.error(
+      "handler",
+      "Failed to invalidate all features cache:",
+      error,
+    );
   }
 }

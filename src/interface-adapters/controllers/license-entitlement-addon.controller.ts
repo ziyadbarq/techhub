@@ -5,6 +5,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { handleControllerError } from "./error-handler";
 import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
@@ -71,14 +72,11 @@ export async function attachAddonToEntitlement(
       data: LicenseEntitlementAddonPresenter.toDTO(entitlementAddon),
     };
   } catch (error) {
-    console.error("Error attaching addon to entitlement:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to attach addon to entitlement",
-    };
+    return handleControllerError(
+      error,
+      { function: "attachAddonToEntitlement" },
+      "Failed to attach addon to entitlement",
+    );
   }
 }
 
@@ -104,14 +102,11 @@ export async function detachAddonFromEntitlement(
 
     return { success: true };
   } catch (error) {
-    console.error("Error detaching addon from entitlement:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to detach addon from entitlement",
-    };
+    return handleControllerError(
+      error,
+      { function: "detachAddonFromEntitlement" },
+      "Failed to detach addon from entitlement",
+    );
   }
 }
 
@@ -150,14 +145,11 @@ export async function updateEntitlementAddon(
       data: LicenseEntitlementAddonPresenter.toDTO(entitlementAddon),
     };
   } catch (error) {
-    console.error("Error updating entitlement addon:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to update entitlement addon",
-    };
+    return handleControllerError(
+      error,
+      { function: "updateEntitlementAddon" },
+      "Failed to update entitlement addon",
+    );
   }
 }
 
@@ -188,14 +180,11 @@ export async function listEntitlementAddons(params?: {
       data: LicenseEntitlementAddonPresenter.toDTOList(entitlementAddons),
     };
   } catch (error) {
-    console.error("Error listing entitlement addons:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to list entitlement addons",
-    };
+    return handleControllerError(
+      error,
+      { function: "listEntitlementAddons" },
+      "Failed to list entitlement addons",
+    );
   }
 }
 
@@ -225,13 +214,10 @@ export async function calculateEntitlementTotalCost(
       data: LicenseEntitlementAddonPresenter.toCostBreakdownDTO(breakdown),
     };
   } catch (error) {
-    console.error("Error calculating entitlement total cost:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to calculate entitlement total cost",
-    };
+    return handleControllerError(
+      error,
+      { function: "calculateEntitlementTotalCost" },
+      "Failed to calculate entitlement total cost",
+    );
   }
 }

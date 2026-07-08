@@ -5,6 +5,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IConfigService } from "@/core/services/config.service.interface";
@@ -36,7 +37,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("Error fetching client settings:", error);
+    logger.scope("API").error("GET", "Error fetching client settings", error);
     return NextResponse.json(
       { error: "Failed to fetch client settings" },
       { status: 500 },

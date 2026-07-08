@@ -15,6 +15,7 @@
  */
 
 import type { Container } from "inversify";
+import { logger } from "@/lib/logger";
 import { DI_TOKENS } from "../types";
 import type { IFileStorageService } from "@/core/services/file-storage.service.interface";
 import type { IImageOptimizationService } from "@/core/services/image-optimization.service.interface";
@@ -63,7 +64,7 @@ export function bindFileStorageDependencies(container: Container): void {
 
   // Only log during development to avoid cluttering build output
   if (process.env.NODE_ENV === "development") {
-    console.log("[DI] File Storage dependencies bound");
+    logger.scope("DI").debug("bind", "[DI] File Storage dependencies bound");
   }
 }
 

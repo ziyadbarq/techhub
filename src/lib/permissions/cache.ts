@@ -11,7 +11,10 @@
  */
 
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import { logger } from "@/lib/logger";
 import { getRedis } from "@/lib/redis";
+
+const moduleLogger = logger.scope("PermissionCache");
 
 interface CachedPermissions {
   permissions: PermissionKey[];
@@ -71,7 +74,11 @@ class PermissionCache {
         }
       } catch (error) {
         // Redis unavailable, fall back to in-memory
-        console.error("Redis error in permission cache get:", error);
+        moduleLogger.error(
+          "handler",
+          "Redis error in permission cache get:",
+          error,
+        );
         this.useRedis = false;
       }
     }
@@ -108,7 +115,11 @@ class PermissionCache {
           JSON.stringify(permissions),
         );
       } catch (error) {
-        console.error("Redis error in permission cache set:", error);
+        moduleLogger.error(
+          "handler",
+          "Redis error in permission cache set:",
+          error,
+        );
         this.useRedis = false;
       }
     }
@@ -142,7 +153,11 @@ class PermissionCache {
         const redis = await getRedis();
         await redis.del(key);
       } catch (error) {
-        console.error("Redis error in permission cache invalidate:", error);
+        moduleLogger.error(
+          "handler",
+          "Redis error in permission cache invalidate:",
+          error,
+        );
       }
     }
 
@@ -164,7 +179,11 @@ class PermissionCache {
           await redis.del(...keys);
         }
       } catch (error) {
-        console.error("Redis error in permission cache invalidateAll:", error);
+        moduleLogger.error(
+          "handler",
+          "Redis error in permission cache invalidateAll:",
+          error,
+        );
       }
     }
 

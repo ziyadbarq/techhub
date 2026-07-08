@@ -6,6 +6,7 @@
  */
 
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { logger } from "@/lib/logger";
 import type { TargetObjectTypeEnum } from "@/generated/prisma";
 import { ValidationError } from "../errors/validation.error";
 
@@ -387,7 +388,11 @@ export class Attachment {
       }
       // If file-type library fails, log and allow through (fail open for rare cases)
       // In production, you may want to fail closed instead
-      console.warn("File type detection failed:", error);
+      logger
+        .scope("AttachmentEntity")
+        .warn("validateFileContent", "File type detection failed", {
+          detail: String(error),
+        });
     }
   }
 }

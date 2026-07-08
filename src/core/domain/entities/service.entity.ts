@@ -6,6 +6,7 @@
  */
 
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { logger } from "@/lib/logger";
 import type {
   ServiceType,
   ServiceStatus,
@@ -130,9 +131,12 @@ export class Service {
     // Business rule: Services with Restricted data should have SLA
     if (props.dataConfidentiality === "RESTRICTED" && !props.slaDetails) {
       // This is a warning, not blocking
-      console.warn(
-        "Services with Restricted data should have SLA details defined",
-      );
+      logger
+        .scope("ServiceEntity")
+        .warn(
+          "validate",
+          "Services with Restricted data should have SLA details defined",
+        );
     }
 
     const now = new Date();

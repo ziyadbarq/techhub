@@ -68,7 +68,7 @@ export function SSEDemo() {
       setEventLog((prev) => [logEntry, ...prev].slice(0, 50)); // Keep last 50 events
     },
     onOpen: () => {
-      console.log("[SSE Demo] Connected");
+      // Connection events surface in the on-screen event log
     },
     onError: (error) => {
       console.error("[SSE Demo] Error:", error);

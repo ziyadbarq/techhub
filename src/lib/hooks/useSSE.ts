@@ -172,7 +172,7 @@ export function useSSE<T = unknown>(
 
           reconnectTimeoutRef.current = setTimeout(() => {
             if (isMountedRef.current) {
-              console.log(
+              console.warn(
                 `[SSE] Reconnecting (attempt ${reconnectAttempts + 1})...`,
               );
               // eslint-disable-next-line react-hooks/immutability

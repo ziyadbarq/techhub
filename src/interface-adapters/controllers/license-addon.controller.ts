@@ -5,6 +5,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { handleControllerError } from "./error-handler";
 import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
@@ -69,14 +70,11 @@ export async function createLicenseAddon(
       data: LicenseAddonPresenter.toDTO(addon),
     };
   } catch (error) {
-    console.error("Error creating license addon:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to create license addon",
-    };
+    return handleControllerError(
+      error,
+      { function: "createLicenseAddon" },
+      "Failed to create license addon",
+    );
   }
 }
 
@@ -112,12 +110,11 @@ export async function getLicenseAddon(
       data: LicenseAddonPresenter.toDTO(addon),
     };
   } catch (error) {
-    console.error("Error getting license addon:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to get license addon",
-    };
+    return handleControllerError(
+      error,
+      { function: "getLicenseAddon" },
+      "Failed to get license addon",
+    );
   }
 }
 
@@ -147,14 +144,11 @@ export async function listLicenseAddons(params?: {
       data: LicenseAddonPresenter.toDTOList(addons),
     };
   } catch (error) {
-    console.error("Error listing license addons:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to list license addons",
-    };
+    return handleControllerError(
+      error,
+      { function: "listLicenseAddons" },
+      "Failed to list license addons",
+    );
   }
 }
 
@@ -192,14 +186,11 @@ export async function updateLicenseAddon(
       data: LicenseAddonPresenter.toDTO(addon),
     };
   } catch (error) {
-    console.error("Error updating license addon:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to update license addon",
-    };
+    return handleControllerError(
+      error,
+      { function: "updateLicenseAddon" },
+      "Failed to update license addon",
+    );
   }
 }
 
@@ -225,13 +216,10 @@ export async function deleteLicenseAddon(
 
     return { success: true };
   } catch (error) {
-    console.error("Error deleting license addon:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to delete license addon",
-    };
+    return handleControllerError(
+      error,
+      { function: "deleteLicenseAddon" },
+      "Failed to delete license addon",
+    );
   }
 }

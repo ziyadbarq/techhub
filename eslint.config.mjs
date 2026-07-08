@@ -156,6 +156,9 @@ export default [
                 "@/interface-adapters/**",
                 "@/infrastructure/**",
                 "@/lib/**",
+                // Exception: structured logger (cross-cutting observability,
+                // same precedent as the LogExecution decorator)
+                "!@/lib/logger",
                 "@/config/**",
                 "@/core/use-cases/**",
                 // Allow service interfaces (core layer contracts)
@@ -180,10 +183,9 @@ export default [
     rules: {
       // Business rejections thrown as plain Error are logged at error
       // severity by the controller error handler; domain errors log at warn
-      // and keep 4xx/5xx semantics clean. Warn until the codemod sweep is
-      // complete, then flip to error.
+      // and keep 4xx/5xx semantics clean.
       "no-restricted-syntax": [
-        "warn",
+        "error",
         {
           selector: "ThrowStatement > NewExpression[callee.name='Error']",
           message:
@@ -298,9 +300,11 @@ export default [
       ],
     },
   },
-  // Structured logging policy: console.* bypasses the DI logger (no request
-  // context, no redaction). Warn until the sweep is complete, then flip to
-  // error. Logger internals and the Prisma bootstrap legitimately use console.
+  // Structured logging policy: console.* bypasses the structured logger (no
+  // request context, no redaction). Exemptions, each justified:
+  // - logger internals + Prisma bootstrap: console IS their output channel
+  // - config/instrumentation bootstrap: runs before the logger exists
+  // - seeds + assign-first-admin: CLI utilities where console is the UI
   {
     files: ["src/**/*.{ts,tsx}"],
     ignores: [
@@ -311,12 +315,31 @@ export default [
       "src/infrastructure/database/prisma/client.ts",
       "src/infrastructure/database/prisma/transaction-context.ts",
       "src/infrastructure/database/prisma/seed*.ts",
+      "src/infrastructure/config/cloud-config-init.ts",
+      "src/infrastructure/config/cloud-config-loader.ts",
+      "src/infrastructure/config/hydrate-settings.ts",
+      "src/instrumentation.ts",
+      "src/lib/auth/assign-first-admin.ts",
       "src/app/global-error.tsx",
       "**/__tests__/**",
       "**/*.test.{ts,tsx}",
     ],
     rules: {
-      "no-console": "warn",
+      "no-console": "error",
+    },
+  },
+  // Client-side code may report failures via console.warn/error (the browser
+  // console is the observability channel there); log/info/debug stay banned.
+  {
+    files: [
+      "src/components/**/*.{ts,tsx}",
+      "src/hooks/**/*.{ts,tsx}",
+      "src/contexts/**/*.{ts,tsx}",
+      "src/lib/hooks/**/*.{ts,tsx}",
+      "src/app/**/*-client.tsx",
+    ],
+    rules: {
+      "no-console": ["error", { allow: ["warn", "error"] }],
     },
   },
   // Relax boundary checks inside tests to allow direct imports for setup/mocking

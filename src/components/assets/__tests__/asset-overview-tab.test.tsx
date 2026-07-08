@@ -287,24 +287,27 @@ describe("AssetOverviewTab", () => {
 
   describe("currency conversion", () => {
     it("should show 'converting...' while loading currency conversion", async () => {
-      // Make the conversion take longer
-      vi.mock(
-        "@/interface-adapters/controllers/exchange-rate.controller",
-        () => ({
-          convertCurrencyAction: vi.fn(
-            () =>
-              new Promise((resolve) =>
-                setTimeout(
-                  () =>
-                    resolve({
-                      success: true,
-                      data: { convertedAmount: 5625, exchangeRate: 3.75 },
-                    }),
-                  100,
-                ),
-              ),
+      // Make the conversion take longer for this test only
+      const { convertCurrencyAction } =
+        await import("@/interface-adapters/controllers/exchange-rate.controller");
+      vi.mocked(convertCurrencyAction).mockImplementationOnce(
+        () =>
+          new Promise((resolve) =>
+            setTimeout(
+              () =>
+                resolve({
+                  success: true,
+                  data: {
+                    originalAmount: 1500,
+                    originalCurrency: "USD",
+                    convertedAmount: 5625,
+                    convertedCurrency: "SAR",
+                    exchangeRate: 3.75,
+                  },
+                }),
+              100,
+            ),
           ),
-        }),
       );
 
       render(
@@ -318,9 +321,8 @@ describe("AssetOverviewTab", () => {
     });
 
     it("should not fetch conversion when currency is SAR", async () => {
-      const { convertCurrencyAction } = await import(
-        "@/interface-adapters/controllers/exchange-rate.controller"
-      );
+      const { convertCurrencyAction } =
+        await import("@/interface-adapters/controllers/exchange-rate.controller");
 
       render(
         <AssetOverviewTab
@@ -335,9 +337,8 @@ describe("AssetOverviewTab", () => {
     });
 
     it("should not fetch conversion when purchaseCost is null", async () => {
-      const { convertCurrencyAction } = await import(
-        "@/interface-adapters/controllers/exchange-rate.controller"
-      );
+      const { convertCurrencyAction } =
+        await import("@/interface-adapters/controllers/exchange-rate.controller");
 
       render(
         <AssetOverviewTab asset={createMockAsset({ purchaseCost: null })} />,

@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import {
   getEnabledFeatures,
   isMaintenanceModeEnabled,
@@ -29,7 +30,7 @@ export async function GET() {
       maintenanceMode, // Signal to client if maintenance mode is active
     });
   } catch (error) {
-    console.error("Error fetching enabled features:", error);
+    logger.scope("API").error("GET", "Error fetching enabled features", error);
     return NextResponse.json(
       { error: "Failed to fetch enabled features" },
       { status: 500 },

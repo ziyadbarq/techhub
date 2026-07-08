@@ -61,10 +61,14 @@ function registerModules(): void {
   // Validate module dependencies
   const errors = moduleRegistry.validateAll();
   if (errors.size > 0) {
-    console.error("Module dependency validation errors:");
+    const containerLogger = logger.scope("DIContainer");
     errors.forEach((moduleErrors, moduleName) => {
-      console.error(`  ${moduleName}:`);
-      moduleErrors.forEach((error) => console.error(`    - ${error}`));
+      containerLogger.error(
+        "validateModuleDependencies",
+        `Module dependency validation errors in ${moduleName}`,
+        undefined,
+        { errors: moduleErrors },
+      );
     });
     throw new Error("Module dependency validation failed");
   }
@@ -310,7 +314,9 @@ function initContainerSync(): Container {
       diModule.bindFunction(container);
       moduleRegistry.markLoaded(moduleName);
     } catch (error) {
-      console.error(`Failed to load module ${moduleName}:`, error);
+      logger
+        .scope("DIContainer")
+        .error("loadModule", `Failed to load module ${moduleName}`, error);
       throw error;
     }
   }

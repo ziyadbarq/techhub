@@ -6,6 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { handleControllerError } from "../error-handler";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { $Enums } from "@/generated/prisma";
@@ -57,12 +58,11 @@ export async function listFeatureFlagsAction(): Promise<
       },
     };
   } catch (error) {
-    console.error("Error listing feature flags:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to list feature flags",
-    };
+    return handleControllerError(
+      error,
+      { function: "listFeatureFlagsAction" },
+      "Failed to list feature flags",
+    );
   }
 }
 
@@ -87,12 +87,11 @@ export async function getFeatureFlagAction(
       data: FeatureFlagPresenter.toDTO(featureFlag),
     };
   } catch (error) {
-    console.error("Error getting feature flag:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to get feature flag",
-    };
+    return handleControllerError(
+      error,
+      { function: "getFeatureFlagAction" },
+      "Failed to get feature flag",
+    );
   }
 }
 
@@ -166,14 +165,11 @@ export async function toggleFeatureFlagAction(
       },
     };
   } catch (error) {
-    console.error("Error toggling feature flag:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to toggle feature flag",
-    };
+    return handleControllerError(
+      error,
+      { function: "toggleFeatureFlagAction" },
+      "Failed to toggle feature flag",
+    );
   }
 }
 
@@ -266,14 +262,11 @@ export async function bulkToggleFeatureFlagsAction(
       },
     };
   } catch (error) {
-    console.error("Error bulk toggling feature flags:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to bulk toggle feature flags",
-    };
+    return handleControllerError(
+      error,
+      { function: "bulkToggleFeatureFlagsAction" },
+      "Failed to bulk toggle feature flags",
+    );
   }
 }
 
@@ -308,10 +301,10 @@ export async function getFeatureFlagAuditLogAction(
       data: auditLogs,
     };
   } catch (error) {
-    console.error("Error getting audit log:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Failed to get audit log",
-    };
+    return handleControllerError(
+      error,
+      { function: "getFeatureFlagAuditLogAction" },
+      "Failed to get audit log",
+    );
   }
 }

@@ -5,6 +5,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { controllerLogger } from "@/lib/logger";
+import { handleControllerError } from "./error-handler";
 import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
@@ -75,14 +77,11 @@ export async function createLicenseEntitlement(
       data: LicenseEntitlementPresenter.toDTO(entitlement),
     };
   } catch (error) {
-    console.error("Error creating license entitlement:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to create license entitlement",
-    };
+    return handleControllerError(
+      error,
+      { function: "createLicenseEntitlement" },
+      "Failed to create license entitlement",
+    );
   }
 }
 
@@ -112,14 +111,11 @@ export async function getLicenseEntitlement(
       data: LicenseEntitlementPresenter.toDTO(entitlement),
     };
   } catch (error) {
-    console.error("Error getting license entitlement:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to get license entitlement",
-    };
+    return handleControllerError(
+      error,
+      { function: "getLicenseEntitlement" },
+      "Failed to get license entitlement",
+    );
   }
 }
 
@@ -152,14 +148,11 @@ export async function listLicenseEntitlements(params?: {
       data: LicenseEntitlementPresenter.toDTOList(entitlements),
     };
   } catch (error) {
-    console.error("Error listing license entitlements:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to list license entitlements",
-    };
+    return handleControllerError(
+      error,
+      { function: "listLicenseEntitlements" },
+      "Failed to list license entitlements",
+    );
   }
 }
 
@@ -203,14 +196,11 @@ export async function updateLicenseEntitlement(
       data: LicenseEntitlementPresenter.toDTO(entitlement),
     };
   } catch (error) {
-    console.error("Error updating license entitlement:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to update license entitlement",
-    };
+    return handleControllerError(
+      error,
+      { function: "updateLicenseEntitlement" },
+      "Failed to update license entitlement",
+    );
   }
 }
 
@@ -236,14 +226,11 @@ export async function deleteLicenseEntitlement(
 
     return { success: true };
   } catch (error) {
-    console.error("Error deleting license entitlement:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to delete license entitlement",
-    };
+    return handleControllerError(
+      error,
+      { function: "deleteLicenseEntitlement" },
+      "Failed to delete license entitlement",
+    );
   }
 }
 
@@ -304,7 +291,11 @@ export async function bulkCreateLicenseEntitlementsAction(
 
     return results;
   } catch (error) {
-    console.error("Error bulk creating license entitlements:", error);
+    controllerLogger.error(
+      "bulkCreateLicenseEntitlementsAction",
+      "Error bulk creating license entitlements",
+      error,
+    );
     return {
       success: false,
       successCount: 0,
