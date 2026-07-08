@@ -425,31 +425,6 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   },
 
   // ============================================================================
-  // SETTINGS ROUTES
-  // ============================================================================
-
-  "/settings/authentication": {
-    requiredPermissions: [PERMISSIONS.SETTINGS_MANAGE],
-    description: "Authentication and SSO configuration",
-  },
-  "/settings/integrations": {
-    requiredPermissions: [PERMISSIONS.SETTINGS_MANAGE],
-    description: "Third-party integrations and API settings",
-  },
-  "/settings/notifications": {
-    requiredPermissions: [PERMISSIONS.SETTINGS_VIEW],
-    description: "Notification preferences and channels",
-  },
-  "/settings/operations": {
-    requiredPermissions: [PERMISSIONS.SETTINGS_MANAGE],
-    description: "Operational settings and configurations",
-  },
-  "/settings/platform": {
-    requiredPermissions: [PERMISSIONS.SETTINGS_MANAGE],
-    description: "Platform-wide settings and configurations",
-  },
-
-  // ============================================================================
   // SYSTEM ROUTES
   // ============================================================================
 
