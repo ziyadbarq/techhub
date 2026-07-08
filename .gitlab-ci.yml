@@ -92,6 +92,7 @@ variables:
   UAT_GCP_IMAGE: me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/gitlab-runner-node-22-alpine:latest
 
 stages:
+  - validate
   - build_only
   - build_and_deploy
   - release_metadata
@@ -100,6 +101,10 @@ stages:
 workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: always
+    # Pushed branches run the validate stage only (build/deploy jobs all
+    # require a web-triggered pipeline).
+    - if: '$CI_PIPELINE_SOURCE == "push"'
       when: always
     - when: never
 
@@ -119,6 +124,48 @@ workflow:
   - echo "Commit:${CI_COMMIT_SHORT_SHA}" | tee -a ${BUILD_METRICS_FILE}
   - if [ -d .next ]; then echo "Next.js build size:$(du -sh .next | cut -f1)" | tee -a ${BUILD_METRICS_FILE}; echo "Static files:$(du -sh .next/static 2>/dev/null | cut -f1 || echo N/A)" | tee -a ${BUILD_METRICS_FILE}; fi
   - if [ -d node_modules ]; then echo "node_modules size:$(du -sh node_modules | cut -f1)" | tee -a ${BUILD_METRICS_FILE}; fi
+
+# Quality gate: type-check + lint + unit tests (mirrors `npm run validate`).
+# Runs before any build job; a failure stops the pipeline, so broken types
+# or tests can no longer reach an image build (builds use build:fast, which
+# skips type checking by design).
+.validate_script: &validate_script
+  - cp /.npmrc .
+  - npm ci $NPM_CI_FLAGS
+  - npm run db:generate
+  - npm run type-check
+  - npm run lint
+  - npx vitest --run
+
+validate-gcp:
+  timeout: 15m
+  image: $DEV_GCP_IMAGE
+  stage: validate
+  cache:
+    <<: *build_cache
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web"'
+      when: always
+    - when: never
+  tags:
+    - $DEV_GCP_LAB_TAG
+  script: *validate_script
+
+validate-oci:
+  timeout: 15m
+  image: $DEV_OCI_IMAGE
+  stage: validate
+  cache:
+    <<: *build_cache
+  rules:
+    - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web"'
+      when: always
+    - when: never
+  tags:
+    - $DEV_OCI_LAB_TAG
+  script: *validate_script
 
 build-gcp:
   timeout: 30m
