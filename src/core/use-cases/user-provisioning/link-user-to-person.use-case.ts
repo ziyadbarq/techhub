@@ -16,6 +16,7 @@ import type { IUserRoleRepository } from "@/core/repositories/user-role-reposito
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface LinkUserToPersonRequest {
   userId: string;
@@ -61,13 +62,13 @@ export class LinkUserToPersonUseCase {
     // 1. Validate user exists
     const user = await this.userRepository.findById(request.userId);
     if (!user) {
-      throw new Error(`User not found: ${request.userId}`);
+      throw new NotFoundError(`User not found: ${request.userId}`);
     }
 
     // 2. Validate person exists
     const person = await this.personRepository.findById(request.personId);
     if (!person) {
-      throw new Error(`Person not found: ${request.personId}`);
+      throw new NotFoundError(`Person not found: ${request.personId}`);
     }
 
     // 3. Check if user is already linked to a person

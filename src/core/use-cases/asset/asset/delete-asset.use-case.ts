@@ -6,6 +6,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteAssetUseCase {
@@ -18,7 +19,7 @@ export class DeleteAssetUseCase {
     // Check if asset exists
     const asset = await this.assetRepository.findById(id);
     if (!asset) {
-      throw new Error(`Asset with ID "${id}" not found`);
+      throw new NotFoundError(`Asset with ID "${id}" not found`);
     }
 
     // Business Rule: Cannot delete asset with active assignments

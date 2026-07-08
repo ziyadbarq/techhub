@@ -4,6 +4,7 @@ import type { OwnershipType } from "@/generated/prisma";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { IServiceOwnershipRepository } from "@/core/repositories/service-ownership.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface AddServiceOwnerRequest {
   serviceId: string;
@@ -26,12 +27,12 @@ export class AddServiceOwnerUseCase {
   async execute(request: AddServiceOwnerRequest): Promise<void> {
     const service = await this.serviceRepository.findById(request.serviceId);
     if (!service) {
-      throw new Error(`Service with ID ${request.serviceId} not found`);
+      throw new NotFoundError(`Service with ID ${request.serviceId} not found`);
     }
 
     const person = await this.personRepository.findById(request.personId);
     if (!person) {
-      throw new Error(`Person with ID ${request.personId} not found`);
+      throw new NotFoundError(`Person with ID ${request.personId} not found`);
     }
 
     const existing = await this.serviceOwnershipRepository.find(

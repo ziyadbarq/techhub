@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IDataOwnershipRepository } from "@/core/repositories/data-ownership.repository.interface";
 import type { DataOwnership } from "@/core/domain/entities/data-ownership.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetDataOwnershipRequest {
   id: string;
@@ -24,7 +25,7 @@ export class GetDataOwnershipUseCase {
     );
 
     if (!dataOwnership) {
-      throw new Error("Data ownership not found");
+      throw new NotFoundError("Data ownership not found");
     }
 
     return dataOwnership;

@@ -11,6 +11,7 @@ import type { Asset } from "@/core/domain/entities/asset.entity";
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateAssetInput {
   id: string;
@@ -50,7 +51,7 @@ export class UpdateAssetUseCase {
     // Find existing asset
     const asset = await this.assetRepository.findById(input.id);
     if (!asset) {
-      throw new Error(`Asset with ID "${input.id}" not found`);
+      throw new NotFoundError(`Asset with ID "${input.id}" not found`);
     }
 
     // Capture original location for movement tracking

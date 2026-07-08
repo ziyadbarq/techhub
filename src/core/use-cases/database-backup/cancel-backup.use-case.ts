@@ -10,6 +10,7 @@ import type { IDatabaseBackupRepository } from "@/core/repositories/database-bac
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
 import { MAINTENANCE_JOBS, QUEUE_NAMES } from "@/core/domain/jobs/job-names";
 import type { ILoggerService } from "@/core/services";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CancelDatabaseBackupInput {
   backupId: string;
@@ -30,7 +31,7 @@ export class CancelDatabaseBackupUseCase {
   async execute(input: CancelDatabaseBackupInput): Promise<DatabaseBackup> {
     const backup = await this.repository.findById(input.backupId);
     if (!backup) {
-      throw new Error("Backup not found");
+      throw new NotFoundError("Backup not found");
     }
 
     const backupData = backup.toJSON();

@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IConfigurationItemRepository } from "../../../repositories/configuration-item.repository.interface";
 import type {
@@ -24,7 +25,7 @@ export class UpdateConfigurationItemUseCase {
     const ci = await this.ciRepository.findById(request.id);
 
     if (!ci) {
-      throw new Error(`Configuration Item not found: ${request.id}`);
+      throw new NotFoundError(`Configuration Item not found: ${request.id}`);
     }
 
     // Check if CI key already exists (if being updated)

@@ -7,6 +7,7 @@
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IStockLocationRepository } from "@/core/repositories/stock-location.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteStockLocationUseCase {
@@ -25,7 +26,7 @@ export class DeleteStockLocationUseCase {
     // Find existing stock location
     const stockLocation = await this.stockLocationRepository.findById(id);
     if (!stockLocation) {
-      throw new Error(`Stock location with ID "${id}" not found`);
+      throw new NotFoundError(`Stock location with ID "${id}" not found`);
     }
 
     // Check if can be deleted (no assets or stock movements)

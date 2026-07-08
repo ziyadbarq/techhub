@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIClassFieldRepository } from "@/core/repositories/ci-class-field.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteCIClassFieldRequest {
   id: string;
@@ -21,7 +22,7 @@ export class DeleteCIClassFieldUseCase {
     const ciClassField = await this.ciClassFieldRepository.findById(request.id);
 
     if (!ciClassField) {
-      throw new Error("CI class field not found");
+      throw new NotFoundError("CI class field not found");
     }
 
     await this.ciClassFieldRepository.delete(request.id);

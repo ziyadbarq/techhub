@@ -8,6 +8,7 @@ import type { ILicenseAddonRepository } from "@/core/repositories/license-addon.
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import { LicenseAddon } from "@/core/domain/entities/license-addon.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateLicenseAddonRequest {
   licenseProductId: string;
@@ -34,7 +35,7 @@ export class CreateLicenseAddonUseCase {
       request.licenseProductId,
     );
     if (!product) {
-      throw new Error("License product not found");
+      throw new NotFoundError("License product not found");
     }
 
     // Auto-generate code if not provided

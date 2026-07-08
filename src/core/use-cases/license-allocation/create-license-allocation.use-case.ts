@@ -9,6 +9,7 @@ import type { ILicenseEntitlementRepository } from "@/core/repositories/license-
 import type { IUnitOfWork } from "@/core/services/unit-of-work.service.interface";
 import type { AllocationTargetType } from "@/core/domain/entities/license-allocation.entity";
 import { LicenseAllocation } from "@/core/domain/entities/license-allocation.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateLicenseAllocationRequest {
   licenseEntitlementId: string;
@@ -41,7 +42,7 @@ export class CreateLicenseAllocationUseCase {
         request.licenseEntitlementId,
       );
       if (!entitlement) {
-        throw new Error("License entitlement not found");
+        throw new NotFoundError("License entitlement not found");
       }
 
       // Check if entitlement is active

@@ -2,6 +2,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IConfigurationItemRepository } from "../../../repositories/configuration-item.repository.interface";
 import type { ConfigurationItem } from "../../../domain/entities/configuration-item.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetConfigurationItemRequest {
   id?: string;
@@ -32,7 +33,7 @@ export class GetConfigurationItemUseCase {
 
     if (!ci) {
       const identifier = request.id || request.ciKey || "unknown";
-      throw new Error(`Configuration Item not found: ${identifier}`);
+      throw new NotFoundError(`Configuration Item not found: ${identifier}`);
     }
 
     return ci;

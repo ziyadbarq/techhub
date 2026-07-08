@@ -5,6 +5,7 @@ import type { IServiceRepository } from "@/core/repositories/service.repository.
 import type { ILoggerService } from "@/core/services";
 import type { ServiceInfrastructure } from "@/core/domain/entities/service-infrastructure.entity";
 import { LogExecution } from "@/lib/decorators";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetServiceInfrastructureRequest {
   serviceId: string;
@@ -29,7 +30,7 @@ export class GetServiceInfrastructureUseCase {
     // Check if service exists
     const service = await this.serviceRepository.findById(request.serviceId);
     if (!service) {
-      throw new Error(`Service with ID ${request.serviceId} not found`);
+      throw new NotFoundError(`Service with ID ${request.serviceId} not found`);
     }
 
     return this.infrastructureRepository.findByServiceId(request.serviceId);

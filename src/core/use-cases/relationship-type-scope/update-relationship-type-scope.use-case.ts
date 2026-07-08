@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IRelationshipTypeScopeRepository } from "@/core/repositories/relationship-type-scope.repository.interface";
 import type { RelationshipTypeScope } from "@/core/domain/entities/relationship-type-scope.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateRelationshipTypeScopeRequest {
   id: string;
@@ -25,7 +26,7 @@ export class UpdateRelationshipTypeScopeUseCase {
     const scope = await this.scopeRepository.findById(request.id);
 
     if (!scope) {
-      throw new Error("Relationship type scope not found");
+      throw new NotFoundError("Relationship type scope not found");
     }
 
     scope.update({

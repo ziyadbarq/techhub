@@ -7,6 +7,7 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IMaintenanceScheduleRepository } from "@/core/repositories/maintenance-schedule.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteMaintenanceScheduleUseCase {
@@ -22,7 +23,7 @@ export class DeleteMaintenanceScheduleUseCase {
     // Verify existence
     const schedule = await this.repository.findById(id);
     if (!schedule) {
-      throw new Error(`Maintenance schedule not found: ${id}`);
+      throw new NotFoundError(`Maintenance schedule not found: ${id}`);
     }
 
     // Delete

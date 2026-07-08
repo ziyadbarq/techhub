@@ -4,6 +4,7 @@ import type { IAssetReservationRepository } from "@/core/repositories/asset-rese
 import type { IAssetReservationConflictRepository } from "@/core/repositories/asset-reservation-conflict.repository.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { AssetReservationConflict } from "@/core/domain/entities/asset-reservation-conflict.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DetectConflictsRequest {
   reservationId: string;
@@ -32,7 +33,9 @@ export class DetectConflictsUseCase {
       request.reservationId,
     );
     if (!reservation) {
-      throw new Error(`Reservation with ID ${request.reservationId} not found`);
+      throw new NotFoundError(
+        `Reservation with ID ${request.reservationId} not found`,
+      );
     }
 
     // Find all overlapping reservations

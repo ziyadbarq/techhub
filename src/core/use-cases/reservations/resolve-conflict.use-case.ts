@@ -2,6 +2,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationConflictRepository } from "@/core/repositories/asset-reservation-conflict.repository.interface";
 import type { AssetReservationConflict } from "@/core/domain/entities/asset-reservation-conflict.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface ResolveConflictRequest {
   conflictId: string;
@@ -20,7 +21,9 @@ export class ResolveConflictUseCase {
   ): Promise<AssetReservationConflict> {
     const conflict = await this.conflictRepository.findById(request.conflictId);
     if (!conflict) {
-      throw new Error(`Conflict with ID ${request.conflictId} not found`);
+      throw new NotFoundError(
+        `Conflict with ID ${request.conflictId} not found`,
+      );
     }
 
     conflict.resolve(request.resolutionNote);

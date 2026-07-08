@@ -9,6 +9,7 @@ import type { IContractTypeRepository } from "@/core/repositories/contract-type.
 import type { IVendorRepository } from "@/core/repositories/vendor.repository.interface";
 import type { Contract } from "@/core/domain/entities/contract.entity";
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateContractRequest {
   id: string;
@@ -43,7 +44,7 @@ export class UpdateContractUseCase {
     const contract = await this.contractRepository.findById(request.id);
 
     if (!contract) {
-      throw new Error("Contract not found");
+      throw new NotFoundError("Contract not found");
     }
 
     // Validate contract type if being updated
@@ -55,7 +56,7 @@ export class UpdateContractUseCase {
         request.contractTypeId,
       );
       if (!contractType) {
-        throw new Error("Contract type not found");
+        throw new NotFoundError("Contract type not found");
       }
     }
 
@@ -66,7 +67,7 @@ export class UpdateContractUseCase {
     ) {
       const vendor = await this.vendorRepository.findById(request.vendorId);
       if (!vendor) {
-        throw new Error("Vendor not found");
+        throw new NotFoundError("Vendor not found");
       }
     }
 

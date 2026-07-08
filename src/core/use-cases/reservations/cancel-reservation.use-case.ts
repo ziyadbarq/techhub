@@ -2,6 +2,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
 import type { AssetReservation } from "@/core/domain/entities/asset-reservation.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CancelReservationRequest {
   reservationId: string;
@@ -21,7 +22,9 @@ export class CancelReservationUseCase {
       request.reservationId,
     );
     if (!reservation) {
-      throw new Error(`Reservation with ID ${request.reservationId} not found`);
+      throw new NotFoundError(
+        `Reservation with ID ${request.reservationId} not found`,
+      );
     }
 
     reservation.cancel(request.cancelledById, request.reason);

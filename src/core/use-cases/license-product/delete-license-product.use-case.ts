@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteLicenseProductRequest {
   id: string;
@@ -23,7 +24,7 @@ export class DeleteLicenseProductUseCase {
     );
 
     if (!licenseProduct) {
-      throw new Error("License product not found");
+      throw new NotFoundError("License product not found");
     }
 
     await this.licenseProductRepository.delete(request.id);

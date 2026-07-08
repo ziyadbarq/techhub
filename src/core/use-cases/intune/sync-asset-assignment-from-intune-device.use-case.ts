@@ -14,6 +14,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import { LogExecution } from "@/lib/decorators/log-execution.decorator";
 import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.repository.interface";
@@ -47,7 +48,7 @@ export class SyncAssetAssignmentFromIntuneDeviceUseCase {
     // 1. Load Intune device
     const device = await this.intuneDeviceRepo.findById(input.deviceId);
     if (!device) {
-      throw new Error(`Intune device not found: ${input.deviceId}`);
+      throw new NotFoundError(`Intune device not found: ${input.deviceId}`);
     }
 
     // 2. Check prerequisites: device must have both asset AND person links

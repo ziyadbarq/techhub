@@ -19,6 +19,7 @@ import { Asset } from "@/core/domain/entities/asset.entity";
 import type { IntuneDevice } from "@/core/domain/entities/intune-device.entity";
 import { VendorType } from "@/core/domain/value-objects/foundation-enums";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateAssetFromIntuneDeviceInput {
   /** ID of the Intune device to create an asset from */
@@ -91,7 +92,7 @@ export class CreateAssetFromIntuneDeviceUseCase {
     // 1. Get the Intune device
     const device = await this.deviceRepository.findById(deviceId);
     if (!device) {
-      throw new Error("Intune device not found");
+      throw new NotFoundError("Intune device not found");
     }
 
     // 2. Validate serial number exists (required for unique asset tracking)

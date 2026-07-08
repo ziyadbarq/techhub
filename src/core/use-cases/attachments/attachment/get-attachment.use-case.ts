@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAttachmentRepository } from "@/core/repositories/attachment.repository.interface";
 import type { Attachment } from "@/core/domain/entities/attachment.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetAttachmentRequest {
   id: string;
@@ -22,7 +23,7 @@ export class GetAttachmentUseCase {
     const attachment = await this.attachmentRepository.findById(request.id);
 
     if (!attachment) {
-      throw new Error("Attachment not found");
+      throw new NotFoundError("Attachment not found");
     }
 
     return attachment;

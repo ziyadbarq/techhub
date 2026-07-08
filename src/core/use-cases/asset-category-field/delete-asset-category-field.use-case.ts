@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetCategoryFieldRepository } from "@/core/repositories/asset-category-field.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteAssetCategoryFieldRequest {
   id: string;
@@ -21,7 +22,7 @@ export class DeleteAssetCategoryFieldUseCase {
     const field = await this.fieldRepository.findById(request.id);
 
     if (!field) {
-      throw new Error("Asset category field not found");
+      throw new NotFoundError("Asset category field not found");
     }
 
     await this.fieldRepository.delete(request.id);

@@ -9,6 +9,7 @@ import type { IAssetCategoryRepository } from "@/core/repositories/asset-categor
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import { AssetCategoryField } from "@/core/domain/entities/asset-category-field.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateAssetCategoryFieldRequest {
   assetCategoryId: string;
@@ -42,7 +43,7 @@ export class CreateAssetCategoryFieldUseCase {
       request.assetCategoryId,
     );
     if (!category) {
-      throw new Error("Asset category not found");
+      throw new NotFoundError("Asset category not found");
     }
 
     // Verify field definition exists
@@ -50,7 +51,7 @@ export class CreateAssetCategoryFieldUseCase {
       request.fieldDefinitionId,
     );
     if (!fieldDefinition) {
-      throw new Error("Field definition not found");
+      throw new NotFoundError("Field definition not found");
     }
 
     // Check for duplicate

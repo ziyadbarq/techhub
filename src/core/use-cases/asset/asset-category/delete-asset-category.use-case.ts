@@ -7,6 +7,7 @@
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteAssetCategoryUseCase {
@@ -25,7 +26,7 @@ export class DeleteAssetCategoryUseCase {
     // Find existing asset category
     const assetCategory = await this.assetCategoryRepository.findById(id);
     if (!assetCategory) {
-      throw new Error(`Asset category with ID "${id}" not found`);
+      throw new NotFoundError(`Asset category with ID "${id}" not found`);
     }
 
     // Check if can be deleted (no asset models or assets)

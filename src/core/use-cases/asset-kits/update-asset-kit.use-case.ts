@@ -3,6 +3,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitRepository } from "@/core/repositories/asset-kit.repository.interface";
 import type { AssetKit } from "@/core/domain/entities/asset-kit.entity";
 import type { KitType } from "@/core/domain/entities/asset-kit.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateAssetKitRequest {
   kitId: string;
@@ -23,7 +24,7 @@ export class UpdateAssetKitUseCase {
   async execute(request: UpdateAssetKitRequest): Promise<AssetKit> {
     const kit = await this.assetKitRepository.findById(request.kitId);
     if (!kit) {
-      throw new Error(`Asset kit with ID ${request.kitId} not found`);
+      throw new NotFoundError(`Asset kit with ID ${request.kitId} not found`);
     }
 
     // Check if code is being changed and if new code already exists

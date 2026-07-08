@@ -12,6 +12,7 @@ import type { IJobQueueService } from "@/core/services/job-queue.service.interfa
 import type { DatabaseRestoreJobData } from "@/core/domain/jobs/job-data.types";
 import type { ILoggerService } from "@/core/services";
 import type { IDatabaseBackupService } from "@/core/services/database-backup.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface RestoreDatabaseFromBackupInput {
   backupId: string;
@@ -36,7 +37,7 @@ export class RestoreDatabaseFromBackupUseCase {
   ): Promise<DatabaseBackup> {
     const backup = await this.repository.findById(input.backupId);
     if (!backup) {
-      throw new Error("Backup not found");
+      throw new NotFoundError("Backup not found");
     }
 
     const backupData = backup.toJSON();

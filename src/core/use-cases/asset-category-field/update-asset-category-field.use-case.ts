@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetCategoryFieldRepository } from "@/core/repositories/asset-category-field.repository.interface";
 import type { AssetCategoryField } from "@/core/domain/entities/asset-category-field.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateAssetCategoryFieldRequest {
   id: string;
@@ -29,7 +30,7 @@ export class UpdateAssetCategoryFieldUseCase {
     const field = await this.fieldRepository.findById(request.id);
 
     if (!field) {
-      throw new Error("Asset category field not found");
+      throw new NotFoundError("Asset category field not found");
     }
 
     field.update({

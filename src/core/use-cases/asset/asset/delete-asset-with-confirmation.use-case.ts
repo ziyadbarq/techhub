@@ -15,6 +15,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { IAssetDependencyRepository } from "@/core/repositories/asset-dependency.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteAssetConfirmationRequest {
   id: string;
@@ -58,7 +59,7 @@ export class DeleteAssetWithConfirmationUseCase {
     // Check if asset exists
     const asset = await this.assetRepository.findById(request.id);
     if (!asset) {
-      throw new Error(`Asset with ID "${request.id}" not found`);
+      throw new NotFoundError(`Asset with ID "${request.id}" not found`);
     }
 
     // Check all dependencies
@@ -193,7 +194,7 @@ export class DeleteAssetWithConfirmationUseCase {
   async executeSoftDelete(id: string): Promise<void> {
     const asset = await this.assetRepository.findById(id);
     if (!asset) {
-      throw new Error(`Asset with ID "${id}" not found`);
+      throw new NotFoundError(`Asset with ID "${id}" not found`);
     }
 
     // Perform soft delete by setting deletedAt timestamp

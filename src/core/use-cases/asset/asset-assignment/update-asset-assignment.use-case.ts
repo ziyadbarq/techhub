@@ -4,6 +4,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
 import type {
@@ -32,7 +33,9 @@ export class UpdateAssetAssignmentUseCase {
     // Find existing assignment
     const assignment = await this.assetAssignmentRepository.findById(input.id);
     if (!assignment) {
-      throw new Error(`Asset assignment with ID "${input.id}" not found`);
+      throw new NotFoundError(
+        `Asset assignment with ID "${input.id}" not found`,
+      );
     }
 
     // Business Rule: Check for overlapping assignments if dates changed

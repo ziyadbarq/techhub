@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
 import type { LicenseEntitlement } from "@/core/domain/entities/license-entitlement.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetLicenseEntitlementRequest {
   id: string;
@@ -24,7 +25,7 @@ export class GetLicenseEntitlementUseCase {
     const entitlement = await this.entitlementRepository.findById(request.id);
 
     if (!entitlement) {
-      throw new Error("License entitlement not found");
+      throw new NotFoundError("License entitlement not found");
     }
 
     return entitlement;

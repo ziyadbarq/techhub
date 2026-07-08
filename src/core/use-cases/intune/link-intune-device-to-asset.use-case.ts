@@ -13,6 +13,7 @@ import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { IntuneDevice } from "@/core/domain/entities/intune-device.entity";
 import type { SyncAssetAssignmentFromIntuneDeviceUseCase } from "./sync-asset-assignment-from-intune-device.use-case";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface LinkDeviceToAssetInput {
   /** Intune device ID (our internal ID, not Intune's) */
@@ -50,13 +51,13 @@ export class LinkIntuneDeviceToAssetUseCase {
     // Find the device
     const device = await this.deviceRepository.findById(input.deviceId);
     if (!device) {
-      throw new Error(`Intune device not found: ${input.deviceId}`);
+      throw new NotFoundError(`Intune device not found: ${input.deviceId}`);
     }
 
     // Find the asset
     const asset = await this.assetRepository.findById(input.assetId);
     if (!asset) {
-      throw new Error(`Asset not found: ${input.assetId}`);
+      throw new NotFoundError(`Asset not found: ${input.assetId}`);
     }
 
     // Check if device is already linked to a different asset

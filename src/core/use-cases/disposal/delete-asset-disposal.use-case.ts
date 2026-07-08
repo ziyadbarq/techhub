@@ -2,6 +2,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
 import { LogExecution } from "@/lib/decorators/log-execution.decorator";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteAssetDisposalRequest {
   disposalId: string;
@@ -20,7 +21,9 @@ export class DeleteAssetDisposalUseCase {
       request.disposalId,
     );
     if (!disposal) {
-      throw new Error(`Disposal with ID ${request.disposalId} not found`);
+      throw new NotFoundError(
+        `Disposal with ID ${request.disposalId} not found`,
+      );
     }
 
     // Only allow deletion of pending or cancelled disposals

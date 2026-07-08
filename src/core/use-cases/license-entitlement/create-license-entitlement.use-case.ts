@@ -8,6 +8,7 @@ import type { ILicenseEntitlementRepository } from "@/core/repositories/license-
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
 import type { IContractRepository } from "@/core/repositories/contract.repository.interface";
 import { LicenseEntitlement } from "@/core/domain/entities/license-entitlement.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateLicenseEntitlementRequest {
   licenseProductId: string;
@@ -40,7 +41,7 @@ export class CreateLicenseEntitlementUseCase {
       request.licenseProductId,
     );
     if (!licenseProduct) {
-      throw new Error("License product not found");
+      throw new NotFoundError("License product not found");
     }
 
     // Validate contract exists if provided
@@ -49,7 +50,7 @@ export class CreateLicenseEntitlementUseCase {
         request.contractId,
       );
       if (!contract) {
-        throw new Error("Contract not found");
+        throw new NotFoundError("Contract not found");
       }
     }
 

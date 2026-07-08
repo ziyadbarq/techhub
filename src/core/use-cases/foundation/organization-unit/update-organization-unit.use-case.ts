@@ -82,7 +82,7 @@ export class UpdateOrganizationUnitUseCase {
           props.parentId,
         );
         if (!newParent) {
-          throw new Error("Parent organization unit not found");
+          throw new NotFoundError("Parent organization unit not found");
         }
         newLevel = newParent.level + 1;
         if (newLevel > 10) {

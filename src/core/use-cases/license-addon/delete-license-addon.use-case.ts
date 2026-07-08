@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseAddonRepository } from "@/core/repositories/license-addon.repository.interface";
 import type { ILicenseEntitlementAddonRepository } from "@/core/repositories/license-entitlement-addon.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteLicenseAddonUseCase {
@@ -19,7 +20,7 @@ export class DeleteLicenseAddonUseCase {
   async execute(id: string): Promise<void> {
     const addon = await this.addonRepository.findById(id);
     if (!addon) {
-      throw new Error("License addon not found");
+      throw new NotFoundError("License addon not found");
     }
 
     // Check if addon is attached to any entitlements

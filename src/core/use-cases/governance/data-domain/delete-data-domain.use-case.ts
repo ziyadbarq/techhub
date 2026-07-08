@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteDataDomainRequest {
   id: string;
@@ -22,7 +23,7 @@ export class DeleteDataDomainUseCase {
     const dataDomain = await this.dataDomainRepository.findById(request.id);
 
     if (!dataDomain) {
-      throw new Error("Data domain not found");
+      throw new NotFoundError("Data domain not found");
     }
 
     await this.dataDomainRepository.delete(request.id);

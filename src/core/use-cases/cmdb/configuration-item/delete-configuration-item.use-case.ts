@@ -1,6 +1,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IConfigurationItemRepository } from "../../../repositories/configuration-item.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteConfigurationItemRequest {
   id: string;
@@ -17,7 +18,7 @@ export class DeleteConfigurationItemUseCase {
     const ci = await this.ciRepository.findById(request.id);
 
     if (!ci) {
-      throw new Error(`Configuration Item not found: ${request.id}`);
+      throw new NotFoundError(`Configuration Item not found: ${request.id}`);
     }
 
     await this.ciRepository.delete(request.id);

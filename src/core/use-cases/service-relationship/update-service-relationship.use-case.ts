@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRelationshipRepository } from "../../repositories/service-relationship.repository.interface";
 import type {
@@ -6,8 +7,7 @@ import type {
   UpdateServiceRelationshipProps,
 } from "../../domain/entities/service-relationship.entity";
 
-export interface UpdateServiceRelationshipRequest
-  extends UpdateServiceRelationshipProps {
+export interface UpdateServiceRelationshipRequest extends UpdateServiceRelationshipProps {
   id: string;
 }
 
@@ -26,7 +26,7 @@ export class UpdateServiceRelationshipUseCase {
     );
 
     if (!relationship) {
-      throw new Error(`Service relationship not found: ${request.id}`);
+      throw new NotFoundError(`Service relationship not found: ${request.id}`);
     }
 
     relationship.update({

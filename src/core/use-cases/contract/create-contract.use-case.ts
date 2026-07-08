@@ -10,6 +10,7 @@ import type { IVendorRepository } from "@/core/repositories/vendor.repository.in
 import { Contract } from "@/core/domain/entities/contract.entity";
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateContractRequest {
   contractTypeId: string;
@@ -48,13 +49,13 @@ export class CreateContractUseCase {
       request.contractTypeId,
     );
     if (!contractType) {
-      throw new Error("Contract type not found");
+      throw new NotFoundError("Contract type not found");
     }
 
     // Validate vendor exists
     const vendor = await this.vendorRepository.findById(request.vendorId);
     if (!vendor) {
-      throw new Error("Vendor not found");
+      throw new NotFoundError("Vendor not found");
     }
 
     // Check for duplicate contract number if provided

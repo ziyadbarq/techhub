@@ -9,6 +9,7 @@ import type { IRelationshipTypeRepository } from "@/core/repositories/relationsh
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
 import { RelationshipTypeScope } from "@/core/domain/entities/relationship-type-scope.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateRelationshipTypeScopeRequest {
   relationshipTypeId: string;
@@ -39,7 +40,7 @@ export class CreateRelationshipTypeScopeUseCase {
       request.relationshipTypeId,
     );
     if (!relationshipType) {
-      throw new Error("Relationship type not found");
+      throw new NotFoundError("Relationship type not found");
     }
 
     // Verify from CI class exists
@@ -47,13 +48,13 @@ export class CreateRelationshipTypeScopeUseCase {
       request.fromCiClassId,
     );
     if (!fromClass) {
-      throw new Error("From CI class not found");
+      throw new NotFoundError("From CI class not found");
     }
 
     // Verify to CI class exists
     const toClass = await this.ciClassRepository.findById(request.toCiClassId);
     if (!toClass) {
-      throw new Error("To CI class not found");
+      throw new NotFoundError("To CI class not found");
     }
 
     // Check for duplicate

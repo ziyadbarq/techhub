@@ -11,6 +11,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IUserRepository } from "@/core/repositories/user-repository.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IPasswordService } from "@/core/services/password.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface ResetUserPasswordRequest {
   userId: string;
@@ -52,7 +53,7 @@ export class ResetUserPasswordUseCase {
     // 1. Validate user exists
     const user = await this.userRepository.findById(request.userId);
     if (!user) {
-      throw new Error(`User not found: ${request.userId}`);
+      throw new NotFoundError(`User not found: ${request.userId}`);
     }
 
     // 2. Generate or use provided password

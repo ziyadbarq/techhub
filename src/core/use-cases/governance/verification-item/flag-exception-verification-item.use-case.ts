@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IVerificationItemRepository } from "@/core/repositories/verification-item.repository.interface";
 import type { VerificationItem } from "@/core/domain/entities/verification-item.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface FlagExceptionVerificationItemRequest {
   id: string;
@@ -28,7 +29,7 @@ export class FlagExceptionVerificationItemUseCase {
     );
 
     if (!verificationItem) {
-      throw new Error("Verification item not found");
+      throw new NotFoundError("Verification item not found");
     }
 
     // Flag as exception (business logic in entity)

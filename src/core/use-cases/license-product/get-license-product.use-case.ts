@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
 import type { LicenseProduct } from "@/core/domain/entities/license-product.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetLicenseProductRequest {
   id: string;
@@ -24,7 +25,7 @@ export class GetLicenseProductUseCase {
     );
 
     if (!licenseProduct) {
-      throw new Error("License product not found");
+      throw new NotFoundError("License product not found");
     }
 
     return licenseProduct;

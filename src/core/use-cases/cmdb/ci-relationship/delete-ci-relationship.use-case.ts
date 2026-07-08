@@ -1,6 +1,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIRelationshipRepository } from "../../../repositories/ci-relationship.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteCIRelationshipRequest {
   id: string;
@@ -19,7 +20,7 @@ export class DeleteCIRelationshipUseCase {
     );
 
     if (!relationship) {
-      throw new Error(`CI Relationship not found: ${request.id}`);
+      throw new NotFoundError(`CI Relationship not found: ${request.id}`);
     }
 
     await this.ciRelationshipRepository.delete(request.id);

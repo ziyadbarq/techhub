@@ -8,6 +8,7 @@ import type { ILicenseEntitlementAddonRepository } from "@/core/repositories/lic
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
 import type { ILicenseAddonRepository } from "@/core/repositories/license-addon.repository.interface";
 import { LicenseEntitlementAddon } from "@/core/domain/entities/license-entitlement-addon.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface AttachAddonToEntitlementRequest {
   licenseEntitlementId: string;
@@ -36,13 +37,13 @@ export class AttachAddonToEntitlementUseCase {
       request.licenseEntitlementId,
     );
     if (!entitlement) {
-      throw new Error("License entitlement not found");
+      throw new NotFoundError("License entitlement not found");
     }
 
     // Validate addon exists
     const addon = await this.addonRepository.findById(request.licenseAddonId);
     if (!addon) {
-      throw new Error("License addon not found");
+      throw new NotFoundError("License addon not found");
     }
 
     // Validate addon is active

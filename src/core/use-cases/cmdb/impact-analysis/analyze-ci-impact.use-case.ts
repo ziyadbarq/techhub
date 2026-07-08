@@ -12,6 +12,7 @@ import type { IConfigurationItemRepository } from "@/core/repositories/configura
 import type { IRelationshipTypeRepository } from "@/core/repositories/relationship-type.repository.interface";
 import type { ILoggerService } from "@/core/services";
 import { LogExecution } from "@/lib/decorators";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface AnalyzeCIImpactRequest {
   ciId: string;
@@ -80,7 +81,7 @@ export class AnalyzeCIImpactUseCase {
     // Validate source CI exists
     const sourceCi = await this.ciRepository.findById(ciId);
     if (!sourceCi) {
-      throw new Error(`Configuration Item not found: ${ciId}`);
+      throw new NotFoundError(`Configuration Item not found: ${ciId}`);
     }
 
     // BFS traversal

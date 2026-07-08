@@ -9,6 +9,7 @@ import type { ICIClassRepository } from "@/core/repositories/ci-class.repository
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import { CIClassField } from "@/core/domain/entities/ci-class-field.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateCIClassFieldRequest {
   ciClassId: string;
@@ -39,7 +40,7 @@ export class CreateCIClassFieldUseCase {
     // Verify CI class exists
     const ciClass = await this.ciClassRepository.findById(request.ciClassId);
     if (!ciClass) {
-      throw new Error("CI class not found");
+      throw new NotFoundError("CI class not found");
     }
 
     // Verify field definition exists
@@ -47,7 +48,7 @@ export class CreateCIClassFieldUseCase {
       request.fieldDefinitionId,
     );
     if (!fieldDefinition) {
-      throw new Error("Field definition not found");
+      throw new NotFoundError("Field definition not found");
     }
 
     // Check for duplicate

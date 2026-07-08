@@ -11,6 +11,7 @@ import { OrganizationUnit } from "@/core/domain/entities/organization-unit.entit
 import type { OrganizationUnitType } from "@/core/domain/value-objects/foundation-enums";
 import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateOrganizationUnitProps {
   code?: string;
@@ -64,7 +65,7 @@ export class CreateOrganizationUnitUseCase {
         props.parentId,
       );
       if (!parent) {
-        throw new Error("Parent organization unit not found");
+        throw new NotFoundError("Parent organization unit not found");
       }
       level = parent.level + 1;
       if (level > 10) {

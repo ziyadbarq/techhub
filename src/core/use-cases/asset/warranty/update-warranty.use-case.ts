@@ -8,6 +8,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IWarrantyRepository } from "@/core/repositories/warranty.repository.interface";
 import type { Warranty } from "@/core/domain/entities/warranty.entity";
 import type { WarrantyCoverageType } from "@/generated/prisma";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateWarrantyProps {
   id: string;
@@ -35,7 +36,7 @@ export class UpdateWarrantyUseCase {
     // Business Rule: Warranty must exist
     const warranty = await this.warrantyRepository.findById(props.id);
     if (!warranty) {
-      throw new Error(`Warranty with ID "${props.id}" not found.`);
+      throw new NotFoundError(`Warranty with ID "${props.id}" not found.`);
     }
 
     // Business Rule: Policy reference must be unique if provided and changed

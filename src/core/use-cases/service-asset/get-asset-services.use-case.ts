@@ -3,6 +3,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IServiceAssetRepository } from "@/core/repositories/service-asset.repository.interface";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { ServiceAsset } from "@/generated/prisma";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface ServiceAssetWithService extends ServiceAsset {
   service: {
@@ -32,7 +33,7 @@ export class GetAssetServicesUseCase {
   ): Promise<ServiceAssetWithService[]> {
     const asset = await this.assetRepository.findById(request.assetId);
     if (!asset) {
-      throw new Error(`Asset with ID ${request.assetId} not found`);
+      throw new NotFoundError(`Asset with ID ${request.assetId} not found`);
     }
 
     return this.serviceAssetRepository.listByAsset(request.assetId);

@@ -8,6 +8,7 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { AssetCategory } from "@/core/domain/entities/asset-category.entity";
 import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateAssetCategoryProps {
   id: string;
@@ -35,7 +36,7 @@ export class UpdateAssetCategoryUseCase {
     // Find existing asset category
     const assetCategory = await this.assetCategoryRepository.findById(props.id);
     if (!assetCategory) {
-      throw new Error(`Asset category with ID "${props.id}" not found`);
+      throw new NotFoundError(`Asset category with ID "${props.id}" not found`);
     }
 
     // Check for duplicate code if code is being changed

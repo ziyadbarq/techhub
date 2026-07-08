@@ -8,6 +8,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IMaintenanceRecordRepository } from "@/core/repositories/maintenance-record.repository.interface";
 import type { MaintenanceRecord } from "@/core/domain/entities/maintenance-record.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class GetMaintenanceRecordUseCase {
@@ -22,7 +23,7 @@ export class GetMaintenanceRecordUseCase {
 
     const record = await this.repository.findById(id);
     if (!record) {
-      throw new Error(`Maintenance record not found: ${id}`);
+      throw new NotFoundError(`Maintenance record not found: ${id}`);
     }
 
     return record;

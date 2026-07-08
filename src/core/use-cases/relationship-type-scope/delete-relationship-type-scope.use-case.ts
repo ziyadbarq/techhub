@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IRelationshipTypeScopeRepository } from "@/core/repositories/relationship-type-scope.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteRelationshipTypeScopeRequest {
   id: string;
@@ -21,7 +22,7 @@ export class DeleteRelationshipTypeScopeUseCase {
     const scope = await this.scopeRepository.findById(request.id);
 
     if (!scope) {
-      throw new Error("Relationship type scope not found");
+      throw new NotFoundError("Relationship type scope not found");
     }
 
     await this.scopeRepository.delete(request.id);

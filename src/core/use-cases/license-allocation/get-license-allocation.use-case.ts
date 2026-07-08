@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseAllocationRepository } from "@/core/repositories/license-allocation.repository.interface";
 import type { LicenseAllocation } from "@/core/domain/entities/license-allocation.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetLicenseAllocationRequest {
   id: string;
@@ -24,7 +25,7 @@ export class GetLicenseAllocationUseCase {
     const allocation = await this.allocationRepository.findById(request.id);
 
     if (!allocation) {
-      throw new Error("License allocation not found");
+      throw new NotFoundError("License allocation not found");
     }
 
     return allocation;

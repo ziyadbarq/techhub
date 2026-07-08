@@ -10,6 +10,7 @@ import type { ICodeGeneratorService } from "@/core/services/code-generator.servi
 import type { LicenseMetricType } from "@/core/domain/entities/license-product.entity";
 import { LicenseProduct } from "@/core/domain/entities/license-product.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateLicenseProductRequest {
   name: string;
@@ -44,7 +45,7 @@ export class CreateLicenseProductUseCase {
     // Validate vendor exists
     const vendor = await this.vendorRepository.findById(request.vendorId);
     if (!vendor) {
-      throw new Error("Vendor not found");
+      throw new NotFoundError("Vendor not found");
     }
 
     // Check for duplicate name

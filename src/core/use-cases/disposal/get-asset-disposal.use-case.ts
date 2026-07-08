@@ -3,6 +3,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
 import type { AssetDisposal } from "@/core/domain/entities/asset-disposal.entity";
 import { LogExecution } from "@/lib/decorators/log-execution.decorator";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetAssetDisposalRequest {
   disposalId: string;
@@ -22,7 +23,9 @@ export class GetAssetDisposalUseCase {
     );
 
     if (!disposal) {
-      throw new Error(`Asset disposal with ID ${request.disposalId} not found`);
+      throw new NotFoundError(
+        `Asset disposal with ID ${request.disposalId} not found`,
+      );
     }
 
     return disposal;

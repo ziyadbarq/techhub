@@ -7,6 +7,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IDataOwnershipRepository } from "@/core/repositories/data-ownership.repository.interface";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
 import type { DataOwnership } from "@/core/domain/entities/data-ownership.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateDataOwnershipRequest {
   id: string;
@@ -34,7 +35,7 @@ export class UpdateDataOwnershipUseCase {
     );
 
     if (!dataOwnership) {
-      throw new Error("Data ownership not found");
+      throw new NotFoundError("Data ownership not found");
     }
 
     // Validate data domain if being updated
@@ -46,7 +47,7 @@ export class UpdateDataOwnershipUseCase {
         request.dataDomainId,
       );
       if (!dataDomain) {
-        throw new Error("Data domain not found");
+        throw new NotFoundError("Data domain not found");
       }
     }
 
@@ -65,7 +66,8 @@ export class UpdateDataOwnershipUseCase {
         : dataOwnership.dataDomainId;
 
     // Validate polymorphic target fields
-    const hasCIClass = targetCiClassId !== null && targetCiClassId !== undefined;
+    const hasCIClass =
+      targetCiClassId !== null && targetCiClassId !== undefined;
     const hasAssetCategory =
       targetAssetCategoryId !== null && targetAssetCategoryId !== undefined;
 

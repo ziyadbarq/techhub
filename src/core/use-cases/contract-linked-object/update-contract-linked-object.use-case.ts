@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IContractLinkedObjectRepository } from "@/core/repositories/contract-linked-object.repository.interface";
 import type { ContractLinkedObject } from "@/core/domain/entities/contract-linked-object.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateContractLinkedObjectRequest {
   id: string;
@@ -25,7 +26,7 @@ export class UpdateContractLinkedObjectUseCase {
     const linkedObject = await this.linkedObjectRepository.findById(request.id);
 
     if (!linkedObject) {
-      throw new Error("Contract linked object not found");
+      throw new NotFoundError("Contract linked object not found");
     }
 
     // Update note (only field that can be updated)

@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IVerificationCampaignRepository } from "@/core/repositories/verification-campaign.repository.interface";
 import type { VerificationCampaign } from "@/core/domain/entities/verification-campaign.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateVerificationCampaignRequest {
   id: string;
@@ -30,7 +31,7 @@ export class UpdateVerificationCampaignUseCase {
     const campaign = await this.campaignRepository.findById(request.id);
 
     if (!campaign) {
-      throw new Error("Verification campaign not found");
+      throw new NotFoundError("Verification campaign not found");
     }
 
     // Update fields
@@ -47,9 +48,15 @@ export class UpdateVerificationCampaignUseCase {
     }
 
     // Update schedule if provided
-    if (request.scheduledStart !== undefined || request.scheduledEnd !== undefined) {
+    if (
+      request.scheduledStart !== undefined ||
+      request.scheduledEnd !== undefined
+    ) {
       const newStart = request.scheduledStart ?? campaign.scheduledStart;
-      const newEnd = request.scheduledEnd !== undefined ? request.scheduledEnd : campaign.scheduledEnd;
+      const newEnd =
+        request.scheduledEnd !== undefined
+          ? request.scheduledEnd
+          : campaign.scheduledEnd;
       campaign.updateSchedule(newStart, newEnd);
     }
 

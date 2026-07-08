@@ -6,6 +6,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteAssetAssignmentUseCase {
@@ -18,7 +19,7 @@ export class DeleteAssetAssignmentUseCase {
     // Check if assignment exists
     const assignment = await this.assetAssignmentRepository.findById(id);
     if (!assignment) {
-      throw new Error(`Asset assignment with ID "${id}" not found`);
+      throw new NotFoundError(`Asset assignment with ID "${id}" not found`);
     }
 
     // Delete the assignment

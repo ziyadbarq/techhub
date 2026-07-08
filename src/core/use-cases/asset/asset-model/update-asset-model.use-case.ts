@@ -6,6 +6,7 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { AssetModel } from "@/core/domain/entities/asset-model.entity";
 import type { IAssetModelRepository } from "@/core/repositories/asset-model.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateAssetModelProps {
   id: string;
@@ -28,7 +29,7 @@ export class UpdateAssetModelUseCase {
   async execute(props: UpdateAssetModelProps): Promise<AssetModel> {
     const assetModel = await this.assetModelRepository.findById(props.id);
     if (!assetModel) {
-      throw new Error(`Asset model with ID "${props.id}" not found`);
+      throw new NotFoundError(`Asset model with ID "${props.id}" not found`);
     }
 
     if (props.code && props.code !== assetModel.code) {

@@ -9,6 +9,7 @@ import type { ILicenseProductRepository } from "@/core/repositories/license-prod
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import { LicenseProductField } from "@/core/domain/entities/license-product-field.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateLicenseProductFieldRequest {
   licenseProductId: string;
@@ -41,7 +42,7 @@ export class CreateLicenseProductFieldUseCase {
       request.licenseProductId,
     );
     if (!licenseProduct) {
-      throw new Error("License product not found");
+      throw new NotFoundError("License product not found");
     }
 
     // Validate field definition exists
@@ -49,7 +50,7 @@ export class CreateLicenseProductFieldUseCase {
       request.fieldDefinitionId,
     );
     if (!fieldDefinition) {
-      throw new Error("Field definition not found");
+      throw new NotFoundError("Field definition not found");
     }
 
     // Check if field already attached to this license product

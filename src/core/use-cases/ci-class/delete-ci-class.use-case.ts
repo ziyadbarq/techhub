@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteCIClassRequest {
   ciClassId: string;
@@ -21,7 +22,9 @@ export class DeleteCIClassUseCase {
     // Verify existence
     const ciClass = await this.ciClassRepository.findById(request.ciClassId);
     if (!ciClass) {
-      throw new Error(`CI class with ID "${request.ciClassId}" not found`);
+      throw new NotFoundError(
+        `CI class with ID "${request.ciClassId}" not found`,
+      );
     }
 
     // Check for child classes

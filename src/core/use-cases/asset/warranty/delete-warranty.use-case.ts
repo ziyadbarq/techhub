@@ -6,6 +6,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IWarrantyRepository } from "@/core/repositories/warranty.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteWarrantyUseCase {
@@ -18,7 +19,7 @@ export class DeleteWarrantyUseCase {
     // Business Rule: Warranty must exist
     const warranty = await this.warrantyRepository.findById(id);
     if (!warranty) {
-      throw new Error(`Warranty with ID "${id}" not found.`);
+      throw new NotFoundError(`Warranty with ID "${id}" not found.`);
     }
 
     // Additional business rules can be added here, for example:

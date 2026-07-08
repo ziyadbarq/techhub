@@ -9,6 +9,7 @@ import type { IContractRepository } from "@/core/repositories/contract.repositor
 import { ContractLinkedObject } from "@/core/domain/entities/contract-linked-object.entity";
 import type { TargetObjectType } from "@/core/domain/entities/contract-linked-object.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateContractLinkedObjectRequest {
   contractId: string;
@@ -35,7 +36,7 @@ export class CreateContractLinkedObjectUseCase {
     // Validate contract exists
     const contract = await this.contractRepository.findById(request.contractId);
     if (!contract) {
-      throw new Error("Contract not found");
+      throw new NotFoundError("Contract not found");
     }
 
     // Check for duplicate link

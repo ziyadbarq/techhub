@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseAddonRepository } from "@/core/repositories/license-addon.repository.interface";
 import type { LicenseAddon } from "@/core/domain/entities/license-addon.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateLicenseAddonRequest {
   id: string;
@@ -24,7 +25,7 @@ export class UpdateLicenseAddonUseCase {
   async execute(request: UpdateLicenseAddonRequest): Promise<LicenseAddon> {
     const addon = await this.addonRepository.findById(request.id);
     if (!addon) {
-      throw new Error("License addon not found");
+      throw new NotFoundError("License addon not found");
     }
 
     addon.update({

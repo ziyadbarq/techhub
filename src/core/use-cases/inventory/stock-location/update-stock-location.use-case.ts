@@ -8,6 +8,7 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { StockLocation } from "@/core/domain/entities/stock-location.entity";
 import type { IStockLocationRepository } from "@/core/repositories/stock-location.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateStockLocationProps {
   id: string;
@@ -35,7 +36,7 @@ export class UpdateStockLocationUseCase {
     // Find existing stock location
     const stockLocation = await this.stockLocationRepository.findById(props.id);
     if (!stockLocation) {
-      throw new Error(`Stock location with ID "${props.id}" not found`);
+      throw new NotFoundError(`Stock location with ID "${props.id}" not found`);
     }
 
     // Check for duplicate code if code is being changed

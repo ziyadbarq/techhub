@@ -3,6 +3,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
 import type { AssetDisposal } from "@/core/domain/entities/asset-disposal.entity";
 import { LogExecution } from "@/lib/decorators/log-execution.decorator";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GenerateCertificateRequest {
   disposalId: string;
@@ -28,7 +29,9 @@ export class GenerateCertificateUseCase {
       request.disposalId,
     );
     if (!disposal) {
-      throw new Error(`Disposal with ID ${request.disposalId} not found`);
+      throw new NotFoundError(
+        `Disposal with ID ${request.disposalId} not found`,
+      );
     }
 
     const certificateNumber = disposal.generateCertificate();

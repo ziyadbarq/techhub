@@ -19,6 +19,7 @@ import { getReportDefinition } from "@/core/domain/reports/report-definitions";
 import type { ReportFilterValues } from "@/core/domain/reports/report-types";
 import type { GenerateReportDataUseCase } from "./generate-report-data.use-case";
 import * as XLSX from "xlsx";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class ExecuteScheduledReportUseCase {
@@ -46,7 +47,7 @@ export class ExecuteScheduledReportUseCase {
   ): Promise<void> {
     const scheduleData = await this.repository.findById(scheduleId);
     if (!scheduleData) {
-      throw new Error(`Schedule not found: ${scheduleId}`);
+      throw new NotFoundError(`Schedule not found: ${scheduleId}`);
     }
 
     if (!scheduleData.isActive) {
@@ -55,7 +56,9 @@ export class ExecuteScheduledReportUseCase {
 
     const definition = getReportDefinition(scheduleData.reportId);
     if (!definition) {
-      throw new Error(`Report definition not found: ${scheduleData.reportId}`);
+      throw new NotFoundError(
+        `Report definition not found: ${scheduleData.reportId}`,
+      );
     }
 
     // Check if required feature flags are still enabled

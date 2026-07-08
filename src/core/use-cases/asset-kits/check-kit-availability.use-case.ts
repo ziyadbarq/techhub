@@ -3,6 +3,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitRepository } from "@/core/repositories/asset-kit.repository.interface";
 import type { IAssetKitItemRepository } from "@/core/repositories/asset-kit-item.repository.interface";
 import type { IAssetKitCheckoutItemRepository } from "@/core/repositories/asset-kit-checkout-item.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CheckKitAvailabilityRequest {
   kitId: string;
@@ -37,7 +38,7 @@ export class CheckKitAvailabilityUseCase {
   ): Promise<CheckKitAvailabilityResponse> {
     const kit = await this.assetKitRepository.findById(request.kitId);
     if (!kit) {
-      throw new Error(`Asset kit with ID ${request.kitId} not found`);
+      throw new NotFoundError(`Asset kit with ID ${request.kitId} not found`);
     }
 
     const kitItems = await this.kitItemRepository.findByKitId(request.kitId);

@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
 import type { CIClass } from "@/core/domain/entities/ci-class.entity";
@@ -34,7 +35,9 @@ export class UpdateCIClassUseCase {
     // Get existing CI class
     const ciClass = await this.ciClassRepository.findById(request.ciClassId);
     if (!ciClass) {
-      throw new Error(`CI class with ID "${request.ciClassId}" not found`);
+      throw new NotFoundError(
+        `CI class with ID "${request.ciClassId}" not found`,
+      );
     }
 
     // Check for duplicate name

@@ -16,6 +16,7 @@ import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import type { IPasswordService } from "@/core/services/password.service.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateUserForPersonRequest {
   personId: string;
@@ -66,7 +67,7 @@ export class CreateUserForPersonUseCase {
     // 1. Validate person exists and is not already linked
     const person = await this.personRepository.findById(request.personId);
     if (!person) {
-      throw new Error(`Person not found: ${request.personId}`);
+      throw new NotFoundError(`Person not found: ${request.personId}`);
     }
 
     if (person.userId) {

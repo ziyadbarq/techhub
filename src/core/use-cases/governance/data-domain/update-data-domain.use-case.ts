@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
 import type { DataDomain } from "@/core/domain/entities/data-domain.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateDataDomainRequest {
   id: string;
@@ -27,14 +28,11 @@ export class UpdateDataDomainUseCase {
     const dataDomain = await this.dataDomainRepository.findById(request.id);
 
     if (!dataDomain) {
-      throw new Error("Data domain not found");
+      throw new NotFoundError("Data domain not found");
     }
 
     // Check for duplicate name if name is being updated
-    if (
-      request.name !== undefined &&
-      request.name !== dataDomain.name
-    ) {
+    if (request.name !== undefined && request.name !== dataDomain.name) {
       const existingByName = await this.dataDomainRepository.existsByName(
         request.name,
         request.id,
@@ -46,10 +44,7 @@ export class UpdateDataDomainUseCase {
     }
 
     // Check for duplicate code if code is being updated
-    if (
-      request.code !== undefined &&
-      request.code !== dataDomain.code
-    ) {
+    if (request.code !== undefined && request.code !== dataDomain.code) {
       const existingByCode = await this.dataDomainRepository.existsByCode(
         request.code,
         request.id,

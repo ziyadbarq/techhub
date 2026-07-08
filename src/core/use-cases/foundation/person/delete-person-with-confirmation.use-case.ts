@@ -16,6 +16,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { IPersonDependencyRepository } from "@/core/repositories/person-dependency.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeletePersonConfirmationRequest {
   id: string;
@@ -72,7 +73,7 @@ export class DeletePersonWithConfirmationUseCase {
     // Check if person exists
     const person = await this.personRepository.findById(request.id);
     if (!person) {
-      throw new Error(`Person with ID "${request.id}" not found`);
+      throw new NotFoundError(`Person with ID "${request.id}" not found`);
     }
 
     // Check all dependencies
@@ -235,7 +236,7 @@ export class DeletePersonWithConfirmationUseCase {
   async executeSoftDelete(id: string): Promise<void> {
     const person = await this.personRepository.findById(id);
     if (!person) {
-      throw new Error(`Person with ID "${id}" not found`);
+      throw new NotFoundError(`Person with ID "${id}" not found`);
     }
 
     // Perform soft delete by setting deletedAt timestamp

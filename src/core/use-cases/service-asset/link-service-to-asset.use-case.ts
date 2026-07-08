@@ -4,6 +4,7 @@ import type { IServiceRepository } from "@/core/repositories/service.repository.
 import type { IServiceAssetRepository } from "@/core/repositories/service-asset.repository.interface";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { AssetRelationship } from "@/generated/prisma";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface LinkServiceToAssetRequest {
   serviceId: string;
@@ -27,12 +28,12 @@ export class LinkServiceToAssetUseCase {
     // Check if service exists
     const service = await this.serviceRepository.findById(request.serviceId);
     if (!service) {
-      throw new Error(`Service with ID ${request.serviceId} not found`);
+      throw new NotFoundError(`Service with ID ${request.serviceId} not found`);
     }
 
     const asset = await this.assetRepository.findById(request.assetId);
     if (!asset) {
-      throw new Error(`Asset with ID ${request.assetId} not found`);
+      throw new NotFoundError(`Asset with ID ${request.assetId} not found`);
     }
 
     // Check if asset exists

@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IVerificationItemRepository } from "@/core/repositories/verification-item.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteVerificationItemRequest {
   id: string;
@@ -24,7 +25,7 @@ export class DeleteVerificationItemUseCase {
     );
 
     if (!verificationItem) {
-      throw new Error("Verification item not found");
+      throw new NotFoundError("Verification item not found");
     }
 
     await this.verificationItemRepository.delete(request.id);
