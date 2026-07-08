@@ -5,6 +5,7 @@
 "use client";
 
 import { useState } from "react";
+import { reservationStatusColors } from "@/lib/utils/status-colors";
 import {
   Dialog,
   DialogContent,
@@ -32,14 +33,6 @@ interface ReservationDetailProps {
   onClose: () => void;
   onSuccess: () => void;
 }
-
-const statusColors: Record<string, string> = {
-  PENDING: "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20",
-  CONFIRMED: "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20",
-  ACTIVE: "bg-green-500/10 text-green-500 hover:bg-green-500/20",
-  COMPLETED: "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20",
-  CANCELLED: "bg-red-500/10 text-red-500 hover:bg-red-500/20",
-};
 
 export function ReservationDetail({
   reservation,
@@ -154,7 +147,7 @@ export function ReservationDetail({
             <DialogTitle>Reservation Details</DialogTitle>
             <Badge
               variant="outline"
-              className={statusColors[reservation.status] || ""}
+              className={reservationStatusColors[reservation.status] || ""}
             >
               {reservation.status}
             </Badge>

@@ -5,6 +5,7 @@
 "use client";
 
 import * as React from "react";
+import { disposalStatusColors } from "@/lib/utils/status-colors";
 import { useState } from "react";
 import {
   Dialog,
@@ -44,16 +45,6 @@ interface DisposalDetailProps {
   onClose: () => void;
   onSuccess: () => void;
 }
-
-const statusColors: Record<string, string> = {
-  PENDING_APPROVAL: "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20",
-  APPROVED: "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20",
-  REJECTED: "bg-red-500/10 text-red-500 hover:bg-red-500/20",
-  IN_PROGRESS: "bg-purple-500/10 text-purple-500 hover:bg-purple-500/20",
-  SANITIZED: "bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20",
-  COMPLETED: "bg-green-500/10 text-green-500 hover:bg-green-500/20",
-  CANCELLED: "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20",
-};
 
 export function DisposalDetail({
   disposal,
@@ -187,7 +178,7 @@ export function DisposalDetail({
               <DialogTitle>Disposal Request Details</DialogTitle>
               <Badge
                 variant="outline"
-                className={statusColors[disposal.status] || ""}
+                className={disposalStatusColors[disposal.status] || ""}
               >
                 {disposal.status.replace(/_/g, " ")}
               </Badge>

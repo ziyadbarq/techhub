@@ -6,6 +6,7 @@
 "use no memo";
 
 import { useState } from "react";
+import { disposalStatusColors } from "@/lib/utils/status-colors";
 import {
   flexRender,
   getCoreRowModel,
@@ -49,16 +50,6 @@ interface AssetDisposalsTableProps {
   onView: (disposal: AssetDisposalDTO) => void;
   onRefresh: () => void;
 }
-
-const statusColors: Record<string, string> = {
-  PENDING_APPROVAL: "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20",
-  APPROVED: "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20",
-  REJECTED: "bg-red-500/10 text-red-500 hover:bg-red-500/20",
-  IN_PROGRESS: "bg-purple-500/10 text-purple-500 hover:bg-purple-500/20",
-  SANITIZED: "bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20",
-  COMPLETED: "bg-green-500/10 text-green-500 hover:bg-green-500/20",
-  CANCELLED: "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20",
-};
 
 const disposalTypeLabels: Record<string, string> = {
   DONATION: "Donation",
@@ -119,7 +110,10 @@ export function AssetDisposalsTable({
       cell: ({ row }) => {
         const status = row.getValue<string>("status");
         return (
-          <Badge variant="outline" className={statusColors[status] || ""}>
+          <Badge
+            variant="outline"
+            className={disposalStatusColors[status] || ""}
+          >
             {status.replace(/_/g, " ")}
           </Badge>
         );
