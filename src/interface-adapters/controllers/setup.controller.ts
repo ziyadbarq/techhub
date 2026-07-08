@@ -5,7 +5,7 @@
 
 "use server";
 
-import { getContainer, isModuleLoaded, loadHeavyModule } from "@/di/container";
+import { getContainer, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -41,9 +41,7 @@ const SYSTEM_ADMIN_ROLE_NAME = "system-administrator";
 async function ensureSystemHealthIntegrationModulesLoaded(): Promise<void> {
   getContainer();
 
-  if (!isModuleLoaded("microsoft-graph")) {
-    await loadHeavyModule("microsoft-graph");
-  }
+  await ensureModuleLoaded("microsoft-graph");
 }
 
 /**
@@ -444,11 +442,14 @@ export async function runSetupSeedAction(
     // Docker env, K8s ConfigMap/Secrets, or Spring Cloud Config). Child process
     // inherits process.env from the parent automatically.
     const { execSync } = await import("child_process");
-    execSync(`node node_modules/tsx/dist/cli.mjs src/infrastructure/database/prisma/seed.ts ${preset}`, {
-      cwd: process.cwd(),
-      stdio: "pipe",
-      timeout: 300_000,
-    });
+    execSync(
+      `node node_modules/tsx/dist/cli.mjs src/infrastructure/database/prisma/seed.ts ${preset}`,
+      {
+        cwd: process.cwd(),
+        stdio: "pipe",
+        timeout: 300_000,
+      },
+    );
 
     const presetDescriptions: Record<SeedPresetOption, string> = {
       production:

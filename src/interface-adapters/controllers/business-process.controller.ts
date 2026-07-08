@@ -8,7 +8,7 @@
 
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
-import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { getContainer, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -41,9 +41,7 @@ export async function createBusinessProcessAction(
 
     const validated = CreateBusinessProcessSchema.parse(data);
 
-    if (!isModuleLoaded("service")) {
-      await loadHeavyModule("service");
-    }
+    await ensureModuleLoaded("service");
     const container = getContainer();
     const useCase = container.get<CreateBusinessProcessUseCase>(
       DI_TOKENS.CreateBusinessProcessUseCase,
@@ -78,9 +76,7 @@ export async function getBusinessProcessAction(
   try {
     await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_VIEW);
 
-    if (!isModuleLoaded("service")) {
-      await loadHeavyModule("service");
-    }
+    await ensureModuleLoaded("service");
     const container = getContainer();
     const useCase = container.get<GetBusinessProcessUseCase>(
       DI_TOKENS.GetBusinessProcessUseCase,
@@ -107,9 +103,7 @@ export async function listBusinessProcessesAction(): Promise<
   try {
     await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_VIEW);
 
-    if (!isModuleLoaded("service")) {
-      await loadHeavyModule("service");
-    }
+    await ensureModuleLoaded("service");
     const container = getContainer();
     const useCase = container.get<ListBusinessProcessesUseCase>(
       DI_TOKENS.ListBusinessProcessesUseCase,
@@ -139,9 +133,7 @@ export async function updateBusinessProcessAction(
 
     const validated = UpdateBusinessProcessSchema.parse(data);
 
-    if (!isModuleLoaded("service")) {
-      await loadHeavyModule("service");
-    }
+    await ensureModuleLoaded("service");
     const container = getContainer();
     const useCase = container.get<UpdateBusinessProcessUseCase>(
       DI_TOKENS.UpdateBusinessProcessUseCase,
@@ -178,9 +170,7 @@ export async function deleteBusinessProcessAction(
   try {
     await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_DELETE);
 
-    if (!isModuleLoaded("service")) {
-      await loadHeavyModule("service");
-    }
+    await ensureModuleLoaded("service");
     const container = getContainer();
     const useCase = container.get<DeleteBusinessProcessUseCase>(
       DI_TOKENS.DeleteBusinessProcessUseCase,
@@ -209,9 +199,7 @@ export async function searchBusinessProcessesAction(
   try {
     await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_VIEW);
 
-    if (!isModuleLoaded("service")) {
-      await loadHeavyModule("service");
-    }
+    await ensureModuleLoaded("service");
     const container = getContainer();
     const useCase = container.get<ListBusinessProcessesUseCase>(
       DI_TOKENS.ListBusinessProcessesUseCase,

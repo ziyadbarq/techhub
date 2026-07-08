@@ -6,19 +6,11 @@
 
 import { revalidatePath } from "next/cache";
 import { handleControllerError } from "./error-handler";
-import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { resolve, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
-/**
- * Ensures the Licenses module is loaded before accessing its use cases
- */
-async function ensureLicensesModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("licenses")) {
-    await loadHeavyModule("licenses");
-  }
-}
 import type { BulkCreateResult } from "./types";
 import type {
   CreateLicenseAllocationDTO,
@@ -54,7 +46,7 @@ export async function createLicenseAllocation(
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = CreateLicenseAllocationSchema.parse(data);
 
@@ -98,7 +90,7 @@ export async function getLicenseAllocation(
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<GetLicenseAllocationUseCase>(
       DI_TOKENS.GetLicenseAllocationUseCase,
@@ -135,7 +127,7 @@ export async function listLicenseAllocations(params?: {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<ListLicenseAllocationsUseCase>(
       DI_TOKENS.ListLicenseAllocationsUseCase,
@@ -169,7 +161,7 @@ export async function updateLicenseAllocation(
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = UpdateLicenseAllocationSchema.parse(data);
 
@@ -209,7 +201,7 @@ export async function deleteLicenseAllocation(
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_DELETE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<DeleteLicenseAllocationUseCase>(
       DI_TOKENS.DeleteLicenseAllocationUseCase,
@@ -242,7 +234,7 @@ export async function deallocateLicenseAllocation(
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_DEALLOCATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = DeallocateLicenseAllocationSchema.parse(data);
 
@@ -284,7 +276,7 @@ export async function reactivateLicenseAllocation(
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_REACTIVATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<ReactivateLicenseAllocationUseCase>(
       DI_TOKENS.ReactivateLicenseAllocationUseCase,
@@ -318,7 +310,7 @@ export async function bulkCreateLicenseAllocationsAction(
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<CreateLicenseAllocationUseCase>(
       DI_TOKENS.CreateLicenseAllocationUseCase,

@@ -5,7 +5,7 @@
 
 "use server";
 
-import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { getContainer, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -423,9 +423,7 @@ export async function getPersonIntuneDevicesAction(
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
 
     // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
-    if (!isModuleLoaded("intune")) {
-      await loadHeavyModule("intune");
-    }
+    await ensureModuleLoaded("intune");
 
     if (!personId) {
       return {
@@ -465,9 +463,7 @@ export async function getPersonLicenseAllocationsAction(
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    if (!isModuleLoaded("licenses")) {
-      await loadHeavyModule("licenses");
-    }
+    await ensureModuleLoaded("licenses");
 
     if (!personId) {
       return { success: false, error: "Person ID is required" };
@@ -793,9 +789,7 @@ export async function getPersonServiceOwnershipsAction(
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
     // Ensure Service module is loaded (HEAVY tier, lazy loaded)
-    if (!isModuleLoaded("service")) {
-      await loadHeavyModule("service");
-    }
+    await ensureModuleLoaded("service");
 
     if (!personId) {
       return { success: false, error: "Person ID is required" };

@@ -6,19 +6,11 @@
 
 import { revalidatePath } from "next/cache";
 import { handleControllerError } from "./error-handler";
-import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { resolve, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
-/**
- * Ensures the Licenses module is loaded before accessing its use cases
- */
-async function ensureLicensesModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("licenses")) {
-    await loadHeavyModule("licenses");
-  }
-}
 import type {
   AttachAddonToEntitlementDTO,
   UpdateEntitlementAddonDTO,
@@ -49,7 +41,7 @@ export async function attachAddonToEntitlement(
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = AttachAddonToEntitlementSchema.parse(data);
 
@@ -90,7 +82,7 @@ export async function detachAddonFromEntitlement(
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<DetachAddonFromEntitlementUseCase>(
       DI_TOKENS.DetachAddonFromEntitlementUseCase,
@@ -123,7 +115,7 @@ export async function updateEntitlementAddon(
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = UpdateEntitlementAddonSchema.parse(data);
 
@@ -167,7 +159,7 @@ export async function listEntitlementAddons(params?: {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<ListEntitlementAddonsUseCase>(
       DI_TOKENS.ListEntitlementAddonsUseCase,
@@ -201,7 +193,7 @@ export async function calculateEntitlementTotalCost(
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<CalculateEntitlementTotalCostUseCase>(
       DI_TOKENS.CalculateEntitlementTotalCostUseCase,

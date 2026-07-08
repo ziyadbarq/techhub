@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { getContainer, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { handleControllerError } from "./error-handler";
 import type { ActionResponse } from "./types";
@@ -29,15 +29,6 @@ import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 /**
- * Ensures the Service module is loaded before accessing its use cases
- */
-async function ensureServiceModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("service")) {
-    await loadHeavyModule("service");
-  }
-}
-
-/**
  * Create a new service relationship
  */
 export async function createServiceRelationshipAction(
@@ -47,7 +38,7 @@ export async function createServiceRelationshipAction(
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
 
     // Ensure Service module is loaded (HEAVY tier, lazy loaded)
-    await ensureServiceModuleLoaded();
+    await ensureModuleLoaded("service");
 
     const validated = CreateServiceRelationshipSchema.parse(data);
 
@@ -91,7 +82,7 @@ export async function getServiceRelationshipAction(
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
     // Ensure Service module is loaded (HEAVY tier, lazy loaded)
-    await ensureServiceModuleLoaded();
+    await ensureModuleLoaded("service");
 
     const container = getContainer();
     const useCase = container.get<GetServiceRelationshipUseCase>(
@@ -130,7 +121,7 @@ export async function updateServiceRelationshipAction(
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
 
     // Ensure Service module is loaded (HEAVY tier, lazy loaded)
-    await ensureServiceModuleLoaded();
+    await ensureModuleLoaded("service");
 
     const validated = UpdateServiceRelationshipSchema.parse(data);
 
@@ -172,7 +163,7 @@ export async function deleteServiceRelationshipAction(
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
 
     // Ensure Service module is loaded (HEAVY tier, lazy loaded)
-    await ensureServiceModuleLoaded();
+    await ensureModuleLoaded("service");
 
     const container = getContainer();
     const useCase = container.get<DeleteServiceRelationshipUseCase>(
@@ -206,7 +197,7 @@ export async function listServiceRelationshipsAction(
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
     // Ensure Service module is loaded (HEAVY tier, lazy loaded)
-    await ensureServiceModuleLoaded();
+    await ensureModuleLoaded("service");
 
     const container = getContainer();
     const useCase = container.get<ListServiceRelationshipsUseCase>(
@@ -242,7 +233,7 @@ export async function getServiceDependenciesAction(
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
     // Ensure Service module is loaded (HEAVY tier, lazy loaded)
-    await ensureServiceModuleLoaded();
+    await ensureModuleLoaded("service");
 
     const container = getContainer();
     const useCase = container.get<GetServiceDependenciesUseCase>(
@@ -272,7 +263,7 @@ export async function getServiceDependentsAction(
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
     // Ensure Service module is loaded (HEAVY tier, lazy loaded)
-    await ensureServiceModuleLoaded();
+    await ensureModuleLoaded("service");
 
     const container = getContainer();
     const useCase = container.get<GetServiceDependentsUseCase>(
@@ -303,7 +294,7 @@ export async function getImpactedServicesAction(
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
     // Ensure Service module is loaded (HEAVY tier, lazy loaded)
-    await ensureServiceModuleLoaded();
+    await ensureModuleLoaded("service");
 
     const container = getContainer();
     const useCase = container.get<GetImpactedServicesUseCase>(

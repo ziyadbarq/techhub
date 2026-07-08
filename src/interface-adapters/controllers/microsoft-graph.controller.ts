@@ -6,21 +6,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { getContainer, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
-/**
- * Ensures the Microsoft Graph module is loaded before accessing its services
- */
-async function ensureMicrosoftGraphModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("microsoft-graph")) {
-    await loadHeavyModule("microsoft-graph");
-  }
-}
 import type { SyncUsersFromGraphUseCase } from "@/core/use-cases/foundation/person";
 import type { CreateOrganizationUnitUseCase } from "@/core/use-cases/foundation/organization-unit";
 import { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
@@ -73,7 +65,7 @@ export async function testGraphConnectionAction(): Promise<
     await requirePermission(PERMISSIONS.PERSONS_SYNC);
 
     // Ensure Microsoft Graph module is loaded (HEAVY tier, lazy loaded)
-    await ensureMicrosoftGraphModuleLoaded();
+    await ensureModuleLoaded("microsoft-graph");
 
     const container = getContainer();
     const graphService = container.get<IMicrosoftGraphService>(
@@ -124,7 +116,7 @@ export async function syncUsersFromGraphAction(
     await requirePermission(PERMISSIONS.PERSONS_SYNC);
 
     // Ensure Microsoft Graph module is loaded (HEAVY tier, lazy loaded)
-    await ensureMicrosoftGraphModuleLoaded();
+    await ensureModuleLoaded("microsoft-graph");
 
     const validated = SyncOptionsSchema.parse(options);
 
@@ -174,7 +166,7 @@ export async function syncPersonFromGraphAction(
     await requirePermission(PERMISSIONS.PERSONS_SYNC);
 
     // Ensure Microsoft Graph module is loaded (HEAVY tier, lazy loaded)
-    await ensureMicrosoftGraphModuleLoaded();
+    await ensureModuleLoaded("microsoft-graph");
 
     if (!personId) {
       return {
@@ -263,7 +255,7 @@ export async function getGraphSyncStatusAction(): Promise<
     await requirePermission(PERMISSIONS.PERSONS_SYNC);
 
     // Ensure Microsoft Graph module is loaded (HEAVY tier, lazy loaded)
-    await ensureMicrosoftGraphModuleLoaded();
+    await ensureModuleLoaded("microsoft-graph");
 
     const configErrors: string[] = [];
 
@@ -307,7 +299,7 @@ export async function getPersonSyncDefaultsAction(): Promise<
     await requirePermission(PERMISSIONS.PERSONS_SYNC);
 
     // Ensure Microsoft Graph module is loaded (HEAVY tier, lazy loaded)
-    await ensureMicrosoftGraphModuleLoaded();
+    await ensureModuleLoaded("microsoft-graph");
 
     const container = getContainer();
     const orgUnitRepo = container.get<IOrganizationUnitRepository>(

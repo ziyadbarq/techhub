@@ -78,6 +78,11 @@ vi.mock("@/di/container", () => ({
   })),
   loadHeavyModule: mockLoadHeavyModule,
   isModuleLoaded: mockIsModuleLoaded,
+  ensureModuleLoaded: vi.fn(async (moduleName: string) => {
+    if (!mockIsModuleLoaded(moduleName)) {
+      await mockLoadHeavyModule(moduleName);
+    }
+  }),
 }));
 
 describe("Setup Controller", () => {

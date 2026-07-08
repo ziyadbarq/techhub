@@ -6,7 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { getContainer, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type {
   CreateLicenseProductFieldUseCase,
@@ -29,14 +29,6 @@ import {
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
-/**
- * Ensures the Licenses module is loaded before accessing its use cases
- */
-async function ensureLicensesModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("licenses")) {
-    await loadHeavyModule("licenses");
-  }
-}
 import type { BulkCreateResult } from "./types";
 import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 
@@ -53,7 +45,7 @@ export async function createLicenseProductField(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     // Validate input
     const validatedData = CreateLicenseProductFieldSchema.parse(data);
@@ -98,7 +90,7 @@ export async function getLicenseProductField(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<GetLicenseProductFieldUseCase>(
@@ -135,7 +127,7 @@ export async function listLicenseProductFields(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<ListLicenseProductFieldsUseCase>(
@@ -173,7 +165,7 @@ export async function updateLicenseProductField(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     // Validate input
     const validatedData = UpdateLicenseProductFieldSchema.parse(data);
@@ -216,7 +208,7 @@ export async function deleteLicenseProductField(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_DELETE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<DeleteLicenseProductFieldUseCase>(
@@ -253,7 +245,7 @@ export async function bulkCreateLicenseProductFieldsAction(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<CreateLicenseProductFieldUseCase>(
@@ -321,7 +313,7 @@ export async function listEnrichedLicenseProductFieldsAction(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     // Use repository directly for enriched query
     const container = getContainer();
