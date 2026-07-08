@@ -7,6 +7,7 @@ import { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.enti
 import type { AssigneeType } from "@/core/domain/entities/asset-kit-checkout.entity";
 import { AssetKitCheckoutItem } from "@/core/domain/entities/asset-kit-checkout-item.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import type { IUnitOfWork } from "@/core/services/unit-of-work.service.interface";
 
 export interface CreateKitCheckoutRequest {
   kitId: string;
@@ -31,6 +32,8 @@ export class CreateKitCheckoutUseCase {
 
     @inject(DI_TOKENS.IIdGenerator)
     private readonly idGenerator: IIdGenerator,
+    @inject(DI_TOKENS.IUnitOfWork)
+    private readonly unitOfWork: IUnitOfWork,
   ) {}
 
   async execute(request: CreateKitCheckoutRequest): Promise<AssetKitCheckout> {
@@ -69,21 +72,26 @@ export class CreateKitCheckoutUseCase {
       this.idGenerator,
     );
 
-    const createdCheckout = await this.kitCheckoutRepository.create(checkout);
+    // The checkout header and its items commit atomically: a failure while
+    // creating any item rolls back the whole checkout instead of leaving an
+    // orphaned header with a partial item list.
+    return this.unitOfWork.execute(async () => {
+      const createdCheckout = await this.kitCheckoutRepository.create(checkout);
 
-    // Create checkout items for each asset (when assets are explicitly provided)
-    for (let i = 0; i < assetIds.length; i++) {
-      const checkoutItem = AssetKitCheckoutItem.create(
-        {
-          kitCheckoutId: createdCheckout.id,
-          assetId: assetIds[i],
-          kitItemId: kitItemIds[i] ?? kitItems[i]?.id ?? assetIds[i],
-        },
-        this.idGenerator,
-      );
-      await this.checkoutItemRepository.create(checkoutItem);
-    }
+      // Create checkout items for each asset (when assets are explicitly provided)
+      for (let i = 0; i < assetIds.length; i++) {
+        const checkoutItem = AssetKitCheckoutItem.create(
+          {
+            kitCheckoutId: createdCheckout.id,
+            assetId: assetIds[i],
+            kitItemId: kitItemIds[i] ?? kitItems[i]?.id ?? assetIds[i],
+          },
+          this.idGenerator,
+        );
+        await this.checkoutItemRepository.create(checkoutItem);
+      }
 
-    return createdCheckout;
+      return createdCheckout;
+    });
   }
 }
