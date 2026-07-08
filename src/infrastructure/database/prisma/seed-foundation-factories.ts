@@ -511,54 +511,6 @@ export async function createVendorContacts(
 }
 
 // ==============================================
-// Person Role Assignments Factory
-// ==============================================
-
-export interface PersonRoleAssignmentData {
-  personEmail: string;
-  roleName: string;
-  isPrimary?: boolean;
-  scope?: string;
-  personName?: string;
-}
-
-export async function createPersonRoleAssignments(
-  prisma: PrismaClient,
-  assignments: readonly PersonRoleAssignmentData[] | PersonRoleAssignmentData[],
-  personEmailMap: Map<string, string>,
-  personNameMap?: Map<string, string>,
-) {
-  const uniqueRoles = Array.from(
-    new Set(assignments.map((a) => a.roleName)),
-  ).filter(Boolean);
-
-  const roles = await prisma.role.findMany({
-    where: { name: { in: uniqueRoles } },
-  });
-  const roleMap = new Map(roles.map((r) => [r.name, r.id]));
-
-  for (const assignment of assignments) {
-    const personId =
-      personEmailMap.get(assignment.personEmail.toLowerCase()) ||
-      (assignment.personName
-        ? personNameMap?.get(assignment.personName.toLowerCase())
-        : undefined);
-    const roleId = roleMap.get(assignment.roleName);
-
-    if (!personId || !roleId) {
-      console.warn(
-        `⚠️  Skipping role assignment for ${assignment.personEmail} -> ${assignment.roleName} (missing person or role)`,
-      );
-      continue;
-    }
-
-    // NOTE: personRoleAssignment table no longer exists
-    // Role assignments are now managed via BetterAuth and PersonAuthenticationProvider
-    // TODO: Implement role assignment seeding through appropriate authentication flow
-  }
-}
-
-// ==============================================
 // Exchange Rates Factory
 // ==============================================
 

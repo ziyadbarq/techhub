@@ -20,7 +20,6 @@ export interface PersonDependencies {
   reservationsCreated: number;
   reservationsConfirmed: number;
   reservationsCancelled: number;
-  roleAssignments: number;
 }
 
 export interface IPersonDependencyRepository {

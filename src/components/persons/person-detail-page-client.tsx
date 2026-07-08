@@ -214,7 +214,6 @@ export function PersonDetailPageClient({
           personId={person.id}
           reportingChain={reportingChain}
           directReportsCount={counts?.directReports ?? 0}
-          roleAssignmentsCount={counts?.roleAssignments ?? 0}
         />
       ),
     },

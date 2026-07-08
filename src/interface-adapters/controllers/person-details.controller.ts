@@ -29,7 +29,6 @@ import type { PrismaClient } from "@/generated/prisma/server";
  */
 export interface PersonRelationCounts {
   directReports: number;
-  roleAssignments: number;
   intuneDevices: number;
   licenseAllocations: number;
   // Assets & Inventory
@@ -161,16 +160,6 @@ export interface PersonDisposalDTO {
   status: string;
   disposalDate: string | null;
   role: "initiated" | "approved";
-}
-
-export interface PersonRoleAssignmentSummaryDTO {
-  id: string;
-  roleName: string;
-  scope: string | null;
-  startDate: string;
-  endDate: string | null;
-  isPrimary: boolean;
-  isActive: boolean;
 }
 
 export interface PersonAuditLogDTO {
@@ -397,7 +386,6 @@ export async function getPersonRelationCountsAction(
       success: true,
       data: {
         directReports,
-        roleAssignments: 0, // Role assignments removed - Person-Role business relationships deprecated
         intuneDevices,
         licenseAllocations,
         assetReservations,
@@ -1256,36 +1244,6 @@ export async function getPersonAuditLogAction(
       error,
       { function: "getPersonAuditLogAction", personId },
       "Failed to get audit logs for person",
-    );
-  }
-}
-
-/**
- * Get role assignments for a person
- * @deprecated Person-Role business relationships removed. Returns empty array.
- */
-export async function getPersonRoleAssignmentsAction(
-  personId: string,
-): Promise<ActionResponse<PersonRoleAssignmentSummaryDTO[]>> {
-  try {
-    if (!personId) {
-      return {
-        success: false,
-        error: "Person ID is required",
-      };
-    }
-
-    // Person-Role business relationships removed
-    // Role assignments now only exist for RBAC (UserRole table)
-    return {
-      success: true,
-      data: [],
-    };
-  } catch (error) {
-    return handleControllerError(
-      error,
-      { function: "getPersonRoleAssignmentsAction", personId },
-      "Failed to get role assignments for person",
     );
   }
 }

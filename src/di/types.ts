@@ -55,9 +55,6 @@ export const DI_TOKENS = {
   IOrganizationUnitRepository: Symbol.for("IOrganizationUnitRepository"),
   ILocationRepository: Symbol.for("ILocationRepository"),
   IPersonRepository: Symbol.for("IPersonRepository"),
-  IPersonRoleAssignmentRepository: Symbol.for(
-    "IPersonRoleAssignmentRepository",
-  ), // Deprecated: feature removed
   IFieldDefinitionRepository: Symbol.for("IFieldDefinitionRepository"),
   IFieldTemplateRepository: Symbol.for("IFieldTemplateRepository"),
   IExchangeRateRepository: Symbol.for("IExchangeRateRepository"),
@@ -407,21 +404,6 @@ export const DI_TOKENS = {
   GetReportingChainUseCase: Symbol.for("GetReportingChainUseCase"),
   GetDirectReportsUseCase: Symbol.for("GetDirectReportsUseCase"),
   GetRootEmployeesUseCase: Symbol.for("GetRootEmployeesUseCase"),
-
-  // Foundation: Person Role Assignment Use Cases
-  CreatePersonRoleAssignmentUseCase: Symbol.for(
-    "CreatePersonRoleAssignmentUseCase",
-  ),
-  GetPersonRoleAssignmentUseCase: Symbol.for("GetPersonRoleAssignmentUseCase"),
-  ListPersonRoleAssignmentsUseCase: Symbol.for(
-    "ListPersonRoleAssignmentsUseCase",
-  ),
-  UpdatePersonRoleAssignmentUseCase: Symbol.for(
-    "UpdatePersonRoleAssignmentUseCase",
-  ),
-  DeletePersonRoleAssignmentUseCase: Symbol.for(
-    "DeletePersonRoleAssignmentUseCase",
-  ),
 
   // Foundation: Field Definition Use Cases
   CreateFieldDefinitionUseCase: Symbol.for("CreateFieldDefinitionUseCase"),

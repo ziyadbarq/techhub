@@ -156,7 +156,7 @@ export const MODULE_METADATA: Record<SeedModule, SeedModuleMetadata> = {
     description: "21 demo persons for development (production uses Graph sync)",
     estimatedTime: 1,
     dependencies: [SeedModule.RBAC, SeedModule.FOUNDATION],
-    tables: ["PersonRoleAssignment", "Person"],
+    tables: ["Person"],
   },
 
   [SeedModule.DEMO_ASSETS]: {

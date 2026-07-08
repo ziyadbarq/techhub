@@ -43,7 +43,6 @@ export interface PersonDependencies {
   reservationsCreated: number;
   reservationsConfirmed: number;
   reservationsCancelled: number;
-  roleAssignments: number;
 }
 
 export interface DeletePersonConfirmationResponse {
@@ -205,12 +204,6 @@ export class DeletePersonWithConfirmationUseCase {
     if (dependencies.attachments > 0) {
       warnings.push(
         `${dependencies.attachments} attachment(s) will be preserved.`,
-      );
-    }
-
-    if (dependencies.roleAssignments > 0) {
-      warnings.push(
-        `${dependencies.roleAssignments} role assignment(s) will be removed.`,
       );
     }
 

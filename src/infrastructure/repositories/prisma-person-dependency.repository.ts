@@ -6,9 +6,7 @@ import type {
 } from "@/core/repositories/person-dependency.repository.interface";
 
 @injectable()
-export class PrismaPersonDependencyRepository
-  implements IPersonDependencyRepository
-{
+export class PrismaPersonDependencyRepository implements IPersonDependencyRepository {
   async getDependencies(personId: string): Promise<PersonDependencies> {
     const [
       userAccount,
@@ -89,7 +87,6 @@ export class PrismaPersonDependencyRepository
       reservationsCreated,
       reservationsConfirmed,
       reservationsCancelled,
-      roleAssignments: 0,
     };
   }
 

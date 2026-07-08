@@ -246,11 +246,6 @@ function getPermissionDescription(permission?: string): string | null {
     "persons:update": "Edit person information",
     "persons:delete": "Delete person records",
 
-    "person-role-assignments:view": "View person role assignments",
-    "person-role-assignments:create": "Assign roles to persons",
-    "person-role-assignments:update": "Edit role assignments",
-    "person-role-assignments:delete": "Remove role assignments",
-
     "locations:view": "View physical locations",
     "locations:create": "Create new locations",
     "locations:update": "Edit location information",
