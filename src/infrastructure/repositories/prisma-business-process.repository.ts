@@ -2,25 +2,29 @@
  * Prisma BusinessProcess Repository Implementation
  */
 
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { IBusinessProcessRepository } from "@/core/repositories/business-process.repository.interface";
 import { BusinessProcess } from "@/core/domain/entities/business-process.entity";
-import { prisma } from "@/infrastructure/database/prisma/client";
 import type { BusinessProcess as PrismaBusinessProcess } from "@/generated/prisma";
 import { createRepositoryLogger } from "./repository-logger";
 import { toJsonValue, fromJsonValue } from "./prisma-helpers";
 
 @injectable()
-export class PrismaBusinessProcessRepository
-  implements IBusinessProcessRepository
-{
+export class PrismaBusinessProcessRepository implements IBusinessProcessRepository {
   private readonly logger = createRepositoryLogger("BusinessProcessRepository");
+
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
 
   async create(businessProcess: BusinessProcess): Promise<BusinessProcess> {
     const timer = this.logger.startTimer();
 
     try {
-      const created = await prisma.businessProcess.create({
+      const created = await this.prisma.businessProcess.create({
         data: {
           id: businessProcess.id,
           code: businessProcess.code,
@@ -46,7 +50,7 @@ export class PrismaBusinessProcessRepository
   }
 
   async findById(id: string): Promise<BusinessProcess | null> {
-    const businessProcess = await prisma.businessProcess.findUnique({
+    const businessProcess = await this.prisma.businessProcess.findUnique({
       where: { id },
     });
 
@@ -54,7 +58,7 @@ export class PrismaBusinessProcessRepository
   }
 
   async findByCode(code: string): Promise<BusinessProcess | null> {
-    const businessProcess = await prisma.businessProcess.findUnique({
+    const businessProcess = await this.prisma.businessProcess.findUnique({
       where: { code: code.toUpperCase() },
     });
 
@@ -67,7 +71,7 @@ export class PrismaBusinessProcessRepository
     orderBy?: "name" | "code" | "category" | "createdAt";
     order?: "asc" | "desc";
   }): Promise<BusinessProcess[]> {
-    const businessProcesses = await prisma.businessProcess.findMany({
+    const businessProcesses = await this.prisma.businessProcess.findMany({
       skip: options?.skip,
       take: options?.take,
       orderBy: options?.orderBy
@@ -82,7 +86,7 @@ export class PrismaBusinessProcessRepository
     const timer = this.logger.startTimer();
 
     try {
-      const updated = await prisma.businessProcess.update({
+      const updated = await this.prisma.businessProcess.update({
         where: { id: businessProcess.id },
         data: {
           code: businessProcess.code,
@@ -109,7 +113,7 @@ export class PrismaBusinessProcessRepository
     const timer = this.logger.startTimer();
 
     try {
-      await prisma.businessProcess.delete({
+      await this.prisma.businessProcess.delete({
         where: { id },
       });
 
@@ -129,7 +133,7 @@ export class PrismaBusinessProcessRepository
       where.id = { not: excludeId };
     }
 
-    const count = await prisma.businessProcess.count({ where });
+    const count = await this.prisma.businessProcess.count({ where });
     return count > 0;
   }
 
@@ -140,7 +144,7 @@ export class PrismaBusinessProcessRepository
       take?: number;
     },
   ): Promise<BusinessProcess[]> {
-    const businessProcesses = await prisma.businessProcess.findMany({
+    const businessProcesses = await this.prisma.businessProcess.findMany({
       where: {
         OR: [
           {
@@ -172,7 +176,7 @@ export class PrismaBusinessProcessRepository
   }
 
   async count(): Promise<number> {
-    return prisma.businessProcess.count();
+    return this.prisma.businessProcess.count();
   }
 
   private toDomain(

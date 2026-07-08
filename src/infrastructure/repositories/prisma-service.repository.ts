@@ -2,10 +2,11 @@
  * Prisma Service Repository Implementation
  */
 
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import { Service } from "@/core/domain/entities/service.entity";
-import { prisma } from "@/infrastructure/database/prisma/client";
 import type {
   Service as PrismaService,
   ServiceType,
@@ -19,11 +20,16 @@ import { toJsonValue, fromJsonValue } from "./prisma-helpers";
 export class PrismaServiceRepository implements IServiceRepository {
   private readonly logger = createRepositoryLogger("ServiceRepository");
 
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
+
   async create(service: Service): Promise<Service> {
     const timer = this.logger.startTimer();
 
     try {
-      const created = await prisma.service.create({
+      const created = await this.prisma.service.create({
         data: {
           id: service.id,
           name: service.name,
@@ -80,7 +86,7 @@ export class PrismaServiceRepository implements IServiceRepository {
   }
 
   async findById(id: string): Promise<Service | null> {
-    const service = await prisma.service.findUnique({
+    const service = await this.prisma.service.findUnique({
       where: { id },
       include: {
         vendor: true,
@@ -108,7 +114,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     orderBy?: "name" | "serviceType" | "currentStatus" | "createdAt";
     order?: "asc" | "desc";
   }): Promise<Service[]> {
-    const services = await prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       skip: options?.skip,
       take: options?.take,
       orderBy: options?.orderBy
@@ -138,7 +144,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     const timer = this.logger.startTimer();
 
     try {
-      const updated = await prisma.service.update({
+      const updated = await this.prisma.service.update({
         where: { id: service.id },
         data: {
           name: service.name,
@@ -195,7 +201,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     const timer = this.logger.startTimer();
 
     try {
-      await prisma.service.delete({
+      await this.prisma.service.delete({
         where: { id },
       });
 
@@ -210,7 +216,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     type: ServiceType,
     options?: { skip?: number; take?: number },
   ): Promise<Service[]> {
-    const services = await prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       where: { serviceType: type },
       skip: options?.skip,
       take: options?.take,
@@ -239,7 +245,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     status: ServiceStatus,
     options?: { skip?: number; take?: number },
   ): Promise<Service[]> {
-    const services = await prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       where: { currentStatus: status },
       skip: options?.skip,
       take: options?.take,
@@ -268,7 +274,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     criticality: CriticalityLevel,
     options?: { skip?: number; take?: number },
   ): Promise<Service[]> {
-    const services = await prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       where: { criticality },
       skip: options?.skip,
       take: options?.take,
@@ -297,7 +303,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     skip?: number;
     take?: number;
   }): Promise<Service[]> {
-    const services = await prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       where: { isEssentialService: true },
       skip: options?.skip,
       take: options?.take,
@@ -326,7 +332,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     personId: string,
     options?: { skip?: number; take?: number },
   ): Promise<Service[]> {
-    const services = await prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       where: {
         owners: {
           some: {
@@ -361,7 +367,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     vendorId: string,
     options?: { skip?: number; take?: number },
   ): Promise<Service[]> {
-    const services = await prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       where: { vendorId },
       skip: options?.skip,
       take: options?.take,
@@ -390,7 +396,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     businessProcessId: string,
     options?: { skip?: number; take?: number },
   ): Promise<Service[]> {
-    const services = await prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       where: { businessProcessId },
       skip: options?.skip,
       take: options?.take,
@@ -423,7 +429,7 @@ export class PrismaServiceRepository implements IServiceRepository {
     const futureDate = new Date();
     futureDate.setDate(now.getDate() + daysThreshold);
 
-    const services = await prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       where: {
         plannedDecommissionDate: {
           gte: now,
@@ -460,7 +466,7 @@ export class PrismaServiceRepository implements IServiceRepository {
       take?: number;
     },
   ): Promise<Service[]> {
-    const services = await prisma.service.findMany({
+    const services = await this.prisma.service.findMany({
       where: {
         OR: [
           {
@@ -507,23 +513,23 @@ export class PrismaServiceRepository implements IServiceRepository {
   }
 
   async count(): Promise<number> {
-    return prisma.service.count();
+    return this.prisma.service.count();
   }
 
   async countByType(type: ServiceType): Promise<number> {
-    return prisma.service.count({
+    return this.prisma.service.count({
       where: { serviceType: type },
     });
   }
 
   async countByStatus(status: ServiceStatus): Promise<number> {
-    return prisma.service.count({
+    return this.prisma.service.count({
       where: { currentStatus: status },
     });
   }
 
   async countEssential(): Promise<number> {
-    return prisma.service.count({
+    return this.prisma.service.count({
       where: { isEssentialService: true },
     });
   }
@@ -537,7 +543,7 @@ export class PrismaServiceRepository implements IServiceRepository {
       where.id = { not: excludeId };
     }
 
-    const count = await prisma.service.count({ where });
+    const count = await this.prisma.service.count({ where });
     return count > 0;
   }
 

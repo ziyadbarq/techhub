@@ -1,5 +1,6 @@
-import { injectable } from "inversify";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type {
   IPersonDependencyRepository,
   PersonDependencies,
@@ -7,6 +8,10 @@ import type {
 
 @injectable()
 export class PrismaPersonDependencyRepository implements IPersonDependencyRepository {
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
   async getDependencies(personId: string): Promise<PersonDependencies> {
     const [
       userAccount,
@@ -31,36 +36,46 @@ export class PrismaPersonDependencyRepository implements IPersonDependencyReposi
       reservationsConfirmed,
       reservationsCancelled,
     ] = await Promise.all([
-      prisma.person.findFirst({
+      this.prisma.person.findFirst({
         where: { id: personId, userId: { not: null } },
         select: { id: true },
       }),
-      prisma.organizationUnit.count({ where: { managerId: personId } }),
-      prisma.person.count({ where: { managerId: personId } }),
-      prisma.configurationItem.count({
+      this.prisma.organizationUnit.count({ where: { managerId: personId } }),
+      this.prisma.person.count({ where: { managerId: personId } }),
+      this.prisma.configurationItem.count({
         where: { primaryOwnerPersonId: personId },
       }),
-      prisma.stockMovement.count({ where: { performedById: personId } }),
-      prisma.verificationCampaign.count({ where: { createdById: personId } }),
-      prisma.verificationItem.count({ where: { verifierPersonId: personId } }),
-      prisma.auditLogEntry.count({ where: { changedById: personId } }),
-      prisma.attachment.count({ where: { uploadedById: personId } }),
-      prisma.dataOwnership.count({ where: { ownerPersonId: personId } }),
-      prisma.maintenanceSchedule.count({ where: { assignedToId: personId } }),
-      prisma.maintenanceRecord.count({ where: { performedById: personId } }),
-      prisma.assetDisposal.count({ where: { initiatedById: personId } }),
-      prisma.assetDisposal.count({ where: { approvedById: personId } }),
-      prisma.disposalApproval.count({ where: { approverId: personId } }),
-      prisma.disposalDocument.count({ where: { uploadedById: personId } }),
-      prisma.assetKitCheckout.count({ where: { checkedOutById: personId } }),
-      prisma.assetReservation.count({
+      this.prisma.stockMovement.count({ where: { performedById: personId } }),
+      this.prisma.verificationCampaign.count({
+        where: { createdById: personId },
+      }),
+      this.prisma.verificationItem.count({
+        where: { verifierPersonId: personId },
+      }),
+      this.prisma.auditLogEntry.count({ where: { changedById: personId } }),
+      this.prisma.attachment.count({ where: { uploadedById: personId } }),
+      this.prisma.dataOwnership.count({ where: { ownerPersonId: personId } }),
+      this.prisma.maintenanceSchedule.count({
+        where: { assignedToId: personId },
+      }),
+      this.prisma.maintenanceRecord.count({
+        where: { performedById: personId },
+      }),
+      this.prisma.assetDisposal.count({ where: { initiatedById: personId } }),
+      this.prisma.assetDisposal.count({ where: { approvedById: personId } }),
+      this.prisma.disposalApproval.count({ where: { approverId: personId } }),
+      this.prisma.disposalDocument.count({ where: { uploadedById: personId } }),
+      this.prisma.assetKitCheckout.count({
+        where: { checkedOutById: personId },
+      }),
+      this.prisma.assetReservation.count({
         where: { reservedForPersonId: personId },
       }),
-      prisma.assetReservation.count({ where: { reservedById: personId } }),
-      prisma.assetReservation.count({
+      this.prisma.assetReservation.count({ where: { reservedById: personId } }),
+      this.prisma.assetReservation.count({
         where: { reservedById: personId, status: "CONFIRMED" },
       }),
-      prisma.assetReservation.count({
+      this.prisma.assetReservation.count({
         where: { reservedById: personId, status: "CANCELLED" },
       }),
     ]);
@@ -91,13 +106,13 @@ export class PrismaPersonDependencyRepository implements IPersonDependencyReposi
   }
 
   async countActiveMaintenanceSchedules(personId: string): Promise<number> {
-    return prisma.maintenanceSchedule.count({
+    return this.prisma.maintenanceSchedule.count({
       where: { assignedToId: personId, isActive: true },
     });
   }
 
   async countActiveReservations(personId: string): Promise<number> {
-    return prisma.assetReservation.count({
+    return this.prisma.assetReservation.count({
       where: {
         reservedForPersonId: personId,
         status: { in: ["PENDING", "CONFIRMED"] },

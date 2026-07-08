@@ -2,20 +2,25 @@
  * Prisma CIClassField Repository Implementation
  */
 
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type {
   CIClassFieldWithDefinition,
   ICIClassFieldRepository,
 } from "@/core/repositories/ci-class-field.repository.interface";
 import { CIClassField } from "@/core/domain/entities/ci-class-field.entity";
-import { prisma } from "@/infrastructure/database/prisma/client";
 import type { CIClassField as PrismaCIClassField } from "@/generated/prisma";
 import { toJsonValue } from "./prisma-helpers";
 
 @injectable()
 export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
   async create(ciClassField: CIClassField): Promise<CIClassField> {
-    const created = await prisma.cIClassField.create({
+    const created = await this.prisma.cIClassField.create({
       data: {
         ciClassId: ciClassField.ciClassId,
         fieldDefinitionId: ciClassField.fieldDefinitionId,
@@ -32,7 +37,7 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
   }
 
   async findById(id: string): Promise<CIClassField | null> {
-    const ciClassField = await prisma.cIClassField.findUnique({
+    const ciClassField = await this.prisma.cIClassField.findUnique({
       where: { id },
     });
 
@@ -40,7 +45,7 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
   }
 
   async findByCIClassId(ciClassId: string): Promise<CIClassField[]> {
-    const ciClassFields = await prisma.cIClassField.findMany({
+    const ciClassFields = await this.prisma.cIClassField.findMany({
       where: { ciClassId },
       orderBy: { uiOrder: "asc" },
     });
@@ -52,7 +57,7 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
     ciClassId: string,
     fieldDefinitionId: string,
   ): Promise<CIClassField | null> {
-    const ciClassField = await prisma.cIClassField.findUnique({
+    const ciClassField = await this.prisma.cIClassField.findUnique({
       where: {
         ciClassId_fieldDefinitionId: {
           ciClassId,
@@ -67,7 +72,7 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
   async findByFieldDefinitionId(
     fieldDefinitionId: string,
   ): Promise<CIClassField[]> {
-    const ciClassFields = await prisma.cIClassField.findMany({
+    const ciClassFields = await this.prisma.cIClassField.findMany({
       where: { fieldDefinitionId },
       orderBy: { ciClassId: "asc" },
     });
@@ -76,7 +81,7 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
   }
 
   async findAll(): Promise<CIClassField[]> {
-    const ciClassFields = await prisma.cIClassField.findMany({
+    const ciClassFields = await this.prisma.cIClassField.findMany({
       orderBy: [{ ciClassId: "asc" }, { uiOrder: "asc" }],
     });
 
@@ -84,7 +89,7 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
   }
 
   async update(ciClassField: CIClassField): Promise<CIClassField> {
-    const updated = await prisma.cIClassField.update({
+    const updated = await this.prisma.cIClassField.update({
       where: { id: ciClassField.id },
       data: {
         isRequired: ciClassField.isRequired,
@@ -101,13 +106,13 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await prisma.cIClassField.delete({
+    await this.prisma.cIClassField.delete({
       where: { id },
     });
   }
 
   async exists(ciClassId: string, fieldDefinitionId: string): Promise<boolean> {
-    const count = await prisma.cIClassField.count({
+    const count = await this.prisma.cIClassField.count({
       where: {
         ciClassId,
         fieldDefinitionId,
@@ -118,7 +123,7 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
   }
 
   async countByCIClassId(ciClassId: string): Promise<number> {
-    return await prisma.cIClassField.count({
+    return await this.prisma.cIClassField.count({
       where: { ciClassId },
     });
   }
@@ -135,7 +140,7 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
     ciClassId: string,
   ): Promise<CIClassFieldWithDefinition[]> {
     // 1. Get class-specific fields from CIClassField
-    const classFields = await prisma.cIClassField.findMany({
+    const classFields = await this.prisma.cIClassField.findMany({
       where: { ciClassId },
       orderBy: { uiOrder: "asc" },
       include: {
@@ -157,7 +162,7 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
 
     // 2. Get global CONFIGURATION_ITEM fields that aren't already linked to this class
     const linkedFieldIds = classFields.map((f) => f.fieldDefinitionId);
-    const globalFields = await prisma.fieldDefinition.findMany({
+    const globalFields = await this.prisma.fieldDefinition.findMany({
       where: {
         entityType: "CONFIGURATION_ITEM",
         isGlobal: true,

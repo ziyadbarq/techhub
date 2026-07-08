@@ -1,14 +1,17 @@
-import { injectable } from "inversify";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type {
   AssetDependencies,
   IAssetDependencyRepository,
 } from "@/core/repositories/asset-dependency.repository.interface";
 
 @injectable()
-export class PrismaAssetDependencyRepository
-  implements IAssetDependencyRepository
-{
+export class PrismaAssetDependencyRepository implements IAssetDependencyRepository {
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
   async getDependencies(assetId: string): Promise<AssetDependencies> {
     const [
       warranties,
@@ -21,15 +24,15 @@ export class PrismaAssetDependencyRepository
       kitCheckoutItems,
       configurationItems,
     ] = await Promise.all([
-      prisma.warranty.count({ where: { assetId } }),
-      prisma.maintenanceSchedule.count({ where: { assetId } }),
-      prisma.maintenanceRecord.count({ where: { assetId } }),
-      prisma.assetAssignment.count({ where: { assetId } }),
-      prisma.stockMovement.count({ where: { assetId } }),
-      prisma.assetDisposal.count({ where: { assetId } }),
-      prisma.assetReservation.count({ where: { assetId } }),
-      prisma.assetKitCheckoutItem.count({ where: { assetId } }),
-      prisma.serviceAsset.count({ where: { assetId } }),
+      this.prisma.warranty.count({ where: { assetId } }),
+      this.prisma.maintenanceSchedule.count({ where: { assetId } }),
+      this.prisma.maintenanceRecord.count({ where: { assetId } }),
+      this.prisma.assetAssignment.count({ where: { assetId } }),
+      this.prisma.stockMovement.count({ where: { assetId } }),
+      this.prisma.assetDisposal.count({ where: { assetId } }),
+      this.prisma.assetReservation.count({ where: { assetId } }),
+      this.prisma.assetKitCheckoutItem.count({ where: { assetId } }),
+      this.prisma.serviceAsset.count({ where: { assetId } }),
     ]);
 
     return {
@@ -46,13 +49,13 @@ export class PrismaAssetDependencyRepository
   }
 
   async countActiveReservations(assetId: string): Promise<number> {
-    return prisma.assetReservation.count({
+    return this.prisma.assetReservation.count({
       where: { assetId, status: { in: ["PENDING", "CONFIRMED"] } },
     });
   }
 
   async countActiveDisposals(assetId: string): Promise<number> {
-    return prisma.assetDisposal.count({
+    return this.prisma.assetDisposal.count({
       where: {
         assetId,
         status: { notIn: ["COMPLETED", "CANCELLED", "REJECTED"] },
@@ -61,13 +64,13 @@ export class PrismaAssetDependencyRepository
   }
 
   async countActiveKitCheckouts(assetId: string): Promise<number> {
-    return prisma.assetKitCheckoutItem.count({
+    return this.prisma.assetKitCheckoutItem.count({
       where: { assetId, status: "CHECKED_OUT" },
     });
   }
 
   async countActiveAssignments(assetId: string): Promise<number> {
-    return prisma.assetAssignment.count({
+    return this.prisma.assetAssignment.count({
       where: {
         assetId,
         OR: [{ endDate: null }, { endDate: { gt: new Date() } }],

@@ -2,16 +2,21 @@
  * Prisma ContractType Repository Implementation
  */
 
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { IContractTypeRepository } from "@/core/repositories/contract-type.repository.interface";
 import { ContractType } from "@/core/domain/entities/contract-type.entity";
-import { prisma } from "@/infrastructure/database/prisma/client";
 import type { ContractType as PrismaContractType } from "@/generated/prisma";
 
 @injectable()
 export class PrismaContractTypeRepository implements IContractTypeRepository {
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
   async create(contractType: ContractType): Promise<ContractType> {
-    const created = await prisma.contractType.create({
+    const created = await this.prisma.contractType.create({
       data: {
         name: contractType.name,
         code: contractType.code,
@@ -24,7 +29,7 @@ export class PrismaContractTypeRepository implements IContractTypeRepository {
   }
 
   async findById(id: string): Promise<ContractType | null> {
-    const contractType = await prisma.contractType.findUnique({
+    const contractType = await this.prisma.contractType.findUnique({
       where: { id },
     });
 
@@ -32,7 +37,7 @@ export class PrismaContractTypeRepository implements IContractTypeRepository {
   }
 
   async findByName(name: string): Promise<ContractType | null> {
-    const contractType = await prisma.contractType.findUnique({
+    const contractType = await this.prisma.contractType.findUnique({
       where: { name },
     });
 
@@ -40,7 +45,7 @@ export class PrismaContractTypeRepository implements IContractTypeRepository {
   }
 
   async findByCode(code: string): Promise<ContractType | null> {
-    const contractType = await prisma.contractType.findUnique({
+    const contractType = await this.prisma.contractType.findUnique({
       where: { code },
     });
 
@@ -48,7 +53,7 @@ export class PrismaContractTypeRepository implements IContractTypeRepository {
   }
 
   async findAll(): Promise<ContractType[]> {
-    const contractTypes = await prisma.contractType.findMany({
+    const contractTypes = await this.prisma.contractType.findMany({
       orderBy: { name: "asc" },
     });
 
@@ -56,7 +61,7 @@ export class PrismaContractTypeRepository implements IContractTypeRepository {
   }
 
   async findAllActive(): Promise<ContractType[]> {
-    const contractTypes = await prisma.contractType.findMany({
+    const contractTypes = await this.prisma.contractType.findMany({
       where: { isActive: true },
       orderBy: { name: "asc" },
     });
@@ -65,7 +70,7 @@ export class PrismaContractTypeRepository implements IContractTypeRepository {
   }
 
   async update(contractType: ContractType): Promise<ContractType> {
-    const updated = await prisma.contractType.update({
+    const updated = await this.prisma.contractType.update({
       where: { id: contractType.id },
       data: {
         name: contractType.name,
@@ -80,13 +85,13 @@ export class PrismaContractTypeRepository implements IContractTypeRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await prisma.contractType.delete({
+    await this.prisma.contractType.delete({
       where: { id },
     });
   }
 
   async existsByName(name: string, excludeId?: string): Promise<boolean> {
-    const count = await prisma.contractType.count({
+    const count = await this.prisma.contractType.count({
       where: {
         name,
         ...(excludeId && { id: { not: excludeId } }),
@@ -97,7 +102,7 @@ export class PrismaContractTypeRepository implements IContractTypeRepository {
   }
 
   async existsByCode(code: string, excludeId?: string): Promise<boolean> {
-    const count = await prisma.contractType.count({
+    const count = await this.prisma.contractType.count({
       where: {
         code,
         ...(excludeId && { id: { not: excludeId } }),

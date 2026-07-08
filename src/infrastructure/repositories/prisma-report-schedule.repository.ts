@@ -2,15 +2,20 @@
  * Prisma Report Schedule Repository
  */
 
-import { injectable } from "inversify";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { IReportScheduleRepository } from "@/core/repositories/report-schedule.repository.interface";
 import type { ReportScheduleProps } from "@/core/domain/entities/report-schedule.entity";
 
 @injectable()
 export class PrismaReportScheduleRepository implements IReportScheduleRepository {
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
   async create(data: ReportScheduleProps): Promise<ReportScheduleProps> {
-    const record = await prisma.reportSchedule.create({
+    const record = await this.prisma.reportSchedule.create({
       data: {
         id: data.id,
         reportId: data.reportId,
@@ -34,19 +39,21 @@ export class PrismaReportScheduleRepository implements IReportScheduleRepository
   }
 
   async findById(id: string): Promise<ReportScheduleProps | null> {
-    const record = await prisma.reportSchedule.findUnique({ where: { id } });
+    const record = await this.prisma.reportSchedule.findUnique({
+      where: { id },
+    });
     return record ? this.toDomain(record) : null;
   }
 
   async findAll(): Promise<ReportScheduleProps[]> {
-    const records = await prisma.reportSchedule.findMany({
+    const records = await this.prisma.reportSchedule.findMany({
       orderBy: { createdAt: "desc" },
     });
     return records.map((r) => this.toDomain(r));
   }
 
   async findByCreatedBy(userId: string): Promise<ReportScheduleProps[]> {
-    const records = await prisma.reportSchedule.findMany({
+    const records = await this.prisma.reportSchedule.findMany({
       where: { createdById: userId },
       orderBy: { createdAt: "desc" },
     });
@@ -54,7 +61,7 @@ export class PrismaReportScheduleRepository implements IReportScheduleRepository
   }
 
   async findDueSchedules(now: Date): Promise<ReportScheduleProps[]> {
-    const records = await prisma.reportSchedule.findMany({
+    const records = await this.prisma.reportSchedule.findMany({
       where: {
         isActive: true,
         nextSendAt: { lte: now },
@@ -84,7 +91,7 @@ export class PrismaReportScheduleRepository implements IReportScheduleRepository
     if (data.lastSentAt !== undefined) updateData.lastSentAt = data.lastSentAt;
     if (data.nextSendAt !== undefined) updateData.nextSendAt = data.nextSendAt;
 
-    const record = await prisma.reportSchedule.update({
+    const record = await this.prisma.reportSchedule.update({
       where: { id },
       data: updateData,
     });
@@ -92,7 +99,7 @@ export class PrismaReportScheduleRepository implements IReportScheduleRepository
   }
 
   async delete(id: string): Promise<void> {
-    await prisma.reportSchedule.delete({ where: { id } });
+    await this.prisma.reportSchedule.delete({ where: { id } });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

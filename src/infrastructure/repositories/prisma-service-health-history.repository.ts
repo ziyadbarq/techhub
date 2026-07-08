@@ -2,28 +2,32 @@
  * Prisma Service Health History Repository Implementation
  */
 
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { IServiceHealthHistoryRepository } from "@/core/repositories/service-health-history.repository.interface";
 import { ServiceHealthHistory } from "@/core/domain/entities/service-health-history.entity";
-import { prisma } from "@/infrastructure/database/prisma/client";
 import type { ServiceHealthHistory as PrismaServiceHealthHistory } from "@/generated/prisma";
 import type { ServiceHealthStatus } from "@/generated/prisma";
 import { createRepositoryLogger } from "./repository-logger";
 import { fromJsonValue, toJsonValue } from "./prisma-helpers";
 
 @injectable()
-export class PrismaServiceHealthHistoryRepository
-  implements IServiceHealthHistoryRepository
-{
+export class PrismaServiceHealthHistoryRepository implements IServiceHealthHistoryRepository {
   private readonly logger = createRepositoryLogger(
     "ServiceHealthHistoryRepository",
   );
+
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
 
   async create(history: ServiceHealthHistory): Promise<ServiceHealthHistory> {
     const timer = this.logger.startTimer();
 
     try {
-      const created = await prisma.serviceHealthHistory.create({
+      const created = await this.prisma.serviceHealthHistory.create({
         data: {
           id: history.id,
           serviceId: history.serviceId,
@@ -57,7 +61,7 @@ export class PrismaServiceHealthHistoryRepository
   }
 
   async findById(id: string): Promise<ServiceHealthHistory | null> {
-    const history = await prisma.serviceHealthHistory.findUnique({
+    const history = await this.prisma.serviceHealthHistory.findUnique({
       where: { id },
     });
 
@@ -68,7 +72,7 @@ export class PrismaServiceHealthHistoryRepository
     serviceId: string,
     options?: { skip?: number; take?: number },
   ): Promise<ServiceHealthHistory[]> {
-    const histories = await prisma.serviceHealthHistory.findMany({
+    const histories = await this.prisma.serviceHealthHistory.findMany({
       where: { serviceId },
       skip: options?.skip,
       take: options?.take,
@@ -83,7 +87,7 @@ export class PrismaServiceHealthHistoryRepository
     status: ServiceHealthStatus,
     options?: { skip?: number; take?: number },
   ): Promise<ServiceHealthHistory[]> {
-    const histories = await prisma.serviceHealthHistory.findMany({
+    const histories = await this.prisma.serviceHealthHistory.findMany({
       where: { serviceId, newStatus: status },
       skip: options?.skip,
       take: options?.take,
@@ -97,7 +101,7 @@ export class PrismaServiceHealthHistoryRepository
     serviceId: string,
     limit: number,
   ): Promise<ServiceHealthHistory[]> {
-    const histories = await prisma.serviceHealthHistory.findMany({
+    const histories = await this.prisma.serviceHealthHistory.findMany({
       where: { serviceId },
       orderBy: { checkTimestamp: "desc" },
       take: limit,
@@ -111,7 +115,7 @@ export class PrismaServiceHealthHistoryRepository
     startDate: Date,
     endDate: Date,
   ): Promise<ServiceHealthHistory[]> {
-    const histories = await prisma.serviceHealthHistory.findMany({
+    const histories = await this.prisma.serviceHealthHistory.findMany({
       where: {
         serviceId,
         checkTimestamp: {
@@ -126,11 +130,11 @@ export class PrismaServiceHealthHistoryRepository
   }
 
   async countByServiceId(serviceId: string): Promise<number> {
-    return prisma.serviceHealthHistory.count({ where: { serviceId } });
+    return this.prisma.serviceHealthHistory.count({ where: { serviceId } });
   }
 
   async deleteOlderThan(date: Date): Promise<number> {
-    const result = await prisma.serviceHealthHistory.deleteMany({
+    const result = await this.prisma.serviceHealthHistory.deleteMany({
       where: { checkTimestamp: { lt: date } },
     });
 
