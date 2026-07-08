@@ -42,6 +42,11 @@ const mockCreateTaskUseCase = {
   execute: vi.fn(),
 };
 
+// Mock requirePermission
+vi.mock("@/lib/permissions/server", () => ({
+  requirePermission: vi.fn(),
+}));
+
 // Mock the DI container
 vi.mock("@/di/container", () => ({
   getContainer: vi.fn(() => ({

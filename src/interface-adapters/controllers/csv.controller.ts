@@ -10,6 +10,8 @@
 import { z } from "zod";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
 import type { ICSVService } from "@/core/services";
@@ -40,6 +42,8 @@ export async function exportTasksToCSV(
   tasks: TaskDTO[],
 ): Promise<ActionResponse<string>> {
   try {
+    await requirePermission(PERMISSIONS.TASKS_VIEW);
+
     if (tasks.length === 0) {
       return {
         success: false,
@@ -90,6 +94,8 @@ export async function importTasksFromCSV(csvString: string): Promise<
   }>
 > {
   try {
+    await requirePermission(PERMISSIONS.TASKS_CREATE);
+
     const container = getContainer();
     const csvService = container.get<ICSVService>(DI_TOKENS.ICSVService);
     const createTask = container.get<CreateTaskUseCase>(
@@ -175,6 +181,8 @@ export async function validateTasksCSV(csvString: string): Promise<
   }>
 > {
   try {
+    await requirePermission(PERMISSIONS.TASKS_CREATE);
+
     const container = getContainer();
     const csvService = container.get<ICSVService>(DI_TOKENS.ICSVService);
 
