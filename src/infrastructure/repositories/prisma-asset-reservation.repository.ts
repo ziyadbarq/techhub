@@ -8,9 +8,7 @@ import {
 } from "@/core/domain/entities/asset-reservation.entity";
 
 @injectable()
-export class PrismaAssetReservationRepository
-  implements IAssetReservationRepository
-{
+export class PrismaAssetReservationRepository implements IAssetReservationRepository {
   constructor(
     @inject(DI_TOKENS.PrismaClient)
     private readonly prisma: PrismaClient,
@@ -84,6 +82,16 @@ export class PrismaAssetReservationRepository
     });
 
     return reservations.map((r) => this.toDomain(r));
+  }
+
+  async findByAssetIdForUpdate(assetId: string): Promise<AssetReservation[]> {
+    // Row lock on the asset serializes concurrent reservation attempts for
+    // the duration of the surrounding transaction (no-op outside one).
+    await this.prisma.$queryRaw`
+      SELECT id FROM "assets" WHERE id = ${assetId} FOR UPDATE
+    `;
+
+    return this.findByAssetId(assetId);
   }
 
   async findByStatus(
