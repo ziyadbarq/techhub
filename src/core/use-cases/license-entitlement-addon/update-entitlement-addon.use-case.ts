@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseEntitlementAddonRepository } from "@/core/repositories/license-entitlement-addon.repository.interface";
 import type { LicenseEntitlementAddon } from "@/core/domain/entities/license-entitlement-addon.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateEntitlementAddonRequest {
   id: string;
@@ -28,7 +29,7 @@ export class UpdateEntitlementAddonUseCase {
       request.id,
     );
     if (!entitlementAddon) {
-      throw new Error("Entitlement addon attachment not found");
+      throw new NotFoundError("Entitlement addon attachment not found");
     }
 
     entitlementAddon.update({

@@ -5,12 +5,14 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateAssetInput {
   id: string;
@@ -50,7 +52,7 @@ export class UpdateAssetUseCase {
     // Find existing asset
     const asset = await this.assetRepository.findById(input.id);
     if (!asset) {
-      throw new Error(`Asset with ID "${input.id}" not found`);
+      throw new NotFoundError(`Asset with ID "${input.id}" not found`);
     }
 
     // Capture original location for movement tracking
@@ -63,7 +65,7 @@ export class UpdateAssetUseCase {
         input.id,
       );
       if (existingByTag) {
-        throw new Error(
+        throw new ConflictError(
           `Asset tag "${input.assetTag}" already exists. Asset tags must be unique.`,
         );
       }
@@ -76,7 +78,7 @@ export class UpdateAssetUseCase {
         input.id,
       );
       if (existingBySerial) {
-        throw new Error(
+        throw new ConflictError(
           `Serial number "${input.serialNumber}" already exists. Serial numbers must be unique.`,
         );
       }

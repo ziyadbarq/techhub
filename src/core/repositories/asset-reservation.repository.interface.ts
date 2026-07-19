@@ -31,6 +31,15 @@ export interface IAssetReservationRepository {
   ): Promise<AssetReservation[]>;
 
   /**
+   * Find reservations by asset ID, locking the asset row for the duration
+   * of the surrounding unit of work. Concurrent reservation attempts for
+   * the same asset serialize on this lock, making the one-active-
+   * reservation-per-asset check race-free. Behaves like findByAssetId
+   * outside a unit of work.
+   */
+  findByAssetIdForUpdate(assetId: string): Promise<AssetReservation[]>;
+
+  /**
    * Find reservations by status
    */
   findByStatus(

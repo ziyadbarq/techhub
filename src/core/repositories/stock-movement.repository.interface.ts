@@ -38,6 +38,17 @@ export interface IStockMovementRepository {
   create(stockMovement: StockMovement): Promise<StockMovement>;
 
   /**
+   * Net ACTIVE quantity currently at a stock location, derived from the
+   * movement ledger (quantities moved in minus quantities moved out).
+   *
+   * When called inside a unit of work, acquires a row lock on the stock
+   * location so concurrent movements against the same location serialize;
+   * callers can then safely validate availability before creating an
+   * outbound movement.
+   */
+  getNetQuantityAtLocation(stockLocationId: string): Promise<number>;
+
+  /**
    * Update an existing stock movement (for voiding)
    */
   update(stockMovement: StockMovement): Promise<StockMovement>;

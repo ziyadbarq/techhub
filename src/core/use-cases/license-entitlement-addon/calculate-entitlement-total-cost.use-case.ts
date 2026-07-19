@@ -9,6 +9,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
 import type {
@@ -37,7 +38,7 @@ export class CalculateEntitlementTotalCostUseCase {
     const entitlement =
       await this.entitlementRepository.findById(entitlementId);
     if (!entitlement) {
-      throw new Error("License entitlement not found");
+      throw new NotFoundError("License entitlement not found");
     }
 
     // Calculate base cost

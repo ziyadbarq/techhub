@@ -9,6 +9,7 @@ import type { IUserPreferencesRepository } from "@/core/repositories/user-prefer
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { NotificationPreferences } from "@/core/domain/entities/user-preferences.entity";
 import { LogExecution } from "@/lib/decorators/log-execution.decorator";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateUserPreferencesInput {
   userId: string;
@@ -35,7 +36,7 @@ export class UpdateUserPreferencesUseCase {
     let preferences = await this.preferencesRepository.findByUserId(userId);
 
     if (!preferences) {
-      throw new Error(`User preferences not found for user: ${userId}`);
+      throw new NotFoundError(`User preferences not found for user: ${userId}`);
     }
 
     // Update preferences using entity method

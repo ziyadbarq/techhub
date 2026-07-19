@@ -3,9 +3,13 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseAllocationRepository } from "@/core/repositories/license-allocation.repository.interface";
+import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
+import type { IUnitOfWork } from "@/core/services/unit-of-work.service.interface";
 import type { LicenseAllocation } from "@/core/domain/entities/license-allocation.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateLicenseAllocationRequest {
   id: string;
@@ -18,23 +22,64 @@ export class UpdateLicenseAllocationUseCase {
   constructor(
     @inject(DI_TOKENS.ILicenseAllocationRepository)
     private allocationRepository: ILicenseAllocationRepository,
+    @inject(DI_TOKENS.ILicenseEntitlementRepository)
+    private entitlementRepository: ILicenseEntitlementRepository,
+    @inject(DI_TOKENS.IUnitOfWork)
+    private unitOfWork: IUnitOfWork,
   ) {}
 
   async execute(
     request: UpdateLicenseAllocationRequest,
   ): Promise<LicenseAllocation> {
-    // Find existing allocation
-    const allocation = await this.allocationRepository.findById(request.id);
-    if (!allocation) {
-      throw new Error("License allocation not found");
-    }
+    // Availability re-check and update run in one transaction with a row
+    // lock on the entitlement (same locking discipline as create), so a
+    // quantity increase cannot race other allocations past the seat limit.
+    return this.unitOfWork.execute(async () => {
+      // Find existing allocation
+      const allocation = await this.allocationRepository.findById(request.id);
+      if (!allocation) {
+        throw new NotFoundError("License allocation not found");
+      }
 
-    // Update the allocation
-    allocation.update({
-      allocatedQuantity: request.allocatedQuantity,
-      note: request.note,
+      const increasesConsumption =
+        allocation.isActive() &&
+        request.allocatedQuantity !== undefined &&
+        request.allocatedQuantity > allocation.allocatedQuantity;
+
+      if (increasesConsumption) {
+        const entitlement = await this.entitlementRepository.findByIdForUpdate(
+          allocation.licenseEntitlementId,
+        );
+        if (!entitlement) {
+          throw new NotFoundError("License entitlement not found");
+        }
+
+        const consumedQuantity =
+          await this.allocationRepository.sumActiveAllocatedQuantityByEntitlement(
+            allocation.licenseEntitlementId,
+          );
+        const consumedAfterUpdate =
+          consumedQuantity -
+          allocation.allocatedQuantity +
+          (request.allocatedQuantity as number);
+
+        if (!entitlement.hasAvailableQuantity(consumedAfterUpdate)) {
+          const available =
+            entitlement.calculateAvailableQuantity(consumedQuantity) +
+            allocation.allocatedQuantity;
+          throw new ValidationError(
+            `Insufficient quantity available. Requested: ${request.allocatedQuantity}, Available: ${available}`,
+          );
+        }
+      }
+
+      // Update the allocation
+      allocation.update({
+        allocatedQuantity: request.allocatedQuantity,
+        note: request.note,
+      });
+
+      return this.allocationRepository.update(allocation);
     });
-
-    return await this.allocationRepository.update(allocation);
   }
 }

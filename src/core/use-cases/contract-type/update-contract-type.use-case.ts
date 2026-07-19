@@ -3,9 +3,11 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IContractTypeRepository } from "@/core/repositories/contract-type.repository.interface";
 import type { ContractType } from "@/core/domain/entities/contract-type.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateContractTypeRequest {
   id: string;
@@ -26,7 +28,7 @@ export class UpdateContractTypeUseCase {
     const contractType = await this.contractTypeRepository.findById(request.id);
 
     if (!contractType) {
-      throw new Error("Contract type not found");
+      throw new NotFoundError("Contract type not found");
     }
 
     // Check for duplicate name if name is being updated
@@ -36,7 +38,9 @@ export class UpdateContractTypeUseCase {
         request.id,
       );
       if (existingByName) {
-        throw new Error("A contract type with this name already exists");
+        throw new ConflictError(
+          "A contract type with this name already exists",
+        );
       }
     }
 
@@ -47,7 +51,9 @@ export class UpdateContractTypeUseCase {
         request.id,
       );
       if (existingByCode) {
-        throw new Error("A contract type with this code already exists");
+        throw new ConflictError(
+          "A contract type with this code already exists",
+        );
       }
     }
 

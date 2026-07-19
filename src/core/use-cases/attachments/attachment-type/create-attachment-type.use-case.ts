@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAttachmentTypeRepository } from "@/core/repositories/attachment-type.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
@@ -41,14 +42,18 @@ export class CreateAttachmentTypeUseCase {
       request.name,
     );
     if (existingByName) {
-      throw new Error("An attachment type with this name already exists");
+      throw new ConflictError(
+        "An attachment type with this name already exists",
+      );
     }
 
     // Check for duplicate code
     const existingByCode =
       await this.attachmentTypeRepository.existsByCode(code);
     if (existingByCode) {
-      throw new Error("An attachment type with this code already exists");
+      throw new ConflictError(
+        "An attachment type with this code already exists",
+      );
     }
 
     // Create attachment type entity

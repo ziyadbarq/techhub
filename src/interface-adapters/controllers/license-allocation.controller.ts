@@ -5,20 +5,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { handleControllerError } from "./error-handler";
+import { resolve, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
-/**
- * Ensures the Licenses module is loaded before accessing its use cases
- */
-async function ensureLicensesModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("licenses")) {
-    await loadHeavyModule("licenses");
-  }
-}
-import type { BulkCreateResult } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import type {
   CreateLicenseAllocationDTO,
   UpdateLicenseAllocationDTO,
@@ -45,15 +38,12 @@ import type { AllocationTargetType } from "@/core/domain/entities/license-alloca
  */
 export async function createLicenseAllocation(
   data: CreateLicenseAllocationDTO,
-): Promise<
-  | { success: true; data: LicenseAllocationDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAllocationDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = CreateLicenseAllocationSchema.parse(data);
 
@@ -76,14 +66,11 @@ export async function createLicenseAllocation(
       data: LicenseAllocationPresenter.toDTO(allocation),
     };
   } catch (error) {
-    console.error("Error creating license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to create license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "createLicenseAllocation" },
+      "Failed to create license allocation",
+    );
   }
 }
 
@@ -92,15 +79,12 @@ export async function createLicenseAllocation(
  */
 export async function getLicenseAllocation(
   id: string,
-): Promise<
-  | { success: true; data: LicenseAllocationDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAllocationDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<GetLicenseAllocationUseCase>(
       DI_TOKENS.GetLicenseAllocationUseCase,
@@ -113,14 +97,11 @@ export async function getLicenseAllocation(
       data: LicenseAllocationPresenter.toDTO(allocation),
     };
   } catch (error) {
-    console.error("Error getting license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to get license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "getLicenseAllocation" },
+      "Failed to get license allocation",
+    );
   }
 }
 
@@ -132,15 +113,12 @@ export async function listLicenseAllocations(params?: {
   targetType?: AllocationTargetType;
   targetId?: string;
   activeOnly?: boolean;
-}): Promise<
-  | { success: true; data: LicenseAllocationDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<LicenseAllocationDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<ListLicenseAllocationsUseCase>(
       DI_TOKENS.ListLicenseAllocationsUseCase,
@@ -153,14 +131,11 @@ export async function listLicenseAllocations(params?: {
       data: LicenseAllocationPresenter.toDTOList(allocations),
     };
   } catch (error) {
-    console.error("Error listing license allocations:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to list license allocations",
-    };
+    return handleControllerError(
+      error,
+      { function: "listLicenseAllocations" },
+      "Failed to list license allocations",
+    );
   }
 }
 
@@ -169,15 +144,12 @@ export async function listLicenseAllocations(params?: {
  */
 export async function updateLicenseAllocation(
   data: UpdateLicenseAllocationDTO,
-): Promise<
-  | { success: true; data: LicenseAllocationDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAllocationDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = UpdateLicenseAllocationSchema.parse(data);
 
@@ -199,14 +171,11 @@ export async function updateLicenseAllocation(
       data: LicenseAllocationPresenter.toDTO(allocation),
     };
   } catch (error) {
-    console.error("Error updating license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to update license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "updateLicenseAllocation" },
+      "Failed to update license allocation",
+    );
   }
 }
 
@@ -220,7 +189,7 @@ export async function deleteLicenseAllocation(
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_DELETE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<DeleteLicenseAllocationUseCase>(
       DI_TOKENS.DeleteLicenseAllocationUseCase,
@@ -232,14 +201,11 @@ export async function deleteLicenseAllocation(
 
     return { success: true };
   } catch (error) {
-    console.error("Error deleting license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to delete license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "deleteLicenseAllocation" },
+      "Failed to delete license allocation",
+    );
   }
 }
 
@@ -248,15 +214,12 @@ export async function deleteLicenseAllocation(
  */
 export async function deallocateLicenseAllocation(
   data: DeallocateLicenseAllocationDTO,
-): Promise<
-  | { success: true; data: LicenseAllocationDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAllocationDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_DEALLOCATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = DeallocateLicenseAllocationSchema.parse(data);
 
@@ -277,14 +240,11 @@ export async function deallocateLicenseAllocation(
       data: LicenseAllocationPresenter.toDTO(allocation),
     };
   } catch (error) {
-    console.error("Error deallocating license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to deallocate license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "deallocateLicenseAllocation" },
+      "Failed to deallocate license allocation",
+    );
   }
 }
 
@@ -293,15 +253,12 @@ export async function deallocateLicenseAllocation(
  */
 export async function reactivateLicenseAllocation(
   id: string,
-): Promise<
-  | { success: true; data: LicenseAllocationDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAllocationDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_REACTIVATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<ReactivateLicenseAllocationUseCase>(
       DI_TOKENS.ReactivateLicenseAllocationUseCase,
@@ -317,14 +274,11 @@ export async function reactivateLicenseAllocation(
       data: LicenseAllocationPresenter.toDTO(allocation),
     };
   } catch (error) {
-    console.error("Error reactivating license allocation:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to reactivate license allocation",
-    };
+    return handleControllerError(
+      error,
+      { function: "reactivateLicenseAllocation" },
+      "Failed to reactivate license allocation",
+    );
   }
 }
 
@@ -338,7 +292,7 @@ export async function bulkCreateLicenseAllocationsAction(
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<CreateLicenseAllocationUseCase>(
       DI_TOKENS.CreateLicenseAllocationUseCase,

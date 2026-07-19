@@ -1,4 +1,7 @@
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
+
+const moduleLogger = logger.scope("Encryption");
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY as string;
 const ALGORITHM = "aes-256-gcm";
@@ -50,7 +53,7 @@ export function encrypt(plaintext: string): string {
 
     return result.toString("base64");
   } catch (error) {
-    console.error("Encryption error:", error);
+    moduleLogger.error("handler", "Encryption error:", error);
     throw new Error("Failed to encrypt data");
   }
 }
@@ -91,7 +94,7 @@ export function decrypt(encryptedData: string): string {
 
     return decrypted;
   } catch (error) {
-    console.error("Decryption error:", error);
+    moduleLogger.error("handler", "Decryption error:", error);
     throw new Error("Failed to decrypt data");
   }
 }

@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import {
@@ -7,6 +8,7 @@ import {
 } from "@/core/domain/entities/database-backup.entity";
 import type { IDatabaseBackupRepository } from "@/core/repositories/database-backup.repository.interface";
 import type { ILoggerService } from "@/core/services";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteDatabaseBackupInput {
   backupId: string;
@@ -25,11 +27,11 @@ export class DeleteDatabaseBackupUseCase {
   async execute(input: DeleteDatabaseBackupInput): Promise<DatabaseBackup> {
     const backup = await this.repository.findById(input.backupId);
     if (!backup) {
-      throw new Error("Backup not found");
+      throw new NotFoundError("Backup not found");
     }
 
     if (backup.toJSON().status === BackupStatus.RUNNING) {
-      throw new Error("Cannot delete a backup while it is running");
+      throw new ValidationError("Cannot delete a backup while it is running");
     }
 
     await this.repository.softDelete(input.backupId, input.deletedById);

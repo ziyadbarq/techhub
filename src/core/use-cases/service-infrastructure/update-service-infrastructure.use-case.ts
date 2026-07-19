@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceInfrastructureRepository } from "@/core/repositories/service-infrastructure.repository.interface";
 import type { ILoggerService } from "@/core/services";
@@ -39,7 +40,7 @@ export class UpdateServiceInfrastructureUseCase {
       request.infrastructureId,
     );
     if (!infrastructure) {
-      throw new Error(
+      throw new ValidationError(
         `Service infrastructure with ID ${request.infrastructureId} not found`,
       );
     }

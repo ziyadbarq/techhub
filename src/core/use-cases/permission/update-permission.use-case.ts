@@ -9,6 +9,7 @@ import { inject, injectable } from "inversify";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import { DI_TOKENS } from "@/di/types";
 import type { Permission } from "@/core/domain/entities/permission.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdatePermissionParams {
   id: string;
@@ -29,7 +30,7 @@ export class UpdatePermissionUseCase {
     const permission = await this.permissionRepository.findById(params.id);
 
     if (!permission) {
-      throw new Error("Permission not found");
+      throw new NotFoundError("Permission not found");
     }
 
     // Update permission entity

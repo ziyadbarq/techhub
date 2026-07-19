@@ -1,7 +1,9 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitRepository } from "@/core/repositories/asset-kit.repository.interface";
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteAssetKitRequest {
   kitId: string;
@@ -19,7 +21,7 @@ export class DeleteAssetKitUseCase {
   async execute(request: DeleteAssetKitRequest): Promise<void> {
     const kit = await this.assetKitRepository.findById(request.kitId);
     if (!kit) {
-      throw new Error(`Asset kit with ID ${request.kitId} not found`);
+      throw new NotFoundError(`Asset kit with ID ${request.kitId} not found`);
     }
 
     // Check if kit has active checkouts
@@ -32,7 +34,7 @@ export class DeleteAssetKitUseCase {
         checkout.status === "PARTIALLY_RETURNED",
     );
     if (hasActiveCheckout) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete kit with active checkouts. Please return all items first.",
       );
     }

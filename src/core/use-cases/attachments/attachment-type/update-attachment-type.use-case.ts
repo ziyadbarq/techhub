@@ -3,9 +3,11 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAttachmentTypeRepository } from "@/core/repositories/attachment-type.repository.interface";
 import type { AttachmentType } from "@/core/domain/entities/attachment-type.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateAttachmentTypeRequest {
   id: string;
@@ -30,7 +32,7 @@ export class UpdateAttachmentTypeUseCase {
       request.id,
     );
     if (!attachmentType) {
-      throw new Error("Attachment type not found");
+      throw new NotFoundError("Attachment type not found");
     }
 
     // Check for duplicate name if name is being changed
@@ -40,7 +42,9 @@ export class UpdateAttachmentTypeUseCase {
         request.id,
       );
       if (existingByName) {
-        throw new Error("An attachment type with this name already exists");
+        throw new ConflictError(
+          "An attachment type with this name already exists",
+        );
       }
       attachmentType.name = request.name;
     }
@@ -52,7 +56,9 @@ export class UpdateAttachmentTypeUseCase {
         request.id,
       );
       if (existingByCode) {
-        throw new Error("An attachment type with this code already exists");
+        throw new ConflictError(
+          "An attachment type with this code already exists",
+        );
       }
       attachmentType.code = request.code;
     }

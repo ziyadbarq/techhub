@@ -4,9 +4,12 @@
  */
 
 import { getContainer } from "@/di/container";
+import { logger } from "@/lib/logger";
 import { DI_TOKENS } from "@/di/types";
 import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
+
+const moduleLogger = logger.scope("FeatureAuthUtils");
 
 /**
  * Check if a user is a system administrator
@@ -36,7 +39,11 @@ export async function isUserSystemAdministrator(
     // Check if user has system-administrator role
     return userRoles.some((userRole) => userRole.roleId === adminRole.id);
   } catch (error) {
-    console.error("Error checking if user is system administrator:", error);
+    moduleLogger.error(
+      "handler",
+      "Error checking if user is system administrator:",
+      error,
+    );
     return false;
   }
 }

@@ -310,7 +310,8 @@ openssl rand -hex 32
 # Configure other required variables in .env.local:
 # - DATABASE_URL (PostgreSQL connection string)
 # - REDIS_URL (Redis connection for background jobs)
-# - NEXT_PUBLIC_APP_URL (your application URL)
+# - BETTER_AUTH_URL and NEXT_PUBLIC_APP_URL (same canonical app URL)
+# - TRUSTED_ORIGINS only when you need extra browser origins
 
 # Apply database migrations
 npm run db:migrate

@@ -6,7 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { getContainer, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -31,27 +31,16 @@ import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 /**
- * Ensures the Licenses module is loaded before accessing its use cases
- */
-async function ensureLicensesModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("licenses")) {
-    await loadHeavyModule("licenses");
-  }
-}
-
-/**
  * Create a new license product
  */
 export async function createLicenseProduct(
   data: CreateLicenseProductDTO,
-): Promise<
-  { success: true; data: LicenseProductDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     // Validate input
     const validatedData = CreateLicenseProductSchema.parse(data);
@@ -88,14 +77,12 @@ export async function createLicenseProduct(
  */
 export async function getLicenseProduct(
   id: string,
-): Promise<
-  { success: true; data: LicenseProductDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<GetLicenseProductUseCase>(
@@ -124,15 +111,12 @@ export async function getLicenseProduct(
  */
 export async function listLicenseProducts(options?: {
   vendorId?: string;
-}): Promise<
-  | { success: true; data: LicenseProductDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<LicenseProductDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<ListLicenseProductsUseCase>(
@@ -164,14 +148,12 @@ export async function listLicenseProducts(options?: {
 export async function updateLicenseProduct(
   id: string,
   data: UpdateLicenseProductDTO,
-): Promise<
-  { success: true; data: LicenseProductDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     // Validate input
     const validatedData = UpdateLicenseProductSchema.parse(data);
@@ -215,7 +197,7 @@ export async function deleteLicenseProduct(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_DELETE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<DeleteLicenseProductUseCase>(
@@ -255,7 +237,7 @@ export async function bulkCreateLicenseProductsAction(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<CreateLicenseProductUseCase>(

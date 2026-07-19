@@ -6,6 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { ActionResponse } from "./types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type {
@@ -33,9 +34,7 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
  */
 export async function createDataOwnership(
   data: CreateDataOwnershipDTO,
-): Promise<
-  { success: true; data: DataOwnershipDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<DataOwnershipDTO>> {
   try {
     await requirePermission(PERMISSIONS.DATA_OWNERSHIPS_CREATE);
 
@@ -74,9 +73,7 @@ export async function createDataOwnership(
  */
 export async function getDataOwnership(
   id: string,
-): Promise<
-  { success: true; data: DataOwnershipDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<DataOwnershipDTO>> {
   try {
     await requirePermission(PERMISSIONS.DATA_OWNERSHIPS_VIEW);
 
@@ -109,10 +106,7 @@ export async function listDataOwnerships(options?: {
   assetCategoryId?: string;
   ownerPersonId?: string;
   ownerOrgUnitId?: string;
-}): Promise<
-  | { success: true; data: DataOwnershipDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<DataOwnershipDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.DATA_OWNERSHIPS_VIEW);
 
@@ -131,7 +125,9 @@ export async function listDataOwnerships(options?: {
     return {
       success: false,
       error:
-        error instanceof Error ? error.message : "Failed to list data ownerships",
+        error instanceof Error
+          ? error.message
+          : "Failed to list data ownerships",
     };
   }
 }
@@ -142,9 +138,7 @@ export async function listDataOwnerships(options?: {
 export async function updateDataOwnership(
   id: string,
   data: UpdateDataOwnershipDTO,
-): Promise<
-  { success: true; data: DataOwnershipDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<DataOwnershipDTO>> {
   try {
     await requirePermission(PERMISSIONS.DATA_OWNERSHIPS_UPDATE);
 

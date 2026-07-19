@@ -306,7 +306,7 @@ Keep messages concise with relevant context.
 
 - Required: `DATABASE_URL`, `REDIS_URL`
 - Debug: `PRISMA_VERBOSE_LOGS=true`, `AUTH_DEBUG_LOGS=true`, `LOG_LEVEL=debug`
-- Config Server (optional): `CONFIG_SERVER_URL`, `SPRING_PROFILE` - See instrumentation.ts for Spring Cloud Config integration
+- Config Server (optional): `CONFIG_SERVER_URL`, `ENVIRONMENT_NAME`/`SPRING_PROFILE` - see `docker-start.mjs` and [SPRING_CLOUD_CONFIG.md](docs/infrastructure/SPRING_CLOUD_CONFIG.md)
 
 ## Git Workflow
 

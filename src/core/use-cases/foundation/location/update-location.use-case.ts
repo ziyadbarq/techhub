@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import type { Location } from "@/core/domain/entities/location.entity";
@@ -60,7 +61,9 @@ export class UpdateLocationUseCase {
         props.id,
       );
       if (existsByCode) {
-        throw new Error(`Location with code "${props.code}" already exists`);
+        throw new ConflictError(
+          `Location with code "${props.code}" already exists`,
+        );
       }
     }
 

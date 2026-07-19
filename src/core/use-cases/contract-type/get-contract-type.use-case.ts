@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IContractTypeRepository } from "@/core/repositories/contract-type.repository.interface";
 import type { ContractType } from "@/core/domain/entities/contract-type.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetContractTypeRequest {
   id: string;
@@ -22,7 +23,7 @@ export class GetContractTypeUseCase {
     const contractType = await this.contractTypeRepository.findById(request.id);
 
     if (!contractType) {
-      throw new Error("Contract type not found");
+      throw new NotFoundError("Contract type not found");
     }
 
     return contractType;

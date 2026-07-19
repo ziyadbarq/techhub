@@ -46,6 +46,8 @@ COPY --chown=nextjs:nodejs ./src/infrastructure/database/prisma/schema ./src/inf
 
 # Set production environment after dependencies are installed.
 ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV HOSTNAME=0.0.0.0
 
 # Create directories for logs and uploads
 RUN mkdir -p local/logs local/uploads && \

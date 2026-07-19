@@ -27,19 +27,42 @@ const isBuildPhase =
   process.env.NEXT_PHASE === "phase-production-build" ||
   process.env.NEXT_PHASE === "phase-export";
 
+const parsePositiveInt = (value: string | undefined, fallback: number) => {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+
 // Create PostgreSQL connection pool (reused across entire application)
-// Pool configuration uses pg defaults:
-// - max: 10 connections
-// - idleTimeoutMillis: 10000 (10 seconds)
-// - connectionTimeoutMillis: 0 (no timeout)
-// Override via connection string: ?connection_limit=20&pool_timeout=5
-export const pool =
-  globalForPrisma.pgPool ??
-  new Pool({
+// connectionTimeoutMillis must be non-zero: with the pg default of 0,
+// requests wait forever when the pool is exhausted instead of failing fast.
+const createPool = () => {
+  const newPool = new Pool({
     connectionString: isBuildPhase
       ? "postgresql://build:build@localhost:5432/build"
       : process.env.DATABASE_URL,
+    max: parsePositiveInt(process.env.DATABASE_POOL_MAX, 20),
+    connectionTimeoutMillis: parsePositiveInt(
+      process.env.DATABASE_POOL_CONNECTION_TIMEOUT_MS,
+      5000,
+    ),
+    idleTimeoutMillis: parsePositiveInt(
+      process.env.DATABASE_POOL_IDLE_TIMEOUT_MS,
+      30000,
+    ),
   });
+
+  // Idle clients can emit errors (e.g. backend restart); without a handler
+  // the process crashes with an unhandled 'error' event.
+  newPool.on("error", (error) => {
+    console.error("[Prisma][pool] Unexpected error on idle client", {
+      message: error.message,
+    });
+  });
+
+  return newPool;
+};
+
+export const pool = globalForPrisma.pgPool ?? createPool();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.pgPool = pool;

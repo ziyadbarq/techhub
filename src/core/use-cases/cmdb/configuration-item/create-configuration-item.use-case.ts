@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IConfigurationItemRepository } from "../../../repositories/configuration-item.repository.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
@@ -26,7 +27,7 @@ export class CreateConfigurationItemUseCase {
     if (request.ciKey) {
       const exists = await this.ciRepository.existsByCiKey(request.ciKey);
       if (exists) {
-        throw new Error(
+        throw new ConflictError(
           `Configuration Item with CI key already exists: ${request.ciKey}`,
         );
       }

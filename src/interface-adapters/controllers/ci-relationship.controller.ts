@@ -27,6 +27,8 @@ export async function createCIRelationshipAction(
   note?: string,
 ): Promise<ActionResponse<CIRelationshipDTO>> {
   try {
+    await requirePermission(PERMISSIONS.CI_RELATIONSHIPS_CREATE);
+
     const container = getContainer();
     const useCase = container.get<CreateCIRelationshipUseCase>(
       DI_TOKENS.CreateCIRelationshipUseCase,
@@ -55,6 +57,8 @@ export async function getCIRelationshipAction(
   id: string,
 ): Promise<ActionResponse<CIRelationshipDTO>> {
   try {
+    await requirePermission(PERMISSIONS.CI_RELATIONSHIPS_VIEW);
+
     const container = getContainer();
     const useCase = container.get<GetCIRelationshipUseCase>(
       DI_TOKENS.GetCIRelationshipUseCase,
@@ -110,6 +114,8 @@ export async function listCIRelationshipsAction(
   activeOnly?: boolean,
 ): Promise<ActionResponse<CIRelationshipDTO[]>> {
   try {
+    await requirePermission(PERMISSIONS.CI_RELATIONSHIPS_VIEW);
+
     const container = getContainer();
     const useCase = container.get<ListCIRelationshipsUseCase>(
       DI_TOKENS.ListCIRelationshipsUseCase,
@@ -184,6 +190,8 @@ export async function updateCIRelationshipAction(
   updates: { validTo?: Date | null; note?: string | null; isActive?: boolean },
 ): Promise<ActionResponse<CIRelationshipDTO>> {
   try {
+    await requirePermission(PERMISSIONS.CI_RELATIONSHIPS_UPDATE);
+
     const container = getContainer();
     const useCase = container.get<UpdateCIRelationshipUseCase>(
       DI_TOKENS.UpdateCIRelationshipUseCase,
@@ -206,6 +214,8 @@ export async function deleteCIRelationshipAction(
   id: string,
 ): Promise<ActionResponse<void>> {
   try {
+    await requirePermission(PERMISSIONS.CI_RELATIONSHIPS_DELETE);
+
     const container = getContainer();
     const useCase = container.get<DeleteCIRelationshipUseCase>(
       DI_TOKENS.DeleteCIRelationshipUseCase,

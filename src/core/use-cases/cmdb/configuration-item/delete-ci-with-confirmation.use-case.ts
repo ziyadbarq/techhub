@@ -14,6 +14,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type {
   CIDeletionContext,
@@ -72,7 +73,9 @@ export class DeleteCIWithConfirmationUseCase {
     const context = await this.ciRepository.getDeletionContext(request.id);
 
     if (!context) {
-      throw new Error(`Configuration Item with ID "${request.id}" not found`);
+      throw new NotFoundError(
+        `Configuration Item with ID "${request.id}" not found`,
+      );
     }
 
     const { ci, dependencies, impactingRelationships } = context;
@@ -210,7 +213,7 @@ export class DeleteCIWithConfirmationUseCase {
   async executeDelete(id: string): Promise<void> {
     const ci = await this.ciRepository.findById(id);
     if (!ci) {
-      throw new Error(`Configuration Item with ID "${id}" not found`);
+      throw new NotFoundError(`Configuration Item with ID "${id}" not found`);
     }
 
     await this.ciRepository.deleteWithRelationships(id);

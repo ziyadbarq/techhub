@@ -15,6 +15,7 @@
  */
 
 import type { Container } from "inversify";
+import { logger } from "@/lib/logger";
 import { DI_TOKENS } from "../types";
 import type { ILoggerService } from "@/core/services";
 import { PinoLoggerService } from "@/infrastructure/services/logger/pino-logger.service";
@@ -50,7 +51,7 @@ export function bindLoggerDependencies(container: Container): void {
 
   // Only log during development to avoid cluttering build output
   if (process.env.NODE_ENV === "development") {
-    console.log("[DI] Logger dependencies bound");
+    logger.scope("DI").debug("bind", "[DI] Logger dependencies bound");
   }
 }
 

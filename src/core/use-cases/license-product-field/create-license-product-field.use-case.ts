@@ -3,12 +3,14 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import { LicenseProductField } from "@/core/domain/entities/license-product-field.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateLicenseProductFieldRequest {
   licenseProductId: string;
@@ -41,7 +43,7 @@ export class CreateLicenseProductFieldUseCase {
       request.licenseProductId,
     );
     if (!licenseProduct) {
-      throw new Error("License product not found");
+      throw new NotFoundError("License product not found");
     }
 
     // Validate field definition exists
@@ -49,7 +51,7 @@ export class CreateLicenseProductFieldUseCase {
       request.fieldDefinitionId,
     );
     if (!fieldDefinition) {
-      throw new Error("Field definition not found");
+      throw new NotFoundError("Field definition not found");
     }
 
     // Check if field already attached to this license product
@@ -58,7 +60,7 @@ export class CreateLicenseProductFieldUseCase {
       request.fieldDefinitionId,
     );
     if (existing) {
-      throw new Error(
+      throw new ConflictError(
         "This field definition is already attached to this license product",
       );
     }

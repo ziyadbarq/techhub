@@ -3,11 +3,14 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseEntitlementAddonRepository } from "@/core/repositories/license-entitlement-addon.repository.interface";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
 import type { ILicenseAddonRepository } from "@/core/repositories/license-addon.repository.interface";
 import { LicenseEntitlementAddon } from "@/core/domain/entities/license-entitlement-addon.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface AttachAddonToEntitlementRequest {
   licenseEntitlementId: string;
@@ -36,23 +39,25 @@ export class AttachAddonToEntitlementUseCase {
       request.licenseEntitlementId,
     );
     if (!entitlement) {
-      throw new Error("License entitlement not found");
+      throw new NotFoundError("License entitlement not found");
     }
 
     // Validate addon exists
     const addon = await this.addonRepository.findById(request.licenseAddonId);
     if (!addon) {
-      throw new Error("License addon not found");
+      throw new NotFoundError("License addon not found");
     }
 
     // Validate addon is active
     if (!addon.isActive) {
-      throw new Error("Cannot attach inactive addon");
+      throw new ValidationError("Cannot attach inactive addon");
     }
 
     // Validate addon belongs to the same product as entitlement
     if (addon.licenseProductId !== entitlement.licenseProductId) {
-      throw new Error("Addon does not belong to the same license product");
+      throw new ValidationError(
+        "Addon does not belong to the same license product",
+      );
     }
 
     // Check if already attached
@@ -61,7 +66,7 @@ export class AttachAddonToEntitlementUseCase {
       request.licenseAddonId,
     );
     if (existing) {
-      throw new Error("Addon is already attached to this entitlement");
+      throw new ConflictError("Addon is already attached to this entitlement");
     }
 
     // Create attachment

@@ -3,11 +3,13 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseAddonRepository } from "@/core/repositories/license-addon.repository.interface";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import { LicenseAddon } from "@/core/domain/entities/license-addon.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateLicenseAddonRequest {
   licenseProductId: string;
@@ -34,7 +36,7 @@ export class CreateLicenseAddonUseCase {
       request.licenseProductId,
     );
     if (!product) {
-      throw new Error("License product not found");
+      throw new NotFoundError("License product not found");
     }
 
     // Auto-generate code if not provided
@@ -48,7 +50,7 @@ export class CreateLicenseAddonUseCase {
       code,
     );
     if (existingByCode) {
-      throw new Error(
+      throw new ConflictError(
         "An addon with this code already exists for this product",
       );
     }

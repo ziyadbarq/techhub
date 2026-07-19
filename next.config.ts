@@ -1,3 +1,5 @@
+import { networkInterfaces } from "node:os";
+
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
 
@@ -5,7 +7,53 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
+const parseOriginList = (value: string | undefined): URL[] =>
+  (value ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+    .flatMap((origin) => {
+      try {
+        return [new URL(origin)];
+      } catch {
+        return [];
+      }
+    });
+
+const devPort = process.env.PORT || "3000";
+
+const localNetworkOrigins = Object.values(networkInterfaces())
+  .flatMap((networkInterface) => networkInterface ?? [])
+  .filter((address) => address.family === "IPv4" && !address.internal)
+  .map((address) => `http://${address.address}:${devPort}`);
+
+const configuredDevOrigins = parseOriginList(
+  [
+    `http://localhost:${devPort}`,
+    `http://127.0.0.1:${devPort}`,
+    ...localNetworkOrigins,
+    process.env.NEXT_DEV_ALLOWED_ORIGINS,
+  ].join(","),
+);
+
+const configuredDevHostnames = Array.from(
+  new Set(configuredDevOrigins.map((origin) => origin.hostname)),
+);
+
+const configuredDevWebSocketOrigins = Array.from(
+  new Set(
+    [
+      ...configuredDevOrigins.map((origin) => {
+        const protocol = origin.protocol === "https:" ? "wss:" : "ws:";
+
+        return `${protocol}//${origin.host}`;
+      }),
+    ].filter(Boolean),
+  ),
+);
+
 const nextConfig: NextConfig = {
+  allowedDevOrigins: configuredDevHostnames,
   output: "standalone",
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   typescript: {
@@ -72,6 +120,10 @@ const nextConfig: NextConfig = {
   // Security headers
   async headers() {
     const isProduction = process.env.NODE_ENV === "production";
+    const connectSrc = [
+      "connect-src 'self'",
+      ...(isProduction ? [] : configuredDevWebSocketOrigins),
+    ].join(" ");
 
     return [
       {
@@ -118,7 +170,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob: https://graph.microsoft.com https://*.blob.core.windows.net",
               "font-src 'self' data:",
-              "connect-src 'self'",
+              connectSrc,
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

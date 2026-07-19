@@ -16,7 +16,6 @@ export {
   decrementBadge,
   clearBadge,
   getAllBadges,
-  startMockBadgeUpdates,
   initializeBadges,
   type BadgeRegistry,
 } from "./use-badge-updates";

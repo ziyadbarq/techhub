@@ -7,6 +7,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IReportScheduleRepository } from "@/core/repositories/report-schedule.repository.interface";
 import { LogExecution } from "@/lib/decorators";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteReportScheduleUseCase {
@@ -21,7 +22,7 @@ export class DeleteReportScheduleUseCase {
   async execute(scheduleId: string): Promise<void> {
     const existing = await this.repository.findById(scheduleId);
     if (!existing) {
-      throw new Error(`Schedule not found: ${scheduleId}`);
+      throw new NotFoundError(`Schedule not found: ${scheduleId}`);
     }
 
     await this.repository.delete(scheduleId);

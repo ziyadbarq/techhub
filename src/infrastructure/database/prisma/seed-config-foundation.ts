@@ -315,15 +315,6 @@ export const PERSON_DATA = [
 ] as const;
 
 // ==============================================
-// Person Role Assignments
-// ==============================================
-// Role assignments happen automatically during Graph sync
-// based on department and job title mapping.
-// See src/lib/schemas/graph-normalization.ts for mapping logic.
-
-export const PERSON_ROLE_ASSIGNMENTS = [] as const;
-
-// ==============================================
 // Lifecycle Status Data
 // ==============================================
 

@@ -1,4 +1,6 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IBusinessProcessRepository } from "@/core/repositories/business-process.repository.interface";
 import type { ILoggerService } from "@/core/services";
@@ -32,7 +34,7 @@ export class UpdateBusinessProcessUseCase {
       request.businessProcessId,
     );
     if (!businessProcess) {
-      throw new Error(
+      throw new ValidationError(
         `Business process with ID ${request.businessProcessId} not found`,
       );
     }
@@ -44,7 +46,7 @@ export class UpdateBusinessProcessUseCase {
         request.businessProcessId,
       );
       if (codeExists) {
-        throw new Error(
+        throw new ConflictError(
           `Business process with code "${request.code}" already exists`,
         );
       }

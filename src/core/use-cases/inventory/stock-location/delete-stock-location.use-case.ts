@@ -5,8 +5,10 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IStockLocationRepository } from "@/core/repositories/stock-location.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteStockLocationUseCase {
@@ -25,7 +27,7 @@ export class DeleteStockLocationUseCase {
     // Find existing stock location
     const stockLocation = await this.stockLocationRepository.findById(id);
     if (!stockLocation) {
-      throw new Error(`Stock location with ID "${id}" not found`);
+      throw new NotFoundError(`Stock location with ID "${id}" not found`);
     }
 
     // Check if can be deleted (no assets or stock movements)
@@ -37,7 +39,7 @@ export class DeleteStockLocationUseCase {
       if (hasAssets) reasons.push("assets");
       if (hasMovements) reasons.push("stock movements");
 
-      throw new Error(
+      throw new ValidationError(
         `Cannot delete stock location "${stockLocation.name}" because it has ${reasons.join(" and ")}. Remove them first.`,
       );
     }

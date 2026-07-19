@@ -3,6 +3,8 @@
  * Client-side configuration for feature flag polling behavior
  */
 
+import { logger } from "@/lib/logger";
+
 /**
  * Get the feature flags polling interval from environment variable
  * @returns Number of milliseconds between polls, or 0 to disable polling
@@ -21,9 +23,12 @@ export function getFeatureFlagsPollInterval(): number {
 
   // If invalid number, use default
   if (isNaN(parsed) || parsed < 0) {
-    console.warn(
-      `Invalid NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL: ${envValue}. Using default of 30000ms.`,
-    );
+    logger
+      .scope("FeatureFlagsConfig")
+      .warn(
+        "getPollInterval",
+        `Invalid NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL: ${envValue}. Using default of 30000ms.`,
+      );
     return 30000;
   }
 

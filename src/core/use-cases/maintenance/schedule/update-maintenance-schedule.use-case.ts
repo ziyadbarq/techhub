@@ -10,6 +10,7 @@ import type { IMaintenanceScheduleRepository } from "@/core/repositories/mainten
 import type { MaintenanceSchedule } from "@/core/domain/entities/maintenance-schedule.entity";
 import type { ScheduleType } from "@/core/domain/value-objects/schedule-type";
 import type { MaintenancePriority } from "@/core/domain/value-objects/maintenance-priority";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateMaintenanceScheduleProps {
   id: string;
@@ -42,7 +43,7 @@ export class UpdateMaintenanceScheduleUseCase {
     // Find existing
     const schedule = await this.repository.findById(props.id);
     if (!schedule) {
-      throw new Error(`Maintenance schedule not found: ${props.id}`);
+      throw new NotFoundError(`Maintenance schedule not found: ${props.id}`);
     }
 
     // Update entity

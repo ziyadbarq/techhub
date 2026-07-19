@@ -6,6 +6,8 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.repository.interface";
@@ -19,6 +21,7 @@ import { Asset } from "@/core/domain/entities/asset.entity";
 import type { IntuneDevice } from "@/core/domain/entities/intune-device.entity";
 import { VendorType } from "@/core/domain/value-objects/foundation-enums";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateAssetFromIntuneDeviceInput {
   /** ID of the Intune device to create an asset from */
@@ -91,12 +94,12 @@ export class CreateAssetFromIntuneDeviceUseCase {
     // 1. Get the Intune device
     const device = await this.deviceRepository.findById(deviceId);
     if (!device) {
-      throw new Error("Intune device not found");
+      throw new NotFoundError("Intune device not found");
     }
 
     // 2. Validate serial number exists (required for unique asset tracking)
     if (!device.serialNumber || device.serialNumber === "0") {
-      throw new Error(
+      throw new ValidationError(
         "Cannot create asset: device has no valid serial number. " +
           "Assets require a unique serial number for tracking.",
       );
@@ -107,7 +110,7 @@ export class CreateAssetFromIntuneDeviceUseCase {
       device.serialNumber,
     );
     if (existingAsset) {
-      throw new Error(
+      throw new ConflictError(
         `An asset with serial number "${device.serialNumber}" already exists (${existingAsset.assetTag})`,
       );
     }

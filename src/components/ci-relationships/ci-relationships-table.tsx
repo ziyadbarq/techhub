@@ -5,35 +5,17 @@
 "use client";
 "use no memo";
 
-import { useState } from "react";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
-} from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 import { Link } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import type { CIRelationshipDTO } from "@/interface-adapters/dtos/generated/ci-relationship.dto";
+import { formatDate } from "@/lib/utils/date-format";
+import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
+import type { CIRelationshipDTO } from "@/interface-adapters/dtos/generated/ci-relationship.dto";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { deleteCIRelationshipAction } from "@/interface-adapters/controllers/ci-relationship.controller";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
 import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildActionsColumn } from "@/lib/table-utils";
-import { format } from "date-fns";
 
 interface CIRelationshipsTableProps {
   data: CIRelationshipDTO[];
@@ -50,9 +32,6 @@ export function CIRelationshipsTable({
   onEdit,
   onRefresh,
 }: CIRelationshipsTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
   // Use reusable delete dialog hook
   const deleteDialog = useDeleteDialog<CIRelationshipDTO>({
     onDelete: (relationship) => deleteCIRelationshipAction(relationship.id),
@@ -110,20 +89,14 @@ export function CIRelationshipsTable({
       accessorKey: "validFrom",
       header: "Valid From",
       cell: ({ row }) => (
-        <div className="text-sm">
-          {format(new Date(row.original.validFrom), "MMM d, yyyy")}
-        </div>
+        <div className="text-sm">{formatDate(row.original.validFrom)}</div>
       ),
     },
     {
       accessorKey: "validTo",
       header: "Valid To",
       cell: ({ row }) => (
-        <div className="text-sm">
-          {row.original.validTo
-            ? format(new Date(row.original.validTo), "MMM d, yyyy")
-            : "—"}
-        </div>
+        <div className="text-sm">{formatDate(row.original.validTo) || "—"}</div>
       ),
       meta: {
         label: "Valid To",
@@ -160,121 +133,19 @@ export function CIRelationshipsTable({
       columns,
     });
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: onVisibilityChange,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility: visibility,
-    },
-  });
-
   return (
     <>
-      <div className="space-y-4">
-        {/* Filters */}
-        <div className="flex flex-col gap-4 sm:flex-row">
-          <Input
-            placeholder="Search by From CI..."
-            value={
-              (table.getColumn("fromCiName")?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn("fromCiName")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-          <Input
-            placeholder="Filter by Relationship..."
-            value={
-              (table
-                .getColumn("relationshipTypeName")
-                ?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table
-                .getColumn("relationshipTypeName")
-                ?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-          <Input
-            placeholder="Search by To CI..."
-            value={
-              (table.getColumn("toCiName")?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn("toCiName")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        </div>
-
-        {/* Table */}
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No relationships found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-
-      {/* Delete Confirmation Dialog */}
+      <DataTable
+        columns={columns}
+        data={data}
+        loading={loading}
+        searchable
+        globalFilter
+        searchPlaceholder="Search relationships..."
+        emptyMessage="No relationships found"
+        controlledState={{ columnVisibility: visibility }}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
       <deleteDialog.DialogComponent />
     </>
   );

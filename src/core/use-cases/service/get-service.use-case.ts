@@ -4,6 +4,7 @@ import type { IServiceRepository } from "@/core/repositories/service.repository.
 import type { ILoggerService } from "@/core/services";
 import type { Service } from "@/core/domain/entities/service.entity";
 import { LogExecution } from "@/lib/decorators";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetServiceRequest {
   serviceId: string;
@@ -23,7 +24,7 @@ export class GetServiceUseCase {
   async execute(request: GetServiceRequest): Promise<Service> {
     const service = await this.serviceRepository.findById(request.serviceId);
     if (!service) {
-      throw new Error(`Service with ID ${request.serviceId} not found`);
+      throw new NotFoundError(`Service with ID ${request.serviceId} not found`);
     }
 
     return service;

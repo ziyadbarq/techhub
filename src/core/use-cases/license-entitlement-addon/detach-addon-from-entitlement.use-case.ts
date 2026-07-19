@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseEntitlementAddonRepository } from "@/core/repositories/license-entitlement-addon.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DetachAddonFromEntitlementUseCase {
@@ -16,7 +17,7 @@ export class DetachAddonFromEntitlementUseCase {
   async execute(id: string): Promise<void> {
     const entitlementAddon = await this.entitlementAddonRepository.findById(id);
     if (!entitlementAddon) {
-      throw new Error("Entitlement addon attachment not found");
+      throw new NotFoundError("Entitlement addon attachment not found");
     }
 
     await this.entitlementAddonRepository.delete(id);

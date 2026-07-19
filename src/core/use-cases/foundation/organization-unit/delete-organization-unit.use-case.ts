@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
@@ -37,7 +38,7 @@ export class DeleteOrganizationUnitUseCase {
     // Check for children
     const hasChildren = await this.organizationUnitRepository.hasChildren(id);
     if (hasChildren) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete organization unit because it has child units. Delete or move children first.",
       );
     }
@@ -45,7 +46,7 @@ export class DeleteOrganizationUnitUseCase {
     // Check for people
     const hasPeople = await this.organizationUnitRepository.hasPeople(id);
     if (hasPeople) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete organization unit because it has assigned people. Reassign people first.",
       );
     }

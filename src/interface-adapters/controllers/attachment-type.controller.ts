@@ -6,6 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { ActionResponse } from "./types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type {
@@ -33,10 +34,7 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
  */
 export async function createAttachmentType(
   data: CreateAttachmentTypeDTO,
-): Promise<
-  | { success: true; data: AttachmentTypeDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<AttachmentTypeDTO>> {
   try {
     await requirePermission(PERMISSIONS.ATTACHMENT_TYPES_CREATE);
 
@@ -75,10 +73,7 @@ export async function createAttachmentType(
  */
 export async function getAttachmentType(
   id: string,
-): Promise<
-  | { success: true; data: AttachmentTypeDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<AttachmentTypeDTO>> {
   try {
     await requirePermission(PERMISSIONS.ATTACHMENT_TYPES_VIEW);
 
@@ -97,7 +92,9 @@ export async function getAttachmentType(
     return {
       success: false,
       error:
-        error instanceof Error ? error.message : "Failed to get attachment type",
+        error instanceof Error
+          ? error.message
+          : "Failed to get attachment type",
     };
   }
 }
@@ -107,10 +104,7 @@ export async function getAttachmentType(
  */
 export async function listAttachmentTypes(options?: {
   activeOnly?: boolean;
-}): Promise<
-  | { success: true; data: AttachmentTypeDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<AttachmentTypeDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.ATTACHMENT_TYPES_VIEW);
 
@@ -144,10 +138,7 @@ export async function listAttachmentTypes(options?: {
 export async function updateAttachmentType(
   id: string,
   data: UpdateAttachmentTypeDTO,
-): Promise<
-  | { success: true; data: AttachmentTypeDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<AttachmentTypeDTO>> {
   try {
     await requirePermission(PERMISSIONS.ATTACHMENT_TYPES_UPDATE);
 

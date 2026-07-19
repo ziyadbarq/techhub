@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import type { IVendorRepository } from "@/core/repositories/vendor.repository.interface";
@@ -30,29 +31,37 @@ export class DeleteVendorUseCase {
       throw new NotFoundError("Vendor not found", "Vendor", id);
     }
 
-    // Check for vendor contacts
-    // TODO: Implement hasContacts method in repository (use hasContracts or add new method)
-    // const hasContacts = await this.vendorRepository.hasContacts(id);
-    // if (hasContacts) {
-    //   throw new Error(
-    //     "Cannot delete vendor because it has associated contacts. Delete contacts first.",
-    //   );
-    // }
+    // Referential guards: block deletion while dependent records exist so
+    // callers get a clear message instead of a raw FK-constraint error.
+    const [hasContacts, hasAssets, hasContracts, hasLicenseProducts] =
+      await Promise.all([
+        this.vendorRepository.hasContacts(id),
+        this.vendorRepository.hasAssets(id),
+        this.vendorRepository.hasContracts(id),
+        this.vendorRepository.hasLicenseProducts(id),
+      ]);
 
-    // Check for configuration items
-    // TODO: Implement hasConfigurationItems method in repository
-    // const hasCIs = await this.vendorRepository.hasConfigurationItems(id);
-    // if (hasCIs) {
-    //   throw new Error(
-    //     "Cannot delete vendor because it is referenced by configuration items",
-    //   );
-    // }
+    if (hasContacts) {
+      throw new ValidationError(
+        "Cannot delete vendor because it has associated contacts. Delete contacts first.",
+      );
+    }
 
-    // Check for assets
-    const hasAssets = await this.vendorRepository.hasAssets(id);
     if (hasAssets) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete vendor because it is referenced by assets",
+      );
+    }
+
+    if (hasContracts) {
+      throw new ValidationError(
+        "Cannot delete vendor because it is referenced by contracts",
+      );
+    }
+
+    if (hasLicenseProducts) {
+      throw new ValidationError(
+        "Cannot delete vendor because it is referenced by license products",
       );
     }
 

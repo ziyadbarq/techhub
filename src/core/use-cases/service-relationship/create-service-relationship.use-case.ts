@@ -1,4 +1,6 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRelationshipRepository } from "../../repositories/service-relationship.repository.interface";
 import type { IServiceRepository } from "../../repositories/service.repository.interface";
@@ -30,7 +32,9 @@ export class CreateServiceRelationshipUseCase {
       request.fromServiceId,
     );
     if (!fromService) {
-      throw new Error(`From service not found: ${request.fromServiceId}`);
+      throw new NotFoundError(
+        `From service not found: ${request.fromServiceId}`,
+      );
     }
 
     // Verify toService exists
@@ -38,7 +42,7 @@ export class CreateServiceRelationshipUseCase {
       request.toServiceId,
     );
     if (!toService) {
-      throw new Error(`To service not found: ${request.toServiceId}`);
+      throw new NotFoundError(`To service not found: ${request.toServiceId}`);
     }
 
     // Check for existing relationship
@@ -50,7 +54,7 @@ export class CreateServiceRelationshipUseCase {
       );
 
     if (exists) {
-      throw new Error(
+      throw new ConflictError(
         "Relationship already exists between these services with the same type",
       );
     }

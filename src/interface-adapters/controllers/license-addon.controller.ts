@@ -5,19 +5,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import type { ActionResponse } from "./types";
+import { handleControllerError } from "./error-handler";
+import { resolve, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
-/**
- * Ensures the Licenses module is loaded before accessing its use cases
- */
-async function ensureLicensesModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("licenses")) {
-    await loadHeavyModule("licenses");
-  }
-}
 import type {
   CreateLicenseAddonDTO,
   UpdateLicenseAddonDTO,
@@ -39,14 +33,12 @@ import type { DeleteLicenseAddonUseCase } from "@/core/use-cases/license-addon/d
  */
 export async function createLicenseAddon(
   data: CreateLicenseAddonDTO,
-): Promise<
-  { success: true; data: LicenseAddonDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAddonDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = CreateLicenseAddonSchema.parse(data);
 
@@ -69,14 +61,11 @@ export async function createLicenseAddon(
       data: LicenseAddonPresenter.toDTO(addon),
     };
   } catch (error) {
-    console.error("Error creating license addon:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to create license addon",
-    };
+    return handleControllerError(
+      error,
+      { function: "createLicenseAddon" },
+      "Failed to create license addon",
+    );
   }
 }
 
@@ -85,14 +74,12 @@ export async function createLicenseAddon(
  */
 export async function getLicenseAddon(
   id: string,
-): Promise<
-  { success: true; data: LicenseAddonDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAddonDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<GetLicenseAddonUseCase>(
       DI_TOKENS.GetLicenseAddonUseCase,
@@ -112,12 +99,11 @@ export async function getLicenseAddon(
       data: LicenseAddonPresenter.toDTO(addon),
     };
   } catch (error) {
-    console.error("Error getting license addon:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to get license addon",
-    };
+    return handleControllerError(
+      error,
+      { function: "getLicenseAddon" },
+      "Failed to get license addon",
+    );
   }
 }
 
@@ -127,14 +113,12 @@ export async function getLicenseAddon(
 export async function listLicenseAddons(params?: {
   licenseProductId?: string;
   activeOnly?: boolean;
-}): Promise<
-  { success: true; data: LicenseAddonDTO[] } | { success: false; error: string }
-> {
+}): Promise<ActionResponse<LicenseAddonDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<ListLicenseAddonsUseCase>(
       DI_TOKENS.ListLicenseAddonsUseCase,
@@ -147,14 +131,11 @@ export async function listLicenseAddons(params?: {
       data: LicenseAddonPresenter.toDTOList(addons),
     };
   } catch (error) {
-    console.error("Error listing license addons:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to list license addons",
-    };
+    return handleControllerError(
+      error,
+      { function: "listLicenseAddons" },
+      "Failed to list license addons",
+    );
   }
 }
 
@@ -163,14 +144,12 @@ export async function listLicenseAddons(params?: {
  */
 export async function updateLicenseAddon(
   data: UpdateLicenseAddonDTO,
-): Promise<
-  { success: true; data: LicenseAddonDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseAddonDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = UpdateLicenseAddonSchema.parse(data);
 
@@ -192,14 +171,11 @@ export async function updateLicenseAddon(
       data: LicenseAddonPresenter.toDTO(addon),
     };
   } catch (error) {
-    console.error("Error updating license addon:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to update license addon",
-    };
+    return handleControllerError(
+      error,
+      { function: "updateLicenseAddon" },
+      "Failed to update license addon",
+    );
   }
 }
 
@@ -213,7 +189,7 @@ export async function deleteLicenseAddon(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<DeleteLicenseAddonUseCase>(
       DI_TOKENS.DeleteLicenseAddonUseCase,
@@ -225,13 +201,10 @@ export async function deleteLicenseAddon(
 
     return { success: true };
   } catch (error) {
-    console.error("Error deleting license addon:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to delete license addon",
-    };
+    return handleControllerError(
+      error,
+      { function: "deleteLicenseAddon" },
+      "Failed to delete license addon",
+    );
   }
 }

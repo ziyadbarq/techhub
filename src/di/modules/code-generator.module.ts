@@ -15,6 +15,7 @@
  */
 
 import type { Container } from "inversify";
+import { logger } from "@/lib/logger";
 import { DI_TOKENS } from "../types";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import { CodeGeneratorService } from "@/infrastructure/services/code-generator/code-generator.service";
@@ -51,7 +52,7 @@ export function bindCodeGeneratorDependencies(container: Container): void {
 
   // Only log during development to avoid cluttering build output
   if (process.env.NODE_ENV === "development") {
-    console.log("[DI] Code Generator dependencies bound");
+    logger.scope("DI").debug("bind", "[DI] Code Generator dependencies bound");
   }
 }
 

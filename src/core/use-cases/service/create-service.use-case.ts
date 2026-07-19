@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import type { ILoggerService } from "@/core/services";
@@ -54,7 +55,9 @@ export class CreateServiceUseCase {
     // Check if service name already exists
     const nameExists = await this.serviceRepository.existsByName(request.name);
     if (nameExists) {
-      throw new Error(`Service with name "${request.name}" already exists`);
+      throw new ConflictError(
+        `Service with name "${request.name}" already exists`,
+      );
     }
 
     const service = Service.create(

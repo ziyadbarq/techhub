@@ -7,6 +7,7 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IMaintenanceRecordRepository } from "@/core/repositories/maintenance-record.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteMaintenanceRecordUseCase {
@@ -22,7 +23,7 @@ export class DeleteMaintenanceRecordUseCase {
     // Verify existence
     const record = await this.repository.findById(id);
     if (!record) {
-      throw new Error(`Maintenance record not found: ${id}`);
+      throw new NotFoundError(`Maintenance record not found: ${id}`);
     }
 
     // Delete

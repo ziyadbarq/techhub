@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import type { ILoggerService } from "@/core/services";
@@ -11,6 +12,7 @@ import type {
   CriticalityLevel,
 } from "@/generated/prisma";
 import { LogExecution } from "@/lib/decorators";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateServiceRequest {
   serviceId: string;
@@ -69,7 +71,7 @@ export class UpdateServiceUseCase {
   async execute(request: UpdateServiceRequest): Promise<Service> {
     const service = await this.serviceRepository.findById(request.serviceId);
     if (!service) {
-      throw new Error(`Service with ID ${request.serviceId} not found`);
+      throw new NotFoundError(`Service with ID ${request.serviceId} not found`);
     }
 
     // Check if name is being changed and if new name already exists
@@ -79,7 +81,9 @@ export class UpdateServiceUseCase {
         request.serviceId,
       );
       if (nameExists) {
-        throw new Error(`Service with name "${request.name}" already exists`);
+        throw new ConflictError(
+          `Service with name "${request.name}" already exists`,
+        );
       }
     }
 

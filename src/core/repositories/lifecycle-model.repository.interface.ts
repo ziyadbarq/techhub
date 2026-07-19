@@ -63,6 +63,12 @@ export interface ILifecycleModelRepository {
   hasStates(id: string): Promise<boolean>;
 
   /**
+   * Check whether anything references this lifecycle model (states,
+   * transitions, CI classes, asset categories, or license products)
+   */
+  isInUse(id: string): Promise<boolean>;
+
+  /**
    * Check if lifecycle model has transitions
    */
   hasTransitions(id: string): Promise<boolean>;

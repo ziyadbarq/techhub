@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
 import type { IVendorRepository } from "@/core/repositories/vendor.repository.interface";
@@ -10,6 +11,7 @@ import type { ICodeGeneratorService } from "@/core/services/code-generator.servi
 import type { LicenseMetricType } from "@/core/domain/entities/license-product.entity";
 import { LicenseProduct } from "@/core/domain/entities/license-product.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateLicenseProductRequest {
   name: string;
@@ -44,7 +46,7 @@ export class CreateLicenseProductUseCase {
     // Validate vendor exists
     const vendor = await this.vendorRepository.findById(request.vendorId);
     if (!vendor) {
-      throw new Error("Vendor not found");
+      throw new NotFoundError("Vendor not found");
     }
 
     // Check for duplicate name
@@ -52,14 +54,18 @@ export class CreateLicenseProductUseCase {
       request.name,
     );
     if (existingByName) {
-      throw new Error("A license product with this name already exists");
+      throw new ConflictError(
+        "A license product with this name already exists",
+      );
     }
 
     // Check for duplicate code
     const existingByCode =
       await this.licenseProductRepository.existsByCode(code);
     if (existingByCode) {
-      throw new Error("A license product with this code already exists");
+      throw new ConflictError(
+        "A license product with this code already exists",
+      );
     }
 
     // Create license product entity

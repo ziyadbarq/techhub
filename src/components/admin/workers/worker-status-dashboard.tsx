@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { formatDateTime, formatTime } from "@/lib/utils/date-format";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -122,12 +123,7 @@ function formatRelativeTime(timestamp: number): string {
 }
 
 function formatAbsoluteTime(timestamp: number): string {
-  return new Date(timestamp).toLocaleString([], {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  return formatDateTime(new Date(timestamp));
 }
 
 function describeCronPattern(pattern: string | null): string {
@@ -1273,9 +1269,7 @@ export function WorkerStatusDashboard() {
                     Last refresh
                   </p>
                   <p className="mt-2 text-2xl font-semibold">
-                    {lastRefresh
-                      ? lastRefresh.toLocaleTimeString()
-                      : "Not refreshed"}
+                    {lastRefresh ? formatTime(lastRefresh) : "Not refreshed"}
                   </p>
                   <p className="text-muted-foreground mt-1 text-xs">
                     {refreshing

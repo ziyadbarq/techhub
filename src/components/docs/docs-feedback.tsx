@@ -19,7 +19,7 @@ interface DocsFeedbackProps {
 
 type FeedbackState = "idle" | "positive" | "negative" | "submitted";
 
-export function DocsFeedback({ slug, className }: DocsFeedbackProps) {
+export function DocsFeedback({ slug: _slug, className }: DocsFeedbackProps) {
   const [state, setState] = useState<FeedbackState>("idle");
   const [showTextarea, setShowTextarea] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -36,15 +36,8 @@ export function DocsFeedback({ slug, className }: DocsFeedbackProps) {
   };
 
   const handleSubmitFeedback = () => {
-    // Could send feedback to backend here
-    // For now, just log it
-    if (typeof window !== "undefined") {
-      console.log("Documentation feedback:", {
-        slug,
-        type: "negative",
-        feedback,
-      });
-    }
+    // Feedback is not persisted yet; a backend endpoint is required before
+    // this can do more than acknowledge the user.
     setState("submitted");
     setShowTextarea(false);
   };

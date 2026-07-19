@@ -8,6 +8,7 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ExchangeRate } from "@/core/domain/entities/exchange-rate.entity";
 import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateExchangeRateProps {
   id: string;
@@ -33,7 +34,7 @@ export class UpdateExchangeRateUseCase {
     const exchangeRate = await this.exchangeRateRepository.findById(props.id);
 
     if (!exchangeRate) {
-      throw new Error(`Exchange rate with ID "${props.id}" not found`);
+      throw new NotFoundError(`Exchange rate with ID "${props.id}" not found`);
     }
 
     // Update the exchange rate

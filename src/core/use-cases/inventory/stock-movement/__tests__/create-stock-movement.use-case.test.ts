@@ -11,6 +11,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { CreateStockMovementUseCase } from "../create-stock-movement.use-case";
 import type { IStockMovementRepository } from "@/core/repositories/stock-movement.repository.interface";
+import type { IUnitOfWork } from "@/core/services/unit-of-work.service.interface";
 import type {
   StockMovement,
   StockMovementType,
@@ -23,6 +24,9 @@ class MockStockMovementRepository implements Partial<IStockMovementRepository> {
   private movements = new Map<string, StockMovement>();
   private idCounter = 1;
 
+  /** Net quantity reported for any location (default: plenty) */
+  netQuantity = 1000;
+
   async create(movement: StockMovement): Promise<StockMovement> {
     // Assign ID if not set (simulate repository behavior)
     if (!movement.id) {
@@ -32,11 +36,21 @@ class MockStockMovementRepository implements Partial<IStockMovementRepository> {
     return movement;
   }
 
+  async getNetQuantityAtLocation(_stockLocationId: string): Promise<number> {
+    return this.netQuantity;
+  }
+
   clear(): void {
     this.movements.clear();
     this.idCounter = 1;
+    this.netQuantity = 1000;
   }
 }
+
+/** Pass-through unit of work (no real transaction in unit tests) */
+const mockUnitOfWork: IUnitOfWork = {
+  execute: <T>(work: () => Promise<T>) => work(),
+};
 
 describe("CreateStockMovementUseCase", () => {
   let useCase: CreateStockMovementUseCase;
@@ -46,6 +60,7 @@ describe("CreateStockMovementUseCase", () => {
     mockRepository = new MockStockMovementRepository();
     useCase = new CreateStockMovementUseCase(
       mockRepository as unknown as IStockMovementRepository,
+      mockUnitOfWork,
     );
   });
 
@@ -299,6 +314,74 @@ describe("CreateStockMovementUseCase", () => {
       await expect(useCase.execute(props)).rejects.toThrow(
         /Performed by ID cannot be empty/,
       );
+    });
+  });
+
+  describe("execute - stock availability", () => {
+    it("should reject OUT movement exceeding available quantity", async () => {
+      mockRepository.netQuantity = 2;
+
+      await expect(
+        useCase.execute({
+          movementType: "OUT" as StockMovementType,
+          stockLocationFromId: "loc-1",
+          quantity: 3,
+          performedById: "user-1",
+        }),
+      ).rejects.toThrow(/Insufficient stock/);
+    });
+
+    it("should reject TRANSFER movement exceeding available quantity", async () => {
+      mockRepository.netQuantity = 0;
+
+      await expect(
+        useCase.execute({
+          movementType: "TRANSFER" as StockMovementType,
+          stockLocationFromId: "loc-1",
+          stockLocationToId: "loc-2",
+          quantity: 1,
+          performedById: "user-1",
+        }),
+      ).rejects.toThrow(/Insufficient stock/);
+    });
+
+    it("should allow OUT movement equal to available quantity", async () => {
+      mockRepository.netQuantity = 3;
+
+      const result = await useCase.execute({
+        movementType: "OUT" as StockMovementType,
+        stockLocationFromId: "loc-1",
+        quantity: 3,
+        performedById: "user-1",
+      });
+
+      expect(result.quantity).toBe(3);
+    });
+
+    it("should not check availability for ADJUSTMENT movements", async () => {
+      mockRepository.netQuantity = 0;
+
+      const result = await useCase.execute({
+        movementType: "ADJUSTMENT" as StockMovementType,
+        stockLocationFromId: "loc-1",
+        quantity: 5,
+        performedById: "user-1",
+      });
+
+      expect(result.movementType).toBe("ADJUSTMENT");
+    });
+
+    it("should not check availability for IN movements", async () => {
+      mockRepository.netQuantity = 0;
+
+      const result = await useCase.execute({
+        movementType: "IN" as StockMovementType,
+        stockLocationToId: "loc-1",
+        quantity: 5,
+        performedById: "user-1",
+      });
+
+      expect(result.movementType).toBe("IN");
     });
   });
 

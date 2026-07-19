@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import { FieldDefinition } from "@/core/domain/entities/field-definition.entity";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
@@ -54,7 +55,7 @@ export class CreateFieldDefinitionUseCase {
       props.name,
     );
     if (existsByName) {
-      throw new Error(
+      throw new ConflictError(
         `Field definition with name "${props.name}" already exists`,
       );
     }

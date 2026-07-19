@@ -1,9 +1,11 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import type { IServiceAssetRepository } from "@/core/repositories/service-asset.repository.interface";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { AssetRelationship } from "@/generated/prisma";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface LinkServiceToAssetRequest {
   serviceId: string;
@@ -27,12 +29,12 @@ export class LinkServiceToAssetUseCase {
     // Check if service exists
     const service = await this.serviceRepository.findById(request.serviceId);
     if (!service) {
-      throw new Error(`Service with ID ${request.serviceId} not found`);
+      throw new NotFoundError(`Service with ID ${request.serviceId} not found`);
     }
 
     const asset = await this.assetRepository.findById(request.assetId);
     if (!asset) {
-      throw new Error(`Asset with ID ${request.assetId} not found`);
+      throw new NotFoundError(`Asset with ID ${request.assetId} not found`);
     }
 
     // Check if asset exists
@@ -44,7 +46,7 @@ export class LinkServiceToAssetUseCase {
         request.relationship,
       );
     if (existingLink) {
-      throw new Error(
+      throw new ConflictError(
         `Asset is already linked to this service with relationship ${request.relationship}`,
       );
     }

@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IContractLinkedObjectRepository } from "@/core/repositories/contract-linked-object.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteContractLinkedObjectRequest {
   id: string;
@@ -21,7 +22,7 @@ export class DeleteContractLinkedObjectUseCase {
     const linkedObject = await this.linkedObjectRepository.findById(request.id);
 
     if (!linkedObject) {
-      throw new Error("Contract linked object not found");
+      throw new NotFoundError("Contract linked object not found");
     }
 
     await this.linkedObjectRepository.delete(request.id);

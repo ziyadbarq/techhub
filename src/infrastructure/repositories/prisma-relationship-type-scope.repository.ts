@@ -2,18 +2,21 @@
  * Prisma RelationshipTypeScope Repository Implementation
  */
 
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { IRelationshipTypeScopeRepository } from "@/core/repositories/relationship-type-scope.repository.interface";
 import { RelationshipTypeScope } from "@/core/domain/entities/relationship-type-scope.entity";
-import { prisma } from "@/infrastructure/database/prisma/client";
 import type { RelationshipTypeScope as PrismaRelationshipTypeScope } from "@/generated/prisma";
 
 @injectable()
-export class PrismaRelationshipTypeScopeRepository
-  implements IRelationshipTypeScopeRepository
-{
+export class PrismaRelationshipTypeScopeRepository implements IRelationshipTypeScopeRepository {
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
   async create(scope: RelationshipTypeScope): Promise<RelationshipTypeScope> {
-    const created = await prisma.relationshipTypeScope.create({
+    const created = await this.prisma.relationshipTypeScope.create({
       data: {
         relationshipTypeId: scope.relationshipTypeId,
         fromCiClassId: scope.fromCiClassId,
@@ -26,7 +29,7 @@ export class PrismaRelationshipTypeScopeRepository
   }
 
   async findById(id: string): Promise<RelationshipTypeScope | null> {
-    const scope = await prisma.relationshipTypeScope.findUnique({
+    const scope = await this.prisma.relationshipTypeScope.findUnique({
       where: { id },
     });
 
@@ -36,7 +39,7 @@ export class PrismaRelationshipTypeScopeRepository
   async findByRelationshipTypeId(
     relationshipTypeId: string,
   ): Promise<RelationshipTypeScope[]> {
-    const scopes = await prisma.relationshipTypeScope.findMany({
+    const scopes = await this.prisma.relationshipTypeScope.findMany({
       where: { relationshipTypeId },
       orderBy: [{ fromCiClassId: "asc" }, { toCiClassId: "asc" }],
     });
@@ -47,7 +50,7 @@ export class PrismaRelationshipTypeScopeRepository
   async findByFromCiClassId(
     fromCiClassId: string,
   ): Promise<RelationshipTypeScope[]> {
-    const scopes = await prisma.relationshipTypeScope.findMany({
+    const scopes = await this.prisma.relationshipTypeScope.findMany({
       where: { fromCiClassId },
       orderBy: { relationshipTypeId: "asc" },
     });
@@ -58,7 +61,7 @@ export class PrismaRelationshipTypeScopeRepository
   async findByToCiClassId(
     toCiClassId: string,
   ): Promise<RelationshipTypeScope[]> {
-    const scopes = await prisma.relationshipTypeScope.findMany({
+    const scopes = await this.prisma.relationshipTypeScope.findMany({
       where: { toCiClassId },
       orderBy: { relationshipTypeId: "asc" },
     });
@@ -71,7 +74,7 @@ export class PrismaRelationshipTypeScopeRepository
     fromCiClassId: string,
     toCiClassId: string,
   ): Promise<RelationshipTypeScope | null> {
-    const scope = await prisma.relationshipTypeScope.findUnique({
+    const scope = await this.prisma.relationshipTypeScope.findUnique({
       where: {
         relationshipTypeId_fromCiClassId_toCiClassId: {
           relationshipTypeId,
@@ -85,7 +88,7 @@ export class PrismaRelationshipTypeScopeRepository
   }
 
   async findAll(): Promise<RelationshipTypeScope[]> {
-    const scopes = await prisma.relationshipTypeScope.findMany({
+    const scopes = await this.prisma.relationshipTypeScope.findMany({
       orderBy: [
         { relationshipTypeId: "asc" },
         { fromCiClassId: "asc" },
@@ -97,7 +100,7 @@ export class PrismaRelationshipTypeScopeRepository
   }
 
   async update(scope: RelationshipTypeScope): Promise<RelationshipTypeScope> {
-    const updated = await prisma.relationshipTypeScope.update({
+    const updated = await this.prisma.relationshipTypeScope.update({
       where: { id: scope.id },
       data: {
         note: scope.note,
@@ -109,7 +112,7 @@ export class PrismaRelationshipTypeScopeRepository
   }
 
   async delete(id: string): Promise<void> {
-    await prisma.relationshipTypeScope.delete({
+    await this.prisma.relationshipTypeScope.delete({
       where: { id },
     });
   }
@@ -119,7 +122,7 @@ export class PrismaRelationshipTypeScopeRepository
     fromCiClassId: string,
     toCiClassId: string,
   ): Promise<boolean> {
-    const count = await prisma.relationshipTypeScope.count({
+    const count = await this.prisma.relationshipTypeScope.count({
       where: {
         relationshipTypeId,
         fromCiClassId,
@@ -131,7 +134,7 @@ export class PrismaRelationshipTypeScopeRepository
   }
 
   async countByRelationshipTypeId(relationshipTypeId: string): Promise<number> {
-    return await prisma.relationshipTypeScope.count({
+    return await this.prisma.relationshipTypeScope.count({
       where: { relationshipTypeId },
     });
   }

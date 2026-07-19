@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IBusinessProcessRepository } from "@/core/repositories/business-process.repository.interface";
 import type { ILoggerService } from "@/core/services";
@@ -36,7 +37,7 @@ export class CreateBusinessProcessUseCase {
       request.code,
     );
     if (codeExists) {
-      throw new Error(
+      throw new ConflictError(
         `Business process with code "${request.code}" already exists`,
       );
     }

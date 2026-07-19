@@ -11,6 +11,9 @@ export type { IFileStorageService } from "./file-storage.service.interface";
 // ID Generator Service
 export type { IIdGenerator } from "./id-generator.service.interface";
 
+// Unit of Work Service
+export type { IUnitOfWork } from "./unit-of-work.service.interface";
+
 // Logger Service
 export type {
   ILoggerService,

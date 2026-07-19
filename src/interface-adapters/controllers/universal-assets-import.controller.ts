@@ -431,6 +431,8 @@ export async function getUniversalAssetsImportDefaultSettingsAction(): Promise<{
   error?: string;
 }> {
   try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
     return {
       success: true,
       data: DEFAULT_UNIVERSAL_IMPORT_SETTINGS,
@@ -460,6 +462,8 @@ export async function getUniversalAssetsPrefixInfoAction(): Promise<{
   error?: string;
 }> {
   try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
     return {
       success: true,
       data: [

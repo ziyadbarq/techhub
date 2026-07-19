@@ -130,10 +130,13 @@ export async function restoreDatabaseFromBackupAction(
 }
 
 /**
- * Internal helper: fetch a database backup by id (for server routes/downloads).
- * Does not perform permission checks; callers must enforce auth/authorization.
+ * Fetch a database backup by id (for server routes/downloads).
+ * Guarded directly: "use server" exports are client-invokable endpoints
+ * regardless of intent, so relying on callers to enforce auth is unsafe.
  */
 export async function getDatabaseBackupByIdInternal(backupId: string) {
+  await requirePermission(PERMISSIONS.DATABASE_BACKUP);
+
   const container = getContainer();
   const getBackup = container.get<GetDatabaseBackupUseCase>(
     DI_TOKENS.GetDatabaseBackupUseCase,

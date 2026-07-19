@@ -1,9 +1,11 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { jsPDF } from "jspdf";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import { LogExecution } from "@/lib/decorators/log-execution.decorator";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GenerateDisposalCertificatePDFRequest {
   disposalId: string;
@@ -42,23 +44,23 @@ export class GenerateDisposalCertificatePDFUseCase {
     // Fetch disposal details
     const disposal = await this.disposalRepository.findById(request.disposalId);
     if (!disposal) {
-      throw new Error(`Disposal ${request.disposalId} not found`);
+      throw new NotFoundError(`Disposal ${request.disposalId} not found`);
     }
 
     if (disposal.status !== "COMPLETED") {
-      throw new Error(
+      throw new ValidationError(
         "Certificate can only be generated for completed disposals",
       );
     }
 
     if (!disposal.certificateNumber) {
-      throw new Error("Disposal must have a certificate number");
+      throw new ValidationError("Disposal must have a certificate number");
     }
 
     // Fetch asset details
     const asset = await this.assetRepository.findById(disposal.assetId);
     if (!asset) {
-      throw new Error(`Asset ${disposal.assetId} not found`);
+      throw new NotFoundError(`Asset ${disposal.assetId} not found`);
     }
 
     // Generate PDF

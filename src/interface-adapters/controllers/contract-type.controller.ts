@@ -27,16 +27,14 @@ import {
 } from "@/interface-adapters/presenters/contract-type.presenter";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import type { BulkCreateResult } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 
 /**
  * Create a new contract type
  */
 export async function createContractType(
   data: CreateContractTypeDTO,
-): Promise<
-  { success: true; data: ContractTypeDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<ContractTypeDTO>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACT_TYPES_CREATE);
 
@@ -75,9 +73,7 @@ export async function createContractType(
  */
 export async function getContractType(
   id: string,
-): Promise<
-  { success: true; data: ContractTypeDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<ContractTypeDTO>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACT_TYPES_VIEW);
 
@@ -106,9 +102,7 @@ export async function getContractType(
  */
 export async function listContractTypes(options?: {
   activeOnly?: boolean;
-}): Promise<
-  { success: true; data: ContractTypeDTO[] } | { success: false; error: string }
-> {
+}): Promise<ActionResponse<ContractTypeDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACT_TYPES_VIEW);
 
@@ -142,9 +136,7 @@ export async function listContractTypes(options?: {
 export async function updateContractType(
   id: string,
   data: UpdateContractTypeDTO,
-): Promise<
-  { success: true; data: ContractTypeDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<ContractTypeDTO>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACT_TYPES_UPDATE);
 

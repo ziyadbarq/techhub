@@ -6,7 +6,7 @@
  * Server actions for OCI Cloud resource synchronization.
  */
 
-import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { getContainer, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { requirePermission } from "@/lib/permissions/server";
@@ -32,12 +32,6 @@ import {
 // Module Loading
 // ========================================
 
-async function ensureOciSyncModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("oci-sync")) {
-    await loadHeavyModule("oci-sync");
-  }
-}
-
 // ========================================
 // Server Actions
 // ========================================
@@ -51,7 +45,7 @@ export async function triggerOciSyncAction(
   try {
     await requireFeature("OCI_SYNC");
     await requirePermission(PERMISSIONS.OCI_SYNC_TRIGGER);
-    await ensureOciSyncModuleLoaded();
+    await ensureModuleLoaded("oci-sync");
 
     const parsed = TriggerOciSyncSchema.parse(input);
 
@@ -89,7 +83,7 @@ export async function getOciSyncLogsAction(
   try {
     await requireFeature("OCI_SYNC");
     await requirePermission(PERMISSIONS.OCI_SYNC_LOGS_VIEW);
-    await ensureOciSyncModuleLoaded();
+    await ensureModuleLoaded("oci-sync");
 
     const container = getContainer();
     const getLogsUseCase = container.get<GetOciSyncLogsUseCase>(
@@ -120,7 +114,7 @@ export async function getLatestOciSyncStatusAction(): Promise<
   try {
     await requireFeature("OCI_SYNC");
     await requirePermission(PERMISSIONS.OCI_SYNC_VIEW);
-    await ensureOciSyncModuleLoaded();
+    await ensureModuleLoaded("oci-sync");
 
     const container = getContainer();
     const getLogsUseCase = container.get<GetOciSyncLogsUseCase>(

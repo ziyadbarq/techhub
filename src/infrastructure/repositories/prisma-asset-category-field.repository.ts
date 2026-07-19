@@ -2,19 +2,22 @@
  * Prisma AssetCategoryField Repository Implementation
  */
 
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { IAssetCategoryFieldRepository } from "@/core/repositories/asset-category-field.repository.interface";
 import { AssetCategoryField } from "@/core/domain/entities/asset-category-field.entity";
-import { prisma } from "@/infrastructure/database/prisma/client";
 import type { AssetCategoryField as PrismaAssetCategoryField } from "@/generated/prisma";
 import { toJsonValue } from "./prisma-helpers";
 
 @injectable()
-export class PrismaAssetCategoryFieldRepository
-  implements IAssetCategoryFieldRepository
-{
+export class PrismaAssetCategoryFieldRepository implements IAssetCategoryFieldRepository {
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
   async create(field: AssetCategoryField): Promise<AssetCategoryField> {
-    const created = await prisma.assetCategoryField.create({
+    const created = await this.prisma.assetCategoryField.create({
       data: {
         assetCategoryId: field.assetCategoryId,
         fieldDefinitionId: field.fieldDefinitionId,
@@ -30,7 +33,7 @@ export class PrismaAssetCategoryFieldRepository
   }
 
   async findById(id: string): Promise<AssetCategoryField | null> {
-    const field = await prisma.assetCategoryField.findUnique({
+    const field = await this.prisma.assetCategoryField.findUnique({
       where: { id },
     });
 
@@ -40,7 +43,7 @@ export class PrismaAssetCategoryFieldRepository
   async findByAssetCategoryId(
     assetCategoryId: string,
   ): Promise<AssetCategoryField[]> {
-    const fields = await prisma.assetCategoryField.findMany({
+    const fields = await this.prisma.assetCategoryField.findMany({
       where: { assetCategoryId },
       orderBy: { uiOrder: "asc" },
     });
@@ -52,7 +55,7 @@ export class PrismaAssetCategoryFieldRepository
     assetCategoryId: string,
     fieldDefinitionId: string,
   ): Promise<AssetCategoryField | null> {
-    const field = await prisma.assetCategoryField.findUnique({
+    const field = await this.prisma.assetCategoryField.findUnique({
       where: {
         assetCategoryId_fieldDefinitionId: {
           assetCategoryId,
@@ -67,7 +70,7 @@ export class PrismaAssetCategoryFieldRepository
   async findByFieldDefinitionId(
     fieldDefinitionId: string,
   ): Promise<AssetCategoryField[]> {
-    const fields = await prisma.assetCategoryField.findMany({
+    const fields = await this.prisma.assetCategoryField.findMany({
       where: { fieldDefinitionId },
       orderBy: { assetCategoryId: "asc" },
     });
@@ -76,7 +79,7 @@ export class PrismaAssetCategoryFieldRepository
   }
 
   async findAll(): Promise<AssetCategoryField[]> {
-    const fields = await prisma.assetCategoryField.findMany({
+    const fields = await this.prisma.assetCategoryField.findMany({
       orderBy: [{ assetCategoryId: "asc" }, { uiOrder: "asc" }],
     });
 
@@ -84,7 +87,7 @@ export class PrismaAssetCategoryFieldRepository
   }
 
   async update(field: AssetCategoryField): Promise<AssetCategoryField> {
-    const updated = await prisma.assetCategoryField.update({
+    const updated = await this.prisma.assetCategoryField.update({
       where: { id: field.id },
       data: {
         isRequired: field.isRequired,
@@ -100,7 +103,7 @@ export class PrismaAssetCategoryFieldRepository
   }
 
   async delete(id: string): Promise<void> {
-    await prisma.assetCategoryField.delete({
+    await this.prisma.assetCategoryField.delete({
       where: { id },
     });
   }
@@ -109,7 +112,7 @@ export class PrismaAssetCategoryFieldRepository
     assetCategoryId: string,
     fieldDefinitionId: string,
   ): Promise<boolean> {
-    const count = await prisma.assetCategoryField.count({
+    const count = await this.prisma.assetCategoryField.count({
       where: {
         assetCategoryId,
         fieldDefinitionId,
@@ -120,7 +123,7 @@ export class PrismaAssetCategoryFieldRepository
   }
 
   async countByAssetCategoryId(assetCategoryId: string): Promise<number> {
-    return await prisma.assetCategoryField.count({
+    return await this.prisma.assetCategoryField.count({
       where: { assetCategoryId },
     });
   }
@@ -135,7 +138,7 @@ export class PrismaAssetCategoryFieldRepository
    */
   async findByAssetCategoryIdWithDefinition(assetCategoryId: string) {
     // 1. Get category-specific fields from AssetCategoryField
-    const categoryFields = await prisma.assetCategoryField.findMany({
+    const categoryFields = await this.prisma.assetCategoryField.findMany({
       where: { assetCategoryId },
       orderBy: { uiOrder: "asc" },
       include: {
@@ -157,7 +160,7 @@ export class PrismaAssetCategoryFieldRepository
 
     // 2. Get global ASSET fields that aren't already linked to this category
     const linkedFieldIds = categoryFields.map((f) => f.fieldDefinitionId);
-    const globalFields = await prisma.fieldDefinition.findMany({
+    const globalFields = await this.prisma.fieldDefinition.findMany({
       where: {
         entityType: "ASSET",
         isGlobal: true,

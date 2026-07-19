@@ -5,31 +5,13 @@
 "use client";
 "use no memo";
 
-import { useState } from "react";
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
-} from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 import { Eye, Package, User } from "lucide-react";
 import { formatDate } from "@/lib/utils/date-format";
 import { Button } from "@/components/ui/button";
 import { EntityDisplay } from "@/components/ui/entity-display";
+import { DataTable } from "@/components/ui/data-table";
 import { useColumnVisibilityEnhanced } from "@/hooks";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import type { AssetKitCheckoutDTO } from "@/interface-adapters/dtos/generated/asset-kit-checkout.dto";
 
@@ -53,9 +35,6 @@ export function KitCheckoutsTable({
   loading,
   onView,
 }: KitCheckoutsTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
   const columns: ColumnDef<AssetKitCheckoutDTO>[] = [
     {
       accessorKey: "kitName",
@@ -63,9 +42,7 @@ export function KitCheckoutsTable({
       cell: ({ row }) => (
         <EntityDisplay name={row.original.kitName} icon={Package} />
       ),
-      meta: {
-        label: "Kit",
-      },
+      meta: { label: "Kit" },
     },
     {
       accessorKey: "personName",
@@ -73,9 +50,7 @@ export function KitCheckoutsTable({
       cell: ({ row }) => (
         <EntityDisplay name={row.original.personName} icon={User} />
       ),
-      meta: {
-        label: "Checked Out To",
-      },
+      meta: { label: "Checked Out To" },
     },
     {
       accessorKey: "status",
@@ -88,9 +63,7 @@ export function KitCheckoutsTable({
           </Badge>
         );
       },
-      meta: {
-        label: "Status",
-      },
+      meta: { label: "Status" },
     },
     {
       accessorKey: "checkoutDate",
@@ -100,9 +73,7 @@ export function KitCheckoutsTable({
           {formatDate(row.getValue<string>("checkoutDate"))}
         </div>
       ),
-      meta: {
-        label: "Checkout Date",
-      },
+      meta: { label: "Checkout Date" },
     },
     {
       accessorKey: "expectedReturnDate",
@@ -113,10 +84,7 @@ export function KitCheckoutsTable({
             "N/A"}
         </div>
       ),
-      meta: {
-        label: "Expected Return",
-        hiddenByDefault: true,
-      },
+      meta: { label: "Expected Return", hiddenByDefault: true },
     },
     {
       accessorKey: "actualReturnDate",
@@ -126,10 +94,7 @@ export function KitCheckoutsTable({
           {formatDate(row.getValue<string | null>("actualReturnDate")) || "-"}
         </div>
       ),
-      meta: {
-        label: "Actual Return",
-        hiddenByDefault: true,
-      },
+      meta: { label: "Actual Return", hiddenByDefault: true },
     },
     {
       id: "actions",
@@ -147,102 +112,24 @@ export function KitCheckoutsTable({
     },
   ];
 
-  // Use enhanced column visibility hook with localStorage persistence
+  // Enhanced column visibility with localStorage persistence
   const { visibility, onVisibilityChange } =
     useColumnVisibilityEnhanced<AssetKitCheckoutDTO>({
       storageKey: "kit-checkouts-table-columns",
       columns,
     });
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: (updater) => {
-      const newVisibility =
-        typeof updater === "function" ? updater(visibility) : updater;
-      onVisibilityChange(newVisibility);
-    },
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility: visibility,
-    },
-  });
-
   return (
-    <div className="space-y-4">
-      {/* Filters */}
-      <div className="flex gap-4">
-        <Input
-          placeholder="Filter by kit name..."
-          value={(table.getColumn("kitName")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("kitName")?.setFilterValue(event.target.value)
-          }
-          className="max-w-xs"
-        />
-      </div>
-
-      {/* Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="text-center">
-                  Loading...
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="text-center">
-                  No checkouts found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Pagination Info */}
-      <div className="text-muted-foreground text-sm">
-        Showing {table.getFilteredRowModel().rows.length} of {data.length}{" "}
-        checkout(s)
-      </div>
-    </div>
+    <DataTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      searchable
+      searchKey="kitName"
+      searchPlaceholder="Filter by kit name..."
+      emptyMessage="No checkouts found."
+      controlledState={{ columnVisibility: visibility }}
+      onColumnVisibilityChange={onVisibilityChange}
+    />
   );
 }

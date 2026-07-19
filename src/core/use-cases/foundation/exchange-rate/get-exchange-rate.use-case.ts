@@ -8,6 +8,7 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ExchangeRate } from "@/core/domain/entities/exchange-rate.entity";
 import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class GetExchangeRateUseCase {
@@ -33,7 +34,9 @@ export class GetExchangeRateUseCase {
       : await this.exchangeRateRepository.findByCurrency(currency);
 
     if (!exchangeRate) {
-      throw new Error(`Exchange rate for currency "${currency}" not found`);
+      throw new NotFoundError(
+        `Exchange rate for currency "${currency}" not found`,
+      );
     }
 
     return exchangeRate;

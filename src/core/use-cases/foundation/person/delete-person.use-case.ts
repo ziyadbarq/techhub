@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
@@ -32,7 +33,7 @@ export class DeletePersonUseCase {
 
     // Check if linked to user
     if (person.userId) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete person because it is linked to a user account. Unlink the user first.",
       );
     }

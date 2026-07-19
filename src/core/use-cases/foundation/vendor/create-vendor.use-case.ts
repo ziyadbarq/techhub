@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Vendor } from "@/core/domain/entities/vendor.entity";
@@ -56,7 +57,9 @@ export class CreateVendorUseCase {
     // Check for duplicate name
     const existingVendor = await this.vendorRepository.findByName(props.name);
     if (existingVendor) {
-      throw new Error(`Vendor with name "${props.name}" already exists`);
+      throw new ConflictError(
+        `Vendor with name "${props.name}" already exists`,
+      );
     }
 
     // Auto-generate code if not provided or empty

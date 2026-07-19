@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { OwnershipType } from "@/generated/prisma";
 import type { IServiceOwnershipRepository } from "@/core/repositories/service-ownership.repository.interface";
@@ -23,7 +24,7 @@ export class RemoveServiceOwnerUseCase {
       request.ownershipType,
     );
     if (!ownership) {
-      throw new Error(
+      throw new ValidationError(
         `Ownership record not found for service ${request.serviceId}, person ${request.personId}, type ${request.ownershipType}`,
       );
     }

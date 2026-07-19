@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import { DI_TOKENS } from "@/di/types";
 import { Permission } from "@/core/domain/entities/permission.entity";
@@ -35,7 +36,7 @@ export class CreatePermissionUseCase {
     const existing = await this.permissionRepository.findByName(name);
 
     if (existing) {
-      throw new Error(`Permission ${name} already exists`);
+      throw new ConflictError(`Permission ${name} already exists`);
     }
 
     // Create permission entity

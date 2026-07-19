@@ -61,10 +61,14 @@ function registerModules(): void {
   // Validate module dependencies
   const errors = moduleRegistry.validateAll();
   if (errors.size > 0) {
-    console.error("Module dependency validation errors:");
+    const containerLogger = logger.scope("DIContainer");
     errors.forEach((moduleErrors, moduleName) => {
-      console.error(`  ${moduleName}:`);
-      moduleErrors.forEach((error) => console.error(`    - ${error}`));
+      containerLogger.error(
+        "validateModuleDependencies",
+        `Module dependency validation errors in ${moduleName}`,
+        undefined,
+        { errors: moduleErrors },
+      );
     });
     throw new Error("Module dependency validation failed");
   }
@@ -242,6 +246,19 @@ export function isModuleLoaded(moduleName: string): boolean {
 }
 
 /**
+ * Ensure a lazily-loaded (HEAVY tier) module is loaded before resolving
+ * its use cases. No-op when already loaded. Replaces the per-controller
+ * ensureXModuleLoaded helper copies.
+ *
+ * @param moduleName - Name of the module to load (e.g. "licenses")
+ */
+export async function ensureModuleLoaded(moduleName: string): Promise<void> {
+  if (!isModuleLoaded(moduleName)) {
+    await loadHeavyModule(moduleName);
+  }
+}
+
+/**
  * Get module statistics
  *
  * Returns information about loaded/unloaded modules by tier
@@ -310,7 +327,9 @@ function initContainerSync(): Container {
       diModule.bindFunction(container);
       moduleRegistry.markLoaded(moduleName);
     } catch (error) {
-      console.error(`Failed to load module ${moduleName}:`, error);
+      logger
+        .scope("DIContainer")
+        .error("loadModule", `Failed to load module ${moduleName}`, error);
       throw error;
     }
   }

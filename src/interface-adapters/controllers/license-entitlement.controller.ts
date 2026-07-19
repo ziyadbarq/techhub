@@ -5,19 +5,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { controllerLogger } from "@/lib/logger";
+import { handleControllerError } from "./error-handler";
+import { resolve, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
-/**
- * Ensures the Licenses module is loaded before accessing its use cases
- */
-async function ensureLicensesModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("licenses")) {
-    await loadHeavyModule("licenses");
-  }
-}
 import type {
   CreateLicenseEntitlementDTO,
   UpdateLicenseEntitlementDTO,
@@ -33,22 +27,19 @@ import type { GetLicenseEntitlementUseCase } from "@/core/use-cases/license-enti
 import type { ListLicenseEntitlementsUseCase } from "@/core/use-cases/license-entitlement/list-license-entitlements.use-case";
 import type { UpdateLicenseEntitlementUseCase } from "@/core/use-cases/license-entitlement/update-license-entitlement.use-case";
 import type { DeleteLicenseEntitlementUseCase } from "@/core/use-cases/license-entitlement/delete-license-entitlement.use-case";
-import type { BulkCreateResult } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 
 /**
  * Create a new license entitlement
  */
 export async function createLicenseEntitlement(
   data: CreateLicenseEntitlementDTO,
-): Promise<
-  | { success: true; data: LicenseEntitlementDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseEntitlementDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = CreateLicenseEntitlementSchema.parse(data);
 
@@ -75,14 +66,11 @@ export async function createLicenseEntitlement(
       data: LicenseEntitlementPresenter.toDTO(entitlement),
     };
   } catch (error) {
-    console.error("Error creating license entitlement:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to create license entitlement",
-    };
+    return handleControllerError(
+      error,
+      { function: "createLicenseEntitlement" },
+      "Failed to create license entitlement",
+    );
   }
 }
 
@@ -91,15 +79,12 @@ export async function createLicenseEntitlement(
  */
 export async function getLicenseEntitlement(
   id: string,
-): Promise<
-  | { success: true; data: LicenseEntitlementDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseEntitlementDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<GetLicenseEntitlementUseCase>(
       DI_TOKENS.GetLicenseEntitlementUseCase,
@@ -112,14 +97,11 @@ export async function getLicenseEntitlement(
       data: LicenseEntitlementPresenter.toDTO(entitlement),
     };
   } catch (error) {
-    console.error("Error getting license entitlement:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to get license entitlement",
-    };
+    return handleControllerError(
+      error,
+      { function: "getLicenseEntitlement" },
+      "Failed to get license entitlement",
+    );
   }
 }
 
@@ -131,15 +113,12 @@ export async function listLicenseEntitlements(params?: {
   contractId?: string;
   activeOnly?: boolean;
   asOfDate?: Date;
-}): Promise<
-  | { success: true; data: LicenseEntitlementDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<LicenseEntitlementDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<ListLicenseEntitlementsUseCase>(
       DI_TOKENS.ListLicenseEntitlementsUseCase,
@@ -152,14 +131,11 @@ export async function listLicenseEntitlements(params?: {
       data: LicenseEntitlementPresenter.toDTOList(entitlements),
     };
   } catch (error) {
-    console.error("Error listing license entitlements:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to list license entitlements",
-    };
+    return handleControllerError(
+      error,
+      { function: "listLicenseEntitlements" },
+      "Failed to list license entitlements",
+    );
   }
 }
 
@@ -168,15 +144,12 @@ export async function listLicenseEntitlements(params?: {
  */
 export async function updateLicenseEntitlement(
   data: UpdateLicenseEntitlementDTO,
-): Promise<
-  | { success: true; data: LicenseEntitlementDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseEntitlementDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const validated = UpdateLicenseEntitlementSchema.parse(data);
 
@@ -203,14 +176,11 @@ export async function updateLicenseEntitlement(
       data: LicenseEntitlementPresenter.toDTO(entitlement),
     };
   } catch (error) {
-    console.error("Error updating license entitlement:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to update license entitlement",
-    };
+    return handleControllerError(
+      error,
+      { function: "updateLicenseEntitlement" },
+      "Failed to update license entitlement",
+    );
   }
 }
 
@@ -224,7 +194,7 @@ export async function deleteLicenseEntitlement(
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_DELETE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<DeleteLicenseEntitlementUseCase>(
       DI_TOKENS.DeleteLicenseEntitlementUseCase,
@@ -236,14 +206,11 @@ export async function deleteLicenseEntitlement(
 
     return { success: true };
   } catch (error) {
-    console.error("Error deleting license entitlement:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to delete license entitlement",
-    };
+    return handleControllerError(
+      error,
+      { function: "deleteLicenseEntitlement" },
+      "Failed to delete license entitlement",
+    );
   }
 }
 
@@ -257,7 +224,7 @@ export async function bulkCreateLicenseEntitlementsAction(
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const useCase = resolve<CreateLicenseEntitlementUseCase>(
       DI_TOKENS.CreateLicenseEntitlementUseCase,
@@ -304,7 +271,11 @@ export async function bulkCreateLicenseEntitlementsAction(
 
     return results;
   } catch (error) {
-    console.error("Error bulk creating license entitlements:", error);
+    controllerLogger.error(
+      "bulkCreateLicenseEntitlementsAction",
+      "Error bulk creating license entitlements",
+      error,
+    );
     return {
       success: false,
       successCount: 0,

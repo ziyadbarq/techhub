@@ -15,6 +15,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatTime } from "@/lib/utils/date-format";
 import { usePartykit } from "@/lib/hooks/usePartykit";
 import type { Participant } from "@/lib/hooks/usePartykit";
 import { Button } from "@/components/ui/button";
@@ -119,13 +120,6 @@ export function PartykitDemo() {
    */
   const clearMessages = () => {
     setMessages([]);
-  };
-
-  /**
-   * Formats timestamp
-   */
-  const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString();
   };
 
   /**
@@ -261,7 +255,7 @@ export function PartykitDemo() {
                         {message.senderName}
                       </span>
                       <span className="text-muted-foreground text-xs">
-                        {formatTime(message.timestamp)}
+                        {formatTime(new Date(message.timestamp))}
                       </span>
                     </div>
                     <div className="text-sm">{message.text}</div>

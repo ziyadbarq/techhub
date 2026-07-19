@@ -43,6 +43,9 @@
  */
 
 import type { ILoggerService } from "@/core/services";
+import { logger as fallbackLogger } from "@/lib/logger";
+
+const decoratorLogger = fallbackLogger.scope("LogExecutionDecorator");
 
 /**
  * Sensitive field names that should be redacted in logs
@@ -142,9 +145,9 @@ export function LogExecution(operationName?: string) {
       typeof originalMethod !== "function" ||
       originalMethod.constructor.name !== "AsyncFunction"
     ) {
-      console.warn(
-        `@LogExecution: Method ${propertyKey} is not async. ` +
-          `Decorator is designed for async methods.`,
+      decoratorLogger.warn(
+        "LogExecution",
+        `@LogExecution: Method ${propertyKey} is not async. Decorator is designed for async methods.`,
       );
     }
 
@@ -159,7 +162,8 @@ export function LogExecution(operationName?: string) {
       const logger = this.logger as ILoggerService | undefined;
 
       if (!logger) {
-        console.warn(
+        decoratorLogger.warn(
+          "LogExecution",
           `@LogExecution: No logger found on ${(target as { constructor: { name: string } }).constructor.name}. ` +
             `Ensure the class has an injected ILoggerService via constructor.`,
         );

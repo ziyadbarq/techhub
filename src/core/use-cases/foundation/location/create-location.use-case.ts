@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Location } from "@/core/domain/entities/location.entity";
@@ -57,7 +58,7 @@ export class CreateLocationUseCase {
     // Check for duplicate code
     const existsByCode = await this.locationRepository.existsByCode(code);
     if (existsByCode) {
-      throw new Error(`Location with code "${code}" already exists`);
+      throw new ConflictError(`Location with code "${code}" already exists`);
     }
 
     const location = Location.create({ ...props, code });

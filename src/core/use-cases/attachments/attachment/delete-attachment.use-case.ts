@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAttachmentRepository } from "@/core/repositories/attachment.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteAttachmentRequest {
   id: string;
@@ -22,7 +23,7 @@ export class DeleteAttachmentUseCase {
     const attachment = await this.attachmentRepository.findById(request.id);
 
     if (!attachment) {
-      throw new Error("Attachment not found");
+      throw new NotFoundError("Attachment not found");
     }
 
     await this.attachmentRepository.delete(request.id);

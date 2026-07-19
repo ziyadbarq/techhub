@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
 import type { CIClass } from "@/core/domain/entities/ci-class.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetCIClassRequest {
   ciClassId: string;
@@ -22,7 +23,9 @@ export class GetCIClassUseCase {
     const ciClass = await this.ciClassRepository.findById(request.ciClassId);
 
     if (!ciClass) {
-      throw new Error(`CI class with ID "${request.ciClassId}" not found`);
+      throw new NotFoundError(
+        `CI class with ID "${request.ciClassId}" not found`,
+      );
     }
 
     return ciClass;

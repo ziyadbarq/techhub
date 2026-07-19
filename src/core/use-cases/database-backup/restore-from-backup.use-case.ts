@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IDatabaseBackupRepository } from "@/core/repositories/database-backup.repository.interface";
@@ -12,6 +13,7 @@ import type { IJobQueueService } from "@/core/services/job-queue.service.interfa
 import type { DatabaseRestoreJobData } from "@/core/domain/jobs/job-data.types";
 import type { ILoggerService } from "@/core/services";
 import type { IDatabaseBackupService } from "@/core/services/database-backup.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface RestoreDatabaseFromBackupInput {
   backupId: string;
@@ -36,17 +38,17 @@ export class RestoreDatabaseFromBackupUseCase {
   ): Promise<DatabaseBackup> {
     const backup = await this.repository.findById(input.backupId);
     if (!backup) {
-      throw new Error("Backup not found");
+      throw new NotFoundError("Backup not found");
     }
 
     const backupData = backup.toJSON();
 
     if (backupData.deletedAt) {
-      throw new Error("Cannot restore from a deleted backup");
+      throw new ValidationError("Cannot restore from a deleted backup");
     }
 
     if (backupData.status !== BackupStatus.COMPLETED) {
-      throw new Error(
+      throw new ValidationError(
         "Backup is not completed. Restore requires a completed backup.",
       );
     }
@@ -54,7 +56,7 @@ export class RestoreDatabaseFromBackupUseCase {
     try {
       await fs.access(backupData.filePath);
     } catch {
-      throw new Error("Backup file is missing on disk");
+      throw new ValidationError("Backup file is missing on disk");
     }
 
     const hasWorkers = await this.jobQueue.hasActiveWorkers(

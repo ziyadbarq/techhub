@@ -107,7 +107,11 @@ curl -s -X DELETE \
 
 **Buildtime vs Runtime rules:**
 - `NEXT_PUBLIC_APP_URL`: `is_buildtime: true, is_runtime: true` (embedded in client bundle)
+- `BETTER_AUTH_URL`: `is_buildtime: false, is_runtime: true` and must match the canonical external app origin used for `NEXT_PUBLIC_APP_URL`
+- `TRUSTED_ORIGINS`: optional runtime-only comma-separated exact origins for aliases or transition URLs; omit for single-origin deployments
 - All secrets (`BETTER_AUTH_SECRET`, `ENCRYPTION_KEY`, `DATABASE_URL`, `REDIS_URL`, etc.): `is_buildtime: false, is_runtime: true`
+
+Do not use internal container, pod, or service URLs for `BETTER_AUTH_URL`; OAuth redirects and email links must use the public app origin.
 
 ---
 

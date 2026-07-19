@@ -6,7 +6,7 @@
 
 "use server";
 
-import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { getContainer, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -795,9 +795,7 @@ export async function getMyLicensesAction(): Promise<
     await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    if (!isModuleLoaded("licenses")) {
-      await loadHeavyModule("licenses");
-    }
+    await ensureModuleLoaded("licenses");
 
     const userId = await getCurrentUserId();
     if (!userId) {
@@ -865,9 +863,7 @@ export async function getMyServicesAction(): Promise<
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
     // Ensure Service module is loaded (HEAVY tier, lazy loaded)
-    if (!isModuleLoaded("service")) {
-      await loadHeavyModule("service");
-    }
+    await ensureModuleLoaded("service");
 
     const userId = await getCurrentUserId();
     if (!userId) {

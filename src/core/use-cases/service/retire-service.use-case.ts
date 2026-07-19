@@ -1,9 +1,11 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import type { ILoggerService } from "@/core/services";
 import type { Service } from "@/core/domain/entities/service.entity";
 import { LogExecution } from "@/lib/decorators";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface RetireServiceRequest {
   serviceId: string;
@@ -24,12 +26,12 @@ export class RetireServiceUseCase {
   async execute(request: RetireServiceRequest): Promise<Service> {
     const service = await this.serviceRepository.findById(request.serviceId);
     if (!service) {
-      throw new Error(`Service with ID ${request.serviceId} not found`);
+      throw new NotFoundError(`Service with ID ${request.serviceId} not found`);
     }
 
     // Check if service can be retired (business rule in entity)
     if (!service.canBeRetired()) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot retire service: Essential services in PRODUCTION status cannot be retired",
       );
     }

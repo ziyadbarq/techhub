@@ -3,12 +3,14 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IRelationshipTypeScopeRepository } from "@/core/repositories/relationship-type-scope.repository.interface";
 import type { IRelationshipTypeRepository } from "@/core/repositories/relationship-type.repository.interface";
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
 import { RelationshipTypeScope } from "@/core/domain/entities/relationship-type-scope.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateRelationshipTypeScopeRequest {
   relationshipTypeId: string;
@@ -39,7 +41,7 @@ export class CreateRelationshipTypeScopeUseCase {
       request.relationshipTypeId,
     );
     if (!relationshipType) {
-      throw new Error("Relationship type not found");
+      throw new NotFoundError("Relationship type not found");
     }
 
     // Verify from CI class exists
@@ -47,13 +49,13 @@ export class CreateRelationshipTypeScopeUseCase {
       request.fromCiClassId,
     );
     if (!fromClass) {
-      throw new Error("From CI class not found");
+      throw new NotFoundError("From CI class not found");
     }
 
     // Verify to CI class exists
     const toClass = await this.ciClassRepository.findById(request.toCiClassId);
     if (!toClass) {
-      throw new Error("To CI class not found");
+      throw new NotFoundError("To CI class not found");
     }
 
     // Check for duplicate
@@ -63,7 +65,9 @@ export class CreateRelationshipTypeScopeUseCase {
       request.toCiClassId,
     );
     if (existing) {
-      throw new Error("This scope already exists for the relationship type");
+      throw new ConflictError(
+        "This scope already exists for the relationship type",
+      );
     }
 
     // Create entity

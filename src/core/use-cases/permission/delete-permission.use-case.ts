@@ -5,8 +5,10 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import { DI_TOKENS } from "@/di/types";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeletePermissionUseCase {
@@ -20,12 +22,12 @@ export class DeletePermissionUseCase {
     const permission = await this.permissionRepository.findById(id);
 
     if (!permission) {
-      throw new Error("Permission not found");
+      throw new NotFoundError("Permission not found");
     }
 
     // Check if permission can be deleted
     if (!permission.canBeDeleted()) {
-      throw new Error("Cannot delete system permission");
+      throw new ValidationError("Cannot delete system permission");
     }
 
     // Delete from database

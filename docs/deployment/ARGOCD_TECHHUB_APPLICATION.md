@@ -61,6 +61,11 @@ That means the deployed `techhub` app is not defined only by this repository. Th
 - The `barq` Helm chart version `1.1.2`
 - The contents of `techhub/values-gcpdev.yaml` in the `values-yaml-npd` repo
 
+Env vars injected by `values-gcpdev.yaml` are baseline values. Spring Cloud Config
+(`techhub-gcpdev.properties` in `backend-configs`) overrides them at pod startup for
+any key it returns. See [SPRING_CLOUD_CONFIG.md](../infrastructure/SPRING_CLOUD_CONFIG.md#configuration-source-priority)
+for the full priority rules and which vars belong in each source.
+
 ## What This Means Operationally
 
 This repo controls application code and image production.
@@ -248,6 +253,11 @@ The live `techhub` container has these environment variables present:
 - `NEXT_PUBLIC_APP_URL`
 - `HOST`
 
+`NEXT_PUBLIC_APP_URL` should be the canonical external app origin for the
+environment. It must match `BETTER_AUTH_URL` from the runtime config source, and
+it must be present during build because the value is embedded in the client
+bundle.
+
 Important conclusions:
 
 - `CONFIG_SERVER_URL` is reaching the runtime container
@@ -259,22 +269,17 @@ For security reasons, this document intentionally does not repeat the raw secret
 
 ### Config Server Detail
 
-The live pod manifest shows:
+The live pod manifest should show:
 
-- `CONFIG_SERVER_URL=config-server-svc.horizontal-services.svc.cluster.local:8083`
+- `CONFIG_SERVER_URL=http://config-server-svc.horizontal-services.svc.cluster.local:8083`
+- `APPLICATION_NAME=techhub`
+- `ENVIRONMENT_NAME=gcpdev`
 
 Operational note:
 
 - This appears to reference an in-cluster config server service
-- The value is missing an explicit URL scheme in the manifest snippet you shared
-
-Important caveat:
-
-- The app code currently validates `CONFIG_SERVER_URL` as a URL in the verification script and passes it as an endpoint to the cloud-config loader
-- If the loader expects a full URL, the working runtime behavior suggests one of these is true:
-  - the loader tolerates scheme-less host values
-  - the actual effective value is normalized elsewhere
-  - config loading is not currently failing despite the format
+- `CONFIG_SERVER_URL` must include `http://` or `https://`; the verification script treats scheme-less values as invalid
+- `ENVIRONMENT_NAME=gcpdev` is what makes the app request `techhub-gcpdev.properties`
 
 This is worth verifying in application startup logs rather than assuming.
 
@@ -439,8 +444,13 @@ If you need to verify Spring Cloud Config wiring, inspect the live `Deployment` 
 - `DATABASE_URL`
 - `REDIS_URL`
 - `BETTER_AUTH_URL`
+- `NEXT_PUBLIC_APP_URL`
 - `BETTER_AUTH_SECRET`
 - `ENCRYPTION_KEY`
+
+`BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL` must both point to the public app
+origin, not an internal service URL. `TRUSTED_ORIGINS` is optional and should
+only list additional exact browser origins such as temporary aliases.
 
 This is the most direct way to answer whether runtime variables are reaching the container.
 

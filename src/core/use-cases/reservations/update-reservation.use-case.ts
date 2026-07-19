@@ -5,6 +5,7 @@ import type { IAssetReservationConflictRepository } from "@/core/repositories/as
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { AssetReservation } from "@/core/domain/entities/asset-reservation.entity";
 import { AssetReservationConflict } from "@/core/domain/entities/asset-reservation-conflict.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateReservationRequest {
   reservationId: string;
@@ -28,7 +29,9 @@ export class UpdateReservationUseCase {
       request.reservationId,
     );
     if (!reservation) {
-      throw new Error(`Reservation with ID ${request.reservationId} not found`);
+      throw new NotFoundError(
+        `Reservation with ID ${request.reservationId} not found`,
+      );
     }
 
     let datesChanged = false;

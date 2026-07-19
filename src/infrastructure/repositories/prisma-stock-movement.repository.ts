@@ -63,6 +63,26 @@ export class PrismaStockMovementRepository implements IStockMovementRepository {
     }
   }
 
+  async getNetQuantityAtLocation(stockLocationId: string): Promise<number> {
+    // Row lock serializes concurrent movements against the same location for
+    // the duration of the surrounding transaction (no-op outside one).
+    await this.prisma.$queryRaw`
+      SELECT id FROM "stock_locations" WHERE id = ${stockLocationId} FOR UPDATE
+    `;
+
+    const rows = await this.prisma.$queryRaw<[{ net: bigint | number }]>`
+      SELECT
+        COALESCE(SUM(CASE WHEN "stockLocationToId" = ${stockLocationId} THEN quantity ELSE 0 END), 0)
+        - COALESCE(SUM(CASE WHEN "stockLocationFromId" = ${stockLocationId} THEN quantity ELSE 0 END), 0)
+        AS net
+      FROM "stock_movements"
+      WHERE status = 'ACTIVE'
+        AND ("stockLocationToId" = ${stockLocationId} OR "stockLocationFromId" = ${stockLocationId})
+    `;
+
+    return Number(rows[0]?.net ?? 0);
+  }
+
   async update(stockMovement: StockMovement): Promise<StockMovement> {
     const timer = this.logger.startTimer();
 

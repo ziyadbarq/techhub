@@ -28,17 +28,14 @@ import {
 } from "@/interface-adapters/presenters/contract-linked-object.presenter";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import type { BulkCreateResult } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 
 /**
  * Create a new contract linked object
  */
 export async function createContractLinkedObject(
   data: CreateContractLinkedObjectDTO,
-): Promise<
-  | { success: true; data: ContractLinkedObjectDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<ContractLinkedObjectDTO>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACT_LINKED_OBJECTS_CREATE);
 
@@ -78,10 +75,7 @@ export async function createContractLinkedObject(
  */
 export async function getContractLinkedObject(
   id: string,
-): Promise<
-  | { success: true; data: ContractLinkedObjectDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<ContractLinkedObjectDTO>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACT_LINKED_OBJECTS_VIEW);
 
@@ -114,10 +108,7 @@ export async function listContractLinkedObjects(options?: {
   contractId?: string;
   targetType?: TargetObjectType;
   targetId?: string;
-}): Promise<
-  | { success: true; data: ContractLinkedObjectDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<ContractLinkedObjectDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACT_LINKED_OBJECTS_VIEW);
 
@@ -153,10 +144,7 @@ export async function listContractLinkedObjects(options?: {
 export async function updateContractLinkedObject(
   id: string,
   data: UpdateContractLinkedObjectDTO,
-): Promise<
-  | { success: true; data: ContractLinkedObjectDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<ContractLinkedObjectDTO>> {
   try {
     await requirePermission(PERMISSIONS.CONTRACT_LINKED_OBJECTS_UPDATE);
 

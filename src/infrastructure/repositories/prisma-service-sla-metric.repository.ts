@@ -2,27 +2,31 @@
  * Prisma Service SLA Metric Repository Implementation
  */
 
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { IServiceSlaMetricRepository } from "@/core/repositories/service-sla-metric.repository.interface";
 import { ServiceSlaMetric } from "@/core/domain/entities/service-sla-metric.entity";
-import { prisma } from "@/infrastructure/database/prisma/client";
 import type { ServiceSlaMetric as PrismaServiceSlaMetric } from "@/generated/prisma";
 import type { SlaMetricType, SlaComplianceStatus } from "@/generated/prisma";
 import { createRepositoryLogger } from "./repository-logger";
 
 @injectable()
-export class PrismaServiceSlaMetricRepository
-  implements IServiceSlaMetricRepository
-{
+export class PrismaServiceSlaMetricRepository implements IServiceSlaMetricRepository {
   private readonly logger = createRepositoryLogger(
     "ServiceSlaMetricRepository",
   );
+
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
 
   async create(metric: ServiceSlaMetric): Promise<ServiceSlaMetric> {
     const timer = this.logger.startTimer();
 
     try {
-      const created = await prisma.serviceSlaMetric.create({
+      const created = await this.prisma.serviceSlaMetric.create({
         data: {
           id: metric.id,
           serviceId: metric.serviceId,
@@ -54,7 +58,7 @@ export class PrismaServiceSlaMetricRepository
   }
 
   async findById(id: string): Promise<ServiceSlaMetric | null> {
-    const metric = await prisma.serviceSlaMetric.findUnique({
+    const metric = await this.prisma.serviceSlaMetric.findUnique({
       where: { id },
     });
 
@@ -65,7 +69,7 @@ export class PrismaServiceSlaMetricRepository
     serviceId: string,
     options?: { skip?: number; take?: number },
   ): Promise<ServiceSlaMetric[]> {
-    const metrics = await prisma.serviceSlaMetric.findMany({
+    const metrics = await this.prisma.serviceSlaMetric.findMany({
       where: { serviceId },
       skip: options?.skip,
       take: options?.take,
@@ -80,7 +84,7 @@ export class PrismaServiceSlaMetricRepository
     metricType: SlaMetricType,
     options?: { skip?: number; take?: number },
   ): Promise<ServiceSlaMetric[]> {
-    const metrics = await prisma.serviceSlaMetric.findMany({
+    const metrics = await this.prisma.serviceSlaMetric.findMany({
       where: { serviceId, metricType },
       skip: options?.skip,
       take: options?.take,
@@ -95,7 +99,7 @@ export class PrismaServiceSlaMetricRepository
     status: SlaComplianceStatus,
     options?: { skip?: number; take?: number },
   ): Promise<ServiceSlaMetric[]> {
-    const metrics = await prisma.serviceSlaMetric.findMany({
+    const metrics = await this.prisma.serviceSlaMetric.findMany({
       where: { serviceId, complianceStatus: status },
       skip: options?.skip,
       take: options?.take,
@@ -107,7 +111,7 @@ export class PrismaServiceSlaMetricRepository
 
   async findCurrentPeriod(serviceId: string): Promise<ServiceSlaMetric[]> {
     const now = new Date();
-    const metrics = await prisma.serviceSlaMetric.findMany({
+    const metrics = await this.prisma.serviceSlaMetric.findMany({
       where: {
         serviceId,
         periodEnd: { gte: now },
@@ -123,7 +127,7 @@ export class PrismaServiceSlaMetricRepository
     startDate: Date,
     endDate: Date,
   ): Promise<ServiceSlaMetric[]> {
-    const metrics = await prisma.serviceSlaMetric.findMany({
+    const metrics = await this.prisma.serviceSlaMetric.findMany({
       where: {
         serviceId,
         periodStart: { gte: startDate },
@@ -139,7 +143,7 @@ export class PrismaServiceSlaMetricRepository
     serviceId: string,
     limit: number,
   ): Promise<ServiceSlaMetric[]> {
-    const metrics = await prisma.serviceSlaMetric.findMany({
+    const metrics = await this.prisma.serviceSlaMetric.findMany({
       where: { serviceId },
       orderBy: { periodStart: "desc" },
       take: limit,
@@ -152,7 +156,7 @@ export class PrismaServiceSlaMetricRepository
     const timer = this.logger.startTimer();
 
     try {
-      const updated = await prisma.serviceSlaMetric.update({
+      const updated = await this.prisma.serviceSlaMetric.update({
         where: { id: metric.id },
         data: {
           metricType: metric.metricType,
@@ -183,7 +187,7 @@ export class PrismaServiceSlaMetricRepository
     const timer = this.logger.startTimer();
 
     try {
-      await prisma.serviceSlaMetric.delete({ where: { id } });
+      await this.prisma.serviceSlaMetric.delete({ where: { id } });
 
       this.logger.timed("delete", "Service SLA metric deleted", timer(), {
         id,
@@ -195,17 +199,17 @@ export class PrismaServiceSlaMetricRepository
   }
 
   async countByServiceId(serviceId: string): Promise<number> {
-    return prisma.serviceSlaMetric.count({ where: { serviceId } });
+    return this.prisma.serviceSlaMetric.count({ where: { serviceId } });
   }
 
   async countBreached(serviceId: string): Promise<number> {
-    return prisma.serviceSlaMetric.count({
+    return this.prisma.serviceSlaMetric.count({
       where: { serviceId, complianceStatus: "BREACHED" },
     });
   }
 
   async deleteOlderThan(date: Date): Promise<number> {
-    const result = await prisma.serviceSlaMetric.deleteMany({
+    const result = await this.prisma.serviceSlaMetric.deleteMany({
       where: { periodEnd: { lt: date } },
     });
 

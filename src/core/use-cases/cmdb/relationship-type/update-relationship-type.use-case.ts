@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IRelationshipTypeRepository } from "../../../repositories/relationship-type.repository.interface";
 import type {
@@ -26,7 +27,7 @@ export class UpdateRelationshipTypeUseCase {
     );
 
     if (!relationshipType) {
-      throw new Error(`Relationship type not found: ${request.id}`);
+      throw new NotFoundError(`Relationship type not found: ${request.id}`);
     }
 
     relationshipType.update(request.updates);

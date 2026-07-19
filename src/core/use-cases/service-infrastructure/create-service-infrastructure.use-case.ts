@@ -7,6 +7,7 @@ import { ServiceInfrastructure } from "@/core/domain/entities/service-infrastruc
 import type { ServiceLocation } from "@/generated/prisma";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { LogExecution } from "@/lib/decorators";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateServiceInfrastructureRequest {
   serviceId: string;
@@ -45,7 +46,7 @@ export class CreateServiceInfrastructureUseCase {
     // Check if service exists
     const service = await this.serviceRepository.findById(request.serviceId);
     if (!service) {
-      throw new Error(`Service with ID ${request.serviceId} not found`);
+      throw new NotFoundError(`Service with ID ${request.serviceId} not found`);
     }
 
     const infrastructure = ServiceInfrastructure.create(

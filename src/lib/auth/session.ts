@@ -1,10 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports -- legacy compatibility shim; see docs/architecture/IMPORT_RULES.md
 import { getAuth } from "@/interface-adapters/auth/better-auth";
+import { logger } from "@/lib/logger";
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports -- legacy compatibility shim; see docs/architecture/IMPORT_RULES.md
 import type { Session, User } from "@/interface-adapters/auth/better-auth";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import { SESSION_COOKIE_NAMES } from "@/lib/auth/cookie-names";
+
+const moduleLogger = logger.scope("Session");
 
 /**
  * Get session on server components (memoized per request)
@@ -23,10 +27,13 @@ const getSessionInternal = cache(
   }> => {
     try {
       // Fast path: skip auth API call if no session cookie present
+      // Cookie name depends on the deployment scheme (see cookie-names.ts)
       const cookieStore = await cookies();
-      const sessionToken = cookieStore.get("better-auth.session_token");
+      const hasSessionCookie = SESSION_COOKIE_NAMES.some((name) =>
+        cookieStore.get(name),
+      );
 
-      if (!sessionToken) {
+      if (!hasSessionCookie) {
         return {
           session: null,
           user: null,
@@ -52,7 +59,7 @@ const getSessionInternal = cache(
         user: result.user as User,
       };
     } catch (error) {
-      console.error("Error getting session:", error);
+      moduleLogger.error("handler", "Error getting session:", error);
       return {
         session: null,
         user: null,

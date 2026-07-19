@@ -6,6 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { ActionResponse } from "./types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type {
@@ -36,10 +37,7 @@ import type { TargetObjectTypeEnum } from "@/core/domain/entities/verification-c
  */
 export async function createVerificationCampaign(
   data: CreateVerificationCampaignDTO,
-): Promise<
-  | { success: true; data: VerificationCampaignDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<VerificationCampaignDTO>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_CAMPAIGNS_CREATE);
 
@@ -81,10 +79,7 @@ export async function createVerificationCampaign(
  */
 export async function getVerificationCampaign(
   id: string,
-): Promise<
-  | { success: true; data: VerificationCampaignDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<VerificationCampaignDTO>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW);
 
@@ -116,10 +111,7 @@ export async function getVerificationCampaign(
 export async function listVerificationCampaigns(options?: {
   activeOnly?: boolean;
   createdById?: string;
-}): Promise<
-  | { success: true; data: VerificationCampaignDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<VerificationCampaignDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW);
 
@@ -154,10 +146,7 @@ export async function listVerificationCampaigns(options?: {
 export async function updateVerificationCampaign(
   id: string,
   data: UpdateVerificationCampaignDTO,
-): Promise<
-  | { success: true; data: VerificationCampaignDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<VerificationCampaignDTO>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_CAMPAIGNS_UPDATE);
 
@@ -228,10 +217,7 @@ export async function deleteVerificationCampaign(
  */
 export async function startVerificationCampaign(
   id: string,
-): Promise<
-  | { success: true; data: VerificationCampaignDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<VerificationCampaignDTO>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_CAMPAIGNS_START);
 
@@ -266,10 +252,7 @@ export async function startVerificationCampaign(
  */
 export async function completeVerificationCampaign(
   id: string,
-): Promise<
-  | { success: true; data: VerificationCampaignDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<VerificationCampaignDTO>> {
   try {
     await requirePermission(PERMISSIONS.VERIFICATION_CAMPAIGNS_COMPLETE);
 

@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
 import type { IAssetKitItemRepository } from "@/core/repositories/asset-kit-item.repository.interface";
@@ -7,6 +8,7 @@ import { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.enti
 import type { AssigneeType } from "@/core/domain/entities/asset-kit-checkout.entity";
 import { AssetKitCheckoutItem } from "@/core/domain/entities/asset-kit-checkout-item.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import type { IUnitOfWork } from "@/core/services/unit-of-work.service.interface";
 
 export interface CreateKitCheckoutRequest {
   kitId: string;
@@ -31,13 +33,15 @@ export class CreateKitCheckoutUseCase {
 
     @inject(DI_TOKENS.IIdGenerator)
     private readonly idGenerator: IIdGenerator,
+    @inject(DI_TOKENS.IUnitOfWork)
+    private readonly unitOfWork: IUnitOfWork,
   ) {}
 
   async execute(request: CreateKitCheckoutRequest): Promise<AssetKitCheckout> {
     // Validate kit exists and has items
     const kitItems = await this.kitItemRepository.findByKitId(request.kitId);
     if (kitItems.length === 0) {
-      throw new Error("Cannot checkout empty kit");
+      throw new ValidationError("Cannot checkout empty kit");
     }
 
     const assetIds = request.assetIds ?? [];
@@ -50,7 +54,7 @@ export class CreateKitCheckoutUseCase {
         0,
       );
       if (assetIds.length < requiredQuantity) {
-        throw new Error(
+        throw new ValidationError(
           `Kit requires ${requiredQuantity} assets, but only ${assetIds.length} provided`,
         );
       }
@@ -69,21 +73,26 @@ export class CreateKitCheckoutUseCase {
       this.idGenerator,
     );
 
-    const createdCheckout = await this.kitCheckoutRepository.create(checkout);
+    // The checkout header and its items commit atomically: a failure while
+    // creating any item rolls back the whole checkout instead of leaving an
+    // orphaned header with a partial item list.
+    return this.unitOfWork.execute(async () => {
+      const createdCheckout = await this.kitCheckoutRepository.create(checkout);
 
-    // Create checkout items for each asset (when assets are explicitly provided)
-    for (let i = 0; i < assetIds.length; i++) {
-      const checkoutItem = AssetKitCheckoutItem.create(
-        {
-          kitCheckoutId: createdCheckout.id,
-          assetId: assetIds[i],
-          kitItemId: kitItemIds[i] ?? kitItems[i]?.id ?? assetIds[i],
-        },
-        this.idGenerator,
-      );
-      await this.checkoutItemRepository.create(checkoutItem);
-    }
+      // Create checkout items for each asset (when assets are explicitly provided)
+      for (let i = 0; i < assetIds.length; i++) {
+        const checkoutItem = AssetKitCheckoutItem.create(
+          {
+            kitCheckoutId: createdCheckout.id,
+            assetId: assetIds[i],
+            kitItemId: kitItemIds[i] ?? kitItems[i]?.id ?? assetIds[i],
+          },
+          this.idGenerator,
+        );
+        await this.checkoutItemRepository.create(checkoutItem);
+      }
 
-    return createdCheckout;
+      return createdCheckout;
+    });
   }
 }

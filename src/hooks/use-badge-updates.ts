@@ -26,13 +26,12 @@ export type BadgeRegistry = Record<string, string | undefined>;
 
 /**
  * Global badge state (singleton)
- * TODO: Move to proper state management (Zustand, Redux, etc.)
+ *
+ * Starts empty: no badge renders until a real source calls updateBadge.
+ * (Earlier revisions shipped hardcoded demo counts here, which showed
+ * fake notification numbers in the sidebar.)
  */
-let globalBadges: BadgeRegistry = {
-  "/tasks": "3",
-  "/notifications": "12",
-  // Add more default badges as needed
-};
+let globalBadges: BadgeRegistry = {};
 
 /**
  * Subscribers for badge updates
@@ -111,32 +110,6 @@ export function useBadgeUpdates(): BadgeRegistry {
   }, []);
 
   return badges;
-}
-
-/**
- * Mock badge update simulator
- * Simulates real-time badge updates for development/testing
- * TODO: Remove when real-time system is implemented
- */
-export function startMockBadgeUpdates(): () => void {
-  // Simulate incoming notifications every 10 seconds
-  const interval = setInterval(() => {
-    // Randomly update badges
-    const updates = [
-      { href: "/notifications", delta: Math.floor(Math.random() * 3) },
-      { href: "/messages", delta: Math.floor(Math.random() * 2) },
-      { href: "/tasks", delta: Math.floor(Math.random() * 2) - 1 }, // Can decrease
-    ];
-
-    updates.forEach(({ href, delta }) => {
-      const current = parseInt(globalBadges[href] || "0", 10);
-      const newValue = Math.max(0, current + delta);
-      updateBadge(href, newValue === 0 ? undefined : String(newValue));
-    });
-  }, 10000); // Update every 10 seconds
-
-  // Return cleanup function
-  return () => clearInterval(interval);
 }
 
 /**

@@ -1,7 +1,9 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
 import { LogExecution } from "@/lib/decorators/log-execution.decorator";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteAssetDisposalRequest {
   disposalId: string;
@@ -20,7 +22,9 @@ export class DeleteAssetDisposalUseCase {
       request.disposalId,
     );
     if (!disposal) {
-      throw new Error(`Disposal with ID ${request.disposalId} not found`);
+      throw new NotFoundError(
+        `Disposal with ID ${request.disposalId} not found`,
+      );
     }
 
     // Only allow deletion of pending or cancelled disposals
@@ -28,7 +32,7 @@ export class DeleteAssetDisposalUseCase {
       disposal.status !== "PENDING_APPROVAL" &&
       disposal.status !== "CANCELLED"
     ) {
-      throw new Error(
+      throw new ValidationError(
         `Cannot delete disposal with status ${disposal.status}. Only PENDING_APPROVAL or CANCELLED disposals can be deleted.`,
       );
     }

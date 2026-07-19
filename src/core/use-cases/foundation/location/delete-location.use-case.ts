@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import type { ILocationRepository } from "@/core/repositories/location.repository.interface";
@@ -33,7 +34,7 @@ export class DeleteLocationUseCase {
     // Check for children
     const hasChildren = await this.locationRepository.hasChildren(id);
     if (hasChildren) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete location because it has child locations. Delete or move children first.",
       );
     }
@@ -41,7 +42,7 @@ export class DeleteLocationUseCase {
     // Check for configuration items
     const hasCIs = await this.locationRepository.hasConfigurationItems(id);
     if (hasCIs) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete location because it is referenced by configuration items",
       );
     }
@@ -49,7 +50,7 @@ export class DeleteLocationUseCase {
     // Check for assets
     const hasAssets = await this.locationRepository.hasAssets(id);
     if (hasAssets) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete location because it is referenced by assets",
       );
     }

@@ -156,6 +156,9 @@ export default [
                 "@/interface-adapters/**",
                 "@/infrastructure/**",
                 "@/lib/**",
+                // Exception: structured logger (cross-cutting observability,
+                // same precedent as the LogExecution decorator)
+                "!@/lib/logger",
                 "@/config/**",
                 "@/core/use-cases/**",
                 // Allow service interfaces (core layer contracts)
@@ -178,6 +181,17 @@ export default [
   {
     files: ["src/core/use-cases/**/*.{ts,tsx}"],
     rules: {
+      // Business rejections thrown as plain Error are logged at error
+      // severity by the controller error handler; domain errors log at warn
+      // and keep 4xx/5xx semantics clean.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "ThrowStatement > NewExpression[callee.name='Error']",
+          message:
+            "Throw a domain error (ValidationError, NotFoundError, ...) from @/core/domain/errors instead of a plain Error.",
+        },
+      ],
       "@typescript-eslint/no-restricted-imports": [
         "warn",
         {
@@ -286,11 +300,80 @@ export default [
       ],
     },
   },
+  // Structured logging policy: console.* bypasses the structured logger (no
+  // request context, no redaction). Exemptions, each justified:
+  // - logger internals + Prisma bootstrap: console IS their output channel
+  // - config/instrumentation bootstrap: runs before the logger exists
+  // - seeds + assign-first-admin: CLI utilities where console is the UI
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: [
+      "src/generated/**",
+      "src/infrastructure/services/logger/**",
+      "src/lib/logger.ts",
+      "src/lib/logger-state.ts",
+      "src/infrastructure/database/prisma/client.ts",
+      "src/infrastructure/database/prisma/transaction-context.ts",
+      "src/infrastructure/database/prisma/seed*.ts",
+      "src/infrastructure/config/cloud-config-init.ts",
+      "src/infrastructure/config/cloud-config-loader.ts",
+      "src/infrastructure/config/hydrate-settings.ts",
+      "src/instrumentation.ts",
+      "src/lib/auth/assign-first-admin.ts",
+      "src/app/global-error.tsx",
+      "**/__tests__/**",
+      "**/*.test.{ts,tsx}",
+    ],
+    rules: {
+      "no-console": "error",
+    },
+  },
+  // Date rendering must go through the centralized formatters so every
+  // screen shows the same format regardless of browser locale.
+  // (toLocaleString is not restricted: it is predominantly used for number
+  // formatting; date usage of it is handled by convention/review.)
+  {
+    files: ["src/components/**/*.{ts,tsx}", "src/app/**/*.{ts,tsx}"],
+    ignores: ["**/__tests__/**", "**/*.test.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "CallExpression[callee.property.name='toLocaleDateString']",
+          message:
+            "Use formatDate/formatDateFull from @/lib/utils/date-format instead of toLocaleDateString.",
+        },
+        {
+          selector:
+            "CallExpression[callee.property.name='toLocaleTimeString']",
+          message:
+            "Use formatTime from @/lib/utils/date-format instead of toLocaleTimeString.",
+        },
+      ],
+    },
+  },
+  // Client-side code may report failures via console.warn/error (the browser
+  // console is the observability channel there); log/info/debug stay banned.
+  {
+    files: [
+      "src/components/**/*.{ts,tsx}",
+      "src/hooks/**/*.{ts,tsx}",
+      "src/contexts/**/*.{ts,tsx}",
+      "src/lib/hooks/**/*.{ts,tsx}",
+      "src/app/**/*-client.tsx",
+    ],
+    rules: {
+      "no-console": ["error", { allow: ["warn", "error"] }],
+    },
+  },
   // Relax boundary checks inside tests to allow direct imports for setup/mocking
   {
     files: ["**/__tests__/**/*.{ts,tsx}", "**/*.test.{ts,tsx}"],
     rules: {
       "@typescript-eslint/no-restricted-imports": "off",
+      // Tests may throw plain Errors to simulate failures
+      "no-restricted-syntax": "off",
     },
   },
 ];

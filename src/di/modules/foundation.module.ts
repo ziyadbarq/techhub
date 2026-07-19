@@ -22,7 +22,6 @@ import type { IVendorContactRepository } from "@/core/repositories/vendor-contac
 import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
 import type { ILocationRepository } from "@/core/repositories/location.repository.interface";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
-import type { IPersonRoleAssignmentRepository } from "@/core/repositories/person-role-assignment.repository.interface";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import type { IFieldTemplateRepository } from "@/core/repositories/field-template.repository.interface";
 import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
@@ -35,7 +34,6 @@ import { PrismaVendorContactRepository } from "@/infrastructure/repositories/pri
 import { PrismaOrganizationUnitRepository } from "@/infrastructure/repositories/prisma-organization-unit.repository";
 import { PrismaLocationRepository } from "@/infrastructure/repositories/prisma-location.repository";
 import { PrismaPersonRepository } from "@/infrastructure/repositories/prisma-person.repository";
-import { InMemoryPersonRoleAssignmentRepository } from "@/infrastructure/repositories/in-memory-person-role-assignment.repository";
 import { PrismaFieldDefinitionRepository } from "@/infrastructure/repositories/prisma-field-definition.repository";
 import { PrismaFieldTemplateRepository } from "@/infrastructure/repositories/prisma-field-template.repository";
 import { PrismaExchangeRateRepository } from "@/infrastructure/repositories/prisma-exchange-rate.repository";
@@ -116,13 +114,6 @@ import {
   GetDirectReportsUseCase,
   GetRootEmployeesUseCase,
 } from "@/core/use-cases/foundation/employee-directory";
-
-// Person Role Assignment Use Cases (feature stub)
-import { CreatePersonRoleAssignmentUseCase } from "@/core/use-cases/foundation/person-role-assignment/create-person-role-assignment.use-case";
-import { GetPersonRoleAssignmentUseCase } from "@/core/use-cases/foundation/person-role-assignment/get-person-role-assignment.use-case";
-import { ListPersonRoleAssignmentsUseCase } from "@/core/use-cases/foundation/person-role-assignment/list-person-role-assignments.use-case";
-import { UpdatePersonRoleAssignmentUseCase } from "@/core/use-cases/foundation/person-role-assignment/update-person-role-assignment.use-case";
-import { DeletePersonRoleAssignmentUseCase } from "@/core/use-cases/foundation/person-role-assignment/delete-person-role-assignment.use-case";
 
 // Field Definition Use Cases
 import { CreateFieldDefinitionUseCase } from "@/core/use-cases/foundation/field-definition/create-field-definition.use-case";
@@ -206,13 +197,6 @@ export function bindFoundationDependencies(container: Container): void {
   container
     .bind<IPersonDependencyRepository>(DI_TOKENS.IPersonDependencyRepository)
     .to(PrismaPersonDependencyRepository)
-    .inSingletonScope();
-
-  container
-    .bind<IPersonRoleAssignmentRepository>(
-      DI_TOKENS.IPersonRoleAssignmentRepository,
-    )
-    .to(InMemoryPersonRoleAssignmentRepository)
     .inSingletonScope();
 
   container
@@ -531,45 +515,6 @@ export function bindFoundationDependencies(container: Container): void {
   container
     .bind<GetRootEmployeesUseCase>(DI_TOKENS.GetRootEmployeesUseCase)
     .to(GetRootEmployeesUseCase)
-    .inTransientScope();
-
-  // ==========================================
-  // Person Role Assignment Use Cases (stubbed)
-  // ==========================================
-
-  container
-    .bind<CreatePersonRoleAssignmentUseCase>(
-      DI_TOKENS.CreatePersonRoleAssignmentUseCase,
-    )
-    .to(CreatePersonRoleAssignmentUseCase)
-    .inTransientScope();
-
-  container
-    .bind<GetPersonRoleAssignmentUseCase>(
-      DI_TOKENS.GetPersonRoleAssignmentUseCase,
-    )
-    .to(GetPersonRoleAssignmentUseCase)
-    .inTransientScope();
-
-  container
-    .bind<ListPersonRoleAssignmentsUseCase>(
-      DI_TOKENS.ListPersonRoleAssignmentsUseCase,
-    )
-    .to(ListPersonRoleAssignmentsUseCase)
-    .inTransientScope();
-
-  container
-    .bind<UpdatePersonRoleAssignmentUseCase>(
-      DI_TOKENS.UpdatePersonRoleAssignmentUseCase,
-    )
-    .to(UpdatePersonRoleAssignmentUseCase)
-    .inTransientScope();
-
-  container
-    .bind<DeletePersonRoleAssignmentUseCase>(
-      DI_TOKENS.DeletePersonRoleAssignmentUseCase,
-    )
-    .to(DeletePersonRoleAssignmentUseCase)
     .inTransientScope();
 
   // ==========================================

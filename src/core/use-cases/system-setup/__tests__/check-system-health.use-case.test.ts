@@ -147,7 +147,95 @@ describe("CheckSystemHealthUseCase", () => {
 
     expect(graphService.testIntuneConnection).toHaveBeenCalledTimes(1);
     expect(result.intune.connected).toBe(false);
-    expect(result.intune.error).toContain("403 Forbidden");
-    expect(result.intune.message).toContain("403 Forbidden");
+    expect(result.intune.error).toContain("permission denied");
+    expect(result.intune.message).toContain("permission denied");
+  });
+
+  it("treats copied Intune placeholder values as not configured and skips the probe", async () => {
+    const graphService = {
+      testIntuneConnection: vi.fn(),
+    };
+
+    const useCase = new CheckSystemHealthUseCase(
+      systemSetupRepository as never,
+      jobQueueService as never,
+      createMockLogger(),
+      graphService as never,
+      null,
+      createMockConfigService({
+        AZURE_TENANT_ID: "your-tenant-id",
+        AZURE_CLIENT_ID: "client-id",
+        AZURE_CLIENT_SECRET: "client-secret",
+      }),
+    );
+
+    const result = await useCase.execute();
+
+    expect(graphService.testIntuneConnection).not.toHaveBeenCalled();
+    expect(result.intune.configured).toBe(false);
+    expect(result.intune.connected).toBe(false);
+    expect(result.intune.message).toContain("AZURE_TENANT_ID");
+    expect(result.integrationsHealthy).toBe(true);
+  });
+
+  it("sanitizes Microsoft provider errors before returning health messages", async () => {
+    const graphService = {
+      testIntuneConnection: vi
+        .fn()
+        .mockRejectedValue(
+          new Error(
+            "Failed to connect to Intune via Microsoft Graph: invalid_request: Error(s): 900023 - Timestamp: 2026-06-30 09:16:44Z - Description: AADSTS900023: Specified tenant identifier 'your-tenant-id' is neither a valid DNS name, nor a valid external domain. Trace ID: cccf88ca-ba54-4efb-80e7-273a05863800 Correlation ID: a88406bf-ea0d-4dfb-92fc-8edd0612b153",
+          ),
+        ),
+    };
+
+    const useCase = new CheckSystemHealthUseCase(
+      systemSetupRepository as never,
+      jobQueueService as never,
+      createMockLogger(),
+      graphService as never,
+      null,
+      createMockConfigService({
+        AZURE_TENANT_ID: "13826052-38a1-4044-856f-f6b6c1edf081",
+        AZURE_CLIENT_ID: "client-id",
+        AZURE_CLIENT_SECRET: "client-secret",
+      }),
+    );
+
+    const result = await useCase.execute();
+
+    expect(result.intune.error).toBe(
+      "Intune is configured with an invalid Microsoft tenant. Use a real tenant ID or verified tenant domain.",
+    );
+    expect(result.intune.message).not.toContain("Trace ID");
+    expect(result.intune.message).not.toContain("Correlation ID");
+    expect(result.intune.message).not.toContain("Timestamp");
+  });
+
+  it("treats copied email placeholder values as not configured and skips the probe", async () => {
+    const emailService = {
+      testConnection: vi.fn(),
+    };
+
+    const useCase = new CheckSystemHealthUseCase(
+      systemSetupRepository as never,
+      jobQueueService as never,
+      createMockLogger(),
+      null,
+      emailService as never,
+      createMockConfigService({
+        AZURE_EMAIL_TENANT_ID: "your-email-tenant-id",
+        AZURE_EMAIL_CLIENT_ID: "your-email-client-id",
+        AZURE_EMAIL_CLIENT_SECRET: "your-email-client-secret",
+        AZURE_EMAIL_FROM: "noreply@yourdomain.com",
+      }),
+    );
+
+    const result = await useCase.execute();
+
+    expect(emailService.testConnection).not.toHaveBeenCalled();
+    expect(result.email.configured).toBe(false);
+    expect(result.email.message).toContain("AZURE_EMAIL_TENANT_ID");
+    expect(result.email.message).toContain("AZURE_EMAIL_FROM");
   });
 });

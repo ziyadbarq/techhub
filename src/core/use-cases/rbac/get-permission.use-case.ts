@@ -3,6 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IPermissionRepository } from "../../repositories/permission-repository.interface";
 import type { Permission } from "../../domain/entities/permission.entity";
@@ -23,7 +24,7 @@ export class GetPermissionUseCase {
   async execute(request: GetPermissionRequest): Promise<Permission> {
     // Validate that at least one identifier is provided
     if (!request.id && !request.name) {
-      throw new Error("Either id or name must be provided");
+      throw new ValidationError("Either id or name must be provided");
     }
 
     let permission: Permission | null = null;

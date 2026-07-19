@@ -3,9 +3,11 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
 import type { DataDomain } from "@/core/domain/entities/data-domain.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UpdateDataDomainRequest {
   id: string;
@@ -27,35 +29,29 @@ export class UpdateDataDomainUseCase {
     const dataDomain = await this.dataDomainRepository.findById(request.id);
 
     if (!dataDomain) {
-      throw new Error("Data domain not found");
+      throw new NotFoundError("Data domain not found");
     }
 
     // Check for duplicate name if name is being updated
-    if (
-      request.name !== undefined &&
-      request.name !== dataDomain.name
-    ) {
+    if (request.name !== undefined && request.name !== dataDomain.name) {
       const existingByName = await this.dataDomainRepository.existsByName(
         request.name,
         request.id,
       );
       if (existingByName) {
-        throw new Error("A data domain with this name already exists");
+        throw new ConflictError("A data domain with this name already exists");
       }
       dataDomain.name = request.name;
     }
 
     // Check for duplicate code if code is being updated
-    if (
-      request.code !== undefined &&
-      request.code !== dataDomain.code
-    ) {
+    if (request.code !== undefined && request.code !== dataDomain.code) {
       const existingByCode = await this.dataDomainRepository.existsByCode(
         request.code,
         request.id,
       );
       if (existingByCode) {
-        throw new Error("A data domain with this code already exists");
+        throw new ConflictError("A data domain with this code already exists");
       }
       dataDomain.code = request.code;
     }

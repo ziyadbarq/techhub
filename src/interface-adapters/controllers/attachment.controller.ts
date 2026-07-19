@@ -6,6 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { ActionResponse } from "./types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type {
@@ -35,9 +36,7 @@ import type { TargetObjectTypeEnum } from "@/generated/prisma";
  */
 export async function createAttachment(
   data: CreateAttachmentDTO,
-): Promise<
-  { success: true; data: AttachmentDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<AttachmentDTO>> {
   try {
     await requirePermission(PERMISSIONS.ATTACHMENTS_CREATE);
 
@@ -74,9 +73,7 @@ export async function createAttachment(
  */
 export async function getAttachment(
   id: string,
-): Promise<
-  { success: true; data: AttachmentDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<AttachmentDTO>> {
   try {
     await requirePermission(PERMISSIONS.ATTACHMENTS_VIEW);
 
@@ -107,10 +104,7 @@ export async function listAttachments(options?: {
   uploadedById?: string;
   attachmentTypeId?: string;
   targetType?: string;
-}): Promise<
-  | { success: true; data: AttachmentDTO[] }
-  | { success: false; error: string }
-> {
+}): Promise<ActionResponse<AttachmentDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.ATTACHMENTS_VIEW);
 
@@ -144,10 +138,7 @@ export async function listAttachments(options?: {
 export async function listAttachmentsByTarget(
   targetType: TargetObjectTypeEnum,
   targetId: string,
-): Promise<
-  | { success: true; data: AttachmentDTO[] }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<AttachmentDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.ATTACHMENTS_VIEW);
 
@@ -179,9 +170,7 @@ export async function listAttachmentsByTarget(
 export async function updateAttachment(
   id: string,
   data: UpdateAttachmentDTO,
-): Promise<
-  { success: true; data: AttachmentDTO } | { success: false; error: string }
-> {
+): Promise<ActionResponse<AttachmentDTO>> {
   try {
     await requirePermission(PERMISSIONS.ATTACHMENTS_UPDATE);
 
@@ -219,9 +208,7 @@ export async function updateAttachment(
  */
 export async function downloadAttachment(
   id: string,
-): Promise<
-  { success: true; url: string } | { success: false; error: string }
-> {
+): Promise<{ success: true; url: string } | { success: false; error: string }> {
   try {
     await requirePermission(PERMISSIONS.ATTACHMENTS_VIEW);
 

@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIRelationshipRepository } from "../../../repositories/ci-relationship.repository.interface";
 import type {
@@ -24,7 +25,7 @@ export class UpdateCIRelationshipUseCase {
     );
 
     if (!relationship) {
-      throw new Error(`CI Relationship not found: ${request.id}`);
+      throw new NotFoundError(`CI Relationship not found: ${request.id}`);
     }
 
     relationship.update(request.updates);

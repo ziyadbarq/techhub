@@ -6,7 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { getContainer, ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type {
   CreateLicenseProductFieldUseCase,
@@ -29,15 +29,7 @@ import {
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
-/**
- * Ensures the Licenses module is loaded before accessing its use cases
- */
-async function ensureLicensesModuleLoaded(): Promise<void> {
-  if (!isModuleLoaded("licenses")) {
-    await loadHeavyModule("licenses");
-  }
-}
-import type { BulkCreateResult } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 
 /**
@@ -45,15 +37,12 @@ import type { ILicenseProductFieldRepository } from "@/core/repositories/license
  */
 export async function createLicenseProductField(
   data: CreateLicenseProductFieldDTO,
-): Promise<
-  | { success: true; data: LicenseProductFieldDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductFieldDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     // Validate input
     const validatedData = CreateLicenseProductFieldSchema.parse(data);
@@ -90,15 +79,12 @@ export async function createLicenseProductField(
  */
 export async function getLicenseProductField(
   id: string,
-): Promise<
-  | { success: true; data: LicenseProductFieldDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductFieldDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<GetLicenseProductFieldUseCase>(
@@ -127,15 +113,12 @@ export async function getLicenseProductField(
  */
 export async function listLicenseProductFields(
   licenseProductId: string,
-): Promise<
-  | { success: true; data: LicenseProductFieldDTO[] }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductFieldDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<ListLicenseProductFieldsUseCase>(
@@ -165,15 +148,12 @@ export async function listLicenseProductFields(
 export async function updateLicenseProductField(
   id: string,
   data: UpdateLicenseProductFieldDTO,
-): Promise<
-  | { success: true; data: LicenseProductFieldDTO }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<LicenseProductFieldDTO>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_UPDATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     // Validate input
     const validatedData = UpdateLicenseProductFieldSchema.parse(data);
@@ -216,7 +196,7 @@ export async function deleteLicenseProductField(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_DELETE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<DeleteLicenseProductFieldUseCase>(
@@ -253,7 +233,7 @@ export async function bulkCreateLicenseProductFieldsAction(
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_CREATE);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     const container = getContainer();
     const useCase = container.get<CreateLicenseProductFieldUseCase>(
@@ -313,15 +293,12 @@ export async function bulkCreateLicenseProductFieldsAction(
  */
 export async function listEnrichedLicenseProductFieldsAction(
   licenseProductId: string,
-): Promise<
-  | { success: true; data: EnrichedLicenseProductFieldDTO[] }
-  | { success: false; error: string }
-> {
+): Promise<ActionResponse<EnrichedLicenseProductFieldDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 
     // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
-    await ensureLicensesModuleLoaded();
+    await ensureModuleLoaded("licenses");
 
     // Use repository directly for enriched query
     const container = getContainer();

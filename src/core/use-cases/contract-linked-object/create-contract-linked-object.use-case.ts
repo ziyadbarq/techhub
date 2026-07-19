@@ -3,12 +3,14 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IContractLinkedObjectRepository } from "@/core/repositories/contract-linked-object.repository.interface";
 import type { IContractRepository } from "@/core/repositories/contract.repository.interface";
 import { ContractLinkedObject } from "@/core/domain/entities/contract-linked-object.entity";
 import type { TargetObjectType } from "@/core/domain/entities/contract-linked-object.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateContractLinkedObjectRequest {
   contractId: string;
@@ -35,7 +37,7 @@ export class CreateContractLinkedObjectUseCase {
     // Validate contract exists
     const contract = await this.contractRepository.findById(request.contractId);
     if (!contract) {
-      throw new Error("Contract not found");
+      throw new NotFoundError("Contract not found");
     }
 
     // Check for duplicate link
@@ -45,7 +47,7 @@ export class CreateContractLinkedObjectUseCase {
       request.targetId,
     );
     if (existing) {
-      throw new Error("This object is already linked to the contract");
+      throw new ConflictError("This object is already linked to the contract");
     }
 
     // Note: We don't validate targetId existence because it's polymorphic

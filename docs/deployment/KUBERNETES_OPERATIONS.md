@@ -41,10 +41,10 @@ Day-to-day operations guide for TechHub deployments on Kubernetes (OCI and GCP c
 
 ### Kubernetes Clusters
 
-| Cloud | Namespace | Environment | URL |
-|-------|-----------|-------------|-----|
-| OCI | `istio-dev` | Production | https://techhub.baraq.com |
-| GCP | `horizontal-services` | Development | https://techhub-dev.baraq.com |
+| Cloud | Namespace             | Environment | URL                          |
+| ----- | --------------------- | ----------- | ---------------------------- |
+| OCI   | `istio-dev`           | Production  | https://techhub.baraq.com    |
+| GCP   | `horizontal-services` | Development | https://techhub.dev.barq.com |
 
 ### Container Registries
 
@@ -216,6 +216,7 @@ kubectl get hpa techhub -n istio-dev --watch
 ### Via GitLab CI (Recommended)
 
 **Automatic Method**:
+
 1. Push code to `main` or `dev` branch
 2. Pipeline builds new Docker image
 3. Trigger manual deployment (OCI) or automatic (GCP)
@@ -297,6 +298,84 @@ kubectl delete pod <pod-name> -n istio-dev
 ```
 
 ## Troubleshooting
+
+### GCP Dev — Finding the Right Pod
+
+**Important**: In the `horizontal-services` namespace, `-l app=techhub` does **not** match the actual pod labels. Use `kubectl get po` and look for the techhub pod by name prefix instead.
+
+```bash
+# WRONG — returns "No resources found"
+kubectl get pods -n horizontal-services -l app=techhub
+
+# CORRECT — list all pods and find the techhub one
+kubectl get po -n horizontal-services
+# Look for a pod named like: techhub-56f665fd4-gcdx8
+
+# Then use the pod name directly in all subsequent commands
+POD=techhub-56f665fd4-gcdx8
+```
+
+### GCP Dev — Reading Logs Correctly
+
+```bash
+# Startup logs (docker-start.mjs output — config loading, migrations, seed)
+# Always check this first to confirm env vars loaded correctly
+kubectl logs $POD -n horizontal-services | head -150
+
+# Tail recent logs (for live request activity)
+kubectl logs $POD -n horizontal-services -f
+
+# Filter for server-side errors only (structured JSON level 50 = error)
+kubectl logs $POD -n horizontal-services | grep '"level":50'
+
+# Filter for warnings and errors (level 40 = warn, 50 = error)
+kubectl logs $POD -n horizontal-services | grep -E '"level":(40|50)'
+
+# Logs from a crashed/restarted pod
+kubectl logs $POD -n horizontal-services --previous | head -150
+```
+
+**Log level reference** (structured JSON `level` field):
+- `20` = debug
+- `30` = info
+- `40` = warn
+- `50` = error
+
+**Note**: Client-side errors (React error boundaries) log to the **browser console**, not pod logs. If you see a generic "Something went wrong" UI but no pod-level errors, check browser DevTools → Console.
+
+### GCP Dev — Inspecting Environment Variables
+
+```bash
+# Check all env vars in the running pod (from Spring Cloud Config + K8s secrets)
+kubectl exec $POD -n horizontal-services -- env | sort
+
+# Check specific auth-critical vars
+kubectl exec $POD -n horizontal-services -- env | grep -iE "BETTER_AUTH|TRUSTED_ORIGINS"
+
+# Check database and infra vars
+kubectl exec $POD -n horizontal-services -- env | grep -iE "DATABASE|REDIS|ENCRYPTION"
+
+# Check app URL vars
+kubectl exec $POD -n horizontal-services -- env | grep -iE "APP_URL|PUBLIC"
+```
+
+**Common misconfiguration**: `BETTER_AUTH_URL` set to a Docker bridge IP (e.g. `http://172.17.17.x:3000`) instead of the public hostname. This causes silent session validation failures — users get a redirect loop (`/dashboard` → `/login` → `/dashboard`) with no server-side error logs. Fix: set `BETTER_AUTH_URL=https://techhub.dev.barq.com` and `TRUSTED_ORIGINS=https://techhub.dev.barq.com` in the Spring Cloud Config `gcpdev` profile.
+
+**Cookie name changes with the URL scheme**: Better Auth names the session cookie `better-auth.session_token` on http deployments but `__Secure-better-auth.session_token` on https (secure cookie prefix). App code that checks cookie presence must handle both names — see `src/lib/auth/cookie-names.ts`. After switching an environment between http and https, users may have stale cookies from the other scheme; clearing site cookies in the browser resolves leftover redirect weirdness.
+
+#### Env var has wrong value — check both sources
+
+A pod's env vars come from two places. When a value is wrong, check both before editing either:
+
+| Source | Repo | Local path | How to update |
+| ------ | ---- | ---------- | ------------- |
+| `values-gcpdev.yaml` | `values-yaml-npd` | `~/techhub/values-gcpdev.yaml` | Edit file → ArgoCD syncs on next commit |
+| `techhub-gcpdev.properties` | `backend-configs` | (remote only) | Edit properties file → pod restart picks it up |
+
+Spring Cloud Config **overrides** `values-gcpdev.yaml` for any key it returns. For keys
+not in Spring Cloud Config, `values-gcpdev.yaml` wins by default. The fastest fix for a
+wrong value that is only in `values-gcpdev.yaml`: add the correct value to
+`techhub-gcpdev.properties` — no chart update required, pod restart is enough.
 
 ### Pod Not Starting
 

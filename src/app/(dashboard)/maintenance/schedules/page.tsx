@@ -4,6 +4,7 @@
  */
 
 import Link from "next/link";
+import { formatDate } from "@/lib/utils/date-format";
 import { Calendar, Clock, AlertCircle } from "lucide-react";
 import { listMaintenanceSchedulesAction } from "@/interface-adapters/controllers/maintenance-schedule.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -151,7 +152,7 @@ export default async function MaintenanceSchedulesPage() {
                   <TableCell>
                     <div className="flex flex-col gap-1">
                       <span className="text-sm">
-                        {new Date(schedule.nextDueDate).toLocaleDateString()}
+                        {formatDate(schedule.nextDueDate)}
                       </span>
                       {schedule.isOverdue && (
                         <Badge

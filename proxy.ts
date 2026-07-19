@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isPublicRoute } from "@/config/protected-routes";
+import { SESSION_COOKIE_NAMES } from "@/lib/auth/cookie-names";
 import { withRequestContext, generateRequestId } from "@/lib/request-context";
 
 /**
@@ -33,10 +34,10 @@ import { withRequestContext, generateRequestId } from "@/lib/request-context";
  * (Lightweight check for proxy routing - full validation happens in server components)
  */
 function hasSessionCookie(request: NextRequest): boolean {
-  // Better Auth uses "better-auth.session_token" cookie by default
-  const sessionToken = request.cookies.get("better-auth.session_token");
-
-  return !!sessionToken?.value;
+  // Cookie name depends on the deployment scheme (see cookie-names.ts)
+  return SESSION_COOKIE_NAMES.some(
+    (name) => !!request.cookies.get(name)?.value,
+  );
 }
 
 /**

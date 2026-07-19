@@ -4,8 +4,10 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 @injectable()
 export class DeleteAssetUseCase {
@@ -18,13 +20,13 @@ export class DeleteAssetUseCase {
     // Check if asset exists
     const asset = await this.assetRepository.findById(id);
     if (!asset) {
-      throw new Error(`Asset with ID "${id}" not found`);
+      throw new NotFoundError(`Asset with ID "${id}" not found`);
     }
 
     // Business Rule: Cannot delete asset with active assignments
     const hasAssignments = await this.assetRepository.hasAssignments(id);
     if (hasAssignments) {
-      throw new Error(
+      throw new ValidationError(
         `Cannot delete asset "${asset.assetTag}". It has active assignments. Please remove all assignments first.`,
       );
     }
@@ -32,7 +34,7 @@ export class DeleteAssetUseCase {
     // Business Rule: Cannot delete asset with stock movements
     const hasStockMovements = await this.assetRepository.hasStockMovements(id);
     if (hasStockMovements) {
-      throw new Error(
+      throw new ValidationError(
         `Cannot delete asset "${asset.assetTag}". It has stock movement history. Assets with movement history cannot be deleted for audit purposes.`,
       );
     }

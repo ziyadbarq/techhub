@@ -3,12 +3,14 @@
  */
 
 import { injectable, inject } from "inversify";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIClassFieldRepository } from "@/core/repositories/ci-class-field.repository.interface";
 import type { ICIClassRepository } from "@/core/repositories/ci-class.repository.interface";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import { CIClassField } from "@/core/domain/entities/ci-class-field.entity";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface CreateCIClassFieldRequest {
   ciClassId: string;
@@ -39,7 +41,7 @@ export class CreateCIClassFieldUseCase {
     // Verify CI class exists
     const ciClass = await this.ciClassRepository.findById(request.ciClassId);
     if (!ciClass) {
-      throw new Error("CI class not found");
+      throw new NotFoundError("CI class not found");
     }
 
     // Verify field definition exists
@@ -47,7 +49,7 @@ export class CreateCIClassFieldUseCase {
       request.fieldDefinitionId,
     );
     if (!fieldDefinition) {
-      throw new Error("Field definition not found");
+      throw new NotFoundError("Field definition not found");
     }
 
     // Check for duplicate
@@ -56,7 +58,7 @@ export class CreateCIClassFieldUseCase {
       request.fieldDefinitionId,
     );
     if (existing) {
-      throw new Error(
+      throw new ConflictError(
         "This field definition is already attached to this CI class",
       );
     }

@@ -21,6 +21,9 @@ import {
   listPermissionsAction,
 } from "@/interface-adapters/controllers/role.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
+
+export const dynamic = "force-dynamic";
 
 interface AssignPermissionsPageProps {
   params: Promise<{
@@ -36,6 +39,12 @@ export default async function AssignPermissionsPage(
 
   // Decode URL-encoded role name
   const roleName = decodeURIComponent(params.name);
+
+  await requireFeatureAndPermission(
+    "RBAC",
+    PERMISSIONS.ROLES_MANAGE,
+    `/admin/roles/${roleName}/permissions`,
+  );
 
   // Fetch role and all available permissions on the server
   const [roleResult, permissionsResult] = await Promise.all([

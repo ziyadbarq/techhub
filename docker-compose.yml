@@ -13,8 +13,6 @@
 #
 # The app will be available at http://localhost:3000
 
-version: '3.8'
-
 services:
   # PostgreSQL Database
   postgres:
@@ -50,6 +48,7 @@ services:
 
   # Next.js Application
   app:
+    image: techhub-app
     build:
       context: .
       dockerfile: Dockerfile
@@ -78,11 +77,16 @@ services:
 
       # Node environment
       NODE_ENV: production
+      HOST: 0.0.0.0
+      HOSTNAME: 0.0.0.0
 
       # Better Auth (generate these locally)
       # Run: openssl rand -base64 32
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-change-me-in-production}
       BETTER_AUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      # Optional: set this in .env.docker when accessing from extra origins.
+      # Example: http://localhost:3000,http://YOUR_IP:3000
+      TRUSTED_ORIGINS: ${TRUSTED_ORIGINS:-}
 
       # Feature flags (optional - defaults to all enabled locally)
       # Add your specific flags from .env.local if needed
@@ -102,11 +106,62 @@ services:
         node server.js
       "
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  # Background Job Worker (BullMQ)
+  worker:
+    image: techhub-app
+    container_name: techhub-worker-local
+    depends_on:
+      app:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env.docker
+    environment:
+      # Database connection
+      DATABASE_URL: postgresql://techhub:techhub_local_password@postgres:5432/techhub
+
+      # Redis connection
+      REDIS_URL: redis://redis:6379
+
+      # Node environment
+      NODE_ENV: production
+
+      # Better Auth
+      BETTER_AUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      # Optional: set this in .env.docker when accessing from extra origins.
+      # Example: http://localhost:3000,http://YOUR_IP:3000
+      TRUSTED_ORIGINS: ${TRUSTED_ORIGINS:-}
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+
+      # Encryption key for OAuth tokens (required)
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+    command: >
+      sh -c "
+        echo '👷 Starting background worker...' &&
+        npx tsx --import ./scripts/build/shim-server-only.js src/infrastructure/services/queue/worker.ts
+      "
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "npx tsx --import ./scripts/build/shim-server-only.js scripts/monitoring/worker-health.ts >/tmp/worker-health.log 2>&1"
+        ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 60s
 
 volumes:
   postgres_data:

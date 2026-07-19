@@ -5,7 +5,7 @@ import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { getContainer } from "@/di";
-import { loadHeavyModule, isModuleLoaded } from "@/di/container";
+import { ensureModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { GetLicenseComplianceReportUseCase } from "@/core/use-cases/reports/get-license-compliance-report.use-case";
 import type { GetContractExpirationReportUseCase } from "@/core/use-cases/reports/get-contract-expiration-report.use-case";
@@ -42,9 +42,7 @@ export async function getLicenseComplianceReportAction(): Promise<
   try {
     await requireFeature(FEATURE_FLAGS.LICENSES);
     await requirePermission(PERMISSIONS.REPORTS_VIEW);
-    if (!isModuleLoaded("licenses")) {
-      await loadHeavyModule("licenses");
-    }
+    await ensureModuleLoaded("licenses");
     const container = getContainer();
     const useCase = container.get<GetLicenseComplianceReportUseCase>(
       DI_TOKENS.GetLicenseComplianceReportUseCase,

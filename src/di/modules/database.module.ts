@@ -21,6 +21,9 @@ import { DI_TOKENS } from "../types";
 import type { PrismaClient } from "@/generated/prisma/server";
 import { logger } from "@/lib/logger";
 import { prisma as singletonPrisma } from "@/infrastructure/database/prisma/client";
+import { transactionAwarePrisma } from "@/infrastructure/database/prisma/transaction-context";
+import type { IUnitOfWork } from "@/core/services/unit-of-work.service.interface";
+import { PrismaUnitOfWork } from "@/infrastructure/services/prisma-unit-of-work.service";
 // NOTE: Middleware imports commented out - Prisma 5+ deprecated middleware API
 // import {
 //   createLoggingMiddleware,
@@ -63,7 +66,9 @@ export function bindDatabaseDependencies(container: Container): void {
 
   // Bind PrismaClient as singleton
   // IMPORTANT: Uses the singleton from client.ts to ensure single connection pool
-  // This prevents connection exhaustion and improves performance
+  // The bound value is the transaction-aware proxy: repositories transparently
+  // use the ambient transaction client when a use case runs inside
+  // IUnitOfWork.execute(), and the singleton client otherwise.
   container
     .bind<PrismaClient>(DI_TOKENS.PrismaClient)
     .toDynamicValue(() => {
@@ -76,13 +81,19 @@ export function bindDatabaseDependencies(container: Container): void {
         );
       });
 
-      return singletonPrisma;
+      return transactionAwarePrisma;
     })
     .inSingletonScope()
-    .onDeactivation((prisma) => {
+    .onDeactivation(() => {
       // Clean up connection when container is destroyed
-      return prisma.$disconnect();
+      return singletonPrisma.$disconnect();
     });
+
+  // Bind IUnitOfWork for atomic multi-write use cases
+  container
+    .bind<IUnitOfWork>(DI_TOKENS.IUnitOfWork)
+    .to(PrismaUnitOfWork)
+    .inSingletonScope();
 
   // ==========================================
   // Bind Repository Implementations

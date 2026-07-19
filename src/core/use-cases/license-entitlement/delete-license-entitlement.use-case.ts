@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteLicenseEntitlementRequest {
   id: string;
@@ -21,7 +22,7 @@ export class DeleteLicenseEntitlementUseCase {
     // Check if entitlement exists
     const exists = await this.entitlementRepository.exists(request.id);
     if (!exists) {
-      throw new Error("License entitlement not found");
+      throw new NotFoundError("License entitlement not found");
     }
 
     // Note: Prisma onDelete: Restrict will prevent deletion if there are allocations

@@ -93,6 +93,9 @@ export interface DataTableProps<TData, TValue> {
   searchable?: boolean;
   searchPlaceholder?: string;
   searchKey?: string;
+  // Global filter: when true, the search box filters across all columns
+  // instead of a single searchKey column.
+  globalFilter?: boolean;
   // Selection
   selectable?: boolean;
   onSelectionChange?: (selectedRows: TData[]) => void;
@@ -136,6 +139,7 @@ export function DataTable<TData, TValue>({
   searchable = false,
   searchPlaceholder = "Search...",
   searchKey,
+  globalFilter = false,
   selectable = false,
   onSelectionChange,
   showColumnToggle = true,
@@ -169,6 +173,7 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = React.useState(
     controlledState?.rowSelection ?? {},
   );
+  const [globalFilterValue, setGlobalFilterValue] = React.useState("");
   const [internalPagination, setInternalPagination] =
     React.useState<PaginationState>(
       controlledState?.pagination ?? {
@@ -267,11 +272,13 @@ export function DataTable<TData, TValue>({
         setInternalPagination(next);
       }
     },
+    onGlobalFilterChange: setGlobalFilterValue,
     state: {
       sorting: controlledState?.sorting ?? sorting,
       columnFilters: controlledState?.columnFilters ?? columnFilters,
       columnVisibility: controlledState?.columnVisibility ?? columnVisibility,
       rowSelection: controlledState?.rowSelection ?? rowSelection,
+      globalFilter: globalFilter ? globalFilterValue : undefined,
       pagination:
         controlledState?.pagination ??
         (pagination
@@ -314,7 +321,15 @@ export function DataTable<TData, TValue>({
             toolbarSlot
           ) : (
             <div className="flex flex-1 items-center gap-2">
-              {searchable && searchKey && (
+              {searchable && globalFilter && (
+                <Input
+                  placeholder={searchPlaceholder}
+                  value={globalFilterValue}
+                  onChange={(event) => setGlobalFilterValue(event.target.value)}
+                  className="max-w-sm"
+                />
+              )}
+              {searchable && !globalFilter && searchKey && (
                 <Input
                   placeholder={searchPlaceholder}
                   value={

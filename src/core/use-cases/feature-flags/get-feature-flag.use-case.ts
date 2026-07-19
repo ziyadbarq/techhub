@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IFeatureFlagRepository } from "../../repositories/feature-flag.repository.interface";
 import type { FeatureFlag } from "../../domain/entities/feature-flag.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetFeatureFlagRequest {
   name: string;
@@ -24,7 +25,7 @@ export class GetFeatureFlagUseCase {
     );
 
     if (!featureFlag) {
-      throw new Error(`Feature flag not found: ${request.name}`);
+      throw new NotFoundError(`Feature flag not found: ${request.name}`);
     }
 
     return featureFlag;

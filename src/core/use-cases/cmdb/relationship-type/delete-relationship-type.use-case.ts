@@ -1,6 +1,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IRelationshipTypeRepository } from "../../../repositories/relationship-type.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteRelationshipTypeRequest {
   id: string;
@@ -19,7 +20,7 @@ export class DeleteRelationshipTypeUseCase {
     );
 
     if (!relationshipType) {
-      throw new Error(`Relationship type not found: ${request.id}`);
+      throw new NotFoundError(`Relationship type not found: ${request.id}`);
     }
 
     await this.relationshipTypeRepository.delete(request.id);

@@ -23,6 +23,8 @@ export async function createRelationshipTypeAction(
   data: CreateRelationshipTypeDTO,
 ): Promise<ActionResponse<RelationshipTypeDTO>> {
   try {
+    await requirePermission(PERMISSIONS.RELATIONSHIP_TYPES_CREATE);
+
     const container = getContainer();
     const useCase = container.get<CreateRelationshipTypeUseCase>(
       DI_TOKENS.CreateRelationshipTypeUseCase,
@@ -45,6 +47,8 @@ export async function getRelationshipTypeAction(
   id: string,
 ): Promise<ActionResponse<RelationshipTypeDTO>> {
   try {
+    await requirePermission(PERMISSIONS.RELATIONSHIP_TYPES_VIEW);
+
     const container = getContainer();
     const useCase = container.get<GetRelationshipTypeUseCase>(
       DI_TOKENS.GetRelationshipTypeUseCase,
@@ -68,6 +72,8 @@ export async function listRelationshipTypesAction(filters?: {
   impactingOnly?: boolean;
 }): Promise<ActionResponse<RelationshipTypeDTO[]>> {
   try {
+    await requirePermission(PERMISSIONS.RELATIONSHIP_TYPES_VIEW);
+
     const container = getContainer();
     const useCase = container.get<ListRelationshipTypesUseCase>(
       DI_TOKENS.ListRelationshipTypesUseCase,
@@ -91,6 +97,8 @@ export async function updateRelationshipTypeAction(
   updates: UpdateRelationshipTypeDTO,
 ): Promise<ActionResponse<RelationshipTypeDTO>> {
   try {
+    await requirePermission(PERMISSIONS.RELATIONSHIP_TYPES_UPDATE);
+
     const container = getContainer();
     const useCase = container.get<UpdateRelationshipTypeUseCase>(
       DI_TOKENS.UpdateRelationshipTypeUseCase,
@@ -113,6 +121,8 @@ export async function deleteRelationshipTypeAction(
   id: string,
 ): Promise<ActionResponse<void>> {
   try {
+    await requirePermission(PERMISSIONS.RELATIONSHIP_TYPES_DELETE);
+
     const container = getContainer();
     const useCase = container.get<DeleteRelationshipTypeUseCase>(
       DI_TOKENS.DeleteRelationshipTypeUseCase,

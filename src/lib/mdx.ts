@@ -4,9 +4,12 @@
  */
 
 import { readFileSync, existsSync, readdirSync, statSync } from "fs";
+import { logger } from "@/lib/logger";
 import { join } from "path";
 import matter from "gray-matter";
 import type { TocHeading } from "@/components/docs/table-of-contents";
+
+const moduleLogger = logger.scope("MDX");
 
 const DOCS_PATH = join(process.cwd(), "src", "content", "docs");
 
@@ -71,7 +74,7 @@ export function getAllDocs(): DocContent[] {
       try {
         return getDocContent(slug);
       } catch (error) {
-        console.error(`Error loading doc: ${slug}`, error);
+        moduleLogger.error("handler", `Error loading doc: ${slug}`, error);
         return null;
       }
     })

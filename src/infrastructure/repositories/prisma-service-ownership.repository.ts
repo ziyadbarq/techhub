@@ -1,5 +1,6 @@
-import { prisma } from "@/infrastructure/database/prisma/client";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type {
   IServiceOwnershipRepository,
   ServiceOwnershipWithPerson,
@@ -7,11 +8,13 @@ import type {
 import type { ServiceOwnership } from "@/generated/prisma";
 
 @injectable()
-export class PrismaServiceOwnershipRepository
-  implements IServiceOwnershipRepository
-{
+export class PrismaServiceOwnershipRepository implements IServiceOwnershipRepository {
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
   async listByService(serviceId: string): Promise<ServiceOwnership[]> {
-    return prisma.serviceOwnership.findMany({
+    return this.prisma.serviceOwnership.findMany({
       where: { serviceId },
       orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
     });
@@ -20,7 +23,7 @@ export class PrismaServiceOwnershipRepository
   async listWithPersonByService(
     serviceId: string,
   ): Promise<ServiceOwnershipWithPerson[]> {
-    return prisma.serviceOwnership.findMany({
+    return this.prisma.serviceOwnership.findMany({
       where: { serviceId },
       include: {
         person: {
@@ -46,7 +49,7 @@ export class PrismaServiceOwnershipRepository
     personId: string,
     ownershipType: ServiceOwnership["ownershipType"],
   ): Promise<ServiceOwnership | null> {
-    return prisma.serviceOwnership.findUnique({
+    return this.prisma.serviceOwnership.findUnique({
       where: {
         serviceId_personId_ownershipType: {
           serviceId,
@@ -63,7 +66,7 @@ export class PrismaServiceOwnershipRepository
     ownershipType: ServiceOwnership["ownershipType"];
     isPrimary?: boolean;
   }): Promise<ServiceOwnership> {
-    return prisma.serviceOwnership.create({
+    return this.prisma.serviceOwnership.create({
       data: {
         serviceId: params.serviceId,
         personId: params.personId,
@@ -78,7 +81,7 @@ export class PrismaServiceOwnershipRepository
     personId: string,
     ownershipType: ServiceOwnership["ownershipType"],
   ): Promise<void> {
-    await prisma.serviceOwnership.delete({
+    await this.prisma.serviceOwnership.delete({
       where: {
         serviceId_personId_ownershipType: {
           serviceId,
@@ -94,12 +97,12 @@ export class PrismaServiceOwnershipRepository
     ownershipType: ServiceOwnership["ownershipType"],
     personId: string,
   ): Promise<void> {
-    await prisma.$transaction([
-      prisma.serviceOwnership.updateMany({
+    await this.prisma.$transaction([
+      this.prisma.serviceOwnership.updateMany({
         where: { serviceId },
         data: { isPrimary: false },
       }),
-      prisma.serviceOwnership.updateMany({
+      this.prisma.serviceOwnership.updateMany({
         where: {
           serviceId,
           personId,

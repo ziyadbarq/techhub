@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { IBusinessProcessRepository } from "@/core/repositories/business-process.repository.interface";
 import type { ILoggerService } from "@/core/services";
@@ -24,7 +25,7 @@ export class DeleteBusinessProcessUseCase {
       request.businessProcessId,
     );
     if (!businessProcess) {
-      throw new Error(
+      throw new ValidationError(
         `Business process with ID ${request.businessProcessId} not found`,
       );
     }

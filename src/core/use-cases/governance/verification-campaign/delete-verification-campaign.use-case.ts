@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IVerificationCampaignRepository } from "@/core/repositories/verification-campaign.repository.interface";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface DeleteVerificationCampaignRequest {
   id: string;
@@ -22,7 +23,7 @@ export class DeleteVerificationCampaignUseCase {
     const campaign = await this.campaignRepository.findById(request.id);
 
     if (!campaign) {
-      throw new Error("Verification campaign not found");
+      throw new NotFoundError("Verification campaign not found");
     }
 
     await this.campaignRepository.delete(request.id);

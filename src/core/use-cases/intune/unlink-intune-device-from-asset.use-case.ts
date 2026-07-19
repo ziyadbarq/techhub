@@ -5,10 +5,12 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.repository.interface";
 import type { IntuneDevice } from "@/core/domain/entities/intune-device.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface UnlinkDeviceFromAssetInput {
   /** Intune device ID (our internal ID, not Intune's) */
@@ -42,12 +44,12 @@ export class UnlinkIntuneDeviceFromAssetUseCase {
     // Find the device
     const device = await this.deviceRepository.findById(input.deviceId);
     if (!device) {
-      throw new Error(`Intune device not found: ${input.deviceId}`);
+      throw new NotFoundError(`Intune device not found: ${input.deviceId}`);
     }
 
     // Check if device is linked to an asset
     if (!device.isLinkedToAsset()) {
-      throw new Error("Device is not linked to any asset");
+      throw new ValidationError("Device is not linked to any asset");
     }
 
     const previousAssetId = device.linkedAssetId;

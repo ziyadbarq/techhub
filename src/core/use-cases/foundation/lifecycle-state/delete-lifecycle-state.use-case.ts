@@ -5,6 +5,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
 import type { ILifecycleStateRepository } from "@/core/repositories/lifecycle-state.repository.interface";
@@ -37,7 +38,7 @@ export class DeleteLifecycleStateUseCase {
     // Check if in use (transitions or configuration items)
     const inUse = await this.lifecycleStateRepository.isInUse(id);
     if (inUse) {
-      throw new Error(
+      throw new ValidationError(
         "Cannot delete lifecycle state because it is in use by lifecycle transitions or configuration items",
       );
     }

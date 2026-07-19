@@ -6,6 +6,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IVerificationItemRepository } from "@/core/repositories/verification-item.repository.interface";
 import type { VerificationItem } from "@/core/domain/entities/verification-item.entity";
+import { NotFoundError } from "@/core/domain/errors/not-found.error";
 
 export interface GetVerificationItemRequest {
   id: string;
@@ -18,13 +19,15 @@ export class GetVerificationItemUseCase {
     private verificationItemRepository: IVerificationItemRepository,
   ) {}
 
-  async execute(request: GetVerificationItemRequest): Promise<VerificationItem> {
+  async execute(
+    request: GetVerificationItemRequest,
+  ): Promise<VerificationItem> {
     const verificationItem = await this.verificationItemRepository.findById(
       request.id,
     );
 
     if (!verificationItem) {
-      throw new Error("Verification item not found");
+      throw new NotFoundError("Verification item not found");
     }
 
     return verificationItem;

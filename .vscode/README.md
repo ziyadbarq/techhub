@@ -1,6 +1,6 @@
 # VS Code Workspace Configuration
 
-This directory contains the ultimate VS Code workspace configuration for the TechHub project, optimized for Clean Architecture, Next.js 16, React 19, TypeScript 5.9, Prisma 7, and InversifyJS development.
+This directory contains the shared VS Code workspace configuration for the TechHub project, optimized for Clean Architecture, Next.js 16, React 19, TypeScript 5.9, Prisma 7, and InversifyJS development.
 
 ## 🚀 Quick Start
 
@@ -8,21 +8,12 @@ This directory contains the ultimate VS Code workspace configuration for the Tec
 
 When you open this workspace in VS Code, you'll see a notification to install recommended extensions. Click **"Install All"** or install them manually from the Extensions panel (`Cmd+Shift+X` / `Ctrl+Shift+X`).
 
-**Essential Extensions (Must Install):**
+**Recommended Extensions:**
 - Prisma
 - ESLint
 - Prettier
 - Tailwind CSS IntelliSense
-- GitLens
-- TypeScript Importer
-
-**Recommended Extensions (Highly Beneficial):**
-- Thunder Client (API testing)
-- Error Lens (inline errors)
-- Vitest (test runner)
-- Database Client (PostgreSQL)
-- Path Intellisense
-- Import Cost
+- MDX
 
 ### 2. Configure TypeScript
 
@@ -45,12 +36,11 @@ Workspace settings optimized for:
 - **Tailwind**: Class autocomplete, CVA support
 
 ### `extensions.json`
-23 recommended extensions covering:
-- Core development (Prisma, ESLint, Prettier, Tailwind)
-- React & Next.js (snippets, auto-rename, MDX)
-- Git & collaboration (GitLens, Git Graph)
-- Code quality (Error Lens, SonarLint, Vitest)
-- Productivity (Project Manager, Todo Tree, Import Cost)
+Minimal shared recommendations covering:
+- Formatting and linting (Prettier, ESLint)
+- Prisma schema editing
+- Tailwind CSS autocomplete
+- MDX content editing
 
 ### `tasks.json`
 Quick access to common commands:
@@ -185,35 +175,9 @@ To toggle file nesting: `Cmd+Shift+P` → "File Nesting: Toggle File Nesting"
    - Click "Vitest: All Tests" in Debug panel
    - Runs entire test suite with debugger attached
 
-## 📊 Extension Features
+## 📊 Extension Scope
 
-### Thunder Client (API Testing)
-- Right-click in Explorer → "New HTTP Request"
-- Test API routes without leaving VS Code
-- Create collections for common requests
-- Set environment variables for different environments
-
-### Database Client (PostgreSQL)
-- Click Database icon in sidebar
-- Connect to local PostgreSQL (from `.env.local`)
-- Browse schema, run queries, view data
-- Export/import data
-
-### GitLens (Git Insights)
-- Hover over code to see Git blame
-- Click line annotations to see commit details
-- View repository insights and file history
-- Compare branches and commits
-
-### Error Lens (Inline Diagnostics)
-- See errors and warnings inline (no need to hover)
-- Color-coded by severity
-- Instant visibility of issues
-
-### Import Cost (Bundle Size)
-- See package size inline when importing
-- Helps optimize bundle size
-- Color-coded: green (small), yellow (medium), red (large)
+Recommendations are limited to extensions required by shared workspace settings or common repository file types. Personal productivity tools should stay in user settings or personal extension profiles.
 
 ## 🔧 Customization
 
@@ -334,11 +298,11 @@ Before recommending a new extension:
 
 ## 🎯 Expected Benefits
 
-- **20-30% faster development** - Snippets, auto-imports, AI assistance
-- **50% fewer context switches** - Integrated API testing, database client
-- **Better code quality** - Real-time linting, type checking, import cost
+- **Consistent formatting** - Prettier and ESLint match repo rules
+- **Better schema editing** - Prisma files use the correct formatter and language support
+- **Better content editing** - Tailwind and MDX support match project file types
 - **Easier onboarding** - Consistent setup, documented patterns
-- **Enhanced collaboration** - Git insights, shared configuration
+- **Lower editor overhead** - Optional productivity tools stay personal
 
 ---
 
