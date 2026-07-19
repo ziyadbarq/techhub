@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  evaluate,
-  evaluateBoolean,
-} from "@/lib/workflow/expression-client";
+import { evaluate, evaluateBoolean } from "@/lib/workflow/expression-client";
 import type { Expression } from "@/core/domain/workflow";
 
 import { DateField } from "./date-field";
@@ -37,10 +34,7 @@ interface UserOption {
   email: string;
 }
 
-export type FieldStateMap = Record<
-  string,
-  "EDITABLE" | "READ_ONLY" | "HIDDEN"
->;
+export type FieldStateMap = Record<string, "EDITABLE" | "READ_ONLY" | "HIDDEN">;
 
 interface FormRendererProps {
   schema: FormSchema;
@@ -150,7 +144,7 @@ export function FormRenderer({
           return (
             <div
               key={field.key}
-              className="mt-4 border-t border-[var(--color-hairline-soft)] pt-3 text-h5 text-[var(--color-ink)]"
+              className="text-h5 mt-4 border-t border-[var(--color-hairline-soft)] pt-3 text-[var(--color-ink)]"
             >
               {field.label}
             </div>
@@ -159,7 +153,7 @@ export function FormRenderer({
         if (field.type === "CHECKBOX") {
           return (
             <div key={field.key} className="space-y-1">
-              <label className="inline-flex items-center gap-2 text-body-sm-medium text-[var(--color-ink)]">
+              <label className="text-body-sm-medium inline-flex items-center gap-2 text-[var(--color-ink)]">
                 <input
                   type="checkbox"
                   checked={value === true}
@@ -182,7 +176,7 @@ export function FormRenderer({
         const isAdminOnly = visibility === "ADMINISTRATIVE";
         return (
           <div key={field.key} className="space-y-2">
-            <label className="flex flex-wrap items-center gap-2 text-body-sm-medium text-[var(--color-ink)]">
+            <label className="text-body-sm-medium flex flex-wrap items-center gap-2 text-[var(--color-ink)]">
               <span>
                 {field.label}
                 {field.required ? (
@@ -222,9 +216,6 @@ export function FormRenderer({
     </div>
   );
 }
-
-const SELECT_BG_CHEVRON =
-  "url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231c1c1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")";
 
 function FieldInput({
   field,
@@ -299,7 +290,7 @@ function FieldInput({
         "";
       if (!targetFormId) {
         return (
-          <p className="rounded-md border border-[var(--color-hairline)] bg-[var(--color-surface-soft)] px-3 py-2 text-caption text-[var(--color-stone)]">
+          <p className="text-caption rounded-md border border-[var(--color-hairline)] bg-[var(--color-surface-soft)] px-3 py-2 text-[var(--color-stone)]">
             REQUEST_LINK target form is not configured. Set
             <code className="mx-1">config.targetFormName</code> on this field.
           </p>
@@ -331,9 +322,9 @@ function FieldInput({
           className={
             inputBase +
             ro +
-            " appearance-none pr-10 bg-no-repeat bg-[right_16px_center] bg-[length:16px_16px]"
+            " appearance-none bg-[length:16px_16px] bg-[right_16px_center] bg-no-repeat pr-10"
           }
-          style={{ backgroundImage: SELECT_BG_CHEVRON }}
+          style={{ backgroundImage: "var(--select-chevron)" }}
           value={(value as string | undefined) ?? ""}
           onChange={(e) => onChange(e.target.value)}
           disabled={readOnly}
@@ -357,7 +348,7 @@ function FieldInput({
             return (
               <label
                 key={o}
-                className={`inline-flex cursor-pointer items-center gap-1 rounded-full border px-3 py-1 text-caption-bold transition-colors ${
+                className={`text-caption-bold inline-flex cursor-pointer items-center gap-1 rounded-full border px-3 py-1 transition-colors ${
                   checked
                     ? "border-[var(--color-brand-blue)] bg-[var(--color-surface-featured)] text-[var(--color-brand-blue)]"
                     : "border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-charcoal)]"
@@ -388,9 +379,9 @@ function FieldInput({
           className={
             inputBase +
             ro +
-            " appearance-none pr-10 bg-no-repeat bg-[right_16px_center] bg-[length:16px_16px]"
+            " appearance-none bg-[length:16px_16px] bg-[right_16px_center] bg-no-repeat pr-10"
           }
-          style={{ backgroundImage: SELECT_BG_CHEVRON }}
+          style={{ backgroundImage: "var(--select-chevron)" }}
           value={(value as string | undefined) ?? ""}
           onChange={(e) => onChange(e.target.value)}
           disabled={readOnly}
@@ -419,7 +410,7 @@ function FieldInput({
         <div
           className={
             inputBase +
-            " flex items-center bg-[var(--color-surface-soft)] text-[var(--color-charcoal)] cursor-not-allowed"
+            " flex cursor-not-allowed items-center bg-[var(--color-surface-soft)] text-[var(--color-charcoal)]"
           }
         >
           {value === null || value === undefined ? "—" : String(value)}
@@ -438,9 +429,9 @@ function FieldInput({
           className={
             inputBase +
             ro +
-            " appearance-none pr-10 bg-no-repeat bg-[right_16px_center] bg-[length:16px_16px]"
+            " appearance-none bg-[length:16px_16px] bg-[right_16px_center] bg-no-repeat pr-10"
           }
-          style={{ backgroundImage: SELECT_BG_CHEVRON }}
+          style={{ backgroundImage: "var(--select-chevron)" }}
           value={(value as string | undefined) ?? ""}
           onChange={(e) => onChange(e.target.value)}
           disabled={readOnly}
@@ -542,7 +533,7 @@ function FieldInput({
             type="button"
             disabled={readOnly || rows.length >= maxRows}
             onClick={addRow}
-            className="inline-flex items-center rounded-full border border-[var(--color-hairline)] bg-[var(--color-canvas)] px-3 py-1 text-caption-bold text-[var(--color-charcoal)] hover:bg-[var(--color-surface-soft)] disabled:opacity-50"
+            className="text-caption-bold inline-flex items-center rounded-full border border-[var(--color-hairline)] bg-[var(--color-canvas)] px-3 py-1 text-[var(--color-charcoal)] hover:bg-[var(--color-surface-soft)] disabled:opacity-50"
           >
             + Add row
           </button>
@@ -584,7 +575,7 @@ function FieldInput({
                     {columns.map((c) => (
                       <th
                         key={c.key}
-                        className="px-2 py-1 text-[var(--color-charcoal)] font-medium"
+                        className="px-2 py-1 font-medium text-[var(--color-charcoal)]"
                       >
                         {c.label}
                       </th>
@@ -594,7 +585,7 @@ function FieldInput({
                 <tbody>
                   {rows.map((r) => (
                     <tr key={r.key}>
-                      <td className="px-2 py-1 text-[var(--color-charcoal)] font-medium">
+                      <td className="px-2 py-1 font-medium text-[var(--color-charcoal)]">
                         {r.label}
                       </td>
                       {columns.map((c) => {
@@ -625,7 +616,7 @@ function FieldInput({
             </div>
           )}
           {sel.score !== undefined ? (
-            <p className="mt-3 text-caption text-[var(--color-stone)]">
+            <p className="text-caption mt-3 text-[var(--color-stone)]">
               Score:{" "}
               <span className="text-h5 text-[var(--color-ink)]">
                 {sel.score}

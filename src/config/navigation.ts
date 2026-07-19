@@ -44,6 +44,7 @@ import { foundationNavGroup } from "./navigation-groups/foundation";
 import { assetcatalogNavGroup } from "./navigation-groups/asset-catalog";
 import { assetsNavGroup } from "./navigation-groups/assets";
 import { servicescmdbNavGroup } from "./navigation-groups/services-cmdb";
+import { workflowsNavGroup } from "./navigation-groups/workflows";
 import { complianceNavGroup } from "./navigation-groups/compliance";
 import { systemNavGroup } from "./navigation-groups/system";
 import { rbacNavGroup } from "./navigation-groups/rbac";
@@ -81,6 +82,9 @@ export const navGroups = [
 
   // Services, CMDB, and maintenance
   servicescmdbNavGroup,
+
+  // Workflows (forms, requests, inbox, admin)
+  workflowsNavGroup,
 
   // Compliance, licensing, contracts, governance, and attachments
   complianceNavGroup,

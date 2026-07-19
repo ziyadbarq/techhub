@@ -38,7 +38,7 @@ const TONE_STYLES: Record<Tone, string> = {
   mint: "bg-[var(--color-mint-light)] text-[var(--color-ink)]",
   sand: "bg-[var(--color-sand-light)] text-[var(--color-ink)]",
   lilac: "bg-[var(--color-lilac-light)] text-[var(--color-ink)]",
-  dark: "bg-[var(--color-ink)] text-[var(--color-on-primary)]",
+  dark: "bg-[var(--color-ink)] text-on-ink",
 };
 
 export function Card({

@@ -23,7 +23,6 @@ export default async function TimelinePage({
   params: Promise<{ id: string }>;
 }) {
   await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
-  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN);
 
   const userId = await getCurrentUserId();
   if (!userId) redirect("/login");
@@ -35,11 +34,16 @@ export default async function TimelinePage({
     select: {
       id: true,
       referenceNumber: true,
+      requesterId: true,
       form: { select: { name: true } },
       formVersion: { select: { schemaJson: true } },
     },
   });
   if (!req) notFound();
+
+  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN, {
+    resourceOwnerId: req.requesterId,
+  });
 
   const auditEntries = await prisma.auditEntry.findMany({
     where: { requestId: req.id },
@@ -119,7 +123,7 @@ export default async function TimelinePage({
 
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="space-y-2">
-          <span className="text-caption font-mono text-stone">
+          <span className="text-caption text-stone font-mono">
             {req.referenceNumber}
           </span>
           <h1 className="text-h2">Timeline</h1>
@@ -127,7 +131,7 @@ export default async function TimelinePage({
         </div>
         <a
           href={`/api/workflow/requests/${req.id}/timeline/export`}
-          className="inline-flex items-center gap-2 rounded-md border border-[var(--color-hairline)] px-3 py-1.5 text-body-sm-medium text-charcoal transition hover:bg-[var(--color-surface-soft)]"
+          className="text-body-sm-medium text-charcoal inline-flex items-center gap-2 rounded-md border border-[var(--color-hairline)] px-3 py-1.5 transition hover:bg-[var(--color-surface-soft)]"
           download
         >
           Export CSV
@@ -157,7 +161,7 @@ export default async function TimelinePage({
                     <Badge tone={tone.badge as never}>{summary}</Badge>
                   ) : null}
                 </div>
-                <p className="mt-0.5 text-caption text-stone">
+                <p className="text-caption text-stone mt-0.5">
                   {e.actor
                     ? e.actor.name || e.actor.email
                     : e.actorSystem || "system"}{" "}
@@ -165,7 +169,7 @@ export default async function TimelinePage({
                 </p>
 
                 {fh.length > 0 ? (
-                  <ul className="mt-2 space-y-1 text-body-sm text-slate">
+                  <ul className="text-body-sm text-slate mt-2 space-y-1">
                     {fh.map((h) => {
                       const def = fieldByKey.get(h.fieldKey);
                       const rawValue = (h.valueJson as { value?: unknown })
@@ -173,11 +177,11 @@ export default async function TimelinePage({
                       const display = renderValue(rawValue, def, linkRefById);
                       return (
                         <li key={h.id} className="flex flex-wrap gap-x-2">
-                          <span className="font-medium text-charcoal">
+                          <span className="text-charcoal font-medium">
                             {def?.label ?? h.fieldKey}
                           </span>
                           <span className="text-stone">·</span>
-                          <span className="wrap-break-word text-ink">
+                          <span className="text-ink wrap-break-word">
                             {display}
                           </span>
                         </li>
@@ -186,13 +190,12 @@ export default async function TimelinePage({
                   </ul>
                 ) : null}
 
-                {e.payloadJson &&
-                shouldShowDetails(e.action, e.payloadJson) ? (
+                {e.payloadJson && shouldShowDetails(e.action, e.payloadJson) ? (
                   <details className="mt-2">
-                    <summary className="cursor-pointer select-none text-caption text-stone hover:text-ink">
+                    <summary className="text-caption text-stone hover:text-ink cursor-pointer select-none">
                       Show technical details
                     </summary>
-                    <pre className="mt-2 rounded-md border border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)] px-3 py-2 text-caption text-slate">
+                    <pre className="text-caption text-slate mt-2 rounded-md border border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)] px-3 py-2">
                       {JSON.stringify(e.payloadJson, null, 2)}
                     </pre>
                   </details>

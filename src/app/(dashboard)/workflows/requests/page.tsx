@@ -43,10 +43,15 @@ export default async function RequestsListPage({
   searchParams: Promise<{ scope?: string; status?: string; formId?: string }>;
 }) {
   await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
-  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN);
 
   const userId = await getCurrentUserId();
   if (!userId) redirect("/login");
+
+  // Ownership-scoped permission: user is viewing their own requests, so
+  // pass resourceOwnerId=userId to satisfy the :own check.
+  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN, {
+    resourceOwnerId: userId,
+  });
 
   const sp = await searchParams;
   const scope = sp.scope === "mine" ? "mine" : "all";
@@ -90,10 +95,10 @@ export default async function RequestsListPage({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <span className="text-micro-uppercase text-stone">Requests</span>
-          <h1 className="mt-1 text-h2">
+          <h1 className="text-h2 mt-1">
             {scope === "mine" ? "My requests" : "All requests"}
           </h1>
-          <p className="mt-1 text-subtitle text-slate">
+          <p className="text-subtitle text-slate mt-1">
             {scope === "mine"
               ? "Requests you submitted."
               : "Everything submitted across your organization."}
@@ -119,9 +124,9 @@ export default async function RequestsListPage({
             <Link
               href={`?scope=${scope}${formIdFilter ? `&formId=${formIdFilter}` : ""}`}
               className={
-                "rounded-full px-3 py-1 text-caption-bold border " +
+                "text-caption-bold rounded-full border px-3 py-1 " +
                 (statusFilter === null
-                  ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-white"
+                  ? "text-on-ink border-[var(--color-ink)] bg-[var(--color-ink)]"
                   : "border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-charcoal)]")
               }
             >
@@ -132,9 +137,9 @@ export default async function RequestsListPage({
                 key={s}
                 href={`?scope=${scope}&status=${s}${formIdFilter ? `&formId=${formIdFilter}` : ""}`}
                 className={
-                  "rounded-full px-3 py-1 text-caption-bold border " +
+                  "text-caption-bold rounded-full border px-3 py-1 " +
                   (statusFilter === s
-                    ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-white"
+                    ? "text-on-ink border-[var(--color-ink)] bg-[var(--color-ink)]"
                     : "border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-charcoal)]")
                 }
               >
@@ -154,7 +159,7 @@ export default async function RequestsListPage({
         </div>
       </Card>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left">
             <thead className="border-b border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)]">
@@ -173,19 +178,19 @@ export default async function RequestsListPage({
                   key={r.id}
                   className="border-b border-[var(--color-hairline-soft)] last:border-0"
                 >
-                  <td className="px-5 py-3 font-mono text-caption text-charcoal">
+                  <td className="text-caption text-charcoal px-5 py-3 font-mono">
                     {r.referenceNumber}
                   </td>
-                  <td className="px-5 py-3 text-body-sm-medium text-ink">
+                  <td className="text-body-sm-medium text-ink px-5 py-3">
                     {r.form.name}
                   </td>
-                  <td className="px-5 py-3 text-body-sm text-slate">
+                  <td className="text-body-sm text-slate px-5 py-3">
                     {r.requester.name || r.requester.email}
                   </td>
                   <td className="px-5 py-3">
                     {statusBadge(r.status, r.outcome)}
                   </td>
-                  <td className="px-5 py-3 text-body-sm text-stone">
+                  <td className="text-body-sm text-stone px-5 py-3">
                     {r.submittedAt
                       ? new Date(r.submittedAt).toLocaleString()
                       : "—"}
@@ -204,7 +209,7 @@ export default async function RequestsListPage({
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-5 py-12 text-center text-body-md text-stone"
+                    className="text-body-md text-stone px-5 py-12 text-center"
                   >
                     No requests match this filter.
                   </td>

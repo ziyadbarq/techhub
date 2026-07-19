@@ -14,8 +14,8 @@ export function PillTab({ href, active, children }: PillTabProps) {
       className={[
         "inline-flex h-9 items-center rounded-full px-4 text-[14px] font-medium transition-colors",
         active
-          ? "bg-[var(--color-ink)] text-white border border-[var(--color-ink)]"
-          : "bg-[var(--color-canvas)] text-[var(--color-steel)] border border-[var(--color-hairline)] hover:text-[var(--color-ink)]",
+          ? "text-on-ink border border-[var(--color-ink)] bg-[var(--color-ink)]"
+          : "border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-steel)] hover:text-[var(--color-ink)]",
       ].join(" ")}
     >
       {children}

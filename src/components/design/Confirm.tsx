@@ -78,14 +78,14 @@ export function ConfirmHost() {
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
           className={cn(
-            "fixed inset-0 z-50 bg-[var(--color-ink)]/40 backdrop-blur-sm",
+            "fixed inset-0 z-50 bg-[var(--color-ink-deep)]/40 backdrop-blur-sm dark:bg-black/60",
             "data-[state=open]:animate-in data-[state=open]:fade-in-0",
             "data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
           )}
         />
         <DialogPrimitive.Content
           className={cn(
-            "fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2",
+            "fixed top-1/2 left-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2",
             "rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas)] p-5 shadow-[var(--shadow-3)]",
             "focus:outline-none",
             "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
@@ -96,7 +96,7 @@ export function ConfirmHost() {
             {opts.title}
           </DialogPrimitive.Title>
           {opts.message ? (
-            <DialogPrimitive.Description className="mt-2 text-body-sm text-[var(--color-slate)]">
+            <DialogPrimitive.Description className="text-body-sm mt-2 text-[var(--color-slate)]">
               {opts.message}
             </DialogPrimitive.Description>
           ) : (

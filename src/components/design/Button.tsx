@@ -23,7 +23,7 @@ interface BaseProps {
 
 const VARIANT_STYLES: Record<Variant, string> = {
   primary:
-    "bg-[var(--color-ink)] text-[var(--color-on-primary)] hover:bg-[var(--color-charcoal)] active:bg-[var(--color-charcoal)] disabled:bg-[var(--color-hairline)] disabled:text-[var(--color-stone)]",
+    "bg-[var(--color-ink)] text-on-ink hover:bg-[var(--color-charcoal)] active:bg-[var(--color-charcoal)] disabled:bg-[var(--color-hairline)] disabled:text-[var(--color-stone)]",
   yellow:
     "bg-[var(--color-brand-yellow)] text-[var(--color-ink)] hover:bg-[var(--color-brand-yellow-deep)] disabled:bg-[var(--color-hairline)] disabled:text-[var(--color-stone)]",
   blue: "bg-[var(--color-brand-blue)] text-[var(--color-on-primary)] hover:bg-[var(--color-blue-pressed)] disabled:bg-[var(--color-hairline)] disabled:text-[var(--color-stone)]",
@@ -54,9 +54,7 @@ function classes({
   className?: string;
 }) {
   const isGhost = variant === "ghost";
-  const radius = isGhost
-    ? "rounded-md"
-    : "rounded-[var(--radius-full)]";
+  const radius = isGhost ? "rounded-md" : "rounded-[var(--radius-full)]";
   return [
     "inline-flex items-center justify-center gap-2 font-medium transition-colors",
     "disabled:cursor-not-allowed select-none whitespace-nowrap",

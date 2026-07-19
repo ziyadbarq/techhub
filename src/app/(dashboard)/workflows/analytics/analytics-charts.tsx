@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import {
   Area,
   AreaChart,
@@ -11,7 +12,6 @@ import {
   Cell,
   Legend,
   Line,
-  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -21,6 +21,37 @@ import {
 } from "recharts";
 
 import { Card } from "@/components/design";
+
+type ChartPalette = {
+  tooltipBg: string;
+  tooltipFg: string;
+  axisTick: string;
+  legendFg: string;
+  grid: string;
+  pieStroke: string;
+};
+
+function useChartPalette(): ChartPalette {
+  const { resolvedTheme } = useTheme();
+  const dark = resolvedTheme === "dark";
+  return dark
+    ? {
+        tooltipBg: "rgba(240, 240, 245, 0.96)",
+        tooltipFg: "#1c1c1e",
+        axisTick: "#a5a8b5",
+        legendFg: "#b5b8c5",
+        grid: "rgba(255, 255, 255, 0.12)",
+        pieStroke: "#3a3a3a",
+      }
+    : {
+        tooltipBg: "rgba(28, 28, 30, 0.95)",
+        tooltipFg: "#ffffff",
+        axisTick: "#8e91a0",
+        legendFg: "#555a6a",
+        grid: "rgba(224, 226, 232, 0.6)",
+        pieStroke: "#ffffff",
+      };
+}
 
 const VIEW_NAME = "analytics:dashboard:default";
 type WidgetKey = "trend" | "status" | "outcome" | "forms";
@@ -119,7 +150,7 @@ export function AnalyticsCharts({
         ).map(([key, label]) => (
           <label
             key={key}
-            className="inline-flex cursor-pointer items-center gap-2 text-body-sm text-charcoal"
+            className="text-body-sm text-charcoal inline-flex cursor-pointer items-center gap-2"
           >
             <input
               type="checkbox"
@@ -143,14 +174,14 @@ export function AnalyticsCharts({
   );
 }
 
-const tickStyle = { fill: "#8e91a0", fontSize: 10 };
-const gridStroke = "rgba(224, 226, 232, 0.6)";
-
 function TrendCard({ data }: { data: TrendPoint[] }) {
+  const palette = useChartPalette();
+  const tickStyle = { fill: palette.axisTick, fontSize: 10 };
+  const gridStroke = palette.grid;
   return (
     <Card>
       <h3 className="text-body-md-medium text-ink">Requests over time</h3>
-      <p className="mb-3 text-caption text-stone">
+      <p className="text-caption text-stone mb-3">
         Daily submissions vs. closures
       </p>
       <div className="h-60">
@@ -180,16 +211,16 @@ function TrendCard({ data }: { data: TrendPoint[] }) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "rgba(28,28,30,0.95)",
+                backgroundColor: palette.tooltipBg,
                 border: 0,
                 borderRadius: 8,
-                color: "#fff",
+                color: palette.tooltipFg,
                 fontSize: 12,
               }}
-              labelStyle={{ color: "#fff" }}
+              labelStyle={{ color: palette.tooltipFg }}
             />
             <Legend
-              wrapperStyle={{ fontSize: 11, color: "#555a6a" }}
+              wrapperStyle={{ fontSize: 11, color: palette.legendFg }}
               iconType="circle"
             />
             <Area
@@ -217,11 +248,12 @@ function TrendCard({ data }: { data: TrendPoint[] }) {
 }
 
 function StatusCard({ data }: { data: Bucket[] }) {
+  const palette = useChartPalette();
   const total = data.reduce((s, d) => s + d.value, 0);
   return (
     <Card>
       <h3 className="text-body-md-medium text-ink">By status</h3>
-      <p className="mb-3 text-caption text-stone">
+      <p className="text-caption text-stone mb-3">
         All-time · {total} request{total === 1 ? "" : "s"}
       </p>
       <div className="h-60">
@@ -234,19 +266,19 @@ function StatusCard({ data }: { data: Bucket[] }) {
                 return [`${v} (${pct}%)`, String(name)];
               }}
               contentStyle={{
-                backgroundColor: "rgba(28,28,30,0.95)",
+                backgroundColor: palette.tooltipBg,
                 border: 0,
                 borderRadius: 8,
-                color: "#fff",
+                color: palette.tooltipFg,
                 fontSize: 12,
               }}
-              labelStyle={{ color: "#fff" }}
+              labelStyle={{ color: palette.tooltipFg }}
             />
             <Legend
               layout="vertical"
               verticalAlign="middle"
               align="right"
-              wrapperStyle={{ fontSize: 11, color: "#555a6a" }}
+              wrapperStyle={{ fontSize: 11, color: palette.legendFg }}
               iconType="circle"
             />
             <Pie
@@ -256,7 +288,7 @@ function StatusCard({ data }: { data: Bucket[] }) {
               innerRadius="56%"
               outerRadius="90%"
               paddingAngle={2}
-              stroke="#fff"
+              stroke={palette.pieStroke}
               strokeWidth={2}
             >
               {data.map((entry) => (
@@ -274,12 +306,15 @@ function StatusCard({ data }: { data: Bucket[] }) {
 }
 
 function OutcomeCard({ data }: { data: Bucket[] }) {
+  const palette = useChartPalette();
+  const tickStyle = { fill: palette.axisTick, fontSize: 10 };
+  const gridStroke = palette.grid;
   if (data.length === 0) {
     return (
       <Card>
         <h3 className="text-body-md-medium text-ink">By outcome</h3>
-        <p className="mb-3 text-caption text-stone">Terminal requests only</p>
-        <div className="flex h-60 items-center justify-center text-body-sm text-stone">
+        <p className="text-caption text-stone mb-3">Terminal requests only</p>
+        <div className="text-body-sm text-stone flex h-60 items-center justify-center">
           No terminal requests yet.
         </div>
       </Card>
@@ -288,7 +323,7 @@ function OutcomeCard({ data }: { data: Bucket[] }) {
   return (
     <Card>
       <h3 className="text-body-md-medium text-ink">By outcome</h3>
-      <p className="mb-3 text-caption text-stone">Terminal requests only</p>
+      <p className="text-caption text-stone mb-3">Terminal requests only</p>
       <div className="h-60">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -313,13 +348,13 @@ function OutcomeCard({ data }: { data: Bucket[] }) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "rgba(28,28,30,0.95)",
+                backgroundColor: palette.tooltipBg,
                 border: 0,
                 borderRadius: 8,
-                color: "#fff",
+                color: palette.tooltipFg,
                 fontSize: 12,
               }}
-              labelStyle={{ color: "#fff" }}
+              labelStyle={{ color: palette.tooltipFg }}
             />
             <Bar dataKey="value" name="Requests" radius={[6, 6, 0, 0]}>
               {data.map((entry) => (
@@ -337,12 +372,15 @@ function OutcomeCard({ data }: { data: Bucket[] }) {
 }
 
 function FormsCard({ data }: { data: Bucket[] }) {
+  const palette = useChartPalette();
+  const tickStyle = { fill: palette.axisTick, fontSize: 10 };
+  const gridStroke = palette.grid;
   if (data.length === 0) {
     return (
       <Card>
         <h3 className="text-body-md-medium text-ink">Top forms (30 days)</h3>
-        <p className="mb-3 text-caption text-stone">By submission count</p>
-        <div className="flex h-60 items-center justify-center text-body-sm text-stone">
+        <p className="text-caption text-stone mb-3">By submission count</p>
+        <div className="text-body-sm text-stone flex h-60 items-center justify-center">
           No submissions in the last 30 days.
         </div>
       </Card>
@@ -351,7 +389,7 @@ function FormsCard({ data }: { data: Bucket[] }) {
   return (
     <Card>
       <h3 className="text-body-md-medium text-ink">Top forms (30 days)</h3>
-      <p className="mb-3 text-caption text-stone">By submission count</p>
+      <p className="text-caption text-stone mb-3">By submission count</p>
       <div className="h-60">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -370,20 +408,20 @@ function FormsCard({ data }: { data: Bucket[] }) {
             <YAxis
               type="category"
               dataKey="name"
-              tick={{ fill: "#555a6a", fontSize: 11 }}
+              tick={{ fill: palette.legendFg, fontSize: 11 }}
               tickLine={false}
               axisLine={false}
               width={120}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "rgba(28,28,30,0.95)",
+                backgroundColor: palette.tooltipBg,
                 border: 0,
                 borderRadius: 8,
-                color: "#fff",
+                color: palette.tooltipFg,
                 fontSize: 12,
               }}
-              labelStyle={{ color: "#fff" }}
+              labelStyle={{ color: palette.tooltipFg }}
             />
             <Bar
               dataKey="value"

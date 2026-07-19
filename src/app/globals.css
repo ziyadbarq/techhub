@@ -272,6 +272,14 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Tell the browser which theme to use for UA-controlled UI (native
+     <input type="time">/date pickers, scrollbars, form autofill, etc.). */
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
 }
 
 /* ============================================
@@ -297,6 +305,74 @@
   /* Focus visible states for accessibility */
   .focus-ring {
     @apply focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none;
+  }
+
+  /* ============================================
+     Custom checkbox (Flowbit / workflows)
+     ============================================
+     Replaces the OS-native square with a themed one that:
+     - uses --color-canvas / --color-hairline in idle state,
+     - fills brand-yellow with an ink checkmark when checked,
+     - respects focus/disabled/theme.
+     Consumed via <input type="checkbox" class="custom-checkbox" />. */
+  .custom-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    border-radius: 4px;
+    border: 1.5px solid var(--color-hairline-strong);
+    background-color: var(--color-canvas);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+    position: relative;
+    vertical-align: middle;
+  }
+  .custom-checkbox:hover:not(:disabled) {
+    border-color: var(--color-brand-yellow-deep);
+  }
+  .custom-checkbox:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px
+      color-mix(in oklch, var(--color-brand-yellow) 40%, transparent);
+    border-color: var(--color-brand-yellow-deep);
+  }
+  .custom-checkbox:checked {
+    background-color: var(--color-brand-yellow);
+    border-color: var(--color-brand-yellow-deep);
+  }
+  .custom-checkbox:checked::after {
+    content: "";
+    width: 0.35rem;
+    height: 0.65rem;
+    border: solid var(--color-ink-deep);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-1px, -1px);
+    display: block;
+  }
+  .custom-checkbox:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    background-color: var(--color-surface-soft);
+  }
+  .custom-checkbox:indeterminate {
+    background-color: var(--color-brand-yellow);
+    border-color: var(--color-brand-yellow-deep);
+  }
+  .custom-checkbox:indeterminate::after {
+    content: "";
+    width: 0.6rem;
+    height: 2px;
+    background-color: var(--color-ink-deep);
+    border: 0;
+    transform: none;
   }
 }
 
@@ -468,6 +544,8 @@
 :root {
   /* Brand & accents */
   --color-on-primary: #ffffff;
+  /* Contrast foreground for surfaces painted with --color-ink */
+  --color-on-ink: #ffffff;
   --color-brand-yellow: #ffd02f;
   --color-brand-yellow-deep: #fcb900;
   --color-yellow-light: #fff4c4;
@@ -521,6 +599,89 @@
   --shadow-2: rgba(5, 0, 56, 0.06) 0 4px 12px 0;
   --shadow-3: rgba(5, 0, 56, 0.08) 0 12px 32px -4px;
   --shadow-4: rgba(5, 0, 56, 0.12) 0 16px 48px -8px;
+
+  /* Select chevron (used by native <select> in workflow forms) */
+  --select-chevron: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231c1c1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+
+  /* Chart palette (Recharts tooltip surface / axis text) */
+  --chart-tooltip-bg: rgba(28, 28, 30, 0.95);
+  --chart-tooltip-fg: #ffffff;
+  --chart-axis-tick: #8e91a0;
+  --chart-legend-fg: #555a6a;
+  --chart-grid: rgba(224, 226, 232, 0.6);
+  --chart-pie-stroke: #ffffff;
+}
+
+/* Dark-mode overrides for the Flowbit / workflows design layer so the
+   module honours the same theme switch as the rest of techhub. */
+.dark {
+  /* Workflow surfaces - align with techhub --background/--card */
+  --color-canvas: oklch(0.2 0 0);
+  --color-surface-flowbit: oklch(0.23 0 0);
+  --color-surface-soft: oklch(0.25 0 0);
+  --color-surface-yellow: oklch(0.32 0.05 90);
+  --color-surface-pricing-featured: oklch(0.28 0.03 280);
+
+  /* Hairlines / borders */
+  --color-hairline: oklch(1 0 0 / 15%);
+  --color-hairline-soft: oklch(1 0 0 / 8%);
+  --color-hairline-strong: oklch(1 0 0 / 25%);
+
+  /* Text - inverted from light so ink reads on dark canvas */
+  --color-ink-deep: oklch(0.985 0 0);
+  --color-ink: oklch(0.95 0 0);
+  /* On-ink inverts too: dark text on light "ink" surface */
+  --color-on-ink: oklch(0.2 0 0);
+
+  /* Solid brand accents - dimmed a step so light text reads on top */
+  --color-brand-yellow: oklch(0.72 0.14 90);
+  --color-brand-yellow-deep: oklch(0.65 0.15 85);
+  --color-brand-blue: oklch(0.55 0.2 265);
+  --color-blue-pressed: oklch(0.45 0.18 265);
+  --color-brand-teal: oklch(0.55 0.11 190);
+  --color-brand-coral: oklch(0.68 0.14 20);
+  --color-success-accent: oklch(0.6 0.16 155);
+  --color-charcoal: oklch(0.85 0 0);
+  --color-slate: oklch(0.72 0 0);
+  --color-steel: oklch(0.62 0 0);
+  --color-stone: oklch(0.55 0 0);
+  --color-flowbit-muted: oklch(0.5 0 0);
+
+  /* Pastel accent tints - darker + less saturated for dark backgrounds */
+  --color-yellow-light: oklch(0.32 0.07 90);
+  --color-teal-light: oklch(0.32 0.07 180);
+  --color-coral-light: oklch(0.32 0.07 20);
+  --color-rose-light: oklch(0.32 0.04 340);
+  --color-brand-rose: oklch(0.32 0.04 340);
+  --color-brand-pink: oklch(0.32 0.04 340);
+  --color-brand-red: oklch(0.32 0.06 20);
+  --color-brand-red-dark: oklch(0.35 0.06 20);
+  --color-brand-orange-light: oklch(0.32 0.07 55);
+  --color-sky-light: oklch(0.32 0.06 240);
+  --color-mint-light: oklch(0.32 0.07 145);
+  --color-blush-light: oklch(0.32 0.05 350);
+  --color-sand-light: oklch(0.32 0.03 70);
+  --color-lilac-light: oklch(0.32 0.06 290);
+  --color-lemon-light: oklch(0.32 0.07 90);
+  --color-yellow-dark: oklch(0.85 0.14 90);
+  --color-coral-dark: oklch(0.82 0.14 20);
+
+  /* Shadows - dark mode uses solid black for depth */
+  --shadow-1: rgba(0, 0, 0, 0.35) 0 1px 2px 0;
+  --shadow-2: rgba(0, 0, 0, 0.45) 0 4px 12px 0;
+  --shadow-3: rgba(0, 0, 0, 0.55) 0 12px 32px -4px;
+  --shadow-4: rgba(0, 0, 0, 0.65) 0 16px 48px -8px;
+
+  /* Select chevron - light stroke so it reads on dark input */
+  --select-chevron: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e5e5e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+
+  /* Chart palette - inverted so Recharts tooltips read on dark card */
+  --chart-tooltip-bg: rgba(240, 240, 245, 0.96);
+  --chart-tooltip-fg: #1c1c1e;
+  --chart-axis-tick: #a5a8b5;
+  --chart-legend-fg: #b5b8c5;
+  --chart-grid: rgba(255, 255, 255, 0.12);
+  --chart-pie-stroke: oklch(0.25 0 0);
 }
 
 @theme inline {
@@ -535,6 +696,7 @@
   --color-hairline-strong: var(--color-hairline-strong);
   --color-ink: var(--color-ink);
   --color-ink-deep: var(--color-ink-deep);
+  --color-on-ink: var(--color-on-ink);
   --color-charcoal: var(--color-charcoal);
   --color-slate: var(--color-slate);
   --color-steel: var(--color-steel);

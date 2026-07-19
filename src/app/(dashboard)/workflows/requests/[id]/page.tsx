@@ -36,7 +36,6 @@ export default async function RequestDetailPage({
   params: Promise<{ id: string }>;
 }) {
   await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
-  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN);
 
   const userId = await getCurrentUserId();
   if (!userId) redirect("/login");
@@ -55,6 +54,12 @@ export default async function RequestDetailPage({
     },
   });
   if (!req) notFound();
+
+  // Ownership-scoped permission: pass the request's requester as the resource
+  // owner so users with :view (broader) OR :view:own (self only) both pass.
+  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN, {
+    resourceOwnerId: req.requesterId,
+  });
 
   const stepInstances = await prisma.stepInstance.findMany({
     where: { requestId: req.id },
@@ -88,9 +93,9 @@ export default async function RequestDetailPage({
   });
 
   const activeStep = stepInstances.find((s) => s.status === "ACTIVE");
-  const wfGraph = req.workflowVersion.graphJson as
-    | { steps?: Array<{ key: string; type: string }> }
-    | null;
+  const wfGraph = req.workflowVersion.graphJson as {
+    steps?: Array<{ key: string; type: string }>;
+  } | null;
   const activeStepType =
     activeStep && wfGraph?.steps
       ? (wfGraph.steps.find((g) => g.key === activeStep.stepKey)?.type ?? null)
@@ -98,7 +103,9 @@ export default async function RequestDetailPage({
   const isAssignee =
     activeStep?.snapshots.some((s) => s.user.id === userId) ?? false;
   const isRequester = req.requesterId === userId;
-  const canOverride = await hasPermission(PERMISSIONS.WORKFLOWS_REQUESTS_OVERRIDE);
+  const canOverride = await hasPermission(
+    PERMISSIONS.WORKFLOWS_REQUESTS_OVERRIDE,
+  );
 
   const schema = req.formVersion.schemaJson as {
     fields: Array<{
@@ -161,17 +168,14 @@ export default async function RequestDetailPage({
       </LinkButton>
 
       {/* Header band */}
-      <Card
-        tone={req.status === "ON_HOLD" ? "yellow" : "white"}
-        size="feature"
-      >
+      <Card tone={req.status === "ON_HOLD" ? "yellow" : "white"} size="feature">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div>
-            <p className="text-caption font-mono text-stone">
+            <p className="text-caption text-stone font-mono">
               {req.referenceNumber}
             </p>
-            <h1 className="mt-2 text-h2">{req.form.name}</h1>
-            <p className="mt-1 text-body-md text-slate">
+            <h1 className="text-h2 mt-2">{req.form.name}</h1>
+            <p className="text-body-md text-slate mt-1">
               Submitted by{" "}
               <span className="text-charcoal">
                 {req.requester.name || req.requester.email}
@@ -181,7 +185,7 @@ export default async function RequestDetailPage({
                 : null}
             </p>
           </div>
-          <div className="flex flex-col items-end gap-2 max-w-md">
+          <div className="flex max-w-md flex-col items-end gap-2">
             {statusBadge(req.status, req.outcome)}
             {req.outcome &&
             (req.status === "CLOSED" || req.status === "CANCELLED") ? (
@@ -226,7 +230,7 @@ export default async function RequestDetailPage({
                     : undefined;
                 return (
                   <div key={f.key} className="grid grid-cols-3 gap-4 py-3">
-                    <dt className="flex flex-wrap items-center gap-2 text-body-sm text-stone">
+                    <dt className="text-body-sm text-stone flex flex-wrap items-center gap-2">
                       {f.label}
                       {isAdminOnly ? (
                         <span className="rounded-full bg-[var(--color-yellow-light)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-yellow-dark)]">
@@ -234,10 +238,10 @@ export default async function RequestDetailPage({
                         </span>
                       ) : null}
                     </dt>
-                    <dd className="col-span-2 text-body-md text-ink wrap-break-word">
+                    <dd className="text-body-md text-ink col-span-2 wrap-break-word">
                       {linkInfo ? (
                         <span className="inline-flex flex-wrap items-center gap-2">
-                          <span className="font-mono text-charcoal">
+                          <span className="text-charcoal font-mono">
                             {linkInfo.ref}
                           </span>
                           {linkInfo.title ? (
@@ -287,7 +291,7 @@ export default async function RequestDetailPage({
 
           <Link
             href={`/workflows/requests/${req.id}/timeline`}
-            className="mt-5 inline-block text-body-sm-medium text-[var(--color-brand-blue)] hover:underline"
+            className="text-body-sm-medium mt-5 inline-block text-[var(--color-brand-blue)] hover:underline"
           >
             View full audit log →
           </Link>
@@ -299,17 +303,15 @@ export default async function RequestDetailPage({
       {canOverride ? (
         <Card tone="lavender" size="feature">
           <h2 className="text-h4">Admin overrides</h2>
-          <p className="mt-1 text-body-sm text-charcoal/80">
-            Use only when the standard flow is stuck. Every override is
-            recorded in the audit trail.
+          <p className="text-body-sm text-charcoal/80 mt-1">
+            Use only when the standard flow is stuck. Every override is recorded
+            in the audit trail.
           </p>
           <div className="mt-4">
             <AdminOverridePanel
               requestId={req.id}
               activeStepInstanceId={activeStep?.id ?? null}
-              isTerminal={
-                req.status === "CLOSED" || req.status === "CANCELLED"
-              }
+              isTerminal={req.status === "CLOSED" || req.status === "CANCELLED"}
               orgUsers={orgUsers}
             />
           </div>
