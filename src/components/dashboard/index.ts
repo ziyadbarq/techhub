@@ -14,6 +14,11 @@ export { DashboardSection } from "./dashboard-section";
 export { WelcomeBannerWidget } from "./widgets/welcome-banner-widget";
 export { ProfileCardWidget } from "./widgets/profile-card-widget";
 
+// Overview Widgets
+export { MetricsCardsWidget } from "./widgets/metrics-cards-widget";
+export { RecentActivityWidget } from "./widgets/recent-activity-widget";
+export { TaskQueueWidget } from "./widgets/task-queue-widget";
+
 // My Assets Section Widgets
 export { MyAssetsWidget } from "./widgets/my-assets-widget";
 export { MyServicesWidget } from "./widgets/my-services-widget";

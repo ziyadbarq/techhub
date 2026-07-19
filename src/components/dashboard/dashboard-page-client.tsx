@@ -12,6 +12,9 @@ import {
   MyServicesWidget,
   MyPendingApprovalsWidget,
   MyMaintenanceTasksWidget,
+  MetricsCardsWidget,
+  RecentActivityWidget,
+  TaskQueueWidget,
   DashboardSection,
   DependencyInfographic,
 } from "@/components/dashboard";
@@ -27,6 +30,9 @@ const DASHBOARD_CONFIG = {
   // Header
   welcomeBanner: true,
 
+  // Overview row
+  metricsCards: true,
+
   // Setup guide
   dependencyInfographic: true,
 
@@ -37,6 +43,10 @@ const DASHBOARD_CONFIG = {
   // Left column - My Assignments section
   myAssets: false,
   myServices: false,
+
+  // Overview grid
+  taskQueue: true,
+  recentActivity: true,
 
   // Right column
   profileCard: false,
@@ -55,11 +65,25 @@ export function DashboardPageClient() {
     DASHBOARD_CONFIG.quickActions ||
     DASHBOARD_CONFIG.expiringWarranties;
 
+  const hasOverviewGrid =
+    DASHBOARD_CONFIG.taskQueue || DASHBOARD_CONFIG.recentActivity;
+
   return (
     <CurrentPersonProvider>
       <div className="space-y-6">
         {/* Welcome Banner */}
         {DASHBOARD_CONFIG.welcomeBanner && <WelcomeBannerWidget />}
+
+        {/* Overview Metrics Row */}
+        {DASHBOARD_CONFIG.metricsCards && <MetricsCardsWidget />}
+
+        {/* Overview Grid - Task Queue + Recent Activity */}
+        {hasOverviewGrid && (
+          <div className="grid gap-6 lg:grid-cols-2">
+            {DASHBOARD_CONFIG.taskQueue && <TaskQueueWidget />}
+            {DASHBOARD_CONFIG.recentActivity && <RecentActivityWidget />}
+          </div>
+        )}
 
         {/* Data Entry Workflow Guide */}
         {DASHBOARD_CONFIG.dependencyInfographic && <DependencyInfographic />}

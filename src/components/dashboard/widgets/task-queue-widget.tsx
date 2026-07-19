@@ -16,71 +16,37 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Wrench, Package, ArrowRight } from "lucide-react";
+import { Wrench, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistance } from "date-fns";
+import {
+  getMyMaintenanceTasksAction,
+  type MyMaintenanceTaskDTO,
+} from "@/interface-adapters/controllers/my-dashboard.controller";
 
-interface TaskItem {
-  id: string;
-  type: "maintenance" | "assignment" | "warranty";
-  title: string;
-  assetTag: string;
-  dueDate: Date;
-  priority: "HIGH" | "MEDIUM" | "LOW";
-}
-
-const priorityColors = {
+const priorityColors: Record<string, string> = {
+  CRITICAL: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
   HIGH: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
   MEDIUM:
     "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
   LOW: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
 };
 
-const typeIcons = {
-  maintenance: <Wrench className="h-4 w-4" />,
-  assignment: <Package className="h-4 w-4" />,
-  warranty: <Clock className="h-4 w-4" />,
-};
-
 export function TaskQueueWidget() {
-  const [tasks, setTasks] = useState<TaskItem[]>([]);
+  const [tasks, setTasks] = useState<MyMaintenanceTaskDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchTasks() {
       try {
         setLoading(true);
-        // TODO: Replace with actual server action
-        // For now, using placeholder data
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setTasks([
-          {
-            id: "1",
-            type: "maintenance",
-            title: "Scheduled maintenance - Server Rack A",
-            assetTag: "SRV-001",
-            dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-            priority: "HIGH",
-          },
-          {
-            id: "2",
-            type: "warranty",
-            title: "Warranty renewal review",
-            assetTag: "LPT-042",
-            dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-            priority: "MEDIUM",
-          },
-          {
-            id: "3",
-            type: "assignment",
-            title: "Asset assignment pending",
-            assetTag: "MON-156",
-            dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
-            priority: "HIGH",
-          },
-        ]);
-      } catch (error) {
-        console.error("Failed to fetch tasks:", error);
+        const result = await getMyMaintenanceTasksAction();
+        if (result.success) {
+          setTasks(result.data);
+        } else {
+          toast.error(result.error);
+        }
+      } catch {
         toast.error("Failed to load tasks");
       } finally {
         setLoading(false);
@@ -125,7 +91,7 @@ export function TaskQueueWidget() {
                 className="hover:bg-accent flex items-start gap-3 rounded-lg border p-3 transition-colors"
               >
                 <div className="text-muted-foreground mt-0.5">
-                  {typeIcons[task.type]}
+                  <Wrench className="h-4 w-4" />
                 </div>
                 <div className="flex-1 space-y-1">
                   <div className="flex items-start justify-between gap-2">
@@ -134,16 +100,16 @@ export function TaskQueueWidget() {
                     </p>
                     <Badge
                       variant="secondary"
-                      className={priorityColors[task.priority]}
+                      className={priorityColors[task.priority] ?? ""}
                     >
                       {task.priority}
                     </Badge>
                   </div>
                   <p className="text-muted-foreground text-xs">
-                    Asset: {task.assetTag} • Due{" "}
-                    {formatDistance(task.dueDate, new Date(), {
-                      addSuffix: true,
-                    })}
+                    {task.assetTag ? `Asset: ${task.assetTag} • ` : ""}
+                    {task.nextDueDate
+                      ? `Due ${formatDistance(new Date(task.nextDueDate), new Date(), { addSuffix: true })}`
+                      : "No due date"}
                   </p>
                 </div>
               </div>

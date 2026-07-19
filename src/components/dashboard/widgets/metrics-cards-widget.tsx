@@ -15,13 +15,10 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
-
-interface MetricsData {
-  totalAssets: number;
-  pendingMaintenance: number;
-  expiringWarranties: number;
-  stockAlerts: number;
-}
+import {
+  getDashboardMetricsAction,
+  type DashboardMetricsDTO,
+} from "@/interface-adapters/controllers/my-dashboard.controller";
 
 interface MetricCardProps {
   title: string;
@@ -63,11 +60,11 @@ function MetricCard({
 }
 
 export function MetricsCardsWidget() {
-  const [metrics, setMetrics] = useState<MetricsData>({
+  const [metrics, setMetrics] = useState<DashboardMetricsDTO>({
     totalAssets: 0,
     pendingMaintenance: 0,
     expiringWarranties: 0,
-    stockAlerts: 0,
+    overdueMaintenance: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -75,17 +72,13 @@ export function MetricsCardsWidget() {
     async function fetchMetrics() {
       try {
         setLoading(true);
-        // TODO: Replace with actual server action
-        // For now, using placeholder data
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setMetrics({
-          totalAssets: 1250,
-          pendingMaintenance: 12,
-          expiringWarranties: 8,
-          stockAlerts: 5,
-        });
-      } catch (error) {
-        console.error("Failed to fetch metrics:", error);
+        const result = await getDashboardMetricsAction();
+        if (result.success) {
+          setMetrics(result.data);
+        } else {
+          toast.error(result.error);
+        }
+      } catch {
         toast.error("Failed to load metrics");
       } finally {
         setLoading(false);
@@ -136,10 +129,10 @@ export function MetricsCardsWidget() {
         color="text-red-500"
       />
       <MetricCard
-        title="Stock Alerts"
-        value={metrics.stockAlerts}
+        title="Overdue Maintenance"
+        value={metrics.overdueMaintenance}
         icon={<AlertTriangle className="h-4 w-4" />}
-        description="Low stock or issues"
+        description="Past due date"
         color="text-amber-600 dark:text-yellow-500"
       />
     </div>

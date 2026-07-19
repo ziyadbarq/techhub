@@ -19,7 +19,7 @@ This folder contains detailed specifications for planned features that are not y
 ## Quick Wins (< 1 day each)
 
 - [Background Job Handlers](BACKGROUND_JOB_HANDLERS.md) - **Status: Planned** - Implement 4 missing job handler stubs (email, cleanup, export). Infrastructure ready, just needs handler logic.
-- [Dashboard Widgets](DASHBOARD_WIDGETS.md) - **Status: Planned** - Wire 3 dashboard widgets (metrics, activity, tasks) to real server actions. UI built, data hardcoded.
+- [Dashboard Widgets](DASHBOARD_WIDGETS.md) - **Status: Complete** - Metrics, recent-activity, and task-queue widgets wired to real server actions and rendered on the dashboard.
 - [LicenseProduct Custom Fields UI](LICENSE_PRODUCT_CUSTOM_FIELDS_UI.md) - **Status: Planned** - Add form + display components for LicenseProduct custom fields. Full backend infrastructure already in place.
 - [Redis Rate Limiting](REDIS_RATE_LIMITING.md) - **Status: Planned** - Move Better Auth rate limiting from in-memory to Redis for persistence across restarts.
 

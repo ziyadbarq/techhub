@@ -13,101 +13,63 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Activity,
-  Package,
-  TrendingUp,
-  Wrench,
-  ShieldCheck,
-} from "lucide-react";
+import { Activity, Plus, Pencil, Trash2, Dot } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistance } from "date-fns";
+import {
+  getMyRecentActivityAction,
+  type RecentActivityDTO,
+} from "@/interface-adapters/controllers/my-dashboard.controller";
 
-interface ActivityItem {
-  id: string;
-  type: "assignment" | "movement" | "maintenance" | "warranty";
-  assetTag: string;
-  description: string;
-  timestamp: Date;
-  user: string;
+/** Coarse icon/colour by action verb — audit actions vary per module. */
+function activityVisual(action: string) {
+  const a = action.toLowerCase();
+  if (a.includes("create") || a.includes("add")) {
+    return {
+      icon: Plus,
+      color:
+        "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-200",
+    };
+  }
+  if (a.includes("delete") || a.includes("remove") || a.includes("void")) {
+    return {
+      icon: Trash2,
+      color: "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-200",
+    };
+  }
+  if (a.includes("update") || a.includes("edit")) {
+    return {
+      icon: Pencil,
+      color: "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200",
+    };
+  }
+  return {
+    icon: Dot,
+    color: "bg-muted text-muted-foreground",
+  };
 }
 
-const activityIcons = {
-  assignment: {
-    icon: Package,
-    color: "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200",
-  },
-  movement: {
-    icon: TrendingUp,
-    color: "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-200",
-  },
-  maintenance: {
-    icon: Wrench,
-    color:
-      "bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-200",
-  },
-  warranty: {
-    icon: ShieldCheck,
-    color:
-      "bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-200",
-  },
-};
+/** "asset.status_changed" / "CREATE" → "Asset status changed" / "Create". */
+function humanize(text: string): string {
+  const cleaned = text.replace(/[._]/g, " ").trim().toLowerCase();
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+}
 
 export function RecentActivityWidget() {
-  const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [activities, setActivities] = useState<RecentActivityDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchActivities() {
       try {
         setLoading(true);
-        // TODO: Replace with actual server action
-        // For now, using placeholder data
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setActivities([
-          {
-            id: "1",
-            type: "assignment",
-            assetTag: "LPT-042",
-            description: "Assigned to Ahmed Al Saud",
-            timestamp: new Date(Date.now() - 10 * 60 * 1000),
-            user: "Admin User",
-          },
-          {
-            id: "2",
-            type: "movement",
-            assetTag: "SRV-001",
-            description: "Moved from Warehouse to Server Room",
-            timestamp: new Date(Date.now() - 45 * 60 * 1000),
-            user: "Stock Manager",
-          },
-          {
-            id: "3",
-            type: "maintenance",
-            assetTag: "PRN-023",
-            description: "Maintenance completed",
-            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-            user: "Technician",
-          },
-          {
-            id: "4",
-            type: "warranty",
-            assetTag: "MON-156",
-            description: "Warranty registered",
-            timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
-            user: "Procurement",
-          },
-          {
-            id: "5",
-            type: "assignment",
-            assetTag: "KBD-089",
-            description: "Returned from Fatimah AlHarbi",
-            timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000),
-            user: "IT Support",
-          },
-        ]);
-      } catch (error) {
-        console.error("Failed to fetch activities:", error);
+        const result = await getMyRecentActivityAction();
+        if (result.success) {
+          setActivities(result.data);
+        } else {
+          toast.error(result.error);
+        }
+      } catch {
         toast.error("Failed to load recent activities");
       } finally {
         setLoading(false);
@@ -148,29 +110,30 @@ export function RecentActivityWidget() {
         {activities.length > 0 ? (
           <div className="space-y-4">
             {activities.map((activity) => {
-              const IconConfig = activityIcons[activity.type];
-              const Icon = IconConfig.icon;
+              const visual = activityVisual(activity.action);
+              const Icon = visual.icon;
 
               return (
                 <div
                   key={activity.id}
                   className="flex items-start gap-4 border-b pb-3 last:border-0"
                 >
-                  <div className={`rounded-full p-2 ${IconConfig.color}`}>
+                  <div className={`rounded-full p-2 ${visual.color}`}>
                     <Icon className="h-4 w-4" />
                   </div>
                   <div className="flex-1 space-y-1">
                     <p className="text-sm font-medium">
-                      {activity.assetTag}
+                      {humanize(activity.action)}
                       <span className="text-muted-foreground ml-2 font-normal">
-                        {activity.description}
+                        {humanize(activity.entityType)}
                       </span>
                     </p>
                     <p className="text-muted-foreground text-xs">
-                      {activity.user} •{" "}
-                      {formatDistance(activity.timestamp, new Date(), {
-                        addSuffix: true,
-                      })}
+                      {formatDistance(
+                        new Date(activity.createdAt),
+                        new Date(),
+                        { addSuffix: true },
+                      )}
                     </p>
                   </div>
                 </div>

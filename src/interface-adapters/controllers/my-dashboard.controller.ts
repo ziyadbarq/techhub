@@ -11,7 +11,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
 import { getCurrentUserId } from "@/lib/auth/session";
-import { requirePermission } from "@/lib/permissions/server";
+import { requirePermission, hasPermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { presentPerson, type PersonDTO } from "../presenters/person.presenter";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
@@ -23,6 +23,8 @@ import type { ILicenseAllocationRepository } from "@/core/repositories/license-a
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import type { IWarrantyRepository } from "@/core/repositories/warranty.repository.interface";
+import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
 import { AllocationTargetType } from "@/core/domain/entities/license-allocation.entity";
 import { z } from "zod";
 import type { PrismaClient } from "@/generated/prisma/server";
@@ -417,13 +419,9 @@ export async function getMyPreferencesAction(): Promise<
       data: {
         timezone: preferences.timezone,
         dateFormat: preferences.dateFormat as
-          | "dd/MM/yyyy"
-          | "MM/dd/yyyy"
-          | "yyyy-MM-dd",
+          "dd/MM/yyyy" | "MM/dd/yyyy" | "yyyy-MM-dd",
         currencyDisplay: preferences.currencyDisplay as
-          | "sar"
-          | "original"
-          | "dual",
+          "sar" | "original" | "dual",
         notifications: preferences.notifications,
       },
     };
@@ -468,13 +466,9 @@ export async function updateMyPreferencesAction(
       data: {
         timezone: preferences.timezone,
         dateFormat: preferences.dateFormat as
-          | "dd/MM/yyyy"
-          | "MM/dd/yyyy"
-          | "yyyy-MM-dd",
+          "dd/MM/yyyy" | "MM/dd/yyyy" | "yyyy-MM-dd",
         currencyDisplay: preferences.currencyDisplay as
-          | "sar"
-          | "original"
-          | "dual",
+          "sar" | "original" | "dual",
         notifications: preferences.notifications,
       },
     };
@@ -971,6 +965,160 @@ export async function getMyEquipmentKitsAction(): Promise<
       error,
       { function: "getMyEquipmentKitsAction" },
       "Failed to get my equipment kits",
+    );
+  }
+}
+
+// ============================================================================
+// Dashboard Overview Actions (org-wide, permission-gated per domain)
+// ============================================================================
+
+export interface DashboardMetricsDTO {
+  totalAssets: number;
+  pendingMaintenance: number;
+  expiringWarranties: number;
+  overdueMaintenance: number;
+}
+
+const EXPIRING_WARRANTY_DAYS = 30;
+const PENDING_MAINTENANCE_DAYS = 7;
+
+/**
+ * Aggregate summary metrics for the dashboard overview.
+ *
+ * Each metric is gated by both its feature flag and the viewer's permission,
+ * defaulting to 0 when the module is disabled or the user cannot view it —
+ * so a metric never reveals data the user isn't allowed to see.
+ */
+export async function getDashboardMetricsAction(): Promise<
+  ActionResponse<DashboardMetricsDTO>
+> {
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return {
+        success: true,
+        data: {
+          totalAssets: 0,
+          pendingMaintenance: 0,
+          expiringWarranties: 0,
+          overdueMaintenance: 0,
+        },
+      };
+    }
+
+    const container = getContainer();
+
+    const [assetsEnabled, maintenanceEnabled, warrantiesEnabled] =
+      await Promise.all([
+        isFeatureEnabled(FEATURE_FLAGS.ASSETS),
+        isFeatureEnabled(FEATURE_FLAGS.MAINTENANCE),
+        isFeatureEnabled(FEATURE_FLAGS.WARRANTIES),
+      ]);
+
+    const [canViewAssets, canViewMaintenance, canViewWarranties] =
+      await Promise.all([
+        hasPermission(PERMISSIONS.ASSETS_VIEW),
+        hasPermission(PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW),
+        hasPermission(PERMISSIONS.WARRANTIES_VIEW),
+      ]);
+
+    const dueBefore = new Date();
+    dueBefore.setDate(dueBefore.getDate() + PENDING_MAINTENANCE_DAYS);
+
+    const [
+      totalAssets,
+      pendingMaintenance,
+      overdueMaintenance,
+      expiringWarranties,
+    ] = await Promise.all([
+      assetsEnabled && canViewAssets
+        ? container
+            .get<IAssetRepository>(DI_TOKENS.IAssetRepository)
+            .getStatistics()
+            .then((stats) => stats.total)
+        : Promise.resolve(0),
+      maintenanceEnabled && canViewMaintenance
+        ? container
+            .get<IMaintenanceScheduleRepository>(
+              DI_TOKENS.IMaintenanceScheduleRepository,
+            )
+            .count({ isActive: true, dueBefore })
+        : Promise.resolve(0),
+      maintenanceEnabled && canViewMaintenance
+        ? container
+            .get<IMaintenanceScheduleRepository>(
+              DI_TOKENS.IMaintenanceScheduleRepository,
+            )
+            .count({ isActive: true, overdueOnly: true })
+        : Promise.resolve(0),
+      warrantiesEnabled && canViewWarranties
+        ? container
+            .get<IWarrantyRepository>(DI_TOKENS.IWarrantyRepository)
+            .countExpiringSoon(EXPIRING_WARRANTY_DAYS)
+        : Promise.resolve(0),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        totalAssets,
+        pendingMaintenance,
+        expiringWarranties,
+        overdueMaintenance,
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getDashboardMetricsAction" },
+      "Failed to get dashboard metrics",
+    );
+  }
+}
+
+export interface RecentActivityDTO {
+  id: string;
+  action: string;
+  entityType: string;
+  entityId: string | null;
+  createdAt: string;
+}
+
+/**
+ * Recent audit-log activity for the current user (their own actions).
+ * Naturally user-scoped, so no extra permission beyond authentication.
+ */
+export async function getMyRecentActivityAction(): Promise<
+  ActionResponse<RecentActivityDTO[]>
+> {
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return { success: true, data: [] };
+    }
+
+    const container = getContainer();
+    const auditRepository = container.get<IAuditLogRepository>(
+      DI_TOKENS.IAuditLogRepository,
+    );
+
+    const entries = await auditRepository.findByUserId(userId, 10);
+
+    const activity: RecentActivityDTO[] = entries.map((entry) => ({
+      id: entry.id,
+      action: entry.action,
+      entityType: entry.entityType,
+      entityId: entry.entityId ?? null,
+      createdAt: entry.createdAt.toISOString(),
+    }));
+
+    return { success: true, data: activity };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getMyRecentActivityAction" },
+      "Failed to get recent activity",
     );
   }
 }
