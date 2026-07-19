@@ -7,12 +7,19 @@
 import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
-import type { FieldDefinition } from "@/core/domain/entities/field-definition.entity";
+import { ConflictError } from "@/core/domain/errors/conflict.error";
+import type {
+  FieldConditionalLogic,
+  FieldDefinition,
+} from "@/core/domain/entities/field-definition.entity";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
+import type { FieldDataTypeEnum } from "@/core/domain/value-objects/foundation-enums";
 
 export interface UpdateFieldDefinitionProps {
   id: string;
+  name?: string;
   label?: string;
+  dataType?: FieldDataTypeEnum;
   description?: string | null;
   entityType?: string;
   isRequired?: boolean;
@@ -22,9 +29,11 @@ export interface UpdateFieldDefinitionProps {
   defaultValue?: unknown;
   validationRules?: Record<string, unknown> | null;
   enumOptions?: string[] | null;
+  conditionalLogic?: FieldConditionalLogic | null;
   uiOrder?: number;
   displayOrder?: number;
   uiGroup?: string | null;
+  isActive?: boolean;
   metadata?: Record<string, unknown> | null;
 }
 
@@ -55,9 +64,26 @@ export class UpdateFieldDefinitionUseCase {
       );
     }
 
+    if (
+      props.name &&
+      props.name.trim().toLowerCase() !== fieldDefinition.name
+    ) {
+      const existsByName = await this.fieldDefinitionRepository.existsByName(
+        props.name,
+        props.id,
+      );
+      if (existsByName) {
+        throw new ConflictError(
+          `Field definition with name "${props.name}" already exists`,
+        );
+      }
+    }
+
     // Update using entity's update method (includes validation)
     fieldDefinition.update({
+      name: props.name,
       label: props.label,
+      dataType: props.dataType,
       description: props.description,
       entityType: props.entityType,
       isRequired: props.isRequired,
@@ -65,11 +91,13 @@ export class UpdateFieldDefinitionUseCase {
       validationRules: props.validationRules,
       defaultValue: props.defaultValue,
       enumOptions: props.enumOptions,
+      conditionalLogic: props.conditionalLogic,
       uiGroup: props.uiGroup,
       uiOrder: props.uiOrder,
       displayOrder: props.displayOrder,
       isSearchable: props.isSearchable,
       isFilterable: props.isFilterable,
+      isActive: props.isActive,
       metadata: props.metadata,
     });
 

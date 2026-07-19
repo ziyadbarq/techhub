@@ -69,13 +69,13 @@ interface FieldDefinitionFormProps {
 // Extract enum options from validation rules
 function getEnumOptionsFromRules(
   validationRules?: Record<string, unknown> | null,
+  fallbackOptions?: string[] | null,
 ): string[] {
-  if (!validationRules) return [];
-  const options = validationRules.enumOptions;
+  const options = validationRules?.enumOptions;
   if (Array.isArray(options)) {
     return options.filter((o): o is string => typeof o === "string");
   }
-  return [];
+  return fallbackOptions ?? [];
 }
 
 export function FieldDefinitionForm({
@@ -87,7 +87,10 @@ export function FieldDefinitionForm({
   const isEditing = !!field;
   const entityTypeOptions = useEntityTypeOptions();
   // Compute initial enum options from field prop
-  const initialEnumOptions = getEnumOptionsFromRules(field?.validationRules);
+  const initialEnumOptions = getEnumOptionsFromRules(
+    field?.validationRules,
+    field?.enumOptions,
+  );
   const [enumOptions, setEnumOptions] = useState<string[]>(initialEnumOptions);
   const [newEnumOption, setNewEnumOption] = useState("");
   const [activeTab, setActiveTab] = useState<string>("basic");

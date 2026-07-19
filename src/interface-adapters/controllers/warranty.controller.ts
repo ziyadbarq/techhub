@@ -36,8 +36,16 @@ import type { Warranty } from "@/core/domain/entities/warranty.entity";
 import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
 import type { ListVendorsUseCase } from "@/core/use-cases/foundation/vendor";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import type { IStockMovementRepository } from "@/core/repositories/stock-movement.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+export interface WarrantyAssetOptionDTO {
+  id: string;
+  assetTag: string;
+  receivedDate: string | null;
+  stockLocationName?: string | null;
+}
 
 /**
  * Enrich warranties with asset and vendor display data
@@ -125,6 +133,9 @@ export async function createWarrantyAction(
       coverageDetails: validated.coverageDetails ?? undefined,
       policyReference: validated.policyReference ?? undefined,
       slaDetails: validated.slaDetails ?? undefined,
+      // Honor the start date the user submitted. The form defaults it to the
+      // asset's received date on asset-select and lets the user override —
+      // an earlier server-side re-derivation silently discarded that value.
       startDate: validated.startDate,
       endDate: validated.endDate,
       cost: validated.cost ?? undefined,
@@ -153,6 +164,58 @@ export async function createWarrantyAction(
       error,
       { function: "createWarrantyAction" },
       "Failed to create warranty",
+    );
+  }
+}
+
+export async function listWarrantyAssetOptionsAction(): Promise<
+  ActionResponse<WarrantyAssetOptionDTO[]>
+> {
+  try {
+    await requirePermission(PERMISSIONS.WARRANTIES_CREATE);
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const container = getContainer();
+    const listAssetsUseCase = container.get<ListAssetsUseCase>(
+      DI_TOKENS.ListAssetsUseCase,
+    );
+    const stockMovementRepository = container.get<IStockMovementRepository>(
+      DI_TOKENS.IStockMovementRepository,
+    );
+
+    const [assets, receivingMovements] = await Promise.all([
+      listAssetsUseCase.execute(),
+      stockMovementRepository.findAll({
+        movementType: "IN",
+        orderBy: "occurredAt",
+        order: "asc",
+      }),
+    ]);
+
+    const firstReceivedByAssetId = new Map<string, Date>();
+    for (const movement of receivingMovements) {
+      if (movement.assetId && !firstReceivedByAssetId.has(movement.assetId)) {
+        firstReceivedByAssetId.set(movement.assetId, movement.occurredAt);
+      }
+    }
+
+    return {
+      success: true,
+      data: assets.map((asset) => ({
+        id: asset.id,
+        assetTag: asset.assetTag,
+        receivedDate: (
+          firstReceivedByAssetId.get(asset.id) ??
+          asset.purchaseDate ??
+          asset.createdAt
+        ).toISOString(),
+      })),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "listWarrantyAssetOptionsAction" },
+      "Failed to list warranty asset options",
     );
   }
 }

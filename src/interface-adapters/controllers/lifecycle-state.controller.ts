@@ -47,7 +47,9 @@ export async function createLifecycleStateAction(
 
     const state = await useCase.execute({
       name: validated.name,
-      code: validated.name.toUpperCase().replace(/\s+/g, "_"),
+      code:
+        validated.code?.trim() ||
+        validated.name.trim().toUpperCase().replace(/\s+/g, "_"),
       description: validated.description ?? undefined,
       lifecycleModelId: validated.modelId,
       stateType: validated.stateType,
@@ -226,7 +228,9 @@ export async function bulkCreateLifecycleStatesAction(
 
         await useCase.execute({
           name: validated.name,
-          code: validated.name.toUpperCase().replace(/\s+/g, "_"),
+          code:
+            validated.code?.trim() ||
+            validated.name.trim().toUpperCase().replace(/\s+/g, "_"),
           description: validated.description ?? undefined,
           lifecycleModelId: validated.modelId,
           stateType: validated.stateType,

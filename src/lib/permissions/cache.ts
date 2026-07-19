@@ -12,7 +12,7 @@
 
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 import { logger } from "@/lib/logger";
-import { getRedis } from "@/lib/redis";
+import { getRedis, isRedisReady } from "@/lib/redis";
 
 const moduleLogger = logger.scope("PermissionCache");
 
@@ -55,6 +55,11 @@ class PermissionCache {
   private memoryCache = new Map<string, CachedPermissions>();
   private useRedis = true;
 
+  private getReadyRedis() {
+    const redis = getRedis();
+    return isRedisReady(redis) ? redis : null;
+  }
+
   /**
    * Get cached permissions for a user
    * Tries Redis first, falls back to in-memory cache
@@ -66,11 +71,13 @@ class PermissionCache {
     // Try Redis first
     if (this.useRedis) {
       try {
-        const redis = await getRedis();
-        const cached = await redis.get(key);
-        if (cached) {
-          const permissions = JSON.parse(cached) as PermissionKey[];
-          return permissions;
+        const redis = this.getReadyRedis();
+        if (redis) {
+          const cached = await redis.get(key);
+          if (cached) {
+            const permissions = JSON.parse(cached) as PermissionKey[];
+            return permissions;
+          }
         }
       } catch (error) {
         // Redis unavailable, fall back to in-memory
@@ -108,12 +115,14 @@ class PermissionCache {
     // Try Redis first
     if (this.useRedis) {
       try {
-        const redis = await getRedis();
-        await redis.setex(
-          key,
-          CACHE_CONFIG.TTL_SECONDS,
-          JSON.stringify(permissions),
-        );
+        const redis = this.getReadyRedis();
+        if (redis) {
+          await redis.setex(
+            key,
+            CACHE_CONFIG.TTL_SECONDS,
+            JSON.stringify(permissions),
+          );
+        }
       } catch (error) {
         moduleLogger.error(
           "handler",
@@ -150,8 +159,10 @@ class PermissionCache {
     // Remove from Redis
     if (this.useRedis) {
       try {
-        const redis = await getRedis();
-        await redis.del(key);
+        const redis = this.getReadyRedis();
+        if (redis) {
+          await redis.del(key);
+        }
       } catch (error) {
         moduleLogger.error(
           "handler",
@@ -173,10 +184,12 @@ class PermissionCache {
     // Remove all permission keys from Redis
     if (this.useRedis) {
       try {
-        const redis = await getRedis();
-        const keys = await redis.keys(`${CACHE_CONFIG.REDIS_PREFIX}*`);
-        if (keys.length > 0) {
-          await redis.del(...keys);
+        const redis = this.getReadyRedis();
+        if (redis) {
+          const keys = await redis.keys(`${CACHE_CONFIG.REDIS_PREFIX}*`);
+          if (keys.length > 0) {
+            await redis.del(...keys);
+          }
         }
       } catch (error) {
         moduleLogger.error(

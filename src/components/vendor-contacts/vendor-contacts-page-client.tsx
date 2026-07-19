@@ -10,6 +10,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import type { VendorContactDTO } from "@/interface-adapters/presenters/vendor-contact.presenter";
+import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter";
 import { listVendorContactsAction } from "@/interface-adapters/controllers/vendor-contact.controller";
 import { VendorContactsTable } from "./vendor-contacts-table";
 import { VendorContactForm } from "./vendor-contact-form";
@@ -18,11 +19,13 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 interface VendorContactsPageClientProps {
   initialContacts: VendorContactDTO[];
+  vendors?: VendorDTO[];
   vendorId?: string;
 }
 
 export function VendorContactsPageClient({
   initialContacts,
+  vendors = [],
   vendorId,
 }: VendorContactsPageClientProps) {
   const [contacts, setContacts] = useState<VendorContactDTO[]>(initialContacts);
@@ -96,6 +99,7 @@ export function VendorContactsPageClient({
         onSuccess={handleSuccess}
         contact={editingContact}
         vendorId={vendorId ?? ""}
+        vendors={vendors}
       />
     </div>
   );

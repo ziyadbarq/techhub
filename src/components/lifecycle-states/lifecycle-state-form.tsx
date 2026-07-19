@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -39,6 +40,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
+import type { LifecycleModelDTO } from "@/interface-adapters/presenters/lifecycle-model.presenter";
 import type { LifecycleStateDTO } from "@/interface-adapters/presenters/lifecycle-state.presenter";
 import {
   createLifecycleStateAction,
@@ -56,6 +58,7 @@ interface LifecycleStateFormProps {
   onSuccess: () => void;
   state?: LifecycleStateDTO | null;
   modelId: string;
+  models?: LifecycleModelDTO[];
 }
 
 type LifecycleStateFormValues = z.input<typeof CreateLifecycleStateSchema>;
@@ -66,8 +69,14 @@ export function LifecycleStateForm({
   onSuccess,
   state,
   modelId,
+  models = [],
 }: LifecycleStateFormProps) {
   const isEditing = !!state;
+  const showModelSelect = !modelId;
+  const modelOptions = models.map((model) => ({
+    value: model.id,
+    label: model.name,
+  }));
 
   const form = useForm<
     LifecycleStateFormValues,
@@ -179,6 +188,33 @@ export function LifecycleStateForm({
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {showModelSelect && (
+                <FormField
+                  control={form.control}
+                  name="modelId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Lifecycle Model{" "}
+                        <span className="text-destructive">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <SearchableSelect
+                          options={modelOptions}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          placeholder="Select lifecycle model"
+                          searchPlaceholder="Search lifecycle models..."
+                          emptyMessage="No lifecycle models found."
+                          disabled={isEditing || modelOptions.length === 0}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
                 name="name"

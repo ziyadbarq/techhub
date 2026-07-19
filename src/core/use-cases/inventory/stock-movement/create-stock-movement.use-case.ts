@@ -9,6 +9,7 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import {
   StockMovement,
+  type StockMovementSource,
   type StockMovementType,
 } from "@/core/domain/entities/stock-movement.entity";
 import type { IStockMovementRepository } from "@/core/repositories/stock-movement.repository.interface";
@@ -24,6 +25,9 @@ export interface CreateStockMovementProps {
   reason?: string | null;
   performedById: string;
   occurredAt?: Date;
+  source?: StockMovementSource;
+  sourceReferenceType?: string | null;
+  sourceReferenceId?: string | null;
 }
 
 @injectable()

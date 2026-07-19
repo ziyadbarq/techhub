@@ -45,6 +45,7 @@ interface SearchableSelectProps {
   maxVisibleItems?: number;
   className?: string;
   disabled?: boolean;
+  modal?: boolean;
 }
 
 export function SearchableSelect({
@@ -57,6 +58,7 @@ export function SearchableSelect({
   maxVisibleItems = 5,
   className,
   disabled = false,
+  modal = false,
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
@@ -80,7 +82,7 @@ export function SearchableSelect({
   const hasMoreItems = filteredOptions.length > maxVisibleItems;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={modal}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"

@@ -7,7 +7,10 @@
 import { inject, injectable } from "inversify";
 import { ConflictError } from "@/core/domain/errors/conflict.error";
 import { DI_TOKENS } from "@/di/types";
-import { FieldDefinition } from "@/core/domain/entities/field-definition.entity";
+import {
+  FieldDefinition,
+  type FieldConditionalLogic,
+} from "@/core/domain/entities/field-definition.entity";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
 import type { FieldDataTypeEnum } from "@/core/domain/value-objects/foundation-enums";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
@@ -26,9 +29,11 @@ export interface CreateFieldDefinitionProps {
   defaultValue?: unknown;
   validationRules?: Record<string, unknown>;
   enumOptions?: string[];
+  conditionalLogic?: FieldConditionalLogic;
   uiOrder?: number;
   displayOrder?: number;
   uiGroup?: string;
+  isActive?: boolean;
   metadata?: Record<string, unknown>;
 }
 

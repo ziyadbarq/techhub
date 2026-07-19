@@ -9,6 +9,7 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import type { LifecycleModelDTO } from "@/interface-adapters/presenters/lifecycle-model.presenter";
 import type { LifecycleStateDTO } from "@/interface-adapters/presenters/lifecycle-state.presenter";
 import { listLifecycleStatesAction } from "@/interface-adapters/controllers/lifecycle-state.controller";
 import { LifecycleStatesTable } from "./lifecycle-states-table";
@@ -18,11 +19,13 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 interface LifecycleStatesPageClientProps {
   initialStates: LifecycleStateDTO[];
+  models?: LifecycleModelDTO[];
   modelId?: string;
 }
 
 export function LifecycleStatesPageClient({
   initialStates,
+  models = [],
   modelId,
 }: LifecycleStatesPageClientProps) {
   const [states, setStates] = useState<LifecycleStateDTO[]>(initialStates);
@@ -99,6 +102,7 @@ export function LifecycleStatesPageClient({
         onSuccess={handleSuccess}
         state={editingState}
         modelId={modelId ?? ""}
+        models={models}
       />
     </div>
   );

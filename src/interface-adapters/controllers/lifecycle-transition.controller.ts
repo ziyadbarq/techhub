@@ -102,6 +102,7 @@ export async function createLifecycleTransitionAction(
       toStateId: validated.toStateId,
       conditions: validated.conditions ?? undefined,
       requiresApproval: validated.requiresApproval ?? false,
+      isActive: validated.isActive ?? true,
       metadata: validated.metadata ?? undefined,
     });
 
@@ -203,6 +204,7 @@ export async function updateLifecycleTransitionAction(
       description: validated.description,
       conditions: validated.conditions,
       requiresApproval: validated.requiresApproval,
+      isActive: validated.isActive,
       metadata: validated.metadata,
     });
 

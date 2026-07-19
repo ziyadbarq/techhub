@@ -21,9 +21,7 @@ import { createRepositoryLogger } from "./repository-logger";
 import { toJsonValue, fromJsonValue } from "./prisma-helpers";
 
 @injectable()
-export class PrismaFieldDefinitionRepository
-  implements IFieldDefinitionRepository
-{
+export class PrismaFieldDefinitionRepository implements IFieldDefinitionRepository {
   private readonly logger = createRepositoryLogger("FieldDefinitionRepository");
 
   constructor(
@@ -223,7 +221,9 @@ export class PrismaFieldDefinitionRepository
       const updated = await this.prisma.fieldDefinition.update({
         where: { id: fieldDefinition.id },
         data: {
+          name: fieldDefinition.name,
           label: fieldDefinition.label,
+          dataType: fieldDefinition.dataType,
           description: fieldDefinition.description,
           entityType: fieldDefinition.entityType,
           isGlobal: fieldDefinition.isGlobal,
@@ -447,8 +447,7 @@ export class PrismaFieldDefinitionRepository
         prismaFieldDefinition.validationRules,
       ) as Record<string, unknown> | null,
       enumOptions: fromJsonValue(prismaFieldDefinition.enumOptions) as
-        | string[]
-        | null,
+        string[] | null,
       conditionalLogic: fromJsonValue(
         prismaFieldDefinition.conditionalLogic,
       ) as FieldConditionalLogic | null,

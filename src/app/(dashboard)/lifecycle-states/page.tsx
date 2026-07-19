@@ -3,6 +3,7 @@
  */
 
 import { LifecycleStatesPageClient } from "@/components/lifecycle-states/lifecycle-states-page-client";
+import { listLifecycleModelsAction } from "@/interface-adapters/controllers/lifecycle-model.controller";
 import { listLifecycleStatesAction } from "@/interface-adapters/controllers/lifecycle-state.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
@@ -18,6 +19,10 @@ export default async function LifecycleStatesPage() {
 
   const result = await listLifecycleStatesAction();
   const initialStates = result.success ? result.data : [];
+  const modelsResult = await listLifecycleModelsAction();
+  const models = modelsResult.success ? modelsResult.data : [];
 
-  return <LifecycleStatesPageClient initialStates={initialStates} />;
+  return (
+    <LifecycleStatesPageClient initialStates={initialStates} models={models} />
+  );
 }

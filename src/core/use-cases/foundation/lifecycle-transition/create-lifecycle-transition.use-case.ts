@@ -25,6 +25,7 @@ export interface CreateLifecycleTransitionProps {
   approvalPolicy?: ApprovalPolicy;
   conditions?: Record<string, unknown>;
   isAutomated?: boolean;
+  isActive?: boolean;
   metadata?: Record<string, unknown>;
 }
 

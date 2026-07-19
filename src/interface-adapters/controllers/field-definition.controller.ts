@@ -36,6 +36,19 @@ import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { BulkCreateResult } from "./types";
 
+function getEnumOptions(
+  validationRules?: Record<string, unknown> | null,
+): string[] | undefined {
+  const options = validationRules?.enumOptions;
+  if (!Array.isArray(options)) {
+    return undefined;
+  }
+
+  return options.filter(
+    (option): option is string => typeof option === "string",
+  );
+}
+
 export async function createFieldDefinitionAction(
   data: CreateFieldDefinitionDTO,
 ): Promise<ActionResponse<FieldDefinitionDTO>> {
@@ -59,7 +72,10 @@ export async function createFieldDefinitionAction(
       isUnique: validated.isUnique ?? false,
       defaultValue: validated.defaultValue ?? undefined,
       validationRules: validated.validationRules ?? undefined,
+      enumOptions: getEnumOptions(validated.validationRules),
+      conditionalLogic: validated.conditionalLogic ?? undefined,
       displayOrder: validated.displayOrder ?? 0,
+      isActive: validated.isActive ?? true,
       metadata: validated.metadata ?? undefined,
     });
 
@@ -154,13 +170,19 @@ export async function updateFieldDefinitionAction(
 
     const field = await useCase.execute({
       id: validated.id,
+      name: validated.name,
       label: validated.label,
+      dataType: validated.dataType,
       description: validated.description,
+      entityType: validated.entityType,
       isRequired: validated.isRequired,
       isUnique: validated.isUnique,
       defaultValue: validated.defaultValue,
       validationRules: validated.validationRules,
+      enumOptions: getEnumOptions(validated.validationRules),
+      conditionalLogic: validated.conditionalLogic,
       displayOrder: validated.displayOrder,
+      isActive: validated.isActive,
       metadata: validated.metadata,
     });
 
@@ -244,7 +266,10 @@ export async function bulkCreateFieldDefinitionsAction(
           isUnique: validated.isUnique ?? false,
           defaultValue: validated.defaultValue ?? undefined,
           validationRules: validated.validationRules ?? undefined,
+          enumOptions: getEnumOptions(validated.validationRules),
+          conditionalLogic: validated.conditionalLogic ?? undefined,
           displayOrder: validated.displayOrder ?? 0,
+          isActive: validated.isActive ?? true,
           metadata: validated.metadata ?? undefined,
         });
 
