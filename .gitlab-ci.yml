@@ -6,10 +6,11 @@
 # AUTOMATED WORKFLOW
 # ====================
 #
-# Manual triggers (GitLab UI):
+# Manual triggers only (GitLab UI > Run pipeline):
+#   - validate (type-check, lint, tests) for the selected CLOUD
 #   - build_only for OCI or GCP
 #   - build_and_deploy for OCI or GCP
-#   - OCI deploys remain manual
+# Push events do NOT create pipelines.
 #
 # Secrets:
 #   - Keep build-time values such as ENCRYPTION_KEY and NEXT_PUBLIC_APP_URL
@@ -103,11 +104,8 @@ stages:
 
 workflow:
   rules:
+    # Manual only — Run pipeline in GitLab UI. No pipelines on git push.
     - if: '$CI_PIPELINE_SOURCE == "web"'
-      when: always
-    # Pushed branches run the validate stage only (build/deploy jobs all
-    # require a web-triggered pipeline).
-    - if: '$CI_PIPELINE_SOURCE == "push"'
       when: always
     - when: never
 
@@ -148,10 +146,9 @@ validate-gcp:
   cache:
     <<: *build_cache
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "push"'
-      when: always
     - if: '$CLOUD == "gcp" && $CI_PIPELINE_SOURCE == "web"'
-      when: always
+      when: manual
+      allow_failure: false
     - when: never
   tags:
     - $DEV_GCP_LAB_TAG
@@ -165,7 +162,8 @@ validate-oci:
     <<: *build_cache
   rules:
     - if: '$CLOUD == "oci" && $CI_PIPELINE_SOURCE == "web"'
-      when: always
+      when: manual
+      allow_failure: false
     - when: never
   tags:
     - $DEV_OCI_LAB_TAG

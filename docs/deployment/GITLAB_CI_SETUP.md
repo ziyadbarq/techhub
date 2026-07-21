@@ -344,16 +344,15 @@ Repeat for UAT, Test, Perf environments.
 
 ### 4. Enable the Pipeline
 
-The pipeline is already configured in `.gitlab-ci.yml` and will run automatically.
+The pipeline is already configured in `.gitlab-ci.yml`. **Pushes do not create
+pipelines** — start one from GitLab UI > CI/CD > Run pipeline.
 
 **Pipeline Triggers**:
 
 | Event                | Stage              | Action                                                   |
 | -------------------- | ------------------ | -------------------------------------------------------- |
-| Push to `main`       | `validate`         | Run type-check, lint, tests                              |
-| Push to `main`       | `build_and_deploy` | Build image → Update values-dev.yaml → ArgoCD deploys    |
-| Push to `dev`        | `validate`         | Run validation                                           |
-| Push to `dev`        | `build_and_deploy` | Build image → Update values-gcpdev.yaml → ArgoCD deploys |
+| Git push             | —                  | No pipeline created                                      |
+| Web trigger (manual) | `validate`         | Manual Play: type-check, lint, tests (selected CLOUD)    |
 | Web trigger (manual) | `build_only`       | Build image only (no deployment)                         |
 | Web trigger (manual) | `build_and_deploy` | Build + deploy to selected cloud                         |
 | Manual job           | `image-promotion`  | Promote image to UAT/Test/Perf                           |
@@ -391,33 +390,28 @@ Check that runners are available and healthy:
 
 ### 2. Test Validation Stage
 
-Create a feature branch and push:
+Start a pipeline from GitLab UI (pushes do not create pipelines):
 
-```bash
-git checkout -b test/pipeline-validation
-git commit --allow-empty -m "test: Trigger pipeline validation"
-git push github test/pipeline-validation
-```
-
-**Expected**:
-
-- Pipeline runs `validate` stage only
-- Type-check, lint, and tests pass
-- No build or deployment occurs
-
-### 3. Test Automatic Deployment (Dev)
-
-Push to `dev` branch:
-
-```bash
-git checkout dev
-git merge test/pipeline-validation
-git push github dev
-```
+1. GitLab UI > CI/CD > Pipelines > Run pipeline
+2. Select branch (e.g. `main`)
+3. Set `CLOUD=gcp` (or `oci`)
+4. Run pipeline → Play `validate-gcp` (or `validate-oci`)
 
 **Expected**:
 
-1. `validate` stage passes (~2-3 min)
+- Validate job runs type-check, lint, and tests
+- Build/deploy jobs stay blocked until validate succeeds (then run per `type`)
+
+### 3. Test Manual Deployment (GCP)
+
+1. GitLab UI > CI/CD > Pipelines > Run pipeline
+2. Branch: `main` (or your target branch)
+3. Set `type=build_and_deploy`, `CLOUD=gcp`
+4. Play `validate-gcp`, then let build/deploy continue
+
+**Expected**:
+
+1. `validate` stage passes (~2-3 min) after Play
 2. `build-and-push-gcp-to-argo` runs (~10-12 min):
    - Builds Docker image
    - Pushes to GCP registry
@@ -447,27 +441,25 @@ Trigger pipeline manually via GitLab UI:
    - `type`: `build_only`
    - `CLOUD`: `oci`
 4. Click **Run pipeline**
+5. Play `validate-oci`
 
 **Expected**:
 
-- `validate` stage passes
+- `validate` stage passes after Play
 - `build-oci` job runs
 - Docker image built and pushed to OCI registry
 - **No deployment** (values.yaml not updated)
 
 ### 5. Test Production Deployment (Main)
 
-Push to `main` branch (or merge PR):
-
-```bash
-git checkout main
-git merge develop
-git push github main
-```
+1. **CI/CD** > **Pipelines** > **Run pipeline**
+2. Branch: `main`
+3. Set `type=build_and_deploy`, `CLOUD=oci`
+4. Play `validate-oci`, then let build/deploy continue
 
 **Expected**:
 
-1. `validate` stage passes
+1. `validate` stage passes after Play
 2. `build-and-push-oci-to-argo` runs:
    - Builds Docker image for OCI
    - Updates `manifests/techhub/values-dev.yaml`

@@ -77,14 +77,17 @@ docker compose up --build               # Full: Complete production build in Doc
 # View pipeline status
 # GitLab UI > CI/CD > Pipelines
 
-# Automatic deployment to OCI production (main branch)
-# Push to main → builds image → updates values-dev.yaml → ArgoCD syncs
+# Pushes do NOT create pipelines. Start from GitLab UI > Run pipeline.
 
-# Automatic deployment to GCP dev (dev branch)
-# Push to dev → builds image → updates values-gcpdev.yaml → ArgoCD syncs
+# Validate (manual Play job in the pipeline)
+# GitLab UI > CI/CD > Pipelines > Run pipeline > set CLOUD → Play validate-*
 
-# Manual build only (no deployment)
-# GitLab UI > CI/CD > Pipelines > Run pipeline > set type=build_only
+# Build only (no deployment)
+# GitLab UI > CI/CD > Pipelines > Run pipeline > set type=build_only, CLOUD
+
+# Build and deploy (GCP or OCI)
+# GitLab UI > CI/CD > Pipelines > Run pipeline > set type=build_and_deploy, CLOUD
+# After validate Play succeeds, build/deploy jobs run
 
 # Image promotion (dev → uat/test/perf)
 # GitLab UI > CI/CD > Pipelines > [Pipeline] > promote-to-uat-oci > Play
@@ -94,7 +97,7 @@ kubectl get pods -n istio-dev -l app=techhub              # OCI production
 kubectl get pods -n horizontal-services -l app=techhub    # GCP development
 ```
 
-**Pipeline Stages**: Validate (type-check, lint, tests) → Build & Deploy (Kaniko, GitOps) → Image Promotion (manual)
+**Pipeline Stages**: Validate (manual) → Build & Deploy (Kaniko, GitOps; web-triggered) → Image Promotion (manual)
 
 **GitOps Workflow**: CI updates deployment values in the GitOps repo → ArgoCD monitors the configured sources → Automatically syncs to K8s
 
