@@ -180,10 +180,12 @@ Keep:
 
 - `GITLAB_UN`
 - `GITLAB_TOKEN`
-- `DATABASE_URL` if Prisma generation/validation needs it
 - `ENCRYPTION_KEY` if validation needs it
 - `NEXT_PUBLIC_APP_URL=https://techhub.dev.barq.com` for dev builds, because
   Next.js can inline public variables into the client bundle at build time
+
+Do not put runtime `DATABASE_URL` in GitLab CI variables. Prisma client
+generation uses a CI placeholder; the live URL comes from Spring Cloud Config.
 
 Runtime values are verified in the rendered Deployment/Pod, not assumed from
 GitLab CI/CD variable presence.

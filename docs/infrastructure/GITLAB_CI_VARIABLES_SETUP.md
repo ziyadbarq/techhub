@@ -8,7 +8,7 @@
 | `GITLAB_TOKEN`        | GitLab CI/CD project variables                              | OCI deploys/promotions write updated image tags to `deployment-configs`  |
 | `GITLAB_UN_VAL`       | GitLab CI/CD project variables                              | GCP deploys write updated image tags to `values-yaml-npd`                |
 | `GITLAB_TOKEN_VAL`    | GitLab CI/CD project variables                              | GCP deploys write updated image tags to `values-yaml-npd`                |
-| `DATABASE_URL`        | GitLab CI/CD project variables if needed                    | Prisma generation/validation may need a database URL shape at build time |
+| `DATABASE_URL`        | Not required in GitLab CI                                   | `scripts/db/generate.sh` uses a placeholder in CI; runtime URL comes from Spring Cloud Config |
 | `ENCRYPTION_KEY`      | GitLab CI/CD project variables if needed                    | Validation may need the encryption key format                            |
 | `NEXT_PUBLIC_APP_URL` | GitLab CI/CD project variables for dev builds               | Next.js can inline public variables into the client bundle at build time |
 | Runtime app config    | Spring Cloud Config plus current K8s Secret/ConfigMap split | Loaded by the pod at startup through `docker-start.mjs`                  |
@@ -32,9 +32,13 @@ Go to **GitLab UI > Project > Settings > CI/CD > Variables > Add variable**.
 | `GITLAB_TOKEN`        |    Yes |         Usually yes | Needs `read_repository` and `write_repository` for OCI  |
 | `GITLAB_UN_VAL`       |    Yes |         Usually yes | Needs `values-yaml-npd` write access for GCP            |
 | `GITLAB_TOKEN_VAL`    |    Yes |         Usually yes | Needs `read_repository` and `write_repository` for GCP  |
-| `DATABASE_URL`        |    Yes | No for `dev` branch | Keep if Prisma generation/validation requires it        |
 | `ENCRYPTION_KEY`      |    Yes | No for `dev` branch | Keep if validation requires it                          |
 | `NEXT_PUBLIC_APP_URL` |     No | No for `dev` branch | Set to `https://techhub.dev.barq.com`                   |
+
+`DATABASE_URL` is **not** a required GitLab CI variable. `prisma generate` never
+connects to Postgres; the CI script supplies
+`postgresql://ci:ci@127.0.0.1:5432/techhub_ci` when unset. The real database
+URL belongs in Spring Cloud Config for the running pod.
 
 Keep **Protected = No** for variables needed by the non-protected `dev` branch.
 
@@ -90,7 +94,9 @@ curl -fsS https://techhub.dev.barq.com/api/debug/env
 
 ### `DATABASE_URL` Errors During CI
 
-The CI value only needs to satisfy the tools that run during build/generation.
+`npm run db:generate` should succeed without a GitLab `DATABASE_URL` variable.
+If generation still fails on a missing URL, check that `CI=true` is set (GitLab
+sets this automatically) so `scripts/db/generate.sh` applies the placeholder.
 Runtime database connectivity is verified in the deployed pod.
 
 ## See Also
