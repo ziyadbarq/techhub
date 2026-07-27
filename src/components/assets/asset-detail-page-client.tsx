@@ -494,8 +494,7 @@ export function AssetDetailPageClient({
                   {isAssignmentLoading
                     ? "Checking owner..."
                     : activeAssignment
-                      ? activeAssignment.assigneeName ||
-                        activeAssignment.assigneeId
+                      ? activeAssignment.assigneeName || "Unknown owner"
                       : "Unassigned"}
                 </p>
                 <p className="text-muted-foreground text-xs">
@@ -654,7 +653,7 @@ export function AssetDetailPageClient({
         assignmentId={activeAssignment?.id || ""}
         assignedToName={
           activeAssignment
-            ? `${activeAssignment.assigneeType}: ${activeAssignment.assigneeName || activeAssignment.assigneeId}`
+            ? `${activeAssignment.assigneeType}: ${activeAssignment.assigneeName || "Unknown owner"}`
             : undefined
         }
         open={isReturnWizardOpen}

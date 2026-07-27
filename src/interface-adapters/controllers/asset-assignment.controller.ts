@@ -294,10 +294,18 @@ export async function getActiveAssignmentAction(
 
     // Return the first active assignment (there should only be one primary)
     const activeAssignment = assignments.length > 0 ? assignments[0] : null;
+    const enrichmentMap = activeAssignment
+      ? await enrichAssetAssignments([activeAssignment])
+      : new Map<string, AssetAssignmentEnrichment>();
 
     return {
       success: true,
-      data: activeAssignment ? presentAssetAssignment(activeAssignment) : null,
+      data: activeAssignment
+        ? presentAssetAssignment(
+            activeAssignment,
+            enrichmentMap.get(activeAssignment.id),
+          )
+        : null,
     };
   } catch (error) {
     return handleControllerError(

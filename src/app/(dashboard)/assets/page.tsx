@@ -15,7 +15,15 @@ import { requireFeatureAndPermission } from "@/lib/features/feature-permission-g
 
 export const dynamic = "force-dynamic";
 
-export default async function AssetsPage() {
+interface AssetsPageProps {
+  searchParams: Promise<{
+    assetCategoryId?: string;
+  }>;
+}
+
+export default async function AssetsPage({ searchParams }: AssetsPageProps) {
+  const params = await searchParams;
+
   await requireFeatureAndPermission(
     "ASSETS",
     PERMISSIONS.ASSETS_VIEW,
@@ -39,6 +47,7 @@ export default async function AssetsPage() {
       initialFilterOptions={
         filterOptionsResult.success ? filterOptionsResult.data : undefined
       }
+      initialAssetCategoryId={params.assetCategoryId}
     />
   );
 }

@@ -6,8 +6,30 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { Download, FileSpreadsheet, Package, Plus, Upload } from "lucide-react";
+import {
+  Download,
+  FileSpreadsheet,
+  GripVertical,
+  Package,
+  Plus,
+  Upload,
+} from "lucide-react";
 import { toast } from "sonner";
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,6 +54,8 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { exportAssetsToCSV } from "@/lib/csv-export";
 import { exportAssetsToXLSX } from "@/lib/xlsx-export";
 import { useTableFilters } from "@/hooks/use-table-filters";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { cn } from "@/lib/utils";
 
 interface AssetsPageClientProps {
   /** Initial data from server */
@@ -40,12 +64,15 @@ interface AssetsPageClientProps {
   initialStatistics?: AssetStatistics;
   /** Initial filter options from server */
   initialFilterOptions?: AssetFilterOptions;
+  /** Category filter supplied by route query string */
+  initialAssetCategoryId?: string;
 }
 
 export function AssetsPageClient({
   initialAssets,
   initialStatistics,
   initialFilterOptions,
+  initialAssetCategoryId,
 }: AssetsPageClientProps) {
   // Assets data state
   const [assets, setAssets] = useState<AssetDTO[]>(initialAssets);
@@ -79,7 +106,7 @@ export function AssetsPageClient({
     hostNameTerm: string;
   }>({
     initialFilters: {
-      assetCategoryId: "all",
+      assetCategoryId: initialAssetCategoryId ?? "all",
       lifecycleStateId: "all",
       currentStockLocationId: "all",
       vendorId: "all",
@@ -440,6 +467,69 @@ interface AssetCategoryCardsProps {
 }
 
 function AssetCategoryCards({ categories }: AssetCategoryCardsProps) {
+  const [isEditingOrder, setIsEditingOrder] = useState(false);
+  const [categoryOrder, setCategoryOrder] = useLocalStorage<string[]>(
+    "assets-category-card-order",
+    [],
+  );
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+  );
+
+  const orderedCategories = useMemo(() => {
+    const orderIndex = new Map(
+      categoryOrder.map((categoryId, index) => [categoryId, index]),
+    );
+
+    return [...categories].sort((a, b) => {
+      const aIndex = orderIndex.get(a.id);
+      const bIndex = orderIndex.get(b.id);
+
+      if (aIndex !== undefined && bIndex !== undefined) {
+        return aIndex - bIndex;
+      }
+      if (aIndex !== undefined) return -1;
+      if (bIndex !== undefined) return 1;
+
+      return (
+        categories.findIndex((category) => category.id === a.id) -
+        categories.findIndex((category) => category.id === b.id)
+      );
+    });
+  }, [categories, categoryOrder]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    const oldIndex = orderedCategories.findIndex(
+      (category) => category.id === active.id,
+    );
+    const newIndex = orderedCategories.findIndex(
+      (category) => category.id === over.id,
+    );
+
+    if (oldIndex === -1 || newIndex === -1) {
+      return;
+    }
+
+    const newOrder = arrayMove(orderedCategories, oldIndex, newIndex).map(
+      (category) => category.id,
+    );
+    setCategoryOrder(newOrder);
+  };
+
+  const resetOrder = () => {
+    setCategoryOrder([]);
+  };
+
   if (categories.length === 0) {
     return null;
   }
@@ -453,41 +543,125 @@ function AssetCategoryCards({ categories }: AssetCategoryCardsProps) {
             Inventory count by category
           </p>
         </div>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-        {categories.map((category) => (
-          <Card
-            key={category.id}
-            className="overflow-hidden transition-shadow hover:shadow-md"
-          >
-            <Link
-              href={`/asset-categories/${category.id}`}
-              className="focus-visible:ring-ring block w-full text-left focus-visible:ring-2 focus-visible:outline-none"
+        <div className="flex items-center gap-2">
+          {isEditingOrder && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={resetOrder}
             >
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">
-                      {category.name}
-                    </p>
-                    <p className="text-muted-foreground mt-1 text-xs">
-                      Assets in category
-                    </p>
-                  </div>
-                  <div className="bg-muted text-muted-foreground flex h-9 w-9 shrink-0 items-center justify-center rounded-md">
-                    <Package className="h-4 w-4" />
-                  </div>
-                </div>
-
-                <div className="mt-4 text-3xl font-bold tabular-nums">
-                  {category.count.toLocaleString()}
-                </div>
-              </CardContent>
-            </Link>
-          </Card>
-        ))}
+              Reset order
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant={isEditingOrder ? "default" : "outline"}
+            size="sm"
+            onClick={() => setIsEditingOrder((value) => !value)}
+          >
+            {isEditingOrder ? "Done" : "Edit order"}
+          </Button>
+        </div>
       </div>
+
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={orderedCategories.map((category) => category.id)}
+          strategy={rectSortingStrategy}
+        >
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+            {orderedCategories.map((category) => (
+              <SortableCategoryCard
+                key={category.id}
+                category={category}
+                isEditingOrder={isEditingOrder}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
     </section>
+  );
+}
+
+interface SortableCategoryCardProps {
+  category: AssetCategoryCardItem;
+  isEditingOrder: boolean;
+}
+
+function SortableCategoryCard({
+  category,
+  isEditingOrder,
+}: SortableCategoryCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: category.id, disabled: !isEditingOrder });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+  const content = (
+    <CardContent className="p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium">{category.name}</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            Assets in category
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          {isEditingOrder && (
+            <span
+              {...attributes}
+              {...listeners}
+              className="text-muted-foreground hover:bg-muted flex h-9 w-9 cursor-grab items-center justify-center rounded-md active:cursor-grabbing"
+              aria-label={`Reorder ${category.name}`}
+            >
+              <GripVertical className="h-4 w-4" />
+            </span>
+          )}
+          <div className="bg-muted text-muted-foreground flex h-9 w-9 items-center justify-center rounded-md">
+            <Package className="h-4 w-4" />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 text-3xl font-bold tabular-nums">
+        {category.count.toLocaleString()}
+      </div>
+    </CardContent>
+  );
+
+  return (
+    <Card
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "overflow-hidden transition-shadow hover:shadow-md",
+        isDragging && "opacity-60 shadow-lg",
+      )}
+    >
+      {isEditingOrder ? (
+        <div className="block w-full text-left">{content}</div>
+      ) : (
+        <Link
+          href={`/assets?assetCategoryId=${encodeURIComponent(category.id)}`}
+          className="focus-visible:ring-ring block w-full text-left focus-visible:ring-2 focus-visible:outline-none"
+        >
+          {content}
+        </Link>
+      )}
+    </Card>
   );
 }

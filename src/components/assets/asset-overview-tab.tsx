@@ -158,8 +158,7 @@ export function AssetOverviewTab({
                 {isAssignmentLoading
                   ? "Checking owner..."
                   : activeAssignment
-                    ? activeAssignment.assigneeName ||
-                      activeAssignment.assigneeId
+                    ? activeAssignment.assigneeName || "Unknown owner"
                     : "Unassigned"}
               </p>
             </div>
