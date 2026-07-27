@@ -52,8 +52,11 @@ import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter
 interface AssetModelFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
+  onSuccess: (assetModel?: AssetModelDTO) => void;
   assetModel?: AssetModelDTO | null;
+  initialValues?: Partial<
+    Pick<AssetModelFormValues, "assetCategoryId" | "vendorId">
+  >;
 }
 
 type AssetModelFormValues = z.input<typeof CreateAssetModelSchema>;
@@ -63,6 +66,7 @@ export function AssetModelForm({
   onOpenChange,
   onSuccess,
   assetModel,
+  initialValues,
 }: AssetModelFormProps) {
   const isEditing = !!assetModel;
   const [categories, setCategories] = useState<AssetCategoryDTO[]>([]);
@@ -75,8 +79,9 @@ export function AssetModelForm({
       name: assetModel?.name ?? "",
       code: assetModel?.code ?? "",
       description: assetModel?.description ?? "",
-      assetCategoryId: assetModel?.assetCategoryId ?? "",
-      vendorId: assetModel?.vendorId ?? "",
+      assetCategoryId:
+        assetModel?.assetCategoryId ?? initialValues?.assetCategoryId ?? "",
+      vendorId: assetModel?.vendorId ?? initialValues?.vendorId ?? "",
       defaultWarrantyMonths: assetModel?.defaultWarrantyMonths ?? undefined,
     },
   });
@@ -151,11 +156,12 @@ export function AssetModelForm({
       name: assetModel?.name ?? "",
       code: assetModel?.code ?? "",
       description: assetModel?.description ?? "",
-      assetCategoryId: assetModel?.assetCategoryId ?? "",
-      vendorId: assetModel?.vendorId ?? "",
+      assetCategoryId:
+        assetModel?.assetCategoryId ?? initialValues?.assetCategoryId ?? "",
+      vendorId: assetModel?.vendorId ?? initialValues?.vendorId ?? "",
       defaultWarrantyMonths: assetModel?.defaultWarrantyMonths ?? undefined,
     });
-  }, [assetModel, form]);
+  }, [assetModel, form, initialValues]);
 
   const onSubmit = async (data: CreateAssetModelDTO) => {
     try {
@@ -169,7 +175,7 @@ export function AssetModelForm({
         );
         form.reset();
         onOpenChange(false);
-        onSuccess();
+        onSuccess(result.data);
       } else {
         toast.error(result.error);
       }
@@ -262,7 +268,7 @@ export function AssetModelForm({
                 name="vendorId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Manufacturer</FormLabel>
+                    <FormLabel>Manufacturer / Vendor</FormLabel>
                     <FormControl>
                       <SearchableSelect
                         options={vendorOptions}
@@ -274,7 +280,7 @@ export function AssetModelForm({
                       />
                     </FormControl>
                     <FormDescription>
-                      The company that makes this model
+                      The company that makes or owns this model
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

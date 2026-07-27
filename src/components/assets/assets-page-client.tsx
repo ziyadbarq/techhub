@@ -5,6 +5,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import Link from "next/link";
 import { Download, FileSpreadsheet, Package, Plus, Upload } from "lucide-react";
 import { toast } from "sonner";
 
@@ -31,7 +32,6 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { exportAssetsToCSV } from "@/lib/csv-export";
 import { exportAssetsToXLSX } from "@/lib/xlsx-export";
 import { useTableFilters } from "@/hooks/use-table-filters";
-import { cn } from "@/lib/utils";
 
 interface AssetsPageClientProps {
   /** Initial data from server */
@@ -362,16 +362,7 @@ export function AssetsPageClient({
       <AssetsSummaryCards statistics={statistics} loading={statisticsLoading} />
 
       {/* Category Cards */}
-      <AssetCategoryCards
-        categories={categoryCards}
-        selectedCategoryId={filters.filters.assetCategoryId}
-        onCategorySelect={(categoryId) => {
-          filters.setFilter(
-            "assetCategoryId",
-            filters.filters.assetCategoryId === categoryId ? "all" : categoryId,
-          );
-        }}
-      />
+      <AssetCategoryCards categories={categoryCards} />
 
       {/* Search and Filters Toolbar */}
       <AssetsToolbar
@@ -446,15 +437,9 @@ interface AssetCategoryCardItem {
 
 interface AssetCategoryCardsProps {
   categories: AssetCategoryCardItem[];
-  selectedCategoryId: string;
-  onCategorySelect: (categoryId: string) => void;
 }
 
-function AssetCategoryCards({
-  categories,
-  selectedCategoryId,
-  onCategorySelect,
-}: AssetCategoryCardsProps) {
+function AssetCategoryCards({ categories }: AssetCategoryCardsProps) {
   if (categories.length === 0) {
     return null;
   }
@@ -471,58 +456,37 @@ function AssetCategoryCards({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-        {categories.map((category) => {
-          const isSelected = selectedCategoryId === category.id;
-
-          return (
-            <Card
-              key={category.id}
-              className={cn(
-                "overflow-hidden transition-shadow hover:shadow-md",
-                isSelected && "border-barq-yellow ring-barq-yellow/40 ring-2",
-              )}
+        {categories.map((category) => (
+          <Card
+            key={category.id}
+            className="overflow-hidden transition-shadow hover:shadow-md"
+          >
+            <Link
+              href={`/asset-categories/${category.id}`}
+              className="focus-visible:ring-ring block w-full text-left focus-visible:ring-2 focus-visible:outline-none"
             >
-              <button
-                type="button"
-                onClick={() => onCategorySelect(category.id)}
-                className="focus-visible:ring-ring w-full text-left focus-visible:ring-2 focus-visible:outline-none"
-                aria-pressed={isSelected}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">
-                        {category.name}
-                      </p>
-                      <p className="text-muted-foreground mt-1 text-xs">
-                        Assets in category
-                      </p>
-                    </div>
-                    <div
-                      className={cn(
-                        "bg-muted text-muted-foreground flex h-9 w-9 shrink-0 items-center justify-center rounded-md",
-                        isSelected && "bg-barq-yellow text-barq-black",
-                      )}
-                    >
-                      <Package className="h-4 w-4" />
-                    </div>
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">
+                      {category.name}
+                    </p>
+                    <p className="text-muted-foreground mt-1 text-xs">
+                      Assets in category
+                    </p>
                   </div>
+                  <div className="bg-muted text-muted-foreground flex h-9 w-9 shrink-0 items-center justify-center rounded-md">
+                    <Package className="h-4 w-4" />
+                  </div>
+                </div>
 
-                  <div className="mt-4 flex items-end justify-between gap-3">
-                    <div className="text-3xl font-bold tabular-nums">
-                      {category.count.toLocaleString()}
-                    </div>
-                    {isSelected && (
-                      <span className="text-muted-foreground text-xs">
-                        Selected
-                      </span>
-                    )}
-                  </div>
-                </CardContent>
-              </button>
-            </Card>
-          );
-        })}
+                <div className="mt-4 text-3xl font-bold tabular-nums">
+                  {category.count.toLocaleString()}
+                </div>
+              </CardContent>
+            </Link>
+          </Card>
+        ))}
       </div>
     </section>
   );

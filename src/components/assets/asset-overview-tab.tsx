@@ -17,13 +17,20 @@ import { Badge } from "@/components/ui/badge";
 import { CurrencyDisplay } from "@/components/ui/currency-display";
 import { CustomFieldsDisplay } from "@/components/custom-fields";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
+import type { AssetAssignmentDTO } from "@/interface-adapters/presenters/asset-assignment.presenter";
 import { convertCurrencyAction } from "@/interface-adapters/controllers/exchange-rate.controller";
 
 interface AssetOverviewTabProps {
   asset: AssetDTO;
+  activeAssignment?: AssetAssignmentDTO | null;
+  isAssignmentLoading?: boolean;
 }
 
-export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
+export function AssetOverviewTab({
+  asset,
+  activeAssignment,
+  isAssignmentLoading = false,
+}: AssetOverviewTabProps) {
   const [currencyConversion, setCurrencyConversion] = React.useState<{
     sarAmount: number;
     exchangeRate: number;
@@ -143,6 +150,32 @@ export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
               <p className="text-sm">{asset.stockLocationName}</p>
             </div>
           )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-muted-foreground text-sm font-medium">Owner</p>
+              <p className="text-sm">
+                {isAssignmentLoading
+                  ? "Checking owner..."
+                  : activeAssignment
+                    ? activeAssignment.assigneeName ||
+                      activeAssignment.assigneeId
+                    : "Unassigned"}
+              </p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-sm font-medium">
+                Device Status
+              </p>
+              <Badge variant={activeAssignment ? "secondary" : "outline"}>
+                {isAssignmentLoading
+                  ? "Checking status..."
+                  : activeAssignment
+                    ? "In use"
+                    : "In stock"}
+              </Badge>
+            </div>
+          </div>
         </CardContent>
       </Card>
 

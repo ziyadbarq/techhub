@@ -8,6 +8,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
+import { Plus } from "lucide-react";
 import { InlineEditableField } from "@/components/ui/inline-editable-field";
 import {
   Dialog,
@@ -75,6 +76,9 @@ import {
   type CustomFieldErrors,
 } from "@/components/custom-fields";
 import { useCategoryFields } from "@/hooks/use-category-fields";
+import { AssetModelForm } from "@/components/asset-models/asset-model-form";
+import { PermissionGuard } from "@/components/auth/PermissionGuard";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 interface AssetFormProps {
   open: boolean;
@@ -110,6 +114,7 @@ export function AssetForm({
   const [lifecycleStates, setLifecycleStates] = useState<LifecycleStateDTO[]>(
     [],
   );
+  const [isModelFormOpen, setIsModelFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Custom fields state
@@ -215,6 +220,21 @@ export function AssetForm({
     control: form.control,
     name: "assetCategoryId",
   });
+  const selectedVendorId = useWatch({
+    control: form.control,
+    name: "vendorId",
+  });
+
+  const newModelInitialValues = useMemo(
+    () => ({
+      assetCategoryId: selectedCategoryId || "",
+      vendorId:
+        selectedVendorId && selectedVendorId !== NONE_OPTION_VALUE
+          ? selectedVendorId
+          : "",
+    }),
+    [selectedCategoryId, selectedVendorId],
+  );
 
   // Fetch custom fields for the selected category
   const { fields: categoryFields } = useCategoryFields(selectedCategoryId);
@@ -340,6 +360,28 @@ export function AssetForm({
     }
   };
 
+  const handleModelCreated = (model?: AssetModelDTO) => {
+    if (!model) {
+      loadData();
+      return;
+    }
+
+    setModels((currentModels) => {
+      const existingIndex = currentModels.findIndex(
+        (item) => item.id === model.id,
+      );
+      if (existingIndex === -1) {
+        return [...currentModels, model];
+      }
+
+      return currentModels.map((item) => (item.id === model.id ? model : item));
+    });
+    form.setValue("assetModelId", model.id, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -407,7 +449,23 @@ export function AssetForm({
                       name="assetModelId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Asset Model</FormLabel>
+                          <div className="flex items-center justify-between gap-3">
+                            <FormLabel>Device Model</FormLabel>
+                            <PermissionGuard
+                              permission={PERMISSIONS.ASSET_MODELS_CREATE}
+                            >
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setIsModelFormOpen(true)}
+                                className="h-8 gap-1"
+                              >
+                                <Plus className="h-3.5 w-3.5" />
+                                Add Model
+                              </Button>
+                            </PermissionGuard>
+                          </div>
                           <SearchableSelect
                             options={modelOptions}
                             value={field.value ?? NONE_OPTION_VALUE}
@@ -416,13 +474,14 @@ export function AssetForm({
                                 value === NONE_OPTION_VALUE ? null : value,
                               )
                             }
-                            placeholder="Select a model..."
-                            searchPlaceholder="Search models..."
+                            placeholder="Select a device model..."
+                            searchPlaceholder="Search device models..."
                             emptyMessage="No models found"
                             disabled={loading}
                           />
                           <FormDescription>
-                            Specific model/make of this asset
+                            Specific device model, such as Latitude 5440 or
+                            MacBook Pro M3
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -574,7 +633,7 @@ export function AssetForm({
                       name="vendorId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Supplier</FormLabel>
+                          <FormLabel>Supplier / Manufacturer</FormLabel>
                           <SearchableSelect
                             options={vendorOptions}
                             value={field.value ?? NONE_OPTION_VALUE}
@@ -583,14 +642,14 @@ export function AssetForm({
                                 value === NONE_OPTION_VALUE ? null : value,
                               )
                             }
-                            placeholder="Select a supplier..."
-                            searchPlaceholder="Search suppliers..."
-                            emptyMessage="No suppliers found"
+                            placeholder="Select a supplier or manufacturer..."
+                            searchPlaceholder="Search suppliers or manufacturers..."
+                            emptyMessage="No suppliers or manufacturers found"
                             disabled={loading}
                           />
                           <FormDescription>
-                            The company that supplied this specific asset
-                            (overrides manufacturer from model)
+                            The company that supplied or manufactured this
+                            specific asset
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -756,6 +815,12 @@ export function AssetForm({
           </Form>
         </FormProvider>
       </DialogContent>
+      <AssetModelForm
+        open={isModelFormOpen}
+        onOpenChange={setIsModelFormOpen}
+        onSuccess={handleModelCreated}
+        initialValues={newModelInitialValues}
+      />
     </Dialog>
   );
 }

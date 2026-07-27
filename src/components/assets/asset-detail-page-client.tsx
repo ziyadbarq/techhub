@@ -272,7 +272,13 @@ export function AssetDetailPageClient({
       value: "overview",
       label: "Overview",
       icon: Package,
-      content: <AssetOverviewTab asset={asset} />,
+      content: (
+        <AssetOverviewTab
+          asset={asset}
+          activeAssignment={activeAssignment}
+          isAssignmentLoading={isAssignmentLoading}
+        />
+      ),
       showWhenZero: true,
       triggerClassName: "gap-2",
     },
@@ -470,7 +476,7 @@ export function AssetDetailPageClient({
         </div>
 
         {/* Quick status cards */}
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <Card>
             <CardContent className="flex items-start gap-3 p-4">
               <div
@@ -483,12 +489,10 @@ export function AssetDetailPageClient({
                 <Users className="h-4 w-4" />
               </div>
               <div className="space-y-1">
-                <p className="text-muted-foreground text-xs uppercase">
-                  Assignment
-                </p>
+                <p className="text-muted-foreground text-xs uppercase">Owner</p>
                 <p className="leading-tight font-semibold">
                   {isAssignmentLoading
-                    ? "Checking assignment..."
+                    ? "Checking owner..."
                     : activeAssignment
                       ? activeAssignment.assigneeName ||
                         activeAssignment.assigneeId
@@ -496,10 +500,41 @@ export function AssetDetailPageClient({
                 </p>
                 <p className="text-muted-foreground text-xs">
                   {isAssignmentLoading
-                    ? "Fetching current assignment"
+                    ? "Fetching current owner"
                     : activeAssignment
                       ? `Since ${formatDate(activeAssignment.startDate)}`
-                      : "Assign this asset to put it in use"}
+                      : "No active owner"}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="flex items-start gap-3 p-4">
+              <div
+                className={`rounded-full p-2 ${
+                  activeAssignment
+                    ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-200"
+                    : "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200"
+                }`}
+              >
+                <Package className="h-4 w-4" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-muted-foreground text-xs uppercase">
+                  Device Status
+                </p>
+                <p className="leading-tight font-semibold">
+                  {isAssignmentLoading
+                    ? "Checking status..."
+                    : activeAssignment
+                      ? "In use"
+                      : "In stock"}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {activeAssignment
+                    ? "Currently assigned"
+                    : "Available in inventory"}
                 </p>
               </div>
             </CardContent>
