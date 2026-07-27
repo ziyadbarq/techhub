@@ -85,6 +85,7 @@ interface AssetFormProps {
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
   asset?: AssetDTO | null;
+  initialAssetCategoryId?: string;
 }
 
 type AssetFormValues = z.input<typeof CreateAssetSchema>;
@@ -96,6 +97,7 @@ export function AssetForm({
   onOpenChange,
   onSuccess,
   asset,
+  initialAssetCategoryId,
 }: AssetFormProps) {
   const normalizeCondition = (
     value: AssetDTO["condition"] | undefined,
@@ -198,7 +200,7 @@ export function AssetForm({
     resolver: zodResolver(CreateAssetSchema),
     defaultValues: {
       assetTag: asset?.assetTag ?? "",
-      assetCategoryId: asset?.assetCategoryId ?? "",
+      assetCategoryId: asset?.assetCategoryId ?? initialAssetCategoryId ?? "",
       assetModelId: asset?.assetModelId ?? null,
       vendorId: asset?.vendorId ?? null,
       currentStockLocationId: asset?.currentStockLocationId ?? null,
@@ -300,7 +302,7 @@ export function AssetForm({
   useEffect(() => {
     form.reset({
       assetTag: asset?.assetTag ?? "",
-      assetCategoryId: asset?.assetCategoryId ?? "",
+      assetCategoryId: asset?.assetCategoryId ?? initialAssetCategoryId ?? "",
       assetModelId: asset?.assetModelId ?? null,
       vendorId: asset?.vendorId ?? null,
       currentStockLocationId: asset?.currentStockLocationId ?? null,
@@ -318,7 +320,7 @@ export function AssetForm({
     // Reset custom field values when asset changes (editing mode)
     setCustomFieldValues((asset?.attributes as CustomFieldValues) ?? {});
     setCustomFieldErrors({});
-  }, [asset, form]);
+  }, [asset, form, initialAssetCategoryId]);
 
   const onSubmit = async (data: CreateAssetDTO) => {
     // Validate custom fields before submission

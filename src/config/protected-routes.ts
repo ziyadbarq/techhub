@@ -109,6 +109,13 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.ASSET_CATEGORIES_VIEW],
     description: "View specific asset category with custom fields",
   },
+  "/asset-categories/[id]/assets": {
+    requiredPermissions: [
+      PERMISSIONS.ASSET_CATEGORIES_VIEW,
+      PERMISSIONS.ASSETS_VIEW,
+    ],
+    description: "View assets that belong to a specific category",
+  },
 
   // ============================================================================
   // ASSET-MODELS ROUTES

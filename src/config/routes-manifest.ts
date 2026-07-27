@@ -623,6 +623,17 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     parentRoute: "/asset-categories",
   },
   {
+    path: "/asset-categories/[id]/assets",
+    label: "Asset Category Assets",
+    icon: Package,
+    description: "View assets that belong to a specific category",
+    requiredPermissions: ["ASSET_CATEGORIES_VIEW", "ASSETS_VIEW"],
+    featureFlag: "ASSETS",
+    visibleInNav: false,
+    isChildRoute: true,
+    parentRoute: "/asset-categories",
+  },
+  {
     path: "/asset-models",
     label: "Asset Models",
     icon: Layers,

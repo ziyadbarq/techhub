@@ -656,7 +656,7 @@ function SortableCategoryCard({
         <div className="block w-full text-left">{content}</div>
       ) : (
         <Link
-          href={`/assets?assetCategoryId=${encodeURIComponent(category.id)}`}
+          href={`/asset-categories/${encodeURIComponent(category.id)}/assets`}
           className="focus-visible:ring-ring block w-full text-left focus-visible:ring-2 focus-visible:outline-none"
         >
           {content}
