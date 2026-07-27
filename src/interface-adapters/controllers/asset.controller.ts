@@ -280,6 +280,10 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
       return map;
     })(),
     (async () => {
+      if (!container.isBound(DI_TOKENS.IIntuneDeviceRepository)) {
+        return new Map();
+      }
+
       const intuneRepository = container.get<IIntuneDeviceRepository>(
         DI_TOKENS.IIntuneDeviceRepository,
       );
