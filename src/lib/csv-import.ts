@@ -4,6 +4,7 @@
  */
 
 import * as Papa from "papaparse";
+import * as XLSX from "xlsx";
 
 export interface CSVImportRow {
   assetTag: string;
@@ -52,6 +53,89 @@ export interface AssetCreateLike {
   note?: string | null;
 }
 
+const ASSET_IMPORT_HEADERS = [
+  "assetTag",
+  "categoryCode",
+  "modelCode",
+  "vendorCode",
+  "serialNumber",
+  "purchaseDate",
+  "purchaseCost",
+  "currency",
+  "stockLocationCode",
+  "lifecycleStateCode",
+  "depreciationModel",
+  "depreciationStart",
+  "depreciationEnd",
+  "note",
+] as const;
+
+function normalizeHeader(header: string): string {
+  return header.replace("*", "").trim();
+}
+
+function normalizeRow(
+  row: CSVImportRow | Partial<Record<string, unknown>>,
+): CSVImportRow {
+  const normalized: Record<string, string> = {};
+
+  for (const header of ASSET_IMPORT_HEADERS) {
+    const value = row[header];
+    normalized[header] =
+      value === null || value === undefined ? "" : String(value).trim();
+  }
+
+  return normalized as unknown as CSVImportRow;
+}
+
+function buildParseResult(rows: CSVImportRow[]): CSVParseResult {
+  const assets: ParsedAsset[] = [];
+  let rowNumber = 2;
+
+  for (const row of rows) {
+    if (
+      row.assetTag?.startsWith("Required:") ||
+      row.assetTag?.startsWith("Optional:")
+    ) {
+      rowNumber++;
+      continue;
+    }
+
+    const errors = validateCSVRow(row, rowNumber);
+    assets.push({
+      row: rowNumber,
+      data: row,
+      errors,
+    });
+    rowNumber++;
+  }
+
+  const validRows = assets.filter((a) => a.errors.length === 0).length;
+  const invalidRows = assets.length - validRows;
+
+  return {
+    assets,
+    totalRows: assets.length,
+    validRows,
+    invalidRows,
+  };
+}
+
+/**
+ * Parse CSV or Excel file and validate format
+ */
+export async function parseAssetImportFile(
+  file: File,
+): Promise<CSVParseResult> {
+  const extension = file.name.split(".").pop()?.toLowerCase();
+
+  if (extension === "xlsx" || extension === "xls") {
+    return parseExcelFile(file);
+  }
+
+  return parseCSVFile(file);
+}
+
 /**
  * Parse CSV file and validate format
  */
@@ -60,47 +144,58 @@ export async function parseCSVFile(file: File): Promise<CSVParseResult> {
     Papa.parse<CSVImportRow>(file, {
       header: true,
       skipEmptyLines: true,
-      transformHeader: (header: string) => {
-        // Remove asterisks from required field indicators
-        return header.replace("*", "").trim();
-      },
+      transformHeader: normalizeHeader,
       complete: (results) => {
-        const assets: ParsedAsset[] = [];
-        let rowNumber = 2; // Start from 2 (1 is header, skip instructions row if present)
-
-        for (const row of results.data) {
-          // Skip instructions row (contains "Required:" or "Optional:")
-          if (
-            row.assetTag?.startsWith("Required:") ||
-            row.assetTag?.startsWith("Optional:")
-          ) {
-            continue;
-          }
-
-          const errors = validateCSVRow(row, rowNumber);
-          assets.push({
-            row: rowNumber,
-            data: row,
-            errors,
-          });
-          rowNumber++;
-        }
-
-        const validRows = assets.filter((a) => a.errors.length === 0).length;
-        const invalidRows = assets.length - validRows;
-
-        resolve({
-          assets,
-          totalRows: assets.length,
-          validRows,
-          invalidRows,
-        });
+        resolve(buildParseResult(results.data.map(normalizeRow)));
       },
       error: (error) => {
         reject(new Error(`CSV parsing failed: ${error.message}`));
       },
     });
   });
+}
+
+/**
+ * Parse the first worksheet from an Excel file and validate format
+ */
+export async function parseExcelFile(file: File): Promise<CSVParseResult> {
+  try {
+    const buffer = await file.arrayBuffer();
+    const workbook = XLSX.read(buffer, {
+      type: "array",
+      cellDates: true,
+    });
+    const sheetName = workbook.SheetNames[0];
+
+    if (!sheetName) {
+      throw new Error("Excel workbook has no sheets");
+    }
+
+    const worksheet = workbook.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(worksheet, {
+      defval: "",
+      raw: false,
+      dateNF: "yyyy-mm-dd",
+    });
+
+    const normalizedRows = rows.map((row) => {
+      const normalized: Record<string, unknown> = {};
+
+      for (const [key, value] of Object.entries(row)) {
+        normalized[normalizeHeader(key)] = value;
+      }
+
+      return normalizeRow(normalized);
+    });
+
+    return buildParseResult(normalizedRows);
+  } catch (error) {
+    throw new Error(
+      error instanceof Error
+        ? `Excel parsing failed: ${error.message}`
+        : "Excel parsing failed",
+    );
+  }
 }
 
 /**

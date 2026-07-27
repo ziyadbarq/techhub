@@ -1,6 +1,6 @@
 /**
  * Import Assets Wizard Component
- * Multi-step wizard for importing assets from CSV
+ * Multi-step wizard for importing assets from CSV or Excel
  */
 
 "use client";
@@ -34,13 +34,16 @@ import {
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  parseCSVFile,
+  parseAssetImportFile,
   csvRowToDTO,
   exportFailedRowsToCSV,
   type ParsedAsset,
   type CSVParseResult,
 } from "@/lib/csv-import";
-import { downloadAssetCSVTemplate } from "@/lib/csv-template";
+import {
+  downloadAssetCSVTemplate,
+  downloadAssetExcelTemplate,
+} from "@/lib/csv-template";
 import {
   bulkCreateAssetsAction,
   getImportLookupMapsAction,
@@ -87,8 +90,11 @@ export function ImportAssetsWizard({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      if (!selectedFile.name.endsWith(".csv")) {
-        toast.error("Please select a CSV file");
+      const extension = selectedFile.name.split(".").pop()?.toLowerCase();
+      const supportedExtensions = ["csv", "xlsx", "xls"];
+
+      if (!extension || !supportedExtensions.includes(extension)) {
+        toast.error("Please select a CSV or Excel file");
         return;
       }
       setFile(selectedFile);
@@ -102,18 +108,18 @@ export function ImportAssetsWizard({
     }
 
     try {
-      const result = await parseCSVFile(file);
+      const result = await parseAssetImportFile(file);
       setParseResult(result);
 
       if (result.totalRows === 0) {
-        toast.error("CSV file is empty");
+        toast.error("Import file is empty");
         return;
       }
 
       setStep("validate");
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to parse CSV",
+        error instanceof Error ? error.message : "Failed to parse import file",
       );
     }
   };
@@ -217,6 +223,11 @@ export function ImportAssetsWizard({
   };
 
   const handleDownloadTemplate = () => {
+    downloadAssetExcelTemplate();
+    toast.success("Excel template downloaded");
+  };
+
+  const handleDownloadCSVTemplate = () => {
     downloadAssetCSVTemplate();
     toast.success("Template downloaded");
   };
@@ -238,25 +249,25 @@ export function ImportAssetsWizard({
               <Upload className="h-12 w-12 text-gray-400" />
               <div className="text-center">
                 <p className="text-sm font-medium">
-                  Upload CSV file to import assets
+                  Upload Excel or CSV file to import assets
                 </p>
                 <p className="text-muted-foreground mt-1 text-xs">
-                  CSV file with asset data (max 10,000 rows)
+                  .xlsx, .xls, or .csv file with asset data (max 10,000 rows)
                 </p>
               </div>
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".csv"
+                accept=".xlsx,.xls,.csv"
                 onChange={handleFileChange}
                 className="hidden"
-                id="csv-upload"
+                id="asset-import-upload"
               />
-              <label htmlFor="csv-upload">
+              <label htmlFor="asset-import-upload">
                 <Button asChild variant="outline">
                   <span>
                     <FileText className="mr-2 h-4 w-4" />
-                    Select CSV File
+                    Select Excel or CSV File
                   </span>
                 </Button>
               </label>
@@ -273,7 +284,15 @@ export function ImportAssetsWizard({
                 onClick={handleDownloadTemplate}
               >
                 <Download className="mr-2 h-4 w-4" />
-                Download CSV Template
+                Download Excel Template
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDownloadCSVTemplate}
+                className="ml-2"
+              >
+                Download CSV
               </Button>
             </div>
 
@@ -504,9 +523,9 @@ export function ImportAssetsWizard({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Import Assets from CSV</DialogTitle>
+          <DialogTitle>Bulk Import Assets</DialogTitle>
           <DialogDescription>
-            {step === "upload" && "Upload a CSV file with asset data"}
+            {step === "upload" && "Upload an Excel or CSV file with asset data"}
             {step === "validate" && "Review and validate the data"}
             {step === "import" && "Importing assets..."}
             {step === "complete" && "Import summary"}

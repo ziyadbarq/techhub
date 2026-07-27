@@ -5,10 +5,11 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Plus, Download, FileSpreadsheet } from "lucide-react";
+import { Download, FileSpreadsheet, Package, Plus, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import {
   listAssetsAction,
@@ -23,12 +24,14 @@ import { AssetForm } from "./asset-form";
 import { AssetsSummaryCards } from "./assets-summary-cards";
 import { AssetsToolbar } from "./assets-toolbar";
 import { BulkActionBar } from "./bulk-action-bar";
+import { ImportAssetsWizard } from "./import-assets-wizard";
 
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { exportAssetsToCSV } from "@/lib/csv-export";
 import { exportAssetsToXLSX } from "@/lib/xlsx-export";
 import { useTableFilters } from "@/hooks/use-table-filters";
+import { cn } from "@/lib/utils";
 
 interface AssetsPageClientProps {
   /** Initial data from server */
@@ -62,6 +65,7 @@ export function AssetsPageClient({
   // UI state
   const [isLoading, setIsLoading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<AssetDTO | null>(null);
   const [selectedAssets, setSelectedAssets] = useState<AssetDTO[]>([]);
 
@@ -71,12 +75,16 @@ export function AssetsPageClient({
     lifecycleStateId: string;
     currentStockLocationId: string;
     vendorId: string;
+    assignedUserTerm: string;
+    hostNameTerm: string;
   }>({
     initialFilters: {
       assetCategoryId: "all",
       lifecycleStateId: "all",
       currentStockLocationId: "all",
       vendorId: "all",
+      assignedUserTerm: "",
+      hostNameTerm: "",
     },
     searchConfig: { debounceMs: 300 },
   });
@@ -137,7 +145,10 @@ export function AssetsPageClient({
           (asset.serialNumber?.toLowerCase().includes(term) ?? false) ||
           (asset.categoryName?.toLowerCase().includes(term) ?? false) ||
           (asset.modelName?.toLowerCase().includes(term) ?? false) ||
-          (asset.vendorName?.toLowerCase().includes(term) ?? false),
+          (asset.vendorName?.toLowerCase().includes(term) ?? false) ||
+          (asset.assignedUserName?.toLowerCase().includes(term) ?? false) ||
+          (asset.assignedUserEmail?.toLowerCase().includes(term) ?? false) ||
+          (asset.hostName?.toLowerCase().includes(term) ?? false),
       );
     }
 
@@ -171,8 +182,63 @@ export function AssetsPageClient({
       );
     }
 
+    if (filters.filters.assignedUserTerm) {
+      const term = filters.filters.assignedUserTerm.toLowerCase();
+      result = result.filter(
+        (asset) =>
+          asset.assignedUserName?.toLowerCase().includes(term) ||
+          asset.assignedUserEmail?.toLowerCase().includes(term),
+      );
+    }
+
+    if (filters.filters.hostNameTerm) {
+      const term = filters.filters.hostNameTerm.toLowerCase();
+      result = result.filter((asset) =>
+        asset.hostName?.toLowerCase().includes(term),
+      );
+    }
+
     return result;
   }, [assets, filters.debouncedSearchTerm, filters.filters]);
+
+  const categoryCards = useMemo(() => {
+    const countsByCategoryId = new Map<string, number>();
+    const namesByCategoryId = new Map<string, string>();
+
+    for (const asset of assets) {
+      countsByCategoryId.set(
+        asset.assetCategoryId,
+        (countsByCategoryId.get(asset.assetCategoryId) ?? 0) + 1,
+      );
+
+      if (asset.categoryName) {
+        namesByCategoryId.set(asset.assetCategoryId, asset.categoryName);
+      }
+    }
+
+    const optionCards =
+      filterOptions?.categories.map((category) => ({
+        id: category.value,
+        name: category.label,
+        count: countsByCategoryId.get(category.value) ?? 0,
+      })) ?? [];
+
+    for (const [categoryId, count] of countsByCategoryId.entries()) {
+      if (optionCards.some((category) => category.id === categoryId)) {
+        continue;
+      }
+
+      optionCards.push({
+        id: categoryId,
+        name: namesByCategoryId.get(categoryId) ?? "Uncategorized",
+        count,
+      });
+    }
+
+    return optionCards.sort(
+      (a, b) => b.count - a.count || a.name.localeCompare(b.name),
+    );
+  }, [assets, filterOptions?.categories]);
 
   // Load filter options on mount if not provided
   useEffect(() => {
@@ -271,6 +337,17 @@ export function AssetsPageClient({
 
           <PermissionGuard permission={PERMISSIONS.ASSETS_CREATE}>
             <Button
+              variant="outline"
+              onClick={() => setIsImportOpen(true)}
+              className="gap-2"
+            >
+              <Upload className="h-4 w-4" />
+              Bulk Import
+            </Button>
+          </PermissionGuard>
+
+          <PermissionGuard permission={PERMISSIONS.ASSETS_CREATE}>
+            <Button
               onClick={() => setIsFormOpen(true)}
               className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
             >
@@ -284,6 +361,18 @@ export function AssetsPageClient({
       {/* Summary Cards */}
       <AssetsSummaryCards statistics={statistics} loading={statisticsLoading} />
 
+      {/* Category Cards */}
+      <AssetCategoryCards
+        categories={categoryCards}
+        selectedCategoryId={filters.filters.assetCategoryId}
+        onCategorySelect={(categoryId) => {
+          filters.setFilter(
+            "assetCategoryId",
+            filters.filters.assetCategoryId === categoryId ? "all" : categoryId,
+          );
+        }}
+      />
+
       {/* Search and Filters Toolbar */}
       <AssetsToolbar
         filters={{
@@ -292,6 +381,8 @@ export function AssetsPageClient({
           lifecycleStateId: filters.filters.lifecycleStateId,
           currentStockLocationId: filters.filters.currentStockLocationId,
           vendorId: filters.filters.vendorId,
+          assignedUserTerm: filters.filters.assignedUserTerm,
+          hostNameTerm: filters.filters.hostNameTerm,
         }}
         onSearchChange={filters.setSearchTerm}
         onFilterChange={(key, value) => {
@@ -299,7 +390,9 @@ export function AssetsPageClient({
             key === "assetCategoryId" ||
             key === "lifecycleStateId" ||
             key === "currentStockLocationId" ||
-            key === "vendorId"
+            key === "vendorId" ||
+            key === "assignedUserTerm" ||
+            key === "hostNameTerm"
           ) {
             filters.setFilter(key, value as string);
           }
@@ -334,6 +427,103 @@ export function AssetsPageClient({
         onSuccess={handleSuccess}
         asset={editingAsset}
       />
+
+      {/* Bulk Import Dialog */}
+      <ImportAssetsWizard
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+        onSuccess={handleSuccess}
+      />
     </div>
+  );
+}
+
+interface AssetCategoryCardItem {
+  id: string;
+  name: string;
+  count: number;
+}
+
+interface AssetCategoryCardsProps {
+  categories: AssetCategoryCardItem[];
+  selectedCategoryId: string;
+  onCategorySelect: (categoryId: string) => void;
+}
+
+function AssetCategoryCards({
+  categories,
+  selectedCategoryId,
+  onCategorySelect,
+}: AssetCategoryCardsProps) {
+  if (categories.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold">Asset Categories</h3>
+          <p className="text-muted-foreground text-sm">
+            Inventory count by category
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        {categories.map((category) => {
+          const isSelected = selectedCategoryId === category.id;
+
+          return (
+            <Card
+              key={category.id}
+              className={cn(
+                "overflow-hidden transition-shadow hover:shadow-md",
+                isSelected && "border-barq-yellow ring-barq-yellow/40 ring-2",
+              )}
+            >
+              <button
+                type="button"
+                onClick={() => onCategorySelect(category.id)}
+                className="focus-visible:ring-ring w-full text-left focus-visible:ring-2 focus-visible:outline-none"
+                aria-pressed={isSelected}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">
+                        {category.name}
+                      </p>
+                      <p className="text-muted-foreground mt-1 text-xs">
+                        Assets in category
+                      </p>
+                    </div>
+                    <div
+                      className={cn(
+                        "bg-muted text-muted-foreground flex h-9 w-9 shrink-0 items-center justify-center rounded-md",
+                        isSelected && "bg-barq-yellow text-barq-black",
+                      )}
+                    >
+                      <Package className="h-4 w-4" />
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-end justify-between gap-3">
+                    <div className="text-3xl font-bold tabular-nums">
+                      {category.count.toLocaleString()}
+                    </div>
+                    {isSelected && (
+                      <span className="text-muted-foreground text-xs">
+                        Selected
+                      </span>
+                    )}
+                  </div>
+                </CardContent>
+              </button>
+            </Card>
+          );
+        })}
+      </div>
+    </section>
   );
 }

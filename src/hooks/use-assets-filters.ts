@@ -20,6 +20,8 @@ export interface AssetsFilters {
   lifecycleStateId?: string;
   currentStockLocationId?: string;
   vendorId?: string;
+  assignedUserTerm?: string;
+  hostNameTerm?: string;
   sortBy?: "assetTag" | "createdAt" | "purchaseDate" | "purchaseCost";
   sortOrder?: "asc" | "desc";
 }
@@ -62,6 +64,8 @@ const DEFAULT_FILTERS: AssetsFilters = {
   lifecycleStateId: undefined,
   currentStockLocationId: undefined,
   vendorId: undefined,
+  assignedUserTerm: undefined,
+  hostNameTerm: undefined,
   sortBy: "assetTag",
   sortOrder: "asc",
 };
@@ -145,7 +149,9 @@ export function useAssetsFilters(
       filters.assetCategoryId ||
       filters.lifecycleStateId ||
       filters.currentStockLocationId ||
-      filters.vendorId
+      filters.vendorId ||
+      filters.assignedUserTerm ||
+      filters.hostNameTerm
     );
   }, [filters]);
 
@@ -157,6 +163,8 @@ export function useAssetsFilters(
     if (filters.lifecycleStateId) count++;
     if (filters.currentStockLocationId) count++;
     if (filters.vendorId) count++;
+    if (filters.assignedUserTerm) count++;
+    if (filters.hostNameTerm) count++;
     return count;
   }, [filters]);
 

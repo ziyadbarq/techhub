@@ -38,6 +38,8 @@ import type { AssetCategoryValueReportItem } from "@/core/use-cases/asset/asset/
 import type { AssetsByDepartmentReportItem } from "@/core/use-cases/asset/asset/get-assets-by-department-report.use-case";
 import type { ILoggerService } from "@/core/services";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
+import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.repository.interface";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
 import type { ListAssetCategoriesUseCase } from "@/core/use-cases/asset/asset-category";
@@ -111,6 +113,40 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
         .filter((id): id is string => id !== null),
     ),
   ];
+  const assetIds = assets.map((asset) => asset.id);
+
+  const isActiveAssignment = (assignment: { endDate: Date | null }) =>
+    assignment.endDate === null || assignment.endDate >= new Date();
+
+  const isDeviceLikeAsset = (categoryName: string | null): boolean => {
+    if (!categoryName) return false;
+    return [
+      "device",
+      "laptop",
+      "desktop",
+      "workstation",
+      "server",
+      "mobile",
+      "phone",
+      "tablet",
+    ].some((keyword) => categoryName.toLowerCase().includes(keyword));
+  };
+
+  const getAttributeString = (
+    attributes: Record<string, unknown> | null,
+    keys: string[],
+  ): string | null => {
+    if (!attributes) return null;
+
+    for (const key of keys) {
+      const value = attributes[key];
+      if (typeof value === "string" && value.trim().length > 0) {
+        return value.trim();
+      }
+    }
+
+    return null;
+  };
 
   // Fetch related entities in parallel
   const [
@@ -119,6 +155,8 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
     vendorsMap,
     stockLocationsMap,
     lifecycleStatesMap,
+    assignmentInfoMap,
+    intuneDeviceMap,
   ] = await Promise.all([
     (async () => {
       const useCase = container.get<ListAssetCategoriesUseCase>(
@@ -188,6 +226,78 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
           .map((s) => [s.id, s.name]),
       );
     })(),
+    (async () => {
+      const assignmentRepository = container.get<IAssetAssignmentRepository>(
+        DI_TOKENS.IAssetAssignmentRepository,
+      );
+      const personRepository = container.get<IPersonRepository>(
+        DI_TOKENS.IPersonRepository,
+      );
+
+      const activeAssignments = (await assignmentRepository.findAll())
+        .filter(
+          (assignment) =>
+            assetIds.includes(assignment.assetId) &&
+            assignment.assigneeType === "PERSON" &&
+            isActiveAssignment(assignment),
+        )
+        .sort((a, b) => {
+          if (a.isPrimary !== b.isPrimary) {
+            return a.isPrimary ? -1 : 1;
+          }
+          return b.startDate.getTime() - a.startDate.getTime();
+        });
+
+      const personIds = [
+        ...new Set(
+          activeAssignments.map((assignment) => assignment.assigneeId),
+        ),
+      ];
+      const persons = await Promise.all(
+        personIds.map((personId) => personRepository.findById(personId)),
+      );
+      const personsMap = new Map(
+        persons
+          .filter((person): person is NonNullable<typeof person> => !!person)
+          .map((person) => [person.id, person]),
+      );
+
+      const map = new Map<
+        string,
+        { assignedUserName: string | null; assignedUserEmail: string | null }
+      >();
+
+      for (const assignment of activeAssignments) {
+        if (map.has(assignment.assetId)) continue;
+
+        const person = personsMap.get(assignment.assigneeId);
+        map.set(assignment.assetId, {
+          assignedUserName: person?.fullName ?? null,
+          assignedUserEmail: person?.email ?? null,
+        });
+      }
+
+      return map;
+    })(),
+    (async () => {
+      const intuneRepository = container.get<IIntuneDeviceRepository>(
+        DI_TOKENS.IIntuneDeviceRepository,
+      );
+      const devices = await intuneRepository.findAll({
+        isActive: true,
+        isLinkedToAsset: true,
+      });
+
+      return new Map(
+        devices
+          .filter(
+            (device) =>
+              device.linkedAssetId !== null &&
+              assetIds.includes(device.linkedAssetId),
+          )
+          .map((device) => [device.linkedAssetId!, device]),
+      );
+    })(),
   ]);
 
   // Present assets with enrichment data
@@ -205,6 +315,21 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
     const lifecycleStateName = asset.lifecycleStateId
       ? lifecycleStatesMap.get(asset.lifecycleStateId) || null
       : null;
+    const assignmentInfo = assignmentInfoMap.get(asset.id);
+    const intuneDevice = intuneDeviceMap.get(asset.id);
+    const hostName =
+      intuneDevice?.deviceName ??
+      (isDeviceLikeAsset(categoryName)
+        ? getAttributeString(asset.attributes, [
+            "hostName",
+            "hostname",
+            "host_name",
+            "deviceName",
+            "device_name",
+            "computerName",
+            "computer_name",
+          ])
+        : null);
 
     return presentAsset(asset, {
       categoryName,
@@ -212,6 +337,11 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
       vendorName,
       stockLocationName,
       lifecycleStateName,
+      assignedUserName:
+        assignmentInfo?.assignedUserName ?? intuneDevice?.userDisplayName,
+      assignedUserEmail:
+        assignmentInfo?.assignedUserEmail ?? intuneDevice?.userPrincipalName,
+      hostName,
     });
   });
 }

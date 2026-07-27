@@ -36,6 +36,9 @@ export interface AssetDTO {
   vendorName?: string | null;
   stockLocationName?: string | null;
   lifecycleStateName?: string | null;
+  assignedUserName?: string | null;
+  assignedUserEmail?: string | null;
+  hostName?: string | null;
 }
 
 /**
@@ -49,6 +52,9 @@ export function presentAsset(
     vendorName?: string | null;
     stockLocationName?: string | null;
     lifecycleStateName?: string | null;
+    assignedUserName?: string | null;
+    assignedUserEmail?: string | null;
+    hostName?: string | null;
   },
 ): AssetDTO {
   return {
@@ -82,6 +88,9 @@ export function presentAsset(
     vendorName: enrichment?.vendorName,
     stockLocationName: enrichment?.stockLocationName,
     lifecycleStateName: enrichment?.lifecycleStateName,
+    assignedUserName: enrichment?.assignedUserName,
+    assignedUserEmail: enrichment?.assignedUserEmail,
+    hostName: enrichment?.hostName,
   };
 }
 

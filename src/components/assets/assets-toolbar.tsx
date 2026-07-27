@@ -51,6 +51,8 @@ export function AssetsToolbar({
       filters.lifecycleStateId,
       filters.currentStockLocationId,
       filters.vendorId,
+      filters.assignedUserTerm,
+      filters.hostNameTerm,
     ].filter(Boolean).length;
   }, [filters]);
 
@@ -183,6 +185,26 @@ export function AssetsToolbar({
         )}
       </div>
 
+      {/* Asset metadata filters */}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Input
+          placeholder="Filter by user..."
+          value={filters.assignedUserTerm ?? ""}
+          onChange={(event) =>
+            onFilterChange("assignedUserTerm", event.target.value)
+          }
+          disabled={loading}
+        />
+        <Input
+          placeholder="Filter by host name..."
+          value={filters.hostNameTerm ?? ""}
+          onChange={(event) =>
+            onFilterChange("hostNameTerm", event.target.value)
+          }
+          disabled={loading}
+        />
+      </div>
+
       {/* Active Filters Pills */}
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2">
@@ -240,6 +262,20 @@ export function AssetsToolbar({
                 filters.vendorId
               }
               onClear={() => handleFilterChange("vendorId", undefined)}
+            />
+          )}
+          {filters.assignedUserTerm && (
+            <FilterPill
+              label="User"
+              value={filters.assignedUserTerm}
+              onClear={() => onFilterChange("assignedUserTerm", "")}
+            />
+          )}
+          {filters.hostNameTerm && (
+            <FilterPill
+              label="Host Name"
+              value={filters.hostNameTerm}
+              onClear={() => onFilterChange("hostNameTerm", "")}
             />
           )}
         </div>

@@ -124,6 +124,51 @@ export function AssetsTable({
         },
       },
       {
+        accessorKey: "assignedUserName",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="User" />
+        ),
+        cell: ({ row }) => {
+          const userName = row.original.assignedUserName;
+          const userEmail = row.original.assignedUserEmail;
+
+          if (!userName && !userEmail) {
+            return <span className="text-muted-foreground text-sm">—</span>;
+          }
+
+          return (
+            <div className="flex flex-col gap-1">
+              {userName && <span className="text-sm">{userName}</span>}
+              {userEmail && (
+                <span className="text-muted-foreground text-xs">
+                  {userEmail}
+                </span>
+              )}
+            </div>
+          );
+        },
+        meta: {
+          label: "User",
+        },
+      },
+      {
+        accessorKey: "hostName",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Host Name" />
+        ),
+        cell: ({ row }) => {
+          const hostName = row.original.hostName;
+          return (
+            <span className="text-sm">
+              {hostName || <span className="text-muted-foreground">—</span>}
+            </span>
+          );
+        },
+        meta: {
+          label: "Host Name",
+        },
+      },
+      {
         accessorKey: "stockLocationName",
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Location" />
