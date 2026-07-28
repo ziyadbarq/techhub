@@ -80,6 +80,16 @@ const mockListLifecycleStatesUseCase = {
   execute: vi.fn(),
 };
 
+const mockAssetAssignmentRepository = {
+  findAll: vi.fn(),
+};
+
+const mockPersonRepository = {
+  findById: vi.fn(),
+  findByUserId: vi.fn(),
+  findByEmail: vi.fn(),
+};
+
 const mockAssetRepository = {
   findById: vi.fn(),
   findByAssetTag: vi.fn(),
@@ -94,6 +104,10 @@ vi.mock("@/lib/permissions/server", () => ({
 // Mock revalidatePath
 vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
+}));
+
+vi.mock("@/lib/auth/session", () => ({
+  getSession: vi.fn(() => Promise.resolve({ user: null })),
 }));
 
 // Sample asset data - includes methods that presenter calls
@@ -131,6 +145,7 @@ const createMockAsset = (overrides?: Partial<Asset>): Asset =>
 // Mock the DI container
 vi.mock("@/di/container", () => ({
   getContainer: vi.fn(() => ({
+    isBound: vi.fn(() => false),
     get: vi.fn((token) => {
       const tokenKey = token.toString();
       if (tokenKey === Symbol.for("CreateAssetUseCase").toString()) {
@@ -163,6 +178,12 @@ vi.mock("@/di/container", () => ({
       if (tokenKey === Symbol.for("IAssetRepository").toString()) {
         return mockAssetRepository;
       }
+      if (tokenKey === Symbol.for("IAssetAssignmentRepository").toString()) {
+        return mockAssetAssignmentRepository;
+      }
+      if (tokenKey === Symbol.for("IPersonRepository").toString()) {
+        return mockPersonRepository;
+      }
       if (tokenKey === Symbol.for("ILoggerService").toString()) {
         return mockLogger;
       }
@@ -178,6 +199,10 @@ describe("Asset Controller", () => {
     // Default successful mocks
     mockAssetRepository.findByAssetTag.mockResolvedValue(createMockAsset());
     mockAssetRepository.findBySerialNumbers.mockResolvedValue([]);
+    mockAssetAssignmentRepository.findAll.mockResolvedValue([]);
+    mockPersonRepository.findById.mockResolvedValue(null);
+    mockPersonRepository.findByUserId.mockResolvedValue(null);
+    mockPersonRepository.findByEmail.mockResolvedValue(null);
 
     // Mock related entity lists for enrichment
     mockListAssetCategoriesUseCase.execute.mockResolvedValue([

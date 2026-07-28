@@ -96,6 +96,12 @@ vi.mock("@/hooks/use-category-fields", () => ({
   }),
 }));
 
+vi.mock("@/components/auth/PermissionGuard", () => ({
+  PermissionGuard: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+}));
+
 // Mock sonner toast
 vi.mock("sonner", () => ({
   toast: {
@@ -235,8 +241,8 @@ describe("AssetForm", () => {
         screen.getByRole("button", { name: /Additional Details/i }),
       );
 
-      expect(screen.getByText("Asset Model")).toBeInTheDocument();
-      expect(screen.getByText("Supplier")).toBeInTheDocument();
+      expect(screen.getByText("Device Model")).toBeInTheDocument();
+      expect(screen.getByText("Supplier / Manufacturer")).toBeInTheDocument();
       expect(screen.getByText("Stock Location")).toBeInTheDocument();
       expect(screen.getByText("Lifecycle State")).toBeInTheDocument();
       expect(screen.getByText("Serial Number")).toBeInTheDocument();
