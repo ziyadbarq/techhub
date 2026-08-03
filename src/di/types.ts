@@ -1095,6 +1095,64 @@ export const DI_TOKENS = {
    * Database client for PostgreSQL access
    */
   PrismaClient: Symbol.for("PrismaClient"),
+
+  // ==========================================
+  // Workflow Engine Tokens (workflow.module.ts)
+  // ==========================================
+
+  // Engine orchestrator + use cases
+  IWorkflowEngine: Symbol.for("IWorkflowEngine"),
+  WorkflowSubmitUseCase: Symbol.for("WorkflowSubmitUseCase"),
+  WorkflowTakeActionUseCase: Symbol.for("WorkflowTakeActionUseCase"),
+  WorkflowResubmitUseCase: Symbol.for("WorkflowResubmitUseCase"),
+  WorkflowPlaceOnHoldUseCase: Symbol.for("WorkflowPlaceOnHoldUseCase"),
+  WorkflowResumeUseCase: Symbol.for("WorkflowResumeUseCase"),
+  WorkflowCancelUseCase: Symbol.for("WorkflowCancelUseCase"),
+  WorkflowRejectUseCase: Symbol.for("WorkflowRejectUseCase"),
+  WorkflowReassignUseCase: Symbol.for("WorkflowReassignUseCase"),
+  WorkflowForceAdvanceUseCase: Symbol.for("WorkflowForceAdvanceUseCase"),
+  WorkflowOverrideOutcomeUseCase: Symbol.for("WorkflowOverrideOutcomeUseCase"),
+
+  // Repositories
+  IWorkflowFormRepository: Symbol.for("IWorkflowFormRepository"),
+  IWorkflowDefinitionRepository: Symbol.for("IWorkflowDefinitionRepository"),
+  IWorkflowRequestRepository: Symbol.for("IWorkflowRequestRepository"),
+  IWorkflowStepInstanceRepository: Symbol.for(
+    "IWorkflowStepInstanceRepository",
+  ),
+  IWorkflowAuditRepository: Symbol.for("IWorkflowAuditRepository"),
+  IWorkflowSLAEventRepository: Symbol.for("IWorkflowSLAEventRepository"),
+
+  // Registries (multi-injected member tokens + the registry tokens themselves)
+  IWorkflowStepExecutor: Symbol.for("IWorkflowStepExecutor"),
+  IWorkflowAssigneeResolver: Symbol.for("IWorkflowAssigneeResolver"),
+  IWorkflowAutomationHandler: Symbol.for("IWorkflowAutomationHandler"),
+  IWorkflowStepExecutorRegistry: Symbol.for("IWorkflowStepExecutorRegistry"),
+  IWorkflowAssigneeResolverRegistry: Symbol.for(
+    "IWorkflowAssigneeResolverRegistry",
+  ),
+  IWorkflowAutomationHandlerRegistry: Symbol.for(
+    "IWorkflowAutomationHandlerRegistry",
+  ),
+
+  // Services
+  IWorkflowCalendarService: Symbol.for("IWorkflowCalendarService"),
+  IWorkflowSLACalculator: Symbol.for("IWorkflowSLACalculator"),
+  IWorkflowSLAEscalator: Symbol.for("IWorkflowSLAEscalator"),
+  IWorkflowDelegationResolver: Symbol.for("IWorkflowDelegationResolver"),
+  IWorkflowNotificationService: Symbol.for("IWorkflowNotificationService"),
+  IWorkflowEmailActionTokenService: Symbol.for(
+    "IWorkflowEmailActionTokenService",
+  ),
+  IWorkflowEntryAutomationService: Symbol.for(
+    "IWorkflowEntryAutomationService",
+  ),
+  IWorkflowScheduleTickService: Symbol.for("IWorkflowScheduleTickService"),
+  IWorkflowTemplateRenderer: Symbol.for("IWorkflowTemplateRenderer"),
+  IWorkflowExpressionEvaluator: Symbol.for("IWorkflowExpressionEvaluator"),
+  IWorkflowReferenceNumberService: Symbol.for(
+    "IWorkflowReferenceNumberService",
+  ),
 } as const;
 
 /**

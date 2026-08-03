@@ -39,6 +39,22 @@ model User {
   backupsCreated  DatabaseBackup[] @relation("BackupCreator")
   backupsDeleted  DatabaseBackup[] @relation("BackupDeletedByUser")
 
+  // Workflow Engine relations (workflow-*.prisma)
+  publishedFormVersions      FormVersion[]              @relation("FormVersionPublisher")
+  publishedWorkflowVersions  WorkflowVersion[]          @relation("WorkflowVersionPublisher")
+  submittedRequests          Request[]                  @relation("RequestRequester")
+  auditEntriesAsActor        AuditEntry[]               @relation("AuditEntryActor")
+  workflowAssigneeSnapshots  AssigneeSnapshot[]
+  delegationsFrom            Delegation[]               @relation("DelegationFrom")
+  delegationsTo              Delegation[]               @relation("DelegationTo")
+  workflowWatchers           Watcher[]
+  watcherChannelPreferences  WatcherChannelPreference[]
+  workflowNotifications      Notification[]
+  emailActionTokens          EmailActionToken[]
+  workflowSavedFilters       SavedFilter[]
+  requestComments            RequestComment[]           @relation("RequestCommentAuthor")
+  requestAttachmentsUploaded RequestAttachment[]        @relation("RequestAttachmentUploader")
+
   @@index([email])
   @@map("users")
 }

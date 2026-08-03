@@ -387,6 +387,47 @@ export type CodeSequence = Prisma.CodeSequenceModel
  */
 export type ReportSchedule = Prisma.ReportScheduleModel
 /**
+ * Model Request
+ * 
+ */
+export type Request = Prisma.RequestModel
+/**
+ * Model RequestFieldValue
+ * 
+ */
+export type RequestFieldValue = Prisma.RequestFieldValueModel
+/**
+ * Model StepInstance
+ * 
+ */
+export type StepInstance = Prisma.StepInstanceModel
+/**
+ * Model RequestLink
+ * 
+ */
+export type RequestLink = Prisma.RequestLinkModel
+/**
+ * Model RequestComment
+ * General comment thread on a request — Jira-style. Distinct from action
+ * comments (which live on the AuditEntry payload). Append-only at the
+ * service layer; never editable / deletable by users.
+ */
+export type RequestComment = Prisma.RequestCommentModel
+/**
+ * Model RequestAttachment
+ * File attachment metadata. The actual bytes live in the configured
+ * IFileStorage (local disk in dev, S3/R2 in prod). Per PRD §16:
+ * - immutable once uploaded
+ * - belongs to exactly one request
+ * - retention is forever (never deleted), even on close/cancel
+ */
+export type RequestAttachment = Prisma.RequestAttachmentModel
+/**
+ * Model SavedFilter
+ * 
+ */
+export type SavedFilter = Prisma.SavedFilterModel
+/**
  * Model AssetReservation
  * 
  */
@@ -456,3 +497,141 @@ export type FeatureFlagAuditLog = Prisma.FeatureFlagAuditLogModel
  * 
  */
 export type SystemSetting = Prisma.SystemSettingModel
+/**
+ * Model AuditEntry
+ * 
+ */
+export type AuditEntry = Prisma.AuditEntryModel
+/**
+ * Model FieldHistoryEntry
+ * 
+ */
+export type FieldHistoryEntry = Prisma.FieldHistoryEntryModel
+/**
+ * Model AssigneeSnapshot
+ * 
+ */
+export type AssigneeSnapshot = Prisma.AssigneeSnapshotModel
+/**
+ * Model SLAEvent
+ * 
+ */
+export type SLAEvent = Prisma.SLAEventModel
+/**
+ * Model SLAEscalationLog
+ * 
+ */
+export type SLAEscalationLog = Prisma.SLAEscalationLogModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model EmailActionToken
+ * 
+ */
+export type EmailActionToken = Prisma.EmailActionTokenModel
+/**
+ * Model Calendar
+ * 
+ */
+export type Calendar = Prisma.CalendarModel
+/**
+ * Model MaintenanceWindow
+ * 
+ */
+export type MaintenanceWindow = Prisma.MaintenanceWindowModel
+/**
+ * Model BlackoutPeriod
+ * 
+ */
+export type BlackoutPeriod = Prisma.BlackoutPeriodModel
+/**
+ * Model HoldReason
+ * 
+ */
+export type HoldReason = Prisma.HoldReasonModel
+/**
+ * Model OutcomeCode
+ * Module/form-declared outcome codes (PRD §10.2). Sit ALONGSIDE the generic
+ * RequestOutcome enum and provide finer-grained domain semantics. Each code
+ * maps to exactly one generic outcome (so cross-module reporting still works).
+ * 
+ * Examples: ROLLED_BACK (maps to UNSUCCESSFUL), DEFERRED (WITHDRAWN),
+ * PARTIALLY_ROLLED_BACK (SUCCESSFUL_WITH_ISSUES).
+ */
+export type OutcomeCode = Prisma.OutcomeCodeModel
+/**
+ * Model Delegation
+ * 
+ */
+export type Delegation = Prisma.DelegationModel
+/**
+ * Model Watcher
+ * 
+ */
+export type Watcher = Prisma.WatcherModel
+/**
+ * Model WatcherSubscription
+ * 
+ */
+export type WatcherSubscription = Prisma.WatcherSubscriptionModel
+/**
+ * Model WatcherChannelPreference
+ * 
+ */
+export type WatcherChannelPreference = Prisma.WatcherChannelPreferenceModel
+/**
+ * Model Form
+ * 
+ */
+export type Form = Prisma.FormModel
+/**
+ * Model FormNotificationBinding
+ * Per-form binding: when {event} happens on a request of this form, send
+ * an email using {emailTemplateKey} to the recipients defined by
+ * {recipientKind}.
+ * 
+ * Recipient kinds:
+ * - REQUESTER       — the user who submitted the request
+ * - STEP_ASSIGNEES  — the active step's snapshot
+ * - WATCHERS        — every watcher of this request
+ * - ROLE            — every member of {recipientRoleId}
+ */
+export type FormNotificationBinding = Prisma.FormNotificationBindingModel
+/**
+ * Model FormVersion
+ * 
+ */
+export type FormVersion = Prisma.FormVersionModel
+/**
+ * Model FormField
+ * 
+ */
+export type FormField = Prisma.FormFieldModel
+/**
+ * Model WorkflowDefinition
+ * 
+ */
+export type WorkflowDefinition = Prisma.WorkflowDefinitionModel
+/**
+ * Model WorkflowVersion
+ * 
+ */
+export type WorkflowVersion = Prisma.WorkflowVersionModel
+/**
+ * Model WorkflowStep
+ * 
+ */
+export type WorkflowStep = Prisma.WorkflowStepModel
+/**
+ * Model RejectionPolicy
+ * 
+ */
+export type RejectionPolicy = Prisma.RejectionPolicyModel
+/**
+ * Model EmailTemplate
+ * 
+ */
+export type EmailTemplate = Prisma.EmailTemplateModel

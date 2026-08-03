@@ -295,3 +295,12 @@ export interface GenerateAndSendReportJobData extends BaseJobData {
   /** Original due timestamp claimed by the scheduler, serialized as ISO string */
   claimedNextSendAt?: string | null;
 }
+
+/**
+ * Workflow engine tick jobs (SLA escalation, schedule advancement, entry automation).
+ * All three carry the same shape — just an optional origin tag.
+ */
+export interface WorkflowTickJobData extends BaseJobData {
+  /** Origin of the tick: "cron" (default) or "manual" (HTTP cron endpoint trigger) */
+  origin?: "cron" | "manual";
+}

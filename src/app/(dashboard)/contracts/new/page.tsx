@@ -1,14 +1,9 @@
-/**
- * New Contract Page
- */
-
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContractForm } from "@/components/contracts/contract-form";
-import { listContractTypes } from "@/interface-adapters/controllers/contract-type.controller";
-import { listVendorsAction } from "@/interface-adapters/controllers/vendor.controller";
-import { requireFeature } from "@/lib/features/server";
 import { requirePermission } from "@/lib/permissions/server";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -18,25 +13,18 @@ export default async function NewContractPage() {
   try {
     await requirePermission(PERMISSIONS.CONTRACTS_CREATE);
   } catch (error) {
-    handlePermissionRedirect(error, "/contracts/new");
+    handlePermissionRedirect(error, "/contracts");
     throw error;
   }
 
-  const [contractTypesResult, vendorsResult] = await Promise.all([
-    listContractTypes({ activeOnly: true }),
-    listVendorsAction(),
-  ]);
-
   return (
-    <ContractForm
-      contractTypes={
-        contractTypesResult.success ? contractTypesResult.data : []
-      }
-      vendors={
-        vendorsResult.success
-          ? vendorsResult.data.filter((vendor) => vendor.isActive)
-          : []
-      }
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle>Create Contract</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ContractForm />
+      </CardContent>
+    </Card>
   );
 }

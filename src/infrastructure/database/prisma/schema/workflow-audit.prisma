@@ -1,0 +1,165 @@
+// ============================================
+// WORKFLOW AUDIT (Append-Only Audit Trail, SLA, Notifications)
+// ============================================
+//
+// Models: AuditEntry, FieldHistoryEntry, AssigneeSnapshot,
+//         SLAEvent, SLAEscalationLog, Notification, EmailActionToken
+// Enums:  NotificationChannel, SLAEventType, EmailActionTokenStatus
+// Layer:  Layer 3 / Workflow Engine
+// Related DI Module: workflow.module.ts
+// Feature Flag: WORKFLOW_ENGINE
+//
+// IMPORTANT: AuditEntry, FieldHistoryEntry, AssigneeSnapshot, SLAEvent,
+//            SLAEscalationLog are append-only at the application layer.
+//            DB triggers enforcing immutability are TODO (Phase 00 PRD gap
+//            inherited from the donor app — to be added in a follow-up PR).
+// ============================================
+
+enum SLAEventType {
+  START
+  PAUSE
+  RESUME
+  BREACH
+
+  @@map("sla_event_type")
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+
+  @@map("notification_channel")
+}
+
+enum EmailActionTokenStatus {
+  ACTIVE
+  CONSUMED
+  EXPIRED
+  REVOKED
+
+  @@map("email_action_token_status")
+}
+
+model AuditEntry {
+  id                     String   @id @default(cuid())
+  requestId              String?
+  stepInstanceId         String?
+  actorUserId            String?
+  actorSystem            String?
+  action                 String
+  payloadJson            Json
+  referencesAuditEntryId String?
+  createdAt              DateTime @default(now())
+
+  request      Request?            @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  stepInstance StepInstance?       @relation(fields: [stepInstanceId], references: [id], onDelete: Cascade)
+  actor        User?               @relation("AuditEntryActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  references   AuditEntry?         @relation("AuditOverrides", fields: [referencesAuditEntryId], references: [id], onDelete: SetNull)
+  overriddenBy AuditEntry[]        @relation("AuditOverrides")
+  fieldHistory FieldHistoryEntry[]
+
+  @@index([createdAt])
+  @@index([requestId, createdAt])
+  @@map("audit_entries")
+}
+
+model FieldHistoryEntry {
+  id                String   @id @default(cuid())
+  requestId         String
+  formVersionId     String
+  fieldKey          String
+  valueJson         Json
+  computedValueJson Json?
+  auditEntryId      String
+  createdAt         DateTime @default(now())
+
+  request     Request     @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  formVersion FormVersion @relation(fields: [formVersionId], references: [id], onDelete: Restrict)
+  auditEntry  AuditEntry  @relation(fields: [auditEntryId], references: [id], onDelete: Cascade)
+
+  @@index([requestId, formVersionId, fieldKey])
+  @@map("field_history_entries")
+}
+
+model AssigneeSnapshot {
+  id                     String   @id @default(cuid())
+  stepInstanceId         String
+  userId                 String
+  viaDelegationChainJson Json?
+  createdAt              DateTime @default(now())
+
+  stepInstance StepInstance @relation(fields: [stepInstanceId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([stepInstanceId, userId])
+  @@map("assignee_snapshots")
+}
+
+model SLAEvent {
+  id             String       @id @default(cuid())
+  stepInstanceId String
+  eventType      SLAEventType
+  occurredAt     DateTime     @default(now())
+  payloadJson    Json?
+
+  stepInstance StepInstance @relation(fields: [stepInstanceId], references: [id], onDelete: Cascade)
+
+  @@index([stepInstanceId, occurredAt])
+  @@map("sla_events")
+}
+
+model SLAEscalationLog {
+  id             String   @id @default(cuid())
+  stepInstanceId String
+  ruleKey        String
+  thresholdMs    Int
+  firedAt        DateTime @default(now())
+  payloadJson    Json?
+
+  stepInstance StepInstance @relation(fields: [stepInstanceId], references: [id], onDelete: Cascade)
+
+  @@unique([stepInstanceId, ruleKey])
+  @@index([stepInstanceId, firedAt])
+  @@map("sla_escalation_logs")
+}
+
+model Notification {
+  id             String              @id @default(cuid())
+  userId         String
+  channel        NotificationChannel @default(IN_APP)
+  requestId      String?
+  stepInstanceId String?
+  templateKey    String?
+  subject        String
+  body           String              @db.Text
+  payloadJson    Json?
+  readAt         DateTime?
+  createdAt      DateTime            @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  request      Request?      @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  stepInstance StepInstance? @relation(fields: [stepInstanceId], references: [id], onDelete: SetNull)
+
+  @@index([userId, readAt, createdAt])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model EmailActionToken {
+  id             String                 @id @default(cuid())
+  token          String                 @unique
+  userId         String
+  stepInstanceId String
+  action         String
+  status         EmailActionTokenStatus @default(ACTIVE)
+  expiresAt      DateTime
+  consumedAt     DateTime?
+  createdAt      DateTime               @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stepInstance StepInstance @relation(fields: [stepInstanceId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([stepInstanceId])
+  @@map("email_action_tokens")
+}

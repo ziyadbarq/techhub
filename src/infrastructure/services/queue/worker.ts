@@ -25,6 +25,7 @@ import {
   MAINTENANCE_JOBS,
   RESERVATION_JOBS,
   REPORT_JOBS,
+  WORKFLOW_JOBS,
 } from "@/core/domain/jobs/job-names";
 import {
   handleTaskCompletedNotification,
@@ -48,6 +49,9 @@ import {
 } from "./handlers/database-backup.handler";
 import { handleCheckDueReportSchedules } from "./handlers/check-due-report-schedules.handler";
 import { handleGenerateAndSendReport } from "./handlers/generate-and-send-report.handler";
+import { handleWorkflowSLATick } from "./handlers/workflow-sla-tick.handler";
+import { handleWorkflowScheduleTick } from "./handlers/workflow-schedule-tick.handler";
+import { handleWorkflowEntryAutomationTick } from "./handlers/workflow-entry-automation-tick.handler";
 
 /**
  * Worker instances
@@ -243,6 +247,32 @@ function createMaintenanceWorker(): BaseWorker {
 }
 
 /**
+ * Create and configure workflow queue worker
+ *
+ * Handles the three workflow engine cron ticks: SLA escalation, schedule
+ * advancement, and entry automation. All three are gated at scheduling time
+ * by the WORKFLOW_ENGINE feature flag.
+ */
+function createWorkflowWorker(): BaseWorker {
+  const worker = new BaseWorker({
+    queueName: QUEUE_NAMES.WORKFLOW,
+    concurrency: 1,
+  });
+
+  worker.registerHandler(WORKFLOW_JOBS.SLA_TICK, handleWorkflowSLATick);
+  worker.registerHandler(
+    WORKFLOW_JOBS.SCHEDULE_TICK,
+    handleWorkflowScheduleTick,
+  );
+  worker.registerHandler(
+    WORKFLOW_JOBS.ENTRY_AUTOMATION_TICK,
+    handleWorkflowEntryAutomationTick,
+  );
+
+  return worker;
+}
+
+/**
  * Start all workers
  */
 async function startWorkers(): Promise<void> {
@@ -252,8 +282,9 @@ async function startWorkers(): Promise<void> {
   const taskWorker = createTaskWorker();
   const emailWorker = createEmailWorker();
   const maintenanceWorker = createMaintenanceWorker();
+  const workflowWorker = createWorkflowWorker();
 
-  workers.push(taskWorker, emailWorker, maintenanceWorker);
+  workers.push(taskWorker, emailWorker, maintenanceWorker, workflowWorker);
 
   // Start all workers
   await Promise.all(workers.map((worker) => worker.start()));

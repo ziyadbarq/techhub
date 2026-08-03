@@ -29,6 +29,10 @@ model Role {
   users                UserRole[]
   lifecycleTransitions LifecycleTransition[] @relation("TransitionRequiredRole")
 
+  // Workflow Engine relations (workflow-*.prisma)
+  watcherSubscriptions     WatcherSubscription[]
+  formNotificationBindings FormNotificationBinding[] @relation("FormNotificationBindingRole")
+
   @@index([name])
   @@index([isActive])
   @@index([parentId])

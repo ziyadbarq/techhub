@@ -85,6 +85,7 @@ Advanced IT Asset Management features:
 - [Service SLA & Health Monitoring](./features/SERVICE_SLA_HEALTH_MONITORING.md) - Enterprise-grade SLA tracking and automated health monitoring with compliance status, performance metrics, and proactive alerting (can be disabled via `SERVICE_HEALTH_SLA` feature flag)
 - [Intune Integration](./features/INTUNE_INTEGRATION.md) - Microsoft Intune/MDM device sync with compliance monitoring, asset linking, and SAMA governance reporting
 - [OCI Cloud Sync](./features/OCI_CLOUD_SYNC.md) - Oracle Cloud Infrastructure resource sync via n8n webhook with automated CMDB population, compartment hierarchy, and 8 service types
+- [Workflows Module](./features/WORKFLOWS_OVERVIEW.md) - Generic configurable workflow engine for Change Management, Access Requests, and any request-based process. Forms + workflow definitions loaded as seed data on a single engine. Gated by the `WORKFLOW_ENGINE` feature flag.
 
 ### Global Features
 

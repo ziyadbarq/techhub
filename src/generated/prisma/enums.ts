@@ -360,6 +360,103 @@ export const ReportExportFormat = {
 export type ReportExportFormat = (typeof ReportExportFormat)[keyof typeof ReportExportFormat]
 
 
+export const VersionStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type VersionStatus = (typeof VersionStatus)[keyof typeof VersionStatus]
+
+
+export const RequestStatus = {
+  DRAFT: 'DRAFT',
+  SUBMITTED: 'SUBMITTED',
+  IN_REVIEW: 'IN_REVIEW',
+  ON_HOLD: 'ON_HOLD',
+  IN_PROGRESS: 'IN_PROGRESS',
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  CLOSED: 'CLOSED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type RequestStatus = (typeof RequestStatus)[keyof typeof RequestStatus]
+
+
+export const RequestOutcome = {
+  SUCCESSFUL: 'SUCCESSFUL',
+  SUCCESSFUL_WITH_ISSUES: 'SUCCESSFUL_WITH_ISSUES',
+  UNSUCCESSFUL: 'UNSUCCESSFUL',
+  WITHDRAWN: 'WITHDRAWN',
+  REJECTED: 'REJECTED',
+  SUPERSEDED: 'SUPERSEDED',
+  ABANDONED: 'ABANDONED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type RequestOutcome = (typeof RequestOutcome)[keyof typeof RequestOutcome]
+
+
+export const StepInstanceStatus = {
+  PENDING: 'PENDING',
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED',
+  SKIPPED: 'SKIPPED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type StepInstanceStatus = (typeof StepInstanceStatus)[keyof typeof StepInstanceStatus]
+
+
+export const StepType = {
+  APPROVAL: 'APPROVAL',
+  EXECUTION: 'EXECUTION',
+  INFO_ACK: 'INFO_ACK',
+  AUTOMATION: 'AUTOMATION',
+  NOTIFICATION: 'NOTIFICATION',
+  CONDITIONAL_BRANCH: 'CONDITIONAL_BRANCH',
+  DELAY: 'DELAY',
+  SCHEDULE: 'SCHEDULE',
+  WEBHOOK: 'WEBHOOK',
+  SUB_WORKFLOW: 'SUB_WORKFLOW',
+  WAIT_FOR_EVENT: 'WAIT_FOR_EVENT'
+} as const
+
+export type StepType = (typeof StepType)[keyof typeof StepType]
+
+
+export const FieldType = {
+  SHORT_TEXT: 'SHORT_TEXT',
+  LONG_TEXT: 'LONG_TEXT',
+  NUMBER: 'NUMBER',
+  DATE: 'DATE',
+  DATETIME: 'DATETIME',
+  DROPDOWN: 'DROPDOWN',
+  MULTI_SELECT: 'MULTI_SELECT',
+  CHECKBOX: 'CHECKBOX',
+  FILE: 'FILE',
+  USER_PICKER: 'USER_PICKER',
+  MULTI_USER_PICKER: 'MULTI_USER_PICKER',
+  REQUEST_LINK: 'REQUEST_LINK',
+  SCORED_MATRIX: 'SCORED_MATRIX',
+  REPEATER: 'REPEATER',
+  LOOKUP: 'LOOKUP',
+  SECTION_HEADER: 'SECTION_HEADER',
+  COMPUTED: 'COMPUTED'
+} as const
+
+export type FieldType = (typeof FieldType)[keyof typeof FieldType]
+
+
+export const RejectionRestartMode = {
+  FULL_RESTART: 'FULL_RESTART',
+  RESUME_FROM_REJECTION_STEP: 'RESUME_FROM_REJECTION_STEP'
+} as const
+
+export type RejectionRestartMode = (typeof RejectionRestartMode)[keyof typeof RejectionRestartMode]
+
+
 export const AssetReservationStatusEnum = {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
@@ -638,3 +735,60 @@ export const FeatureFlagAction = {
 } as const
 
 export type FeatureFlagAction = (typeof FeatureFlagAction)[keyof typeof FeatureFlagAction]
+
+
+export const SLAEventType = {
+  START: 'START',
+  PAUSE: 'PAUSE',
+  RESUME: 'RESUME',
+  BREACH: 'BREACH'
+} as const
+
+export type SLAEventType = (typeof SLAEventType)[keyof typeof SLAEventType]
+
+
+export const NotificationChannel = {
+  IN_APP: 'IN_APP',
+  EMAIL: 'EMAIL'
+} as const
+
+export type NotificationChannel = (typeof NotificationChannel)[keyof typeof NotificationChannel]
+
+
+export const EmailActionTokenStatus = {
+  ACTIVE: 'ACTIVE',
+  CONSUMED: 'CONSUMED',
+  EXPIRED: 'EXPIRED',
+  REVOKED: 'REVOKED'
+} as const
+
+export type EmailActionTokenStatus = (typeof EmailActionTokenStatus)[keyof typeof EmailActionTokenStatus]
+
+
+export const BlackoutBehavior = {
+  BLOCK: 'BLOCK',
+  WARN: 'WARN',
+  IGNORE: 'IGNORE'
+} as const
+
+export type BlackoutBehavior = (typeof BlackoutBehavior)[keyof typeof BlackoutBehavior]
+
+
+export const WatcherChannel = {
+  IN_APP: 'IN_APP',
+  EMAIL: 'EMAIL',
+  BOTH: 'BOTH',
+  MUTED: 'MUTED'
+} as const
+
+export type WatcherChannel = (typeof WatcherChannel)[keyof typeof WatcherChannel]
+
+
+export const FormNotificationRecipientKind = {
+  REQUESTER: 'REQUESTER',
+  STEP_ASSIGNEES: 'STEP_ASSIGNEES',
+  WATCHERS: 'WATCHERS',
+  ROLE: 'ROLE'
+} as const
+
+export type FormNotificationRecipientKind = (typeof FormNotificationRecipientKind)[keyof typeof FormNotificationRecipientKind]
