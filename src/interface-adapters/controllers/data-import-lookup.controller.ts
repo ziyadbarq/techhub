@@ -48,10 +48,25 @@ function buildLookupMap(
   const reverseEntries = new Map<string, string>();
   const allValues: string[] = [];
 
+  // Pass 1: index by display field (name/label) FIRST — lower priority so
+  // that when a code collides with a name across records, the code wins.
+  if (displayField && displayField !== lookupField) {
+    for (const entity of entities) {
+      const displayValue = String(entity[displayField] || "");
+      if (!displayValue) continue;
+      const normalizedDisplay = normalizeLookupKey(displayValue);
+      if (normalizedDisplay) entries.set(normalizedDisplay, entity.id);
+    }
+  }
+
+  // Pass 2: index by the canonical lookup field (usually `code`). This
+  // overwrites any name collisions from pass 1, so `code` wins on tie.
   for (const entity of entities) {
     const lookupValue = String(entity[lookupField] || "");
     const normalizedLookupValue = normalizeLookupKey(lookupValue);
-    entries.set(normalizedLookupValue, entity.id);
+    if (normalizedLookupValue) {
+      entries.set(normalizedLookupValue, entity.id);
+    }
     reverseEntries.set(entity.id, lookupValue);
     allValues.push(lookupValue);
   }

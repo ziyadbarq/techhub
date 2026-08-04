@@ -5,7 +5,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, FolderTree, Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -29,10 +29,26 @@ export function AssetCategoryAssetsPageClient({
   category,
   initialAssets,
 }: AssetCategoryAssetsPageClientProps) {
+  const router = useRouter();
   const [assets, setAssets] = useState<AssetDTO[]>(initialAssets);
   const [isLoading, setIsLoading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<AssetDTO | null>(null);
+
+  const goBack = () => {
+    // Prefer real browser history so we land back on whichever page the
+    // user came from (Asset Models, Assets, or Asset Categories). Fall
+    // back to the categories list on direct URL entry (no referrer).
+    if (
+      typeof window !== "undefined" &&
+      window.history.length > 1 &&
+      document.referrer.startsWith(window.location.origin)
+    ) {
+      router.back();
+    } else {
+      router.push("/asset-categories");
+    }
+  };
 
   const loadAssets = useCallback(async () => {
     setIsLoading(true);
@@ -64,11 +80,14 @@ export function AssetCategoryAssetsPageClient({
     <div className="space-y-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div className="space-y-3">
-          <Button asChild variant="ghost" size="sm" className="gap-2 px-0">
-            <Link href="/asset-categories">
-              <ArrowLeft className="h-4 w-4" />
-              Asset Categories
-            </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-2 px-0"
+            onClick={goBack}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
           </Button>
           <div>
             <div className="flex flex-wrap items-center gap-2">

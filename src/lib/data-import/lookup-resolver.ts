@@ -34,7 +34,12 @@ export class LookupResolver {
   }
 
   /**
-   * Build lookup map from database records
+   * Build lookup map from database records.
+   *
+   * Indexes each record under BOTH its lookup field (usually `code`) and
+   * its display field (usually `name`) — normalized — so users can put
+   * either the code or the human label in their spreadsheet. Code wins
+   * on collision.
    */
   buildLookupMap(
     targetEntity: string,
@@ -46,11 +51,25 @@ export class LookupResolver {
     const reverseEntries = new Map<string, string>();
     const allValues: string[] = [];
 
-    for (const record of records) {
-      const lookupValue = String(record[lookupField]);
-      const id = String(record.id);
+    // Pass 1: display field (name) — lower priority.
+    if (displayField && displayField !== lookupField) {
+      for (const record of records) {
+        const displayValue = String(record[displayField] ?? "");
+        if (!displayValue) continue;
+        const normalizedDisplay = this.normalizeLookupKey(displayValue);
+        if (normalizedDisplay)
+          entries.set(normalizedDisplay, String(record.id));
+      }
+    }
 
-      entries.set(lookupValue, id);
+    // Pass 2: canonical lookup field (code) — overwrites on collision.
+    for (const record of records) {
+      const lookupValue = String(record[lookupField] ?? "");
+      const id = String(record.id);
+      const normalizedLookup = this.normalizeLookupKey(lookupValue);
+
+      if (lookupValue) entries.set(lookupValue, id);
+      if (normalizedLookup) entries.set(normalizedLookup, id);
       reverseEntries.set(id, lookupValue);
       allValues.push(lookupValue);
     }
