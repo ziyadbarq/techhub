@@ -227,6 +227,8 @@ export type RoleWhereInput = {
   permissions?: Prisma.RolePermissionListRelationFilter
   users?: Prisma.UserRoleListRelationFilter
   lifecycleTransitions?: Prisma.LifecycleTransitionListRelationFilter
+  watcherSubscriptions?: Prisma.WatcherSubscriptionListRelationFilter
+  formNotificationBindings?: Prisma.FormNotificationBindingListRelationFilter
 }
 
 export type RoleOrderByWithRelationInput = {
@@ -245,6 +247,8 @@ export type RoleOrderByWithRelationInput = {
   permissions?: Prisma.RolePermissionOrderByRelationAggregateInput
   users?: Prisma.UserRoleOrderByRelationAggregateInput
   lifecycleTransitions?: Prisma.LifecycleTransitionOrderByRelationAggregateInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionOrderByRelationAggregateInput
+  formNotificationBindings?: Prisma.FormNotificationBindingOrderByRelationAggregateInput
 }
 
 export type RoleWhereUniqueInput = Prisma.AtLeast<{
@@ -266,6 +270,8 @@ export type RoleWhereUniqueInput = Prisma.AtLeast<{
   permissions?: Prisma.RolePermissionListRelationFilter
   users?: Prisma.UserRoleListRelationFilter
   lifecycleTransitions?: Prisma.LifecycleTransitionListRelationFilter
+  watcherSubscriptions?: Prisma.WatcherSubscriptionListRelationFilter
+  formNotificationBindings?: Prisma.FormNotificationBindingListRelationFilter
 }, "id" | "name">
 
 export type RoleOrderByWithAggregationInput = {
@@ -315,6 +321,8 @@ export type RoleCreateInput = {
   permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput
   users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput
   lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutRoleInput
 }
 
 export type RoleUncheckedCreateInput = {
@@ -332,6 +340,8 @@ export type RoleUncheckedCreateInput = {
   permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput
   users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutRoleInput
 }
 
 export type RoleUpdateInput = {
@@ -349,6 +359,8 @@ export type RoleUpdateInput = {
   permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput
   users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleUncheckedUpdateInput = {
@@ -366,6 +378,8 @@ export type RoleUncheckedUpdateInput = {
   permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
   users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleCreateManyInput = {
@@ -567,6 +581,36 @@ export type RoleUpdateOneRequiredWithoutUsersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.RoleUpdateToOneWithWhereWithoutUsersInput, Prisma.RoleUpdateWithoutUsersInput>, Prisma.RoleUncheckedUpdateWithoutUsersInput>
 }
 
+export type RoleCreateNestedOneWithoutWatcherSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.RoleCreateWithoutWatcherSubscriptionsInput, Prisma.RoleUncheckedCreateWithoutWatcherSubscriptionsInput>
+  connectOrCreate?: Prisma.RoleCreateOrConnectWithoutWatcherSubscriptionsInput
+  connect?: Prisma.RoleWhereUniqueInput
+}
+
+export type RoleUpdateOneRequiredWithoutWatcherSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.RoleCreateWithoutWatcherSubscriptionsInput, Prisma.RoleUncheckedCreateWithoutWatcherSubscriptionsInput>
+  connectOrCreate?: Prisma.RoleCreateOrConnectWithoutWatcherSubscriptionsInput
+  upsert?: Prisma.RoleUpsertWithoutWatcherSubscriptionsInput
+  connect?: Prisma.RoleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RoleUpdateToOneWithWhereWithoutWatcherSubscriptionsInput, Prisma.RoleUpdateWithoutWatcherSubscriptionsInput>, Prisma.RoleUncheckedUpdateWithoutWatcherSubscriptionsInput>
+}
+
+export type RoleCreateNestedOneWithoutFormNotificationBindingsInput = {
+  create?: Prisma.XOR<Prisma.RoleCreateWithoutFormNotificationBindingsInput, Prisma.RoleUncheckedCreateWithoutFormNotificationBindingsInput>
+  connectOrCreate?: Prisma.RoleCreateOrConnectWithoutFormNotificationBindingsInput
+  connect?: Prisma.RoleWhereUniqueInput
+}
+
+export type RoleUpdateOneWithoutFormNotificationBindingsNestedInput = {
+  create?: Prisma.XOR<Prisma.RoleCreateWithoutFormNotificationBindingsInput, Prisma.RoleUncheckedCreateWithoutFormNotificationBindingsInput>
+  connectOrCreate?: Prisma.RoleCreateOrConnectWithoutFormNotificationBindingsInput
+  upsert?: Prisma.RoleUpsertWithoutFormNotificationBindingsInput
+  disconnect?: Prisma.RoleWhereInput | boolean
+  delete?: Prisma.RoleWhereInput | boolean
+  connect?: Prisma.RoleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RoleUpdateToOneWithWhereWithoutFormNotificationBindingsInput, Prisma.RoleUpdateWithoutFormNotificationBindingsInput>, Prisma.RoleUncheckedUpdateWithoutFormNotificationBindingsInput>
+}
+
 export type RoleCreateWithoutLifecycleTransitionsInput = {
   id?: string
   name: string
@@ -581,6 +625,8 @@ export type RoleCreateWithoutLifecycleTransitionsInput = {
   children?: Prisma.RoleCreateNestedManyWithoutParentInput
   permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput
   users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutRoleInput
 }
 
 export type RoleUncheckedCreateWithoutLifecycleTransitionsInput = {
@@ -597,6 +643,8 @@ export type RoleUncheckedCreateWithoutLifecycleTransitionsInput = {
   children?: Prisma.RoleUncheckedCreateNestedManyWithoutParentInput
   permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput
   users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutRoleInput
 }
 
 export type RoleCreateOrConnectWithoutLifecycleTransitionsInput = {
@@ -629,6 +677,8 @@ export type RoleUpdateWithoutLifecycleTransitionsInput = {
   children?: Prisma.RoleUpdateManyWithoutParentNestedInput
   permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput
   users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleUncheckedUpdateWithoutLifecycleTransitionsInput = {
@@ -645,6 +695,8 @@ export type RoleUncheckedUpdateWithoutLifecycleTransitionsInput = {
   children?: Prisma.RoleUncheckedUpdateManyWithoutParentNestedInput
   permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
   users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleCreateWithoutChildrenInput = {
@@ -661,6 +713,8 @@ export type RoleCreateWithoutChildrenInput = {
   permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput
   users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput
   lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutRoleInput
 }
 
 export type RoleUncheckedCreateWithoutChildrenInput = {
@@ -677,6 +731,8 @@ export type RoleUncheckedCreateWithoutChildrenInput = {
   permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput
   users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutRoleInput
 }
 
 export type RoleCreateOrConnectWithoutChildrenInput = {
@@ -698,6 +754,8 @@ export type RoleCreateWithoutParentInput = {
   permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput
   users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput
   lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutRoleInput
 }
 
 export type RoleUncheckedCreateWithoutParentInput = {
@@ -714,6 +772,8 @@ export type RoleUncheckedCreateWithoutParentInput = {
   permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput
   users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutRoleInput
 }
 
 export type RoleCreateOrConnectWithoutParentInput = {
@@ -751,6 +811,8 @@ export type RoleUpdateWithoutChildrenInput = {
   permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput
   users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleUncheckedUpdateWithoutChildrenInput = {
@@ -767,6 +829,8 @@ export type RoleUncheckedUpdateWithoutChildrenInput = {
   permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
   users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleUpsertWithWhereUniqueWithoutParentInput = {
@@ -815,6 +879,8 @@ export type RoleCreateWithoutPermissionsInput = {
   children?: Prisma.RoleCreateNestedManyWithoutParentInput
   users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput
   lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutRoleInput
 }
 
 export type RoleUncheckedCreateWithoutPermissionsInput = {
@@ -831,6 +897,8 @@ export type RoleUncheckedCreateWithoutPermissionsInput = {
   children?: Prisma.RoleUncheckedCreateNestedManyWithoutParentInput
   users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutRoleInput
 }
 
 export type RoleCreateOrConnectWithoutPermissionsInput = {
@@ -863,6 +931,8 @@ export type RoleUpdateWithoutPermissionsInput = {
   children?: Prisma.RoleUpdateManyWithoutParentNestedInput
   users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleUncheckedUpdateWithoutPermissionsInput = {
@@ -879,6 +949,8 @@ export type RoleUncheckedUpdateWithoutPermissionsInput = {
   children?: Prisma.RoleUncheckedUpdateManyWithoutParentNestedInput
   users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleCreateWithoutUsersInput = {
@@ -895,6 +967,8 @@ export type RoleCreateWithoutUsersInput = {
   children?: Prisma.RoleCreateNestedManyWithoutParentInput
   permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput
   lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutRoleInput
 }
 
 export type RoleUncheckedCreateWithoutUsersInput = {
@@ -911,6 +985,8 @@ export type RoleUncheckedCreateWithoutUsersInput = {
   children?: Prisma.RoleUncheckedCreateNestedManyWithoutParentInput
   permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutRoleInput
 }
 
 export type RoleCreateOrConnectWithoutUsersInput = {
@@ -943,6 +1019,8 @@ export type RoleUpdateWithoutUsersInput = {
   children?: Prisma.RoleUpdateManyWithoutParentNestedInput
   permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleUncheckedUpdateWithoutUsersInput = {
@@ -959,6 +1037,184 @@ export type RoleUncheckedUpdateWithoutUsersInput = {
   children?: Prisma.RoleUncheckedUpdateManyWithoutParentNestedInput
   permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutRoleNestedInput
+}
+
+export type RoleCreateWithoutWatcherSubscriptionsInput = {
+  id?: string
+  name: string
+  displayName: string
+  description?: string | null
+  isSystem?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  parent?: Prisma.RoleCreateNestedOneWithoutChildrenInput
+  children?: Prisma.RoleCreateNestedManyWithoutParentInput
+  permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput
+  users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput
+  lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutRoleInput
+}
+
+export type RoleUncheckedCreateWithoutWatcherSubscriptionsInput = {
+  id?: string
+  name: string
+  displayName: string
+  description?: string | null
+  isSystem?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  parentId?: string | null
+  children?: Prisma.RoleUncheckedCreateNestedManyWithoutParentInput
+  permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput
+  users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutRoleInput
+}
+
+export type RoleCreateOrConnectWithoutWatcherSubscriptionsInput = {
+  where: Prisma.RoleWhereUniqueInput
+  create: Prisma.XOR<Prisma.RoleCreateWithoutWatcherSubscriptionsInput, Prisma.RoleUncheckedCreateWithoutWatcherSubscriptionsInput>
+}
+
+export type RoleUpsertWithoutWatcherSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.RoleUpdateWithoutWatcherSubscriptionsInput, Prisma.RoleUncheckedUpdateWithoutWatcherSubscriptionsInput>
+  create: Prisma.XOR<Prisma.RoleCreateWithoutWatcherSubscriptionsInput, Prisma.RoleUncheckedCreateWithoutWatcherSubscriptionsInput>
+  where?: Prisma.RoleWhereInput
+}
+
+export type RoleUpdateToOneWithWhereWithoutWatcherSubscriptionsInput = {
+  where?: Prisma.RoleWhereInput
+  data: Prisma.XOR<Prisma.RoleUpdateWithoutWatcherSubscriptionsInput, Prisma.RoleUncheckedUpdateWithoutWatcherSubscriptionsInput>
+}
+
+export type RoleUpdateWithoutWatcherSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parent?: Prisma.RoleUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.RoleUpdateManyWithoutParentNestedInput
+  permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput
+  users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput
+  lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutRoleNestedInput
+}
+
+export type RoleUncheckedUpdateWithoutWatcherSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  children?: Prisma.RoleUncheckedUpdateManyWithoutParentNestedInput
+  permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
+  users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutRoleNestedInput
+}
+
+export type RoleCreateWithoutFormNotificationBindingsInput = {
+  id?: string
+  name: string
+  displayName: string
+  description?: string | null
+  isSystem?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  parent?: Prisma.RoleCreateNestedOneWithoutChildrenInput
+  children?: Prisma.RoleCreateNestedManyWithoutParentInput
+  permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput
+  users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput
+  lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutRoleInput
+}
+
+export type RoleUncheckedCreateWithoutFormNotificationBindingsInput = {
+  id?: string
+  name: string
+  displayName: string
+  description?: string | null
+  isSystem?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  parentId?: string | null
+  children?: Prisma.RoleUncheckedCreateNestedManyWithoutParentInput
+  permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput
+  users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutRoleInput
+}
+
+export type RoleCreateOrConnectWithoutFormNotificationBindingsInput = {
+  where: Prisma.RoleWhereUniqueInput
+  create: Prisma.XOR<Prisma.RoleCreateWithoutFormNotificationBindingsInput, Prisma.RoleUncheckedCreateWithoutFormNotificationBindingsInput>
+}
+
+export type RoleUpsertWithoutFormNotificationBindingsInput = {
+  update: Prisma.XOR<Prisma.RoleUpdateWithoutFormNotificationBindingsInput, Prisma.RoleUncheckedUpdateWithoutFormNotificationBindingsInput>
+  create: Prisma.XOR<Prisma.RoleCreateWithoutFormNotificationBindingsInput, Prisma.RoleUncheckedCreateWithoutFormNotificationBindingsInput>
+  where?: Prisma.RoleWhereInput
+}
+
+export type RoleUpdateToOneWithWhereWithoutFormNotificationBindingsInput = {
+  where?: Prisma.RoleWhereInput
+  data: Prisma.XOR<Prisma.RoleUpdateWithoutFormNotificationBindingsInput, Prisma.RoleUncheckedUpdateWithoutFormNotificationBindingsInput>
+}
+
+export type RoleUpdateWithoutFormNotificationBindingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parent?: Prisma.RoleUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.RoleUpdateManyWithoutParentNestedInput
+  permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput
+  users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput
+  lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutRoleNestedInput
+}
+
+export type RoleUncheckedUpdateWithoutFormNotificationBindingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  children?: Prisma.RoleUncheckedUpdateManyWithoutParentNestedInput
+  permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
+  users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleCreateManyParentInput = {
@@ -987,6 +1243,8 @@ export type RoleUpdateWithoutParentInput = {
   permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput
   users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleUncheckedUpdateWithoutParentInput = {
@@ -1003,6 +1261,8 @@ export type RoleUncheckedUpdateWithoutParentInput = {
   permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
   users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput
   lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutRoleNestedInput
+  formNotificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutRoleNestedInput
 }
 
 export type RoleUncheckedUpdateManyWithoutParentInput = {
@@ -1027,6 +1287,8 @@ export type RoleCountOutputType = {
   permissions: number
   users: number
   lifecycleTransitions: number
+  watcherSubscriptions: number
+  formNotificationBindings: number
 }
 
 export type RoleCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1034,6 +1296,8 @@ export type RoleCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   permissions?: boolean | RoleCountOutputTypeCountPermissionsArgs
   users?: boolean | RoleCountOutputTypeCountUsersArgs
   lifecycleTransitions?: boolean | RoleCountOutputTypeCountLifecycleTransitionsArgs
+  watcherSubscriptions?: boolean | RoleCountOutputTypeCountWatcherSubscriptionsArgs
+  formNotificationBindings?: boolean | RoleCountOutputTypeCountFormNotificationBindingsArgs
 }
 
 /**
@@ -1074,6 +1338,20 @@ export type RoleCountOutputTypeCountLifecycleTransitionsArgs<ExtArgs extends run
   where?: Prisma.LifecycleTransitionWhereInput
 }
 
+/**
+ * RoleCountOutputType without action
+ */
+export type RoleCountOutputTypeCountWatcherSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WatcherSubscriptionWhereInput
+}
+
+/**
+ * RoleCountOutputType without action
+ */
+export type RoleCountOutputTypeCountFormNotificationBindingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FormNotificationBindingWhereInput
+}
+
 
 export type RoleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1091,6 +1369,8 @@ export type RoleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   permissions?: boolean | Prisma.Role$permissionsArgs<ExtArgs>
   users?: boolean | Prisma.Role$usersArgs<ExtArgs>
   lifecycleTransitions?: boolean | Prisma.Role$lifecycleTransitionsArgs<ExtArgs>
+  watcherSubscriptions?: boolean | Prisma.Role$watcherSubscriptionsArgs<ExtArgs>
+  formNotificationBindings?: boolean | Prisma.Role$formNotificationBindingsArgs<ExtArgs>
   _count?: boolean | Prisma.RoleCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["role"]>
 
@@ -1142,6 +1422,8 @@ export type RoleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   permissions?: boolean | Prisma.Role$permissionsArgs<ExtArgs>
   users?: boolean | Prisma.Role$usersArgs<ExtArgs>
   lifecycleTransitions?: boolean | Prisma.Role$lifecycleTransitionsArgs<ExtArgs>
+  watcherSubscriptions?: boolean | Prisma.Role$watcherSubscriptionsArgs<ExtArgs>
+  formNotificationBindings?: boolean | Prisma.Role$formNotificationBindingsArgs<ExtArgs>
   _count?: boolean | Prisma.RoleCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RoleIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1159,6 +1441,8 @@ export type $RolePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     permissions: Prisma.$RolePermissionPayload<ExtArgs>[]
     users: Prisma.$UserRolePayload<ExtArgs>[]
     lifecycleTransitions: Prisma.$LifecycleTransitionPayload<ExtArgs>[]
+    watcherSubscriptions: Prisma.$WatcherSubscriptionPayload<ExtArgs>[]
+    formNotificationBindings: Prisma.$FormNotificationBindingPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1570,6 +1854,8 @@ export interface Prisma__RoleClient<T, Null = never, ExtArgs extends runtime.Typ
   permissions<T extends Prisma.Role$permissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Role$permissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   users<T extends Prisma.Role$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Role$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   lifecycleTransitions<T extends Prisma.Role$lifecycleTransitionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Role$lifecycleTransitionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LifecycleTransitionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  watcherSubscriptions<T extends Prisma.Role$watcherSubscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Role$watcherSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WatcherSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  formNotificationBindings<T extends Prisma.Role$formNotificationBindingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Role$formNotificationBindingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormNotificationBindingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2122,6 +2408,54 @@ export type Role$lifecycleTransitionsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.LifecycleTransitionScalarFieldEnum | Prisma.LifecycleTransitionScalarFieldEnum[]
+}
+
+/**
+ * Role.watcherSubscriptions
+ */
+export type Role$watcherSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WatcherSubscription
+   */
+  select?: Prisma.WatcherSubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WatcherSubscription
+   */
+  omit?: Prisma.WatcherSubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WatcherSubscriptionInclude<ExtArgs> | null
+  where?: Prisma.WatcherSubscriptionWhereInput
+  orderBy?: Prisma.WatcherSubscriptionOrderByWithRelationInput | Prisma.WatcherSubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.WatcherSubscriptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WatcherSubscriptionScalarFieldEnum | Prisma.WatcherSubscriptionScalarFieldEnum[]
+}
+
+/**
+ * Role.formNotificationBindings
+ */
+export type Role$formNotificationBindingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FormNotificationBinding
+   */
+  select?: Prisma.FormNotificationBindingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FormNotificationBinding
+   */
+  omit?: Prisma.FormNotificationBindingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormNotificationBindingInclude<ExtArgs> | null
+  where?: Prisma.FormNotificationBindingWhereInput
+  orderBy?: Prisma.FormNotificationBindingOrderByWithRelationInput | Prisma.FormNotificationBindingOrderByWithRelationInput[]
+  cursor?: Prisma.FormNotificationBindingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FormNotificationBindingScalarFieldEnum | Prisma.FormNotificationBindingScalarFieldEnum[]
 }
 
 /**

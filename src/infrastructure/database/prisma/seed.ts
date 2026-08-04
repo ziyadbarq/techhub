@@ -28,6 +28,7 @@ import { seedLayer3ITAM } from "./seed-layer3-itam.js";
 import { seedAttachments } from "./seed-attachments.js";
 import { seedGovernance } from "./seed-governance.js";
 import { seedLicenses } from "./seed-licenses.js";
+import { seedWorkflowsStarter } from "./seed-workflows-starter.js";
 import {
   seedBusinessProcesses,
   seedServices,
@@ -160,6 +161,15 @@ async function main() {
       // License products depend on vendors (foundation layer)
       await seedLicenses(prisma);
       seeded.push("License Products (Microsoft 365)");
+      console.log("");
+    }
+
+    // 7.6. Seed Workflow Starter (TechHub-domain forms + workflows)
+    if (shouldSeed(SeedModule.WORKFLOWS_STARTER)) {
+      await seedWorkflowsStarter(prisma);
+      seeded.push(
+        "Workflow Starter (Asset/Access/Vendor/Change forms + workflows)",
+      );
       console.log("");
     }
 

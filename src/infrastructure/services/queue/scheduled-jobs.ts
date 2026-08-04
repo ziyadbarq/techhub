@@ -12,6 +12,7 @@ import {
   RESERVATION_JOBS,
   MAINTENANCE_JOBS,
   REPORT_JOBS,
+  WORKFLOW_JOBS,
 } from "@/core/domain/jobs/job-names";
 import type {
   CleanupOldTasksJobData,
@@ -19,7 +20,10 @@ import type {
   IntuneSyncJobData,
   OciSyncJobData,
   DetectStaleCIsJobData,
+  WorkflowTickJobData,
 } from "@/core/domain/jobs/job-data.types";
+import { isFeatureEnabled } from "@/lib/features/server";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services";
@@ -287,6 +291,54 @@ export async function setupScheduledJobs(
     timezone: "UTC",
     jobName: MAINTENANCE_JOBS.HEALTH_CHECK,
   });
+
+  // ==========================================
+  // Workflow Engine Cron Ticks
+  // ==========================================
+  // Gated by WORKFLOW_ENGINE feature flag — skip scheduling when disabled
+  // so installs without the engine don't see noise in BullMQ.
+  const workflowEnabled = await isFeatureEnabled(FEATURE_FLAGS.WORKFLOW_ENGINE);
+  if (workflowEnabled) {
+    const workflowTickData: WorkflowTickJobData = {
+      origin: "cron",
+      createdAt: Date.now(),
+    };
+
+    // SLA escalation: scan every 2 minutes
+    await jobQueueService.scheduleJob(
+      QUEUE_NAMES.WORKFLOW,
+      WORKFLOW_JOBS.SLA_TICK,
+      workflowTickData,
+      { pattern: "*/2 * * * *", tz: "UTC" },
+    );
+
+    // Schedule step advancement: scan every minute (windows can be short)
+    await jobQueueService.scheduleJob(
+      QUEUE_NAMES.WORKFLOW,
+      WORKFLOW_JOBS.SCHEDULE_TICK,
+      workflowTickData,
+      { pattern: "* * * * *", tz: "UTC" },
+    );
+
+    // Entry automation: every 5 minutes
+    await jobQueueService.scheduleJob(
+      QUEUE_NAMES.WORKFLOW,
+      WORKFLOW_JOBS.ENTRY_AUTOMATION_TICK,
+      workflowTickData,
+      { pattern: "*/5 * * * *", tz: "UTC" },
+    );
+
+    logger.info("Workflow engine cron ticks scheduled", {
+      slaPattern: "*/2 * * * *",
+      schedulePattern: "* * * * *",
+      entryAutomationPattern: "*/5 * * * *",
+      timezone: "UTC",
+    });
+  } else {
+    logger.info(
+      "Skipping workflow engine cron ticks — WORKFLOW_ENGINE feature flag is disabled",
+    );
+  }
 
   logger.info("All scheduled jobs configured successfully");
 }

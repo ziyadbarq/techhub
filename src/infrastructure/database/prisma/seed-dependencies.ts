@@ -15,6 +15,7 @@ export enum SeedModule {
   SERVICES = "SERVICES",
   CMDB = "CMDB",
   ATTACHMENTS_GOVERNANCE = "ATTACHMENTS_GOVERNANCE",
+  WORKFLOWS_STARTER = "WORKFLOWS_STARTER",
 
   // Demo-only modules
   DEMO_PERSONS = "DEMO_PERSONS",
@@ -143,6 +144,23 @@ export const MODULE_METADATA: Record<SeedModule, SeedModuleMetadata> = {
       "VerificationCampaign",
       "DataOwnership",
       "DataDomain",
+    ],
+  },
+
+  [SeedModule.WORKFLOWS_STARTER]: {
+    key: SeedModule.WORKFLOWS_STARTER,
+    name: "Workflow Starter (TechHub domain)",
+    description:
+      "Ready-to-use forms + workflows: Asset Request, Access Request, Vendor Onboarding, CI Change",
+    estimatedTime: 2,
+    dependencies: [SeedModule.RBAC],
+    tables: [
+      "FormField",
+      "FormVersion",
+      "Form",
+      "WorkflowStep",
+      "WorkflowVersion",
+      "WorkflowDefinition",
     ],
   },
 
@@ -409,6 +427,7 @@ export const BUILTIN_PRESETS: SeedPreset[] = [
       SeedModule.ASSET_CONFIG,
       SeedModule.CMDB,
       SeedModule.ATTACHMENTS_GOVERNANCE,
+      SeedModule.WORKFLOWS_STARTER,
       // Note: SERVICES removed - use scripts/import-services.ts for real services
     ],
   },

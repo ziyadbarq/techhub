@@ -249,6 +249,15 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     isSystem: false,
     dependsOn: ["FOUNDATION"],
   },
+  {
+    name: "WORKFLOW_ENGINE",
+    displayName: "Workflow Engine",
+    description:
+      "Generic configurable workflow engine for request-based processes (Change Management, Access Requests, Vendor Onboarding, etc.). Powers /workflows routes, the engine DI bindings, and the SLA/automation cron jobs. Forms and workflow definitions are loaded as seed data on top of the engine.",
+    category: "LAYER_3",
+    isSystem: false,
+    dependsOn: ["RBAC", "FOUNDATION"],
+  },
 ];
 
 /**

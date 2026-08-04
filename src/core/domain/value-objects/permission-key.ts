@@ -404,6 +404,56 @@ export const PERMISSIONS = {
   REPORTS_EXPORT: "reports:export",
   REPORTS_SCHEDULE: "reports:schedule",
   REPORTS_MANAGE: "reports:manage",
+
+  // ==========================================
+  // Workflow Engine (Layer 3 - feature flag: WORKFLOW_ENGINE)
+  // ==========================================
+
+  // Forms (admin)
+  WORKFLOWS_FORMS_VIEW: "workflows-forms:view",
+  WORKFLOWS_FORMS_CREATE: "workflows-forms:create",
+  WORKFLOWS_FORMS_UPDATE: "workflows-forms:update",
+  WORKFLOWS_FORMS_DELETE: "workflows-forms:delete",
+  WORKFLOWS_FORMS_PUBLISH: "workflows-forms:publish",
+  WORKFLOWS_FORMS_MANAGE_NOTIFICATIONS: "workflows-forms:manage-notifications",
+
+  // Workflow definitions (admin)
+  WORKFLOWS_DEFINITIONS_VIEW: "workflows-definitions:view",
+  WORKFLOWS_DEFINITIONS_CREATE: "workflows-definitions:create",
+  WORKFLOWS_DEFINITIONS_UPDATE: "workflows-definitions:update",
+  WORKFLOWS_DEFINITIONS_DELETE: "workflows-definitions:delete",
+  WORKFLOWS_DEFINITIONS_PUBLISH: "workflows-definitions:publish",
+
+  // Requests (everyday)
+  WORKFLOWS_REQUESTS_VIEW: "workflows-requests:view",
+  WORKFLOWS_REQUESTS_VIEW_OWN: "workflows-requests:view:own",
+  WORKFLOWS_REQUESTS_SUBMIT: "workflows-requests:submit",
+  WORKFLOWS_REQUESTS_ACT: "workflows-requests:act",
+  WORKFLOWS_REQUESTS_COMMENT: "workflows-requests:comment",
+  WORKFLOWS_REQUESTS_ATTACH: "workflows-requests:attach",
+  WORKFLOWS_REQUESTS_CANCEL: "workflows-requests:cancel",
+  WORKFLOWS_REQUESTS_CANCEL_OWN: "workflows-requests:cancel:own",
+  WORKFLOWS_REQUESTS_HOLD: "workflows-requests:hold",
+  WORKFLOWS_REQUESTS_OVERRIDE: "workflows-requests:override",
+  WORKFLOWS_REQUESTS_REASSIGN: "workflows-requests:reassign",
+
+  // Inbox / Notifications / Analytics / Audit
+  WORKFLOWS_INBOX_VIEW: "workflows-inbox:view",
+  WORKFLOWS_NOTIFICATIONS_VIEW: "workflows-notifications:view",
+  WORKFLOWS_ANALYTICS_VIEW: "workflows-analytics:view",
+  WORKFLOWS_AUDIT_EXPORT: "workflows-audit:export",
+
+  // Reference data (admin)
+  WORKFLOWS_CALENDARS_VIEW: "workflows-calendars:view",
+  WORKFLOWS_CALENDARS_MANAGE: "workflows-calendars:manage",
+  WORKFLOWS_HOLD_REASONS_MANAGE: "workflows-hold-reasons:manage",
+  WORKFLOWS_OUTCOME_CODES_MANAGE: "workflows-outcome-codes:manage",
+  WORKFLOWS_REJECTION_POLICIES_MANAGE: "workflows-rejection-policies:manage",
+  WORKFLOWS_EMAIL_TEMPLATES_MANAGE: "workflows-email-templates:manage",
+  WORKFLOWS_DELEGATIONS_MANAGE: "workflows-delegations:manage",
+  WORKFLOWS_BLACKOUT_PERIODS_MANAGE: "workflows-blackout-periods:manage",
+  WORKFLOWS_MAINTENANCE_WINDOWS_MANAGE: "workflows-maintenance-windows:manage",
+  WORKFLOWS_WATCHERS_MANAGE: "workflows-watchers:manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

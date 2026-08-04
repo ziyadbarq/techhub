@@ -58,12 +58,29 @@ export const REPORT_JOBS = {
 } as const;
 
 /**
+ * Workflow engine cron tick job names
+ *
+ * Three cron-driven jobs power the engine's time-based behavior:
+ *   - SLA_TICK: scans active steps + fires escalation rules
+ *   - SCHEDULE_TICK: advances SCHEDULE steps when their window opens
+ *   - ENTRY_AUTOMATION_TICK: runs entry-automation handlers on matching requests
+ *
+ * All three are gated at scheduling time by the WORKFLOW_ENGINE feature flag.
+ */
+export const WORKFLOW_JOBS = {
+  SLA_TICK: "workflow-sla-tick",
+  SCHEDULE_TICK: "workflow-schedule-tick",
+  ENTRY_AUTOMATION_TICK: "workflow-entry-automation-tick",
+} as const;
+
+/**
  * Queue names
  */
 export const QUEUE_NAMES = {
   EMAIL: "email",
   TASKS: "tasks",
   MAINTENANCE: "maintenance",
+  WORKFLOW: "workflow",
 } as const;
 
 /**
@@ -76,4 +93,6 @@ export type MaintenanceJobName =
 export type ReservationJobName =
   (typeof RESERVATION_JOBS)[keyof typeof RESERVATION_JOBS];
 export type ReportJobName = (typeof REPORT_JOBS)[keyof typeof REPORT_JOBS];
+export type WorkflowJobName =
+  (typeof WORKFLOW_JOBS)[keyof typeof WORKFLOW_JOBS];
 export type QueueName = (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES];

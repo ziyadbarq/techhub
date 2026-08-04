@@ -1,0 +1,166 @@
+// ============================================
+// WORKFLOW REFERENCE DATA
+// (Calendars, Maintenance Windows, Blackouts, Hold Reasons, Outcome Codes,
+//  Delegations, Watchers)
+// ============================================
+//
+// Models: Calendar, MaintenanceWindow, BlackoutPeriod, HoldReason,
+//         OutcomeCode, Delegation, Watcher, WatcherSubscription,
+//         WatcherChannelPreference
+// Enums:  BlackoutBehavior, WatcherChannel
+// Layer:  Layer 3 / Workflow Engine
+// Related DI Module: workflow.module.ts
+// Feature Flag: WORKFLOW_ENGINE
+// ============================================
+
+enum BlackoutBehavior {
+  BLOCK
+  WARN
+  IGNORE
+
+  @@map("blackout_behavior")
+}
+
+enum WatcherChannel {
+  IN_APP
+  EMAIL
+  BOTH
+  MUTED
+
+  @@map("watcher_channel")
+}
+
+model Calendar {
+  id               String   @id @default(cuid())
+  name             String
+  timezone         String   @default("UTC")
+  workingHoursJson Json
+  holidaysJson     Json
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([name])
+  @@map("calendars")
+}
+
+model MaintenanceWindow {
+  id             String   @id @default(cuid())
+  name           String
+  recurrenceJson Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([name])
+  @@map("maintenance_windows")
+}
+
+model BlackoutPeriod {
+  id        String           @id @default(cuid())
+  name      String
+  startsAt  DateTime
+  endsAt    DateTime
+  behavior  BlackoutBehavior @default(BLOCK)
+  reason    String?
+  createdAt DateTime         @default(now())
+
+  @@index([startsAt, endsAt])
+  @@map("blackout_periods")
+}
+
+model HoldReason {
+  id        String   @id @default(cuid())
+  key       String
+  label     String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  requests Request[]
+
+  @@unique([key])
+  @@map("hold_reasons")
+}
+
+/// Module/form-declared outcome codes (PRD §10.2). Sit ALONGSIDE the generic
+/// RequestOutcome enum and provide finer-grained domain semantics. Each code
+/// maps to exactly one generic outcome (so cross-module reporting still works).
+///
+/// Examples: ROLLED_BACK (maps to UNSUCCESSFUL), DEFERRED (WITHDRAWN),
+///           PARTIALLY_ROLLED_BACK (SUCCESSFUL_WITH_ISSUES).
+model OutcomeCode {
+  id          String         @id @default(cuid())
+  /// Machine-readable key (e.g., "ROLLED_BACK").
+  key         String
+  label       String
+  description String?
+  /// The canonical generic outcome this code maps to for reporting.
+  genericOutcome RequestOutcome
+  /// When set, this code is only offered for the named form (per-form scoping).
+  formId      String?
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  form     Form?     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  requests Request[]
+
+  @@unique([key])
+  @@index([formId, isActive])
+  @@map("outcome_codes")
+}
+
+model Delegation {
+  id         String    @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  startsAt   DateTime
+  endsAt     DateTime?
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  fromUser User @relation("DelegationFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User @relation("DelegationTo", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@index([fromUserId, isActive])
+  @@map("delegations")
+}
+
+model Watcher {
+  id        String   @id @default(cuid())
+  requestId String
+  userId    String
+  reason    String
+  createdAt DateTime @default(now())
+
+  request Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([requestId, userId])
+  @@map("watchers")
+}
+
+model WatcherSubscription {
+  id        String   @id @default(cuid())
+  formId    String
+  roleId    String
+  createdAt DateTime @default(now())
+
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([formId, roleId])
+  @@map("watcher_subscriptions")
+}
+
+model WatcherChannelPreference {
+  id      String         @id @default(cuid())
+  userId  String
+  formId  String
+  channel WatcherChannel @default(IN_APP)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, formId])
+  @@map("watcher_channel_preferences")
+}

@@ -272,6 +272,14 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Tell the browser which theme to use for UA-controlled UI (native
+     <input type="time">/date pickers, scrollbars, form autofill, etc.). */
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
 }
 
 /* ============================================
@@ -297,6 +305,74 @@
   /* Focus visible states for accessibility */
   .focus-ring {
     @apply focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none;
+  }
+
+  /* ============================================
+     Custom checkbox (Flowbit / workflows)
+     ============================================
+     Replaces the OS-native square with a themed one that:
+     - uses --color-canvas / --color-hairline in idle state,
+     - fills brand-yellow with an ink checkmark when checked,
+     - respects focus/disabled/theme.
+     Consumed via <input type="checkbox" class="custom-checkbox" />. */
+  .custom-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    border-radius: 4px;
+    border: 1.5px solid var(--color-hairline-strong);
+    background-color: var(--color-canvas);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+    position: relative;
+    vertical-align: middle;
+  }
+  .custom-checkbox:hover:not(:disabled) {
+    border-color: var(--color-brand-yellow-deep);
+  }
+  .custom-checkbox:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px
+      color-mix(in oklch, var(--color-brand-yellow) 40%, transparent);
+    border-color: var(--color-brand-yellow-deep);
+  }
+  .custom-checkbox:checked {
+    background-color: var(--color-brand-yellow);
+    border-color: var(--color-brand-yellow-deep);
+  }
+  .custom-checkbox:checked::after {
+    content: "";
+    width: 0.35rem;
+    height: 0.65rem;
+    border: solid var(--color-ink-deep);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-1px, -1px);
+    display: block;
+  }
+  .custom-checkbox:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    background-color: var(--color-surface-soft);
+  }
+  .custom-checkbox:indeterminate {
+    background-color: var(--color-brand-yellow);
+    border-color: var(--color-brand-yellow-deep);
+  }
+  .custom-checkbox:indeterminate::after {
+    content: "";
+    width: 0.6rem;
+    height: 2px;
+    background-color: var(--color-ink-deep);
+    border: 0;
+    transform: none;
   }
 }
 
@@ -457,3 +533,348 @@
    Code block syntax highlighting theme
    ============================================ */
 @import "highlight.js/styles/github-dark.css";
+
+/* ============================================
+   FLOWBIT WORKFLOW DESIGN LAYER (Miro-style)
+   ============================================
+   Tokens, typography utilities, and helpers used
+   by the workflows module (src/components/design,
+   src/components/workflows, src/app/(dashboard)/workflows).
+   ============================================ */
+:root {
+  /* Brand & accents */
+  --color-on-primary: #ffffff;
+  /* Contrast foreground for surfaces painted with --color-ink */
+  --color-on-ink: #ffffff;
+  --color-brand-yellow: #ffd02f;
+  --color-brand-yellow-deep: #fcb900;
+  --color-yellow-light: #fff4c4;
+  --color-yellow-dark: #746019;
+  --color-brand-blue: #4262ff;
+  --color-blue-450: #5b76fe;
+  --color-blue-pressed: #2a41b6;
+  --color-brand-coral: #ff9999;
+  --color-coral-light: #ffc6c6;
+  --color-coral-dark: #600000;
+  --color-brand-rose: #ffd8f4;
+  --color-rose-light: #fde0f0;
+  --color-brand-pink: #fde0f0;
+  --color-brand-teal: #0fbcb0;
+  --color-teal-light: #c3faf5;
+  --color-moss-dark: #187574;
+  --color-brand-orange-light: #ffe6cd;
+  --color-brand-red: #fbd4d4;
+  --color-brand-red-dark: #e3c5c5;
+  --color-success-accent: #00b473;
+
+  /* Extended pastel palette */
+  --color-sky-light: #d6e8ff;
+  --color-mint-light: #d4f5dd;
+  --color-blush-light: #ffd8e2;
+  --color-lemon-light: #fff4c4;
+  --color-sand-light: #f0e6d2;
+  --color-lilac-light: #e4d8ff;
+
+  /* Workflow surfaces */
+  --color-canvas: #ffffff;
+  --color-surface-flowbit: #f7f8fa;
+  --color-surface-soft: #fafbfc;
+  --color-surface-yellow: #fff8e0;
+  --color-surface-pricing-featured: #f5f3ff;
+  --color-hairline: #e0e2e8;
+  --color-hairline-soft: #eef0f3;
+  --color-hairline-strong: #c7cad5;
+
+  /* Text */
+  --color-ink-deep: #050038;
+  --color-ink: #1c1c1e;
+  --color-charcoal: #2c2c34;
+  --color-slate: #555a6a;
+  --color-steel: #6b6f7e;
+  --color-stone: #8e91a0;
+  --color-flowbit-muted: #a5a8b5;
+
+  /* Shadows */
+  --shadow-1: rgba(5, 0, 56, 0.04) 0 1px 2px 0;
+  --shadow-2: rgba(5, 0, 56, 0.06) 0 4px 12px 0;
+  --shadow-3: rgba(5, 0, 56, 0.08) 0 12px 32px -4px;
+  --shadow-4: rgba(5, 0, 56, 0.12) 0 16px 48px -8px;
+
+  /* Select chevron (used by native <select> in workflow forms) */
+  --select-chevron: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231c1c1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+
+  /* Chart palette (Recharts tooltip surface / axis text) */
+  --chart-tooltip-bg: rgba(28, 28, 30, 0.95);
+  --chart-tooltip-fg: #ffffff;
+  --chart-axis-tick: #8e91a0;
+  --chart-legend-fg: #555a6a;
+  --chart-grid: rgba(224, 226, 232, 0.6);
+  --chart-pie-stroke: #ffffff;
+}
+
+/* Dark-mode overrides for the Flowbit / workflows design layer so the
+   module honours the same theme switch as the rest of techhub. */
+.dark {
+  /* Workflow surfaces - align with techhub --background/--card */
+  --color-canvas: oklch(0.2 0 0);
+  --color-surface-flowbit: oklch(0.23 0 0);
+  --color-surface-soft: oklch(0.25 0 0);
+  --color-surface-yellow: oklch(0.32 0.05 90);
+  --color-surface-pricing-featured: oklch(0.28 0.03 280);
+
+  /* Hairlines / borders */
+  --color-hairline: oklch(1 0 0 / 15%);
+  --color-hairline-soft: oklch(1 0 0 / 8%);
+  --color-hairline-strong: oklch(1 0 0 / 25%);
+
+  /* Text - inverted from light so ink reads on dark canvas */
+  --color-ink-deep: oklch(0.985 0 0);
+  --color-ink: oklch(0.95 0 0);
+  /* On-ink inverts too: dark text on light "ink" surface */
+  --color-on-ink: oklch(0.2 0 0);
+
+  /* Solid brand accents - dimmed a step so light text reads on top */
+  --color-brand-yellow: oklch(0.72 0.14 90);
+  --color-brand-yellow-deep: oklch(0.65 0.15 85);
+  --color-brand-blue: oklch(0.55 0.2 265);
+  --color-blue-pressed: oklch(0.45 0.18 265);
+  --color-brand-teal: oklch(0.55 0.11 190);
+  --color-brand-coral: oklch(0.68 0.14 20);
+  --color-success-accent: oklch(0.6 0.16 155);
+  --color-charcoal: oklch(0.85 0 0);
+  --color-slate: oklch(0.72 0 0);
+  --color-steel: oklch(0.62 0 0);
+  --color-stone: oklch(0.55 0 0);
+  --color-flowbit-muted: oklch(0.5 0 0);
+
+  /* Pastel accent tints - darker + less saturated for dark backgrounds */
+  --color-yellow-light: oklch(0.32 0.07 90);
+  --color-teal-light: oklch(0.32 0.07 180);
+  --color-coral-light: oklch(0.32 0.07 20);
+  --color-rose-light: oklch(0.32 0.04 340);
+  --color-brand-rose: oklch(0.32 0.04 340);
+  --color-brand-pink: oklch(0.32 0.04 340);
+  --color-brand-red: oklch(0.32 0.06 20);
+  --color-brand-red-dark: oklch(0.35 0.06 20);
+  --color-brand-orange-light: oklch(0.32 0.07 55);
+  --color-sky-light: oklch(0.32 0.06 240);
+  --color-mint-light: oklch(0.32 0.07 145);
+  --color-blush-light: oklch(0.32 0.05 350);
+  --color-sand-light: oklch(0.32 0.03 70);
+  --color-lilac-light: oklch(0.32 0.06 290);
+  --color-lemon-light: oklch(0.32 0.07 90);
+  --color-yellow-dark: oklch(0.85 0.14 90);
+  --color-coral-dark: oklch(0.82 0.14 20);
+
+  /* Shadows - dark mode uses solid black for depth */
+  --shadow-1: rgba(0, 0, 0, 0.35) 0 1px 2px 0;
+  --shadow-2: rgba(0, 0, 0, 0.45) 0 4px 12px 0;
+  --shadow-3: rgba(0, 0, 0, 0.55) 0 12px 32px -4px;
+  --shadow-4: rgba(0, 0, 0, 0.65) 0 16px 48px -8px;
+
+  /* Select chevron - light stroke so it reads on dark input */
+  --select-chevron: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e5e5e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+
+  /* Chart palette - inverted so Recharts tooltips read on dark card */
+  --chart-tooltip-bg: rgba(240, 240, 245, 0.96);
+  --chart-tooltip-fg: #1c1c1e;
+  --chart-axis-tick: #a5a8b5;
+  --chart-legend-fg: #b5b8c5;
+  --chart-grid: rgba(255, 255, 255, 0.12);
+  --chart-pie-stroke: oklch(0.25 0 0);
+}
+
+@theme inline {
+  /* Map Miro tokens to Tailwind utilities for the workflows module so that
+     `bg-canvas`, `text-ink`, `border-hairline`, etc. resolve correctly. */
+  --color-canvas: var(--color-canvas);
+  --color-surface-soft: var(--color-surface-soft);
+  --color-surface-yellow: var(--color-surface-yellow);
+  --color-surface-featured: var(--color-surface-pricing-featured);
+  --color-hairline: var(--color-hairline);
+  --color-hairline-soft: var(--color-hairline-soft);
+  --color-hairline-strong: var(--color-hairline-strong);
+  --color-ink: var(--color-ink);
+  --color-ink-deep: var(--color-ink-deep);
+  --color-on-ink: var(--color-on-ink);
+  --color-charcoal: var(--color-charcoal);
+  --color-slate: var(--color-slate);
+  --color-steel: var(--color-steel);
+  --color-stone: var(--color-stone);
+
+  --color-brand-yellow: var(--color-brand-yellow);
+  --color-brand-yellow-deep: var(--color-brand-yellow-deep);
+  --color-yellow-light: var(--color-yellow-light);
+  --color-yellow-dark: var(--color-yellow-dark);
+  --color-brand-blue: var(--color-brand-blue);
+  --color-blue-pressed: var(--color-blue-pressed);
+  --color-brand-coral: var(--color-brand-coral);
+  --color-coral-light: var(--color-coral-light);
+  --color-coral-dark: var(--color-coral-dark);
+  --color-brand-rose: var(--color-brand-rose);
+  --color-rose-light: var(--color-rose-light);
+  --color-brand-teal: var(--color-brand-teal);
+  --color-teal-light: var(--color-teal-light);
+  --color-moss-dark: var(--color-moss-dark);
+  --color-brand-orange-light: var(--color-brand-orange-light);
+  --color-brand-red: var(--color-brand-red);
+  --color-success-accent: var(--color-success-accent);
+
+  --color-sky-light: var(--color-sky-light);
+  --color-mint-light: var(--color-mint-light);
+  --color-blush-light: var(--color-blush-light);
+  --color-sand-light: var(--color-sand-light);
+  --color-lilac-light: var(--color-lilac-light);
+  --color-lemon-light: var(--color-lemon-light);
+
+  --radius-feature: 32px;
+  --radius-full: 9999px;
+}
+
+/* Typography utilities used across the workflows UI. */
+.text-hero {
+  font-size: 80px;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -2px;
+}
+.text-display-lg {
+  font-size: 60px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+}
+.text-h1 {
+  font-size: 48px;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -1px;
+}
+.text-h2 {
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+.text-h3 {
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+.text-h4 {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.text-h5 {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.text-subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.text-body-md {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.text-body-md-medium {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.text-body-sm {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.text-body-sm-medium {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.text-caption {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.text-caption-bold {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.text-micro {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.text-micro-uppercase {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.text-stat {
+  font-size: 64px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+}
+
+/* Skeleton shimmer & busy region helpers used by the workflows UI. */
+@keyframes flowbit-skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.flowbit-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-soft) 0%,
+    var(--color-surface-flowbit) 40%,
+    var(--color-surface-soft) 80%
+  );
+  background-size: 200% 100%;
+  animation: flowbit-skeleton-shimmer 1.6s ease-in-out infinite;
+  min-height: 0.75rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flowbit-skeleton {
+    animation: none;
+    background: var(--color-surface-flowbit);
+  }
+}
+
+.flowbit-busy-region {
+  position: relative;
+  transition:
+    opacity 220ms ease,
+    filter 220ms ease;
+}
+.flowbit-busy-region[data-busy="true"] {
+  opacity: 0.55;
+  filter: saturate(0.85);
+  pointer-events: none;
+}
+.flowbit-busy-region[data-busy="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: flowbit-skeleton-shimmer 1.4s ease-in-out infinite;
+  pointer-events: none;
+}

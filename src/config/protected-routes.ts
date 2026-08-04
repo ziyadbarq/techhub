@@ -324,6 +324,10 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.TASKS_VIEW],
     description: "Manage your tasks",
   },
+  "/team": {
+    requiredPermissions: [PERMISSIONS.USERS_VIEW],
+    description: "Team members list",
+  },
 
   // ============================================================================
   // PERSONS ROUTES
@@ -470,12 +474,127 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   },
 
   // ============================================================================
+  // TASKS ROUTES
+  // ============================================================================
+
+  "/tasks/new": {
+    requiredPermissions: [PERMISSIONS.TASKS_CREATE],
+    description: "Create new task",
+  },
+  "/tasks/[id]": {
+    requiredPermissions: [PERMISSIONS.TASKS_VIEW],
+    description: "View specific task (ownership checks apply for editing)",
+  },
+  "/tasks/active": {
+    requiredPermissions: [PERMISSIONS.TASKS_VIEW],
+    description: "View active tasks",
+  },
+  "/tasks/completed": {
+    requiredPermissions: [PERMISSIONS.TASKS_VIEW],
+    description: "View completed tasks",
+  },
+  "/tasks/archived": {
+    requiredPermissions: [PERMISSIONS.TASKS_VIEW],
+    description: "View archived tasks",
+  },
+
+  // ============================================================================
+  // TEAM ROUTES
+  // ============================================================================
+
+  "/team/roles": {
+    requiredPermissions: [PERMISSIONS.USERS_MANAGE],
+    description: "Team role management",
+  },
+
+  // ============================================================================
   // VENDORS ROUTES
   // ============================================================================
 
   "/vendors/[id]": {
     requiredPermissions: [PERMISSIONS.VENDORS_VIEW],
     description: "View specific vendor details and related entities",
+  },
+
+  // ============================================================================
+  // WORKFLOWS ROUTES
+  // ============================================================================
+
+  "/workflows/inbox": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_INBOX_VIEW],
+    description:
+      "Pending step actions, watched requests, and submitted requests",
+  },
+  "/workflows/requests": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN],
+    description: "Requests submitted by the current user",
+  },
+  "/workflows/requests/[id]": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN],
+    description: "Request detail, timeline, and action panel",
+  },
+  "/workflows/requests/[id]/timeline": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN],
+    description: "Append-only audit timeline for a request",
+  },
+  "/workflows/requests/new/[formId]": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT],
+    description: "Submit a new request against a form",
+  },
+  "/workflows/forms": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT],
+    description: "Available request forms",
+  },
+  "/workflows/notifications": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW],
+    description: "In-app workflow notifications",
+  },
+  "/workflows/analytics": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_ANALYTICS_VIEW],
+    description: "Workflow throughput, SLA, and outcome dashboards",
+  },
+  "/workflows/admin": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_FORMS_VIEW],
+    description: "Forms, workflow definitions, calendars, and reference data",
+  },
+  "/workflows/admin/forms": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_FORMS_VIEW],
+  },
+  "/workflows/admin/forms/[formId]": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_FORMS_UPDATE],
+  },
+  "/workflows/admin/workflows": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_VIEW],
+  },
+  "/workflows/admin/workflows/[workflowId]": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_UPDATE],
+  },
+  "/workflows/admin/calendars": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_CALENDARS_MANAGE],
+  },
+  "/workflows/admin/hold-reasons": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_HOLD_REASONS_MANAGE],
+  },
+  "/workflows/admin/outcome-codes": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_OUTCOME_CODES_MANAGE],
+  },
+  "/workflows/admin/rejection-policies": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_REJECTION_POLICIES_MANAGE],
+  },
+  "/workflows/admin/email-templates": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_EMAIL_TEMPLATES_MANAGE],
+  },
+  "/workflows/admin/delegations": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_DELEGATIONS_MANAGE],
+  },
+  "/workflows/admin/blackout-periods": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_BLACKOUT_PERIODS_MANAGE],
+  },
+  "/workflows/admin/maintenance-windows": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_MAINTENANCE_WINDOWS_MANAGE],
+  },
+  "/workflows/admin/watcher-subscriptions": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_WATCHERS_MANAGE],
   },
 };
 

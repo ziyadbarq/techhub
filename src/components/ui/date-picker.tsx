@@ -67,6 +67,7 @@ export function DatePicker({
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           variant="outline"
           className={cn(
             "w-full justify-start text-left font-normal",
@@ -94,6 +95,7 @@ export function DatePicker({
         {clearable && value ? (
           <div className="border-t p-3">
             <Button
+              type="button"
               variant="ghost"
               size="sm"
               onClick={() => onChange(undefined)}
