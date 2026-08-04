@@ -121,6 +121,18 @@ export function AssetModelDetailPageClient({
     }
   };
 
+  const goBack = () => {
+    if (
+      typeof window !== "undefined" &&
+      window.history.length > 1 &&
+      document.referrer.startsWith(window.location.origin)
+    ) {
+      router.back();
+    } else {
+      router.push("/asset-models");
+    }
+  };
+
   // Format warranty display
   const formatWarranty = (months: number | null) => {
     if (!months) return null;
@@ -138,11 +150,7 @@ export function AssetModelDetailPageClient({
       {/* Header with Back Button and Actions */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/asset-models")}
-          >
+          <Button variant="ghost" size="icon" onClick={goBack}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>

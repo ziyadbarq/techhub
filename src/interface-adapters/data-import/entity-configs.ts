@@ -226,6 +226,37 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         description: "Current lifecycle state code",
         autoMap: ["state", "status", "lifecycle_state", "lifecycleState"],
       }),
+      // Owner - resolves to a Person by email. Not a column on Asset; the
+      // bulk create action reads this field and creates a corresponding
+      // PERSON AssetAssignment after the asset row is inserted.
+      {
+        ...lookupField({
+          name: "ownerPersonId",
+          label: "Owner Email",
+          required: false,
+          lookupTarget: "Person",
+          lookupField: "email",
+          lookupDisplayField: "email",
+          examples: ["ahmed@barq.com", "sara@barq.com"],
+          description:
+            "Email of the person who owns/uses this asset. Creates an AssetAssignment.",
+          autoMap: [
+            "owner",
+            "owner_email",
+            "ownerEmail",
+            "assignee",
+            "assignee_email",
+            "assigneeEmail",
+            "assigned_to",
+            "assignedTo",
+            "user_email",
+            "userEmail",
+          ],
+        }),
+        // Emails are case-sensitive lookups; override the default
+        // uppercase sanitizer to keep the value lowercase.
+        sanitization: [{ operation: "trim" }, { operation: "lowercase" }],
+      },
       notesField(),
     ],
     businessRules: [],
@@ -237,6 +268,9 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
 - Dates should be in YYYY-MM-DD format
 - Purchase price should be a positive number
 - Currency defaults to SAR if not specified
+- **Owner Email** (optional): the person the asset is assigned to. Must
+  match an existing Person's email. Creates a PERSON assignment after the
+  asset is created.
     `.trim(),
   },
 

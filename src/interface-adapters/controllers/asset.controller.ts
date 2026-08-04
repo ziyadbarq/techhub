@@ -32,6 +32,7 @@ import type {
   GetAssetsByDepartmentReportUseCase,
   GetUnassignedAssetsReportUseCase,
 } from "@/core/use-cases/asset/asset";
+import type { CreateAssetAssignmentUseCase } from "@/core/use-cases/asset/asset-assignment/create-asset-assignment.use-case";
 import type { AssetStatistics } from "@/core/repositories/asset.repository.interface";
 import type { AssetEolStatus } from "@/core/use-cases/asset/asset/get-assets-nearing-eol-report.use-case";
 import type { AssetCategoryValueReportItem } from "@/core/use-cases/asset/asset/get-asset-value-by-category-report.use-case";
@@ -716,11 +717,12 @@ export async function deleteAssetAction(
  * Bulk create assets from CSV import
  */
 export async function bulkCreateAssetsAction(
-  assetsData: CreateAssetDTO[],
+  assetsData: Array<CreateAssetDTO & { ownerPersonId?: string | null }>,
 ): Promise<
   ActionResponse<{
     successCount: number;
     failureCount: number;
+    assignmentCount: number;
     failures: Array<{ index: number; assetTag: string; error: string }>;
   }>
 > {
@@ -732,6 +734,17 @@ export async function bulkCreateAssetsAction(
     const useCase = container.get<CreateAssetUseCase>(
       DI_TOKENS.CreateAssetUseCase,
     );
+    // Resolved lazily so we only touch the AssetAssignment repo when the
+    // sheet actually contained an owner column.
+    let assignmentUseCase: CreateAssetAssignmentUseCase | null = null;
+    const getAssignmentUseCase = (): CreateAssetAssignmentUseCase => {
+      if (!assignmentUseCase) {
+        assignmentUseCase = container.get<CreateAssetAssignmentUseCase>(
+          DI_TOKENS.CreateAssetAssignmentUseCase,
+        );
+      }
+      return assignmentUseCase;
+    };
 
     const log = logger.child({
       controller: "asset.bulkCreate",
@@ -742,16 +755,20 @@ export async function bulkCreateAssetsAction(
     const results = {
       successCount: 0,
       failureCount: 0,
+      assignmentCount: 0,
       failures: [] as Array<{ index: number; assetTag: string; error: string }>,
     };
 
     // Process assets sequentially to avoid overwhelming the database
     for (let i = 0; i < assetsData.length; i++) {
       const assetData = assetsData[i];
+      // Extract the extra owner field before Zod parse — the generated
+      // CreateAssetSchema has no `ownerPersonId` and .parse() strips it.
+      const ownerPersonId = assetData.ownerPersonId ?? null;
       try {
         const validated = CreateAssetSchema.parse(assetData);
 
-        await useCase.execute({
+        const createdAsset = await useCase.execute({
           assetTag: validated.assetTag,
           assetCategoryId: validated.assetCategoryId,
           assetModelId: validated.assetModelId ?? undefined,
@@ -771,6 +788,31 @@ export async function bulkCreateAssetsAction(
         });
 
         results.successCount++;
+
+        if (ownerPersonId) {
+          try {
+            await getAssignmentUseCase().execute({
+              assetId: createdAsset.id,
+              assigneeType: "PERSON",
+              assigneeId: ownerPersonId,
+              startDate: new Date(),
+              isPrimary: true,
+            });
+            results.assignmentCount++;
+          } catch (assignErr) {
+            // Asset already created — surface the assignment problem as
+            // a soft failure so the row shows in the import summary.
+            results.failures.push({
+              index: i,
+              assetTag: createdAsset.assetTag,
+              error:
+                "Asset created, but owner assignment failed: " +
+                (assignErr instanceof Error
+                  ? assignErr.message
+                  : "Unknown error"),
+            });
+          }
+        }
       } catch (error) {
         results.failureCount++;
         results.failures.push({

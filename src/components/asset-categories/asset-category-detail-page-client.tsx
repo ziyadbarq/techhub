@@ -71,6 +71,18 @@ export function AssetCategoryDetailPageClient({
 
   const canUpdate = hasPermission(PERMISSIONS.ASSET_CATEGORIES_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.ASSET_CATEGORIES_DELETE);
+
+  const goBack = () => {
+    if (
+      typeof window !== "undefined" &&
+      window.history.length > 1 &&
+      document.referrer.startsWith(window.location.origin)
+    ) {
+      router.back();
+    } else {
+      router.push("/asset-categories");
+    }
+  };
   const canManageFields = hasPermission(PERMISSIONS.ASSET_CATEGORY_FIELDS_VIEW);
   const canViewModels = hasPermission(PERMISSIONS.ASSET_MODELS_VIEW);
   const canViewAssets = hasPermission(PERMISSIONS.ASSETS_VIEW);
@@ -152,11 +164,7 @@ export function AssetCategoryDetailPageClient({
       {/* Header with Back Button and Actions */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/asset-categories")}
-          >
+          <Button variant="ghost" size="icon" onClick={goBack}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
