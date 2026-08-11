@@ -739,6 +739,7 @@ const createAuth = () =>
       accountLinking: {
         enabled: true,
         trustedProviders: ["microsoft"],
+        requireLocalEmailVerified: false,
       },
     },
 
