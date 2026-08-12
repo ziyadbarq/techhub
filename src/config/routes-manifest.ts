@@ -1389,7 +1389,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
   {
     path: "/workflows/admin/access-services",
     label: "Access Services",
-    icon: Settings,
+    icon: ShieldCheck,
     description: "Manage the IT access service catalog for workflow forms",
     requiredPermissions: ["WORKFLOWS_ACCESS_SERVICES_VIEW"],
     featureFlag: "WORKFLOW_ENGINE",
