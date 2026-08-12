@@ -9,6 +9,15 @@
 * 🟢 You can import this file directly.
 */
 
+export const AccessServiceRole = {
+  OWNER: 'OWNER',
+  CYBERSECURITY: 'CYBERSECURITY',
+  IMPLEMENTER: 'IMPLEMENTER'
+} as const
+
+export type AccessServiceRole = (typeof AccessServiceRole)[keyof typeof AccessServiceRole]
+
+
 export const AssigneeTypeEnum = {
   PERSON: 'PERSON',
   ORG_UNIT: 'ORG_UNIT',
@@ -443,7 +452,8 @@ export const FieldType = {
   REPEATER: 'REPEATER',
   LOOKUP: 'LOOKUP',
   SECTION_HEADER: 'SECTION_HEADER',
-  COMPUTED: 'COMPUTED'
+  COMPUTED: 'COMPUTED',
+  SYSTEM_FIELD: 'SYSTEM_FIELD'
 } as const
 
 export type FieldType = (typeof FieldType)[keyof typeof FieldType]

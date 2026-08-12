@@ -36,11 +36,13 @@ export function SubmitRequestForm({
   schema,
   users,
   formNameToId,
+  systemFieldValues,
 }: {
   formId: string;
   schema: FormSchema;
   users: User[];
   formNameToId?: Record<string, string>;
+  systemFieldValues?: Record<string, string>;
 }) {
   const router = useRouter();
   const [values, setValues] = useState<Record<string, unknown>>({});
@@ -110,6 +112,7 @@ export function SubmitRequestForm({
         users={users}
         invalidFieldKeys={missing}
         formNameToId={formNameToId}
+        systemFieldValues={systemFieldValues}
       />
       {error ? (
         <p className="text-body-sm mt-4 rounded-md border border-[var(--color-brand-red-dark)] bg-[var(--color-brand-red)]/40 px-3 py-2 text-[var(--color-coral-dark)]">

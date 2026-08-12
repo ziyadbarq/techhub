@@ -8,6 +8,11 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/AccessService.ts'
+export type * from './models/AccessServiceAssignee.ts'
+export type * from './models/AccessServiceRequestSnapshot.ts'
+export type * from './models/AccessServiceSnapshotAssignee.ts'
+export type * from './models/RequesterIdentitySnapshot.ts'
 export type * from './models/AssetCategory.ts'
 export type * from './models/AssetCategoryField.ts'
 export type * from './models/AssetModel.ts'

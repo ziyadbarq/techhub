@@ -55,6 +55,12 @@ model User {
   requestComments            RequestComment[]           @relation("RequestCommentAuthor")
   requestAttachmentsUploaded RequestAttachment[]        @relation("RequestAttachmentUploader")
 
+  // Access Management Service relations (access-services.prisma)
+  accessServicesCreated          AccessService[]               @relation("AccessServiceCreatedBy")
+  accessServicesUpdated          AccessService[]               @relation("AccessServiceUpdatedBy")
+  accessServiceAssignees         AccessServiceAssignee[]       @relation("AccessServiceAssignees")
+  accessServiceSnapshotAssignees AccessServiceSnapshotAssignee[] @relation("AccessServiceSnapshotAssignees")
+
   @@index([email])
   @@map("users")
 }

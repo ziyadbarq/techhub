@@ -295,6 +295,10 @@ export type UserWhereInput = {
   workflowSavedFilters?: Prisma.SavedFilterListRelationFilter
   requestComments?: Prisma.RequestCommentListRelationFilter
   requestAttachmentsUploaded?: Prisma.RequestAttachmentListRelationFilter
+  accessServicesCreated?: Prisma.AccessServiceListRelationFilter
+  accessServicesUpdated?: Prisma.AccessServiceListRelationFilter
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeListRelationFilter
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -333,6 +337,10 @@ export type UserOrderByWithRelationInput = {
   workflowSavedFilters?: Prisma.SavedFilterOrderByRelationAggregateInput
   requestComments?: Prisma.RequestCommentOrderByRelationAggregateInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentOrderByRelationAggregateInput
+  accessServicesCreated?: Prisma.AccessServiceOrderByRelationAggregateInput
+  accessServicesUpdated?: Prisma.AccessServiceOrderByRelationAggregateInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeOrderByRelationAggregateInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -374,6 +382,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   workflowSavedFilters?: Prisma.SavedFilterListRelationFilter
   requestComments?: Prisma.RequestCommentListRelationFilter
   requestAttachmentsUploaded?: Prisma.RequestAttachmentListRelationFilter
+  accessServicesCreated?: Prisma.AccessServiceListRelationFilter
+  accessServicesUpdated?: Prisma.AccessServiceListRelationFilter
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeListRelationFilter
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -450,6 +462,10 @@ export type UserCreateInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -488,6 +504,10 @@ export type UserUncheckedCreateInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -526,6 +546,10 @@ export type UserUpdateInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -564,6 +588,10 @@ export type UserUncheckedUpdateInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -609,6 +637,16 @@ export type UserUncheckedUpdateManyInput = {
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
+}
+
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -664,14 +702,66 @@ export type UserSumOrderByAggregateInput = {
   tokenVersion?: Prisma.SortOrder
 }
 
-export type UserScalarRelationFilter = {
-  is?: Prisma.UserWhereInput
-  isNot?: Prisma.UserWhereInput
+export type UserCreateNestedOneWithoutAccessServicesCreatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccessServicesCreatedInput, Prisma.UserUncheckedCreateWithoutAccessServicesCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccessServicesCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserNullableScalarRelationFilter = {
-  is?: Prisma.UserWhereInput | null
-  isNot?: Prisma.UserWhereInput | null
+export type UserCreateNestedOneWithoutAccessServicesUpdatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccessServicesUpdatedInput, Prisma.UserUncheckedCreateWithoutAccessServicesUpdatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccessServicesUpdatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutAccessServicesCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccessServicesCreatedInput, Prisma.UserUncheckedCreateWithoutAccessServicesCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccessServicesCreatedInput
+  upsert?: Prisma.UserUpsertWithoutAccessServicesCreatedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccessServicesCreatedInput, Prisma.UserUpdateWithoutAccessServicesCreatedInput>, Prisma.UserUncheckedUpdateWithoutAccessServicesCreatedInput>
+}
+
+export type UserUpdateOneWithoutAccessServicesUpdatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccessServicesUpdatedInput, Prisma.UserUncheckedCreateWithoutAccessServicesUpdatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccessServicesUpdatedInput
+  upsert?: Prisma.UserUpsertWithoutAccessServicesUpdatedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccessServicesUpdatedInput, Prisma.UserUpdateWithoutAccessServicesUpdatedInput>, Prisma.UserUncheckedUpdateWithoutAccessServicesUpdatedInput>
+}
+
+export type UserCreateNestedOneWithoutAccessServiceAssigneesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccessServiceAssigneesInput, Prisma.UserUncheckedCreateWithoutAccessServiceAssigneesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccessServiceAssigneesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAccessServiceAssigneesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccessServiceAssigneesInput, Prisma.UserUncheckedCreateWithoutAccessServiceAssigneesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccessServiceAssigneesInput
+  upsert?: Prisma.UserUpsertWithoutAccessServiceAssigneesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccessServiceAssigneesInput, Prisma.UserUpdateWithoutAccessServiceAssigneesInput>, Prisma.UserUncheckedUpdateWithoutAccessServiceAssigneesInput>
+}
+
+export type UserCreateNestedOneWithoutAccessServiceSnapshotAssigneesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccessServiceSnapshotAssigneesInput, Prisma.UserUncheckedCreateWithoutAccessServiceSnapshotAssigneesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccessServiceSnapshotAssigneesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutAccessServiceSnapshotAssigneesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccessServiceSnapshotAssigneesInput, Prisma.UserUncheckedCreateWithoutAccessServiceSnapshotAssigneesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccessServiceSnapshotAssigneesInput
+  upsert?: Prisma.UserUpsertWithoutAccessServiceSnapshotAssigneesInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccessServiceSnapshotAssigneesInput, Prisma.UserUpdateWithoutAccessServiceSnapshotAssigneesInput>, Prisma.UserUncheckedUpdateWithoutAccessServiceSnapshotAssigneesInput>
 }
 
 export type NullableBoolFieldUpdateOperationsInput = {
@@ -1012,6 +1102,726 @@ export type UserUpdateOneWithoutPublishedWorkflowVersionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPublishedWorkflowVersionsInput, Prisma.UserUpdateWithoutPublishedWorkflowVersionsInput>, Prisma.UserUncheckedUpdateWithoutPublishedWorkflowVersionsInput>
 }
 
+export type UserCreateWithoutAccessServicesCreatedInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
+  publishedFormVersions?: Prisma.FormVersionCreateNestedManyWithoutPublishedByInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionCreateNestedManyWithoutPublishedByInput
+  submittedRequests?: Prisma.RequestCreateNestedManyWithoutRequesterInput
+  auditEntriesAsActor?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotCreateNestedManyWithoutUserInput
+  delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
+  delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
+  workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
+  workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
+  workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
+  requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAccessServicesCreatedInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
+  publishedFormVersions?: Prisma.FormVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  submittedRequests?: Prisma.RequestUncheckedCreateNestedManyWithoutRequesterInput
+  auditEntriesAsActor?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedCreateNestedManyWithoutUserInput
+  delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
+  delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
+  workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
+  workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
+  workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
+  requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAccessServicesCreatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccessServicesCreatedInput, Prisma.UserUncheckedCreateWithoutAccessServicesCreatedInput>
+}
+
+export type UserCreateWithoutAccessServicesUpdatedInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
+  publishedFormVersions?: Prisma.FormVersionCreateNestedManyWithoutPublishedByInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionCreateNestedManyWithoutPublishedByInput
+  submittedRequests?: Prisma.RequestCreateNestedManyWithoutRequesterInput
+  auditEntriesAsActor?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotCreateNestedManyWithoutUserInput
+  delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
+  delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
+  workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
+  workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
+  workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
+  requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAccessServicesUpdatedInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
+  publishedFormVersions?: Prisma.FormVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  submittedRequests?: Prisma.RequestUncheckedCreateNestedManyWithoutRequesterInput
+  auditEntriesAsActor?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedCreateNestedManyWithoutUserInput
+  delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
+  delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
+  workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
+  workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
+  workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
+  requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAccessServicesUpdatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccessServicesUpdatedInput, Prisma.UserUncheckedCreateWithoutAccessServicesUpdatedInput>
+}
+
+export type UserUpsertWithoutAccessServicesCreatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAccessServicesCreatedInput, Prisma.UserUncheckedUpdateWithoutAccessServicesCreatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccessServicesCreatedInput, Prisma.UserUncheckedCreateWithoutAccessServicesCreatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAccessServicesCreatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAccessServicesCreatedInput, Prisma.UserUncheckedUpdateWithoutAccessServicesCreatedInput>
+}
+
+export type UserUpdateWithoutAccessServicesCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
+  publishedFormVersions?: Prisma.FormVersionUpdateManyWithoutPublishedByNestedInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUpdateManyWithoutPublishedByNestedInput
+  submittedRequests?: Prisma.RequestUpdateManyWithoutRequesterNestedInput
+  auditEntriesAsActor?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUpdateManyWithoutUserNestedInput
+  delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
+  delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
+  workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
+  workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
+  workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
+  requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAccessServicesCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
+  publishedFormVersions?: Prisma.FormVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  submittedRequests?: Prisma.RequestUncheckedUpdateManyWithoutRequesterNestedInput
+  auditEntriesAsActor?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedUpdateManyWithoutUserNestedInput
+  delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
+  delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
+  workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
+  workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
+  requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutAccessServicesUpdatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAccessServicesUpdatedInput, Prisma.UserUncheckedUpdateWithoutAccessServicesUpdatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccessServicesUpdatedInput, Prisma.UserUncheckedCreateWithoutAccessServicesUpdatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAccessServicesUpdatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAccessServicesUpdatedInput, Prisma.UserUncheckedUpdateWithoutAccessServicesUpdatedInput>
+}
+
+export type UserUpdateWithoutAccessServicesUpdatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
+  publishedFormVersions?: Prisma.FormVersionUpdateManyWithoutPublishedByNestedInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUpdateManyWithoutPublishedByNestedInput
+  submittedRequests?: Prisma.RequestUpdateManyWithoutRequesterNestedInput
+  auditEntriesAsActor?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUpdateManyWithoutUserNestedInput
+  delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
+  delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
+  workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
+  workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
+  workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
+  requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAccessServicesUpdatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
+  publishedFormVersions?: Prisma.FormVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  submittedRequests?: Prisma.RequestUncheckedUpdateManyWithoutRequesterNestedInput
+  auditEntriesAsActor?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedUpdateManyWithoutUserNestedInput
+  delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
+  delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
+  workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
+  workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
+  requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutAccessServiceAssigneesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
+  publishedFormVersions?: Prisma.FormVersionCreateNestedManyWithoutPublishedByInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionCreateNestedManyWithoutPublishedByInput
+  submittedRequests?: Prisma.RequestCreateNestedManyWithoutRequesterInput
+  auditEntriesAsActor?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotCreateNestedManyWithoutUserInput
+  delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
+  delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
+  workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
+  workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
+  workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
+  requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAccessServiceAssigneesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
+  publishedFormVersions?: Prisma.FormVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  submittedRequests?: Prisma.RequestUncheckedCreateNestedManyWithoutRequesterInput
+  auditEntriesAsActor?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedCreateNestedManyWithoutUserInput
+  delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
+  delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
+  workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
+  workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
+  workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
+  requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAccessServiceAssigneesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccessServiceAssigneesInput, Prisma.UserUncheckedCreateWithoutAccessServiceAssigneesInput>
+}
+
+export type UserUpsertWithoutAccessServiceAssigneesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAccessServiceAssigneesInput, Prisma.UserUncheckedUpdateWithoutAccessServiceAssigneesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccessServiceAssigneesInput, Prisma.UserUncheckedCreateWithoutAccessServiceAssigneesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAccessServiceAssigneesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAccessServiceAssigneesInput, Prisma.UserUncheckedUpdateWithoutAccessServiceAssigneesInput>
+}
+
+export type UserUpdateWithoutAccessServiceAssigneesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
+  publishedFormVersions?: Prisma.FormVersionUpdateManyWithoutPublishedByNestedInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUpdateManyWithoutPublishedByNestedInput
+  submittedRequests?: Prisma.RequestUpdateManyWithoutRequesterNestedInput
+  auditEntriesAsActor?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUpdateManyWithoutUserNestedInput
+  delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
+  delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
+  workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
+  workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
+  workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
+  requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAccessServiceAssigneesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
+  publishedFormVersions?: Prisma.FormVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  submittedRequests?: Prisma.RequestUncheckedUpdateManyWithoutRequesterNestedInput
+  auditEntriesAsActor?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedUpdateManyWithoutUserNestedInput
+  delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
+  delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
+  workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
+  workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
+  requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutAccessServiceSnapshotAssigneesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
+  publishedFormVersions?: Prisma.FormVersionCreateNestedManyWithoutPublishedByInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionCreateNestedManyWithoutPublishedByInput
+  submittedRequests?: Prisma.RequestCreateNestedManyWithoutRequesterInput
+  auditEntriesAsActor?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotCreateNestedManyWithoutUserInput
+  delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
+  delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
+  workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
+  workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
+  workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
+  requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAccessServiceSnapshotAssigneesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
+  publishedFormVersions?: Prisma.FormVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  submittedRequests?: Prisma.RequestUncheckedCreateNestedManyWithoutRequesterInput
+  auditEntriesAsActor?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedCreateNestedManyWithoutUserInput
+  delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
+  delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
+  workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
+  workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
+  workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
+  requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAccessServiceSnapshotAssigneesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccessServiceSnapshotAssigneesInput, Prisma.UserUncheckedCreateWithoutAccessServiceSnapshotAssigneesInput>
+}
+
+export type UserUpsertWithoutAccessServiceSnapshotAssigneesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAccessServiceSnapshotAssigneesInput, Prisma.UserUncheckedUpdateWithoutAccessServiceSnapshotAssigneesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccessServiceSnapshotAssigneesInput, Prisma.UserUncheckedCreateWithoutAccessServiceSnapshotAssigneesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAccessServiceSnapshotAssigneesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAccessServiceSnapshotAssigneesInput, Prisma.UserUncheckedUpdateWithoutAccessServiceSnapshotAssigneesInput>
+}
+
+export type UserUpdateWithoutAccessServiceSnapshotAssigneesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
+  publishedFormVersions?: Prisma.FormVersionUpdateManyWithoutPublishedByNestedInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUpdateManyWithoutPublishedByNestedInput
+  submittedRequests?: Prisma.RequestUpdateManyWithoutRequesterNestedInput
+  auditEntriesAsActor?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUpdateManyWithoutUserNestedInput
+  delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
+  delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
+  workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
+  workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
+  workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
+  requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAccessServiceSnapshotAssigneesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
+  publishedFormVersions?: Prisma.FormVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  submittedRequests?: Prisma.RequestUncheckedUpdateManyWithoutRequesterNestedInput
+  auditEntriesAsActor?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedUpdateManyWithoutUserNestedInput
+  delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
+  delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
+  workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
+  workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
+  requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutAccountsInput = {
   id?: string
   email: string
@@ -1047,6 +1857,10 @@ export type UserCreateWithoutAccountsInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1084,6 +1898,10 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1137,6 +1955,10 @@ export type UserUpdateWithoutAccountsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1174,6 +1996,10 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1211,6 +2037,10 @@ export type UserCreateWithoutSessionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1248,6 +2078,10 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1301,6 +2135,10 @@ export type UserUpdateWithoutSessionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1338,6 +2176,10 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTwoFactorInput = {
@@ -1375,6 +2217,10 @@ export type UserCreateWithoutTwoFactorInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTwoFactorInput = {
@@ -1412,6 +2258,10 @@ export type UserUncheckedCreateWithoutTwoFactorInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTwoFactorInput = {
@@ -1465,6 +2315,10 @@ export type UserUpdateWithoutTwoFactorInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTwoFactorInput = {
@@ -1502,6 +2356,10 @@ export type UserUncheckedUpdateWithoutTwoFactorInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPreferencesInput = {
@@ -1539,6 +2397,10 @@ export type UserCreateWithoutPreferencesInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPreferencesInput = {
@@ -1576,6 +2438,10 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPreferencesInput = {
@@ -1629,6 +2495,10 @@ export type UserUpdateWithoutPreferencesInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPreferencesInput = {
@@ -1666,6 +2536,10 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBackupsCreatedInput = {
@@ -1703,6 +2577,10 @@ export type UserCreateWithoutBackupsCreatedInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBackupsCreatedInput = {
@@ -1740,6 +2618,10 @@ export type UserUncheckedCreateWithoutBackupsCreatedInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBackupsCreatedInput = {
@@ -1782,6 +2664,10 @@ export type UserCreateWithoutBackupsDeletedInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBackupsDeletedInput = {
@@ -1819,6 +2705,10 @@ export type UserUncheckedCreateWithoutBackupsDeletedInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBackupsDeletedInput = {
@@ -1872,6 +2762,10 @@ export type UserUpdateWithoutBackupsCreatedInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBackupsCreatedInput = {
@@ -1909,6 +2803,10 @@ export type UserUncheckedUpdateWithoutBackupsCreatedInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutBackupsDeletedInput = {
@@ -1957,6 +2855,10 @@ export type UserUpdateWithoutBackupsDeletedInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBackupsDeletedInput = {
@@ -1994,6 +2896,10 @@ export type UserUncheckedUpdateWithoutBackupsDeletedInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPersonInput = {
@@ -2031,6 +2937,10 @@ export type UserCreateWithoutPersonInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPersonInput = {
@@ -2068,6 +2978,10 @@ export type UserUncheckedCreateWithoutPersonInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPersonInput = {
@@ -2121,6 +3035,10 @@ export type UserUpdateWithoutPersonInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonInput = {
@@ -2158,6 +3076,10 @@ export type UserUncheckedUpdateWithoutPersonInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsAsUserInput = {
@@ -2195,6 +3117,10 @@ export type UserCreateWithoutAuditLogsAsUserInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsAsUserInput = {
@@ -2232,6 +3158,10 @@ export type UserUncheckedCreateWithoutAuditLogsAsUserInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsAsUserInput = {
@@ -2285,6 +3215,10 @@ export type UserUpdateWithoutAuditLogsAsUserInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsAsUserInput = {
@@ -2322,6 +3256,10 @@ export type UserUncheckedUpdateWithoutAuditLogsAsUserInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRolesInput = {
@@ -2359,6 +3297,10 @@ export type UserCreateWithoutRolesInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRolesInput = {
@@ -2396,6 +3338,10 @@ export type UserUncheckedCreateWithoutRolesInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRolesInput = {
@@ -2449,6 +3395,10 @@ export type UserUpdateWithoutRolesInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRolesInput = {
@@ -2486,6 +3436,10 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubmittedRequestsInput = {
@@ -2523,6 +3477,10 @@ export type UserCreateWithoutSubmittedRequestsInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubmittedRequestsInput = {
@@ -2560,6 +3518,10 @@ export type UserUncheckedCreateWithoutSubmittedRequestsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubmittedRequestsInput = {
@@ -2613,6 +3575,10 @@ export type UserUpdateWithoutSubmittedRequestsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubmittedRequestsInput = {
@@ -2650,6 +3616,10 @@ export type UserUncheckedUpdateWithoutSubmittedRequestsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRequestCommentsInput = {
@@ -2687,6 +3657,10 @@ export type UserCreateWithoutRequestCommentsInput = {
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRequestCommentsInput = {
@@ -2724,6 +3698,10 @@ export type UserUncheckedCreateWithoutRequestCommentsInput = {
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRequestCommentsInput = {
@@ -2777,6 +3755,10 @@ export type UserUpdateWithoutRequestCommentsInput = {
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRequestCommentsInput = {
@@ -2814,6 +3796,10 @@ export type UserUncheckedUpdateWithoutRequestCommentsInput = {
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRequestAttachmentsUploadedInput = {
@@ -2851,6 +3837,10 @@ export type UserCreateWithoutRequestAttachmentsUploadedInput = {
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRequestAttachmentsUploadedInput = {
@@ -2888,6 +3878,10 @@ export type UserUncheckedCreateWithoutRequestAttachmentsUploadedInput = {
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRequestAttachmentsUploadedInput = {
@@ -2941,6 +3935,10 @@ export type UserUpdateWithoutRequestAttachmentsUploadedInput = {
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRequestAttachmentsUploadedInput = {
@@ -2978,6 +3976,10 @@ export type UserUncheckedUpdateWithoutRequestAttachmentsUploadedInput = {
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWorkflowSavedFiltersInput = {
@@ -3015,6 +4017,10 @@ export type UserCreateWithoutWorkflowSavedFiltersInput = {
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWorkflowSavedFiltersInput = {
@@ -3052,6 +4058,10 @@ export type UserUncheckedCreateWithoutWorkflowSavedFiltersInput = {
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWorkflowSavedFiltersInput = {
@@ -3105,6 +4115,10 @@ export type UserUpdateWithoutWorkflowSavedFiltersInput = {
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWorkflowSavedFiltersInput = {
@@ -3142,6 +4156,10 @@ export type UserUncheckedUpdateWithoutWorkflowSavedFiltersInput = {
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditEntriesAsActorInput = {
@@ -3179,6 +4197,10 @@ export type UserCreateWithoutAuditEntriesAsActorInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditEntriesAsActorInput = {
@@ -3216,6 +4238,10 @@ export type UserUncheckedCreateWithoutAuditEntriesAsActorInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditEntriesAsActorInput = {
@@ -3269,6 +4295,10 @@ export type UserUpdateWithoutAuditEntriesAsActorInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditEntriesAsActorInput = {
@@ -3306,6 +4336,10 @@ export type UserUncheckedUpdateWithoutAuditEntriesAsActorInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWorkflowAssigneeSnapshotsInput = {
@@ -3343,6 +4377,10 @@ export type UserCreateWithoutWorkflowAssigneeSnapshotsInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWorkflowAssigneeSnapshotsInput = {
@@ -3380,6 +4418,10 @@ export type UserUncheckedCreateWithoutWorkflowAssigneeSnapshotsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWorkflowAssigneeSnapshotsInput = {
@@ -3433,6 +4475,10 @@ export type UserUpdateWithoutWorkflowAssigneeSnapshotsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWorkflowAssigneeSnapshotsInput = {
@@ -3470,6 +4516,10 @@ export type UserUncheckedUpdateWithoutWorkflowAssigneeSnapshotsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWorkflowNotificationsInput = {
@@ -3507,6 +4557,10 @@ export type UserCreateWithoutWorkflowNotificationsInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWorkflowNotificationsInput = {
@@ -3544,6 +4598,10 @@ export type UserUncheckedCreateWithoutWorkflowNotificationsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWorkflowNotificationsInput = {
@@ -3597,6 +4655,10 @@ export type UserUpdateWithoutWorkflowNotificationsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWorkflowNotificationsInput = {
@@ -3634,6 +4696,10 @@ export type UserUncheckedUpdateWithoutWorkflowNotificationsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEmailActionTokensInput = {
@@ -3671,6 +4737,10 @@ export type UserCreateWithoutEmailActionTokensInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEmailActionTokensInput = {
@@ -3708,6 +4778,10 @@ export type UserUncheckedCreateWithoutEmailActionTokensInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEmailActionTokensInput = {
@@ -3761,6 +4835,10 @@ export type UserUpdateWithoutEmailActionTokensInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailActionTokensInput = {
@@ -3798,6 +4876,10 @@ export type UserUncheckedUpdateWithoutEmailActionTokensInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDelegationsFromInput = {
@@ -3835,6 +4917,10 @@ export type UserCreateWithoutDelegationsFromInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDelegationsFromInput = {
@@ -3872,6 +4958,10 @@ export type UserUncheckedCreateWithoutDelegationsFromInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDelegationsFromInput = {
@@ -3914,6 +5004,10 @@ export type UserCreateWithoutDelegationsToInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDelegationsToInput = {
@@ -3951,6 +5045,10 @@ export type UserUncheckedCreateWithoutDelegationsToInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDelegationsToInput = {
@@ -4004,6 +5102,10 @@ export type UserUpdateWithoutDelegationsFromInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDelegationsFromInput = {
@@ -4041,6 +5143,10 @@ export type UserUncheckedUpdateWithoutDelegationsFromInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutDelegationsToInput = {
@@ -4089,6 +5195,10 @@ export type UserUpdateWithoutDelegationsToInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDelegationsToInput = {
@@ -4126,6 +5236,10 @@ export type UserUncheckedUpdateWithoutDelegationsToInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWorkflowWatchersInput = {
@@ -4163,6 +5277,10 @@ export type UserCreateWithoutWorkflowWatchersInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWorkflowWatchersInput = {
@@ -4200,6 +5318,10 @@ export type UserUncheckedCreateWithoutWorkflowWatchersInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWorkflowWatchersInput = {
@@ -4253,6 +5375,10 @@ export type UserUpdateWithoutWorkflowWatchersInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWorkflowWatchersInput = {
@@ -4290,6 +5416,10 @@ export type UserUncheckedUpdateWithoutWorkflowWatchersInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWatcherChannelPreferencesInput = {
@@ -4327,6 +5457,10 @@ export type UserCreateWithoutWatcherChannelPreferencesInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWatcherChannelPreferencesInput = {
@@ -4364,6 +5498,10 @@ export type UserUncheckedCreateWithoutWatcherChannelPreferencesInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWatcherChannelPreferencesInput = {
@@ -4417,6 +5555,10 @@ export type UserUpdateWithoutWatcherChannelPreferencesInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWatcherChannelPreferencesInput = {
@@ -4454,6 +5596,10 @@ export type UserUncheckedUpdateWithoutWatcherChannelPreferencesInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPublishedFormVersionsInput = {
@@ -4491,6 +5637,10 @@ export type UserCreateWithoutPublishedFormVersionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPublishedFormVersionsInput = {
@@ -4528,6 +5678,10 @@ export type UserUncheckedCreateWithoutPublishedFormVersionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPublishedFormVersionsInput = {
@@ -4581,6 +5735,10 @@ export type UserUpdateWithoutPublishedFormVersionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPublishedFormVersionsInput = {
@@ -4618,6 +5776,10 @@ export type UserUncheckedUpdateWithoutPublishedFormVersionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPublishedWorkflowVersionsInput = {
@@ -4655,6 +5817,10 @@ export type UserCreateWithoutPublishedWorkflowVersionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPublishedWorkflowVersionsInput = {
@@ -4692,6 +5858,10 @@ export type UserUncheckedCreateWithoutPublishedWorkflowVersionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
   requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPublishedWorkflowVersionsInput = {
@@ -4745,6 +5915,10 @@ export type UserUpdateWithoutPublishedWorkflowVersionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPublishedWorkflowVersionsInput = {
@@ -4782,6 +5956,10 @@ export type UserUncheckedUpdateWithoutPublishedWorkflowVersionsInput = {
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
   requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
   requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -4810,6 +5988,10 @@ export type UserCountOutputType = {
   workflowSavedFilters: number
   requestComments: number
   requestAttachmentsUploaded: number
+  accessServicesCreated: number
+  accessServicesUpdated: number
+  accessServiceAssignees: number
+  accessServiceSnapshotAssignees: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4833,6 +6015,10 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   workflowSavedFilters?: boolean | UserCountOutputTypeCountWorkflowSavedFiltersArgs
   requestComments?: boolean | UserCountOutputTypeCountRequestCommentsArgs
   requestAttachmentsUploaded?: boolean | UserCountOutputTypeCountRequestAttachmentsUploadedArgs
+  accessServicesCreated?: boolean | UserCountOutputTypeCountAccessServicesCreatedArgs
+  accessServicesUpdated?: boolean | UserCountOutputTypeCountAccessServicesUpdatedArgs
+  accessServiceAssignees?: boolean | UserCountOutputTypeCountAccessServiceAssigneesArgs
+  accessServiceSnapshotAssignees?: boolean | UserCountOutputTypeCountAccessServiceSnapshotAssigneesArgs
 }
 
 /**
@@ -4985,6 +6171,34 @@ export type UserCountOutputTypeCountRequestAttachmentsUploadedArgs<ExtArgs exten
   where?: Prisma.RequestAttachmentWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAccessServicesCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccessServiceWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAccessServicesUpdatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccessServiceWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAccessServiceAssigneesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccessServiceAssigneeWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAccessServiceSnapshotAssigneesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccessServiceSnapshotAssigneeWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5022,6 +6236,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   workflowSavedFilters?: boolean | Prisma.User$workflowSavedFiltersArgs<ExtArgs>
   requestComments?: boolean | Prisma.User$requestCommentsArgs<ExtArgs>
   requestAttachmentsUploaded?: boolean | Prisma.User$requestAttachmentsUploadedArgs<ExtArgs>
+  accessServicesCreated?: boolean | Prisma.User$accessServicesCreatedArgs<ExtArgs>
+  accessServicesUpdated?: boolean | Prisma.User$accessServicesUpdatedArgs<ExtArgs>
+  accessServiceAssignees?: boolean | Prisma.User$accessServiceAssigneesArgs<ExtArgs>
+  accessServiceSnapshotAssignees?: boolean | Prisma.User$accessServiceSnapshotAssigneesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -5095,6 +6313,10 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   workflowSavedFilters?: boolean | Prisma.User$workflowSavedFiltersArgs<ExtArgs>
   requestComments?: boolean | Prisma.User$requestCommentsArgs<ExtArgs>
   requestAttachmentsUploaded?: boolean | Prisma.User$requestAttachmentsUploadedArgs<ExtArgs>
+  accessServicesCreated?: boolean | Prisma.User$accessServicesCreatedArgs<ExtArgs>
+  accessServicesUpdated?: boolean | Prisma.User$accessServicesUpdatedArgs<ExtArgs>
+  accessServiceAssignees?: boolean | Prisma.User$accessServiceAssigneesArgs<ExtArgs>
+  accessServiceSnapshotAssignees?: boolean | Prisma.User$accessServiceSnapshotAssigneesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -5126,6 +6348,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     workflowSavedFilters: Prisma.$SavedFilterPayload<ExtArgs>[]
     requestComments: Prisma.$RequestCommentPayload<ExtArgs>[]
     requestAttachmentsUploaded: Prisma.$RequestAttachmentPayload<ExtArgs>[]
+    accessServicesCreated: Prisma.$AccessServicePayload<ExtArgs>[]
+    accessServicesUpdated: Prisma.$AccessServicePayload<ExtArgs>[]
+    accessServiceAssignees: Prisma.$AccessServiceAssigneePayload<ExtArgs>[]
+    accessServiceSnapshotAssignees: Prisma.$AccessServiceSnapshotAssigneePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -5557,6 +6783,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   workflowSavedFilters<T extends Prisma.User$workflowSavedFiltersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workflowSavedFiltersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavedFilterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   requestComments<T extends Prisma.User$requestCommentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$requestCommentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RequestCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   requestAttachmentsUploaded<T extends Prisma.User$requestAttachmentsUploadedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$requestAttachmentsUploadedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RequestAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  accessServicesCreated<T extends Prisma.User$accessServicesCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accessServicesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccessServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  accessServicesUpdated<T extends Prisma.User$accessServicesUpdatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accessServicesUpdatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccessServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  accessServiceAssignees<T extends Prisma.User$accessServiceAssigneesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accessServiceAssigneesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccessServiceAssigneePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  accessServiceSnapshotAssignees<T extends Prisma.User$accessServiceSnapshotAssigneesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accessServiceSnapshotAssigneesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccessServiceSnapshotAssigneePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6525,6 +7755,102 @@ export type User$requestAttachmentsUploadedArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.RequestAttachmentScalarFieldEnum | Prisma.RequestAttachmentScalarFieldEnum[]
+}
+
+/**
+ * User.accessServicesCreated
+ */
+export type User$accessServicesCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccessService
+   */
+  select?: Prisma.AccessServiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccessService
+   */
+  omit?: Prisma.AccessServiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccessServiceInclude<ExtArgs> | null
+  where?: Prisma.AccessServiceWhereInput
+  orderBy?: Prisma.AccessServiceOrderByWithRelationInput | Prisma.AccessServiceOrderByWithRelationInput[]
+  cursor?: Prisma.AccessServiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccessServiceScalarFieldEnum | Prisma.AccessServiceScalarFieldEnum[]
+}
+
+/**
+ * User.accessServicesUpdated
+ */
+export type User$accessServicesUpdatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccessService
+   */
+  select?: Prisma.AccessServiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccessService
+   */
+  omit?: Prisma.AccessServiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccessServiceInclude<ExtArgs> | null
+  where?: Prisma.AccessServiceWhereInput
+  orderBy?: Prisma.AccessServiceOrderByWithRelationInput | Prisma.AccessServiceOrderByWithRelationInput[]
+  cursor?: Prisma.AccessServiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccessServiceScalarFieldEnum | Prisma.AccessServiceScalarFieldEnum[]
+}
+
+/**
+ * User.accessServiceAssignees
+ */
+export type User$accessServiceAssigneesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccessServiceAssignee
+   */
+  select?: Prisma.AccessServiceAssigneeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccessServiceAssignee
+   */
+  omit?: Prisma.AccessServiceAssigneeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccessServiceAssigneeInclude<ExtArgs> | null
+  where?: Prisma.AccessServiceAssigneeWhereInput
+  orderBy?: Prisma.AccessServiceAssigneeOrderByWithRelationInput | Prisma.AccessServiceAssigneeOrderByWithRelationInput[]
+  cursor?: Prisma.AccessServiceAssigneeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccessServiceAssigneeScalarFieldEnum | Prisma.AccessServiceAssigneeScalarFieldEnum[]
+}
+
+/**
+ * User.accessServiceSnapshotAssignees
+ */
+export type User$accessServiceSnapshotAssigneesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccessServiceSnapshotAssignee
+   */
+  select?: Prisma.AccessServiceSnapshotAssigneeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccessServiceSnapshotAssignee
+   */
+  omit?: Prisma.AccessServiceSnapshotAssigneeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccessServiceSnapshotAssigneeInclude<ExtArgs> | null
+  where?: Prisma.AccessServiceSnapshotAssigneeWhereInput
+  orderBy?: Prisma.AccessServiceSnapshotAssigneeOrderByWithRelationInput | Prisma.AccessServiceSnapshotAssigneeOrderByWithRelationInput[]
+  cursor?: Prisma.AccessServiceSnapshotAssigneeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccessServiceSnapshotAssigneeScalarFieldEnum | Prisma.AccessServiceSnapshotAssigneeScalarFieldEnum[]
 }
 
 /**

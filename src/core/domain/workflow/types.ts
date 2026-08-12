@@ -127,7 +127,24 @@ export type AssigneeSpec =
   | { kind: "ROLE"; roleId: string }
   | { kind: "REQUESTER" }
   | { kind: "FIELD_USER"; fieldKey: string }
-  | { kind: "REQUESTER_MANAGER" };
+  | { kind: "REQUESTER_MANAGER" }
+  | {
+      kind: "ACCESS_SERVICE_ROLE";
+      /** Key of the LOOKUP[ACCESS_SERVICES] form field whose snapshot to use */
+      serviceSnapshotKey: string;
+      role: "OWNER" | "CYBERSECURITY" | "IMPLEMENTER";
+    }
+  | {
+      kind: "FALLBACK";
+      primary: AssigneeSpec;
+      /** Form field key (USER_PICKER) to use when primary resolves empty */
+      fallbackFieldKey: string;
+      /**
+       * Expression over fieldValues; when it evaluates truthy the primary is
+       * skipped and fallbackFieldKey is used directly (e.g. manager on leave).
+       */
+      forceFallbackWhen?: Expression;
+    };
 
 export interface SLAConfig {
   calendarId?: string;

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import { evaluate, evaluateBoolean } from "@/lib/workflow/expression-client";
 import type { Expression } from "@/core/domain/workflow";
 
@@ -57,6 +58,8 @@ interface FormRendererProps {
    *  - "admin": shows ADMINISTRATIVE fields read-only; HIDDEN fields stay hidden.
    */
   mode?: "submit" | "admin";
+  /** Values for SYSTEM_FIELD display (resolved server-side from requester identity). */
+  systemFieldValues?: Record<string, string>;
 }
 
 function resolveFieldState(
@@ -83,6 +86,7 @@ export function FormRenderer({
   invalidFieldKeys = [],
   formNameToId = {},
   mode = "submit",
+  systemFieldValues = {},
 }: FormRendererProps) {
   const invalidSet = new Set(invalidFieldKeys);
   const update = (key: string, value: unknown) => {
@@ -203,6 +207,7 @@ export function FormRenderer({
                 users={users}
                 onChange={(v) => update(field.key, v)}
                 formNameToId={formNameToId}
+                systemFieldValues={systemFieldValues}
               />
             </div>
             {isInvalid ? (
@@ -224,6 +229,7 @@ function FieldInput({
   users,
   onChange,
   formNameToId,
+  systemFieldValues = {},
 }: {
   field: FormFieldDef;
   value: unknown;
@@ -231,6 +237,7 @@ function FieldInput({
   users: UserOption[];
   onChange: (value: unknown) => void;
   formNameToId: Record<string, string>;
+  systemFieldValues?: Record<string, string>;
 }) {
   const inputBase =
     "h-11 w-full rounded-md border border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] px-4 text-body-md text-[var(--color-ink)] outline-none transition-colors placeholder:text-[var(--color-stone)] focus:border-[var(--color-brand-blue)] focus:ring-1 focus:ring-[var(--color-brand-blue)]";
@@ -416,10 +423,38 @@ function FieldInput({
           {value === null || value === undefined ? "—" : String(value)}
         </div>
       );
+    case "SYSTEM_FIELD": {
+      const systemKey =
+        (field.config as { systemField?: string } | undefined)?.systemField ??
+        "";
+      const displayValue = systemFieldValues[systemKey] ?? "(not available)";
+      return (
+        <div
+          className={
+            inputBase +
+            " flex cursor-not-allowed items-center bg-[var(--color-surface-soft)] text-[var(--color-charcoal)]"
+          }
+        >
+          {displayValue}
+        </div>
+      );
+    }
     case "LOOKUP": {
       const cfg = (field.config ?? {}) as {
+        dataSource?: string;
         options?: Array<{ value: string; label: string }> | string[];
       };
+      if (cfg.dataSource === "ACCESS_SERVICES") {
+        return (
+          <AccessServiceCombobox
+            value={(value as string | undefined) ?? ""}
+            onChange={onChange}
+            readOnly={readOnly}
+            inputBase={inputBase}
+            ro={ro}
+          />
+        );
+      }
       const raw = cfg.options ?? [];
       const opts = raw.map((o) =>
         typeof o === "string" ? { value: o, label: o } : o,
@@ -643,4 +678,171 @@ function FieldInput({
         />
       );
   }
+}
+
+interface AccessServiceOption {
+  id: string;
+  label: string;
+  publicMetadata: {
+    requireManagerApproval?: boolean;
+    instructions?: string | null;
+  };
+}
+
+function AccessServiceCombobox({
+  value,
+  onChange,
+  readOnly,
+  inputBase,
+  ro,
+}: {
+  value: string;
+  onChange: (v: unknown) => void;
+  readOnly: boolean;
+  inputBase: string;
+  ro: string;
+}) {
+  const [query, setQuery] = useState("");
+  const [options, setOptions] = useState<AccessServiceOption[]>([]);
+  // Cache of resolved options by id — never cleared synchronously in effects
+  const [resolved, setResolved] = useState<Record<string, AccessServiceOption>>(
+    {},
+  );
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Derived: the currently selected option (null when value is empty or not yet resolved)
+  const selected = value ? (resolved[value] ?? null) : null;
+
+  // Resolve label for current value on mount / value change
+  useEffect(() => {
+    if (!value || resolved[value]) return;
+    fetch(
+      `/api/workflow/lookups/ACCESS_SERVICES?q=${encodeURIComponent(value)}&limit=20`,
+    )
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { results?: AccessServiceOption[] } | null) => {
+        const match = data?.results?.find((o) => o.id === value);
+        if (match) setResolved((prev) => ({ ...prev, [value]: match }));
+      })
+      .catch(() => null);
+  }, [value, resolved]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setLoading(true);
+      fetch(
+        `/api/workflow/lookups/ACCESS_SERVICES?q=${encodeURIComponent(query)}&limit=20`,
+      )
+        .then((r) => (r.ok ? r.json() : { results: [] }))
+        .then((data: { results: AccessServiceOption[] }) => {
+          setOptions(data.results ?? []);
+          // Cache resolved options so label lookups stay fast
+          setResolved((prev) => {
+            const next = { ...prev };
+            for (const o of data.results ?? []) next[o.id] = o;
+            return next;
+          });
+        })
+        .catch(() => setOptions([]))
+        .finally(() => setLoading(false));
+    }, 250);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query, open]);
+
+  const instructions = selected?.publicMetadata?.instructions;
+
+  if (readOnly) {
+    return (
+      <div
+        className={
+          inputBase +
+          " flex cursor-not-allowed items-center bg-[var(--color-surface-soft)] text-[var(--color-charcoal)]"
+        }
+      >
+        {selected?.label ?? (value || "—")}
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative">
+      <div
+        className={inputBase + ro + " flex cursor-pointer items-center"}
+        onClick={() => !readOnly && setOpen((o) => !o)}
+      >
+        <span
+          className={
+            selected ? "text-[var(--color-ink)]" : "text-[var(--color-stone)]"
+          }
+        >
+          {selected ? selected.label : "— Search access services —"}
+        </span>
+      </div>
+      {open && (
+        <div className="absolute z-50 mt-1 w-full rounded-md border border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] shadow-lg">
+          <div className="p-2">
+            <input
+              autoFocus
+              type="text"
+              className="text-body-sm h-9 w-full rounded-md border border-[var(--color-hairline-strong)] px-3 text-[var(--color-ink)] outline-none focus:border-[var(--color-brand-blue)]"
+              placeholder="Search…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
+          <ul className="max-h-56 overflow-y-auto">
+            {loading ? (
+              <li className="text-body-sm px-3 py-2 text-[var(--color-stone)]">
+                Loading…
+              </li>
+            ) : options.length === 0 ? (
+              <li className="text-body-sm px-3 py-2 text-[var(--color-stone)]">
+                No results
+              </li>
+            ) : (
+              options.map((opt) => (
+                <li
+                  key={opt.id}
+                  className="text-body-sm cursor-pointer px-3 py-2 text-[var(--color-ink)] hover:bg-[var(--color-surface-soft)]"
+                  onClick={() => {
+                    setResolved((prev) => ({ ...prev, [opt.id]: opt }));
+                    onChange(opt.id);
+                    setOpen(false);
+                    setQuery("");
+                  }}
+                >
+                  {opt.label}
+                </li>
+              ))
+            )}
+          </ul>
+          {selected && (
+            <div className="border-t border-[var(--color-hairline-soft)] px-3 py-2">
+              <button
+                type="button"
+                className="text-caption text-[var(--color-coral-dark)] hover:underline"
+                onClick={() => {
+                  onChange("");
+                  setOpen(false);
+                }}
+              >
+                Clear selection
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {instructions ? (
+        <p className="text-caption mt-1 text-[var(--color-stone)]">
+          {instructions}
+        </p>
+      ) : null}
+    </div>
+  );
 }
