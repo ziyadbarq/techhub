@@ -78,6 +78,7 @@ const FIELD_TYPES: ReadonlyArray<{ value: string; label: string }> = [
   { value: "REPEATER", label: "Repeater" },
   { value: "COMPUTED", label: "Computed" },
   { value: "SECTION_HEADER", label: "Section header" },
+  { value: "SYSTEM_FIELD", label: "System field (read-only)" },
 ];
 
 function uniqueKey(fields: FieldDef[], base: string): string {
@@ -987,10 +988,26 @@ function FieldEditor({
         })}
       </div>
 
-      {/* Options (DROPDOWN, MULTI_SELECT, LOOKUP) */}
+      {/* Data source selector for LOOKUP */}
+      {field.type === "LOOKUP" && (
+        <label className="block">
+          <span className="text-stone">Data source</span>
+          <select
+            value={(field.config?.dataSource as string | undefined) ?? "static"}
+            onChange={(e) => patchConfig({ dataSource: e.target.value })}
+            className="border-hairline-strong bg-canvas text-body-sm text-ink mt-1 w-full rounded-md border px-2 py-1.5"
+          >
+            <option value="static">Static options</option>
+            <option value="ACCESS_SERVICES">Access Services catalog</option>
+          </select>
+        </label>
+      )}
+
+      {/* Options (DROPDOWN, MULTI_SELECT, or LOOKUP with static data source) */}
       {(field.type === "DROPDOWN" ||
         field.type === "MULTI_SELECT" ||
-        field.type === "LOOKUP") && (
+        (field.type === "LOOKUP" &&
+          (field.config?.dataSource ?? "static") === "static")) && (
         <label className="block">
           <span className="text-stone">Options (one per line)</span>
           <textarea
@@ -1006,6 +1023,41 @@ function FieldEditor({
             rows={4}
             className="border-hairline-strong bg-canvas text-body-sm text-ink mt-1 w-full rounded-md border px-2 py-1.5"
           />
+        </label>
+      )}
+
+      {/* Info text for LOOKUP[ACCESS_SERVICES] */}
+      {field.type === "LOOKUP" &&
+        (field.config?.dataSource as string | undefined) ===
+          "ACCESS_SERVICES" && (
+          <p className="text-body-sm text-stone rounded-md border border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)] px-3 py-2">
+            Options are loaded live from the Access Services catalog. No manual
+            options needed.
+          </p>
+        )}
+
+      {/* SYSTEM_FIELD: systemField selector */}
+      {field.type === "SYSTEM_FIELD" && (
+        <label className="block">
+          <span className="text-stone">System field</span>
+          <select
+            value={
+              (field.config?.systemField as string | undefined) ??
+              "REQUESTER_NAME"
+            }
+            onChange={(e) => patchConfig({ systemField: e.target.value })}
+            className="border-hairline-strong bg-canvas text-body-sm text-ink mt-1 w-full rounded-md border px-2 py-1.5"
+          >
+            <option value="REQUESTER_NAME">Requester name</option>
+            <option value="REQUESTER_EMAIL">Requester email</option>
+            <option value="REQUESTER_MANAGER_NAME">
+              Requester&apos;s manager name
+            </option>
+          </select>
+          <p className="text-caption text-stone mt-1">
+            Read-only. Value is resolved automatically at form load and never
+            stored in field values.
+          </p>
         </label>
       )}
 

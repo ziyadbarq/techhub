@@ -54,10 +54,27 @@ type StepType =
   | "SUB_WORKFLOW";
 
 interface Assignee {
-  kind: "USER" | "ROLE" | "REQUESTER" | "FIELD_USER";
+  kind:
+    | "USER"
+    | "ROLE"
+    | "REQUESTER"
+    | "FIELD_USER"
+    | "REQUESTER_MANAGER"
+    | "ACCESS_SERVICE_ROLE"
+    | "FALLBACK";
   userId?: string;
   roleId?: string;
   fieldKey?: string;
+  /** ACCESS_SERVICE_ROLE: field key of the LOOKUP[ACCESS_SERVICES] field */
+  serviceSnapshotKey?: string;
+  /** ACCESS_SERVICE_ROLE: role within the service */
+  serviceRole?: "OWNER" | "CYBERSECURITY" | "IMPLEMENTER";
+  /** FALLBACK: primary spec (simplified — only REQUESTER_MANAGER supported here) */
+  primary?: { kind: "REQUESTER_MANAGER" };
+  /** FALLBACK: USER_PICKER field key to use when primary resolves empty */
+  fallbackFieldKey?: string;
+  /** FALLBACK: expression field key that forces fallback when non-empty */
+  forceFallbackWhenField?: string;
 }
 
 interface StepDef {
@@ -841,16 +858,73 @@ function StepEditor({
   onChange: (patch: Partial<StepDef>) => void;
 }) {
   const config = step.config as Record<string, unknown>;
+  function fromGraphSpec(raw: unknown): Assignee {
+    const s = raw as Record<string, unknown>;
+    if (s.kind === "ACCESS_SERVICE_ROLE") {
+      return {
+        kind: "ACCESS_SERVICE_ROLE",
+        serviceSnapshotKey: (s.serviceSnapshotKey as string) ?? "",
+        serviceRole: ((s.role as string) ?? "OWNER") as
+          | "OWNER"
+          | "CYBERSECURITY"
+          | "IMPLEMENTER",
+      };
+    }
+    if (s.kind === "FALLBACK") {
+      const fw = s.forceFallbackWhen as Record<string, unknown> | undefined;
+      const fwField =
+        fw?.left &&
+        typeof (fw.left as Record<string, unknown>).field === "string"
+          ? ((fw.left as Record<string, unknown>).field as string)
+          : "";
+      return {
+        kind: "FALLBACK",
+        primary: (s.primary as { kind: "REQUESTER_MANAGER" }) ?? {
+          kind: "REQUESTER_MANAGER",
+        },
+        fallbackFieldKey: (s.fallbackFieldKey as string) ?? "",
+        forceFallbackWhenField: fwField,
+      };
+    }
+    return s as unknown as Assignee;
+  }
+
   const assignees = Array.isArray(config.assignees)
-    ? (config.assignees as Assignee[])
+    ? (config.assignees as unknown[]).map(fromGraphSpec)
     : [];
 
   function updateConfig(patch: Record<string, unknown>) {
     onChange({ config: { ...config, ...patch } });
   }
 
+  function toGraphSpec(a: Assignee): Record<string, unknown> {
+    if (a.kind === "ACCESS_SERVICE_ROLE") {
+      return {
+        kind: "ACCESS_SERVICE_ROLE",
+        serviceSnapshotKey: a.serviceSnapshotKey ?? "",
+        role: a.serviceRole ?? "OWNER",
+      };
+    }
+    if (a.kind === "FALLBACK") {
+      const spec: Record<string, unknown> = {
+        kind: "FALLBACK",
+        primary: a.primary ?? { kind: "REQUESTER_MANAGER" },
+        fallbackFieldKey: a.fallbackFieldKey ?? "",
+      };
+      if (a.forceFallbackWhenField) {
+        spec.forceFallbackWhen = {
+          op: "!=",
+          left: { field: a.forceFallbackWhenField },
+          right: { const: "" },
+        };
+      }
+      return spec;
+    }
+    return a as unknown as Record<string, unknown>;
+  }
+
   function updateAssignees(next: Assignee[]) {
-    updateConfig({ assignees: next });
+    updateConfig({ assignees: next.map(toGraphSpec) });
   }
 
   return (
@@ -907,6 +981,12 @@ function StepEditor({
                     {a.kind === "FIELD_USER" && a.fieldKey
                       ? `: field=${a.fieldKey}`
                       : ""}
+                    {a.kind === "ACCESS_SERVICE_ROLE" && a.serviceSnapshotKey
+                      ? `: ${a.serviceSnapshotKey}/${a.serviceRole ?? "OWNER"}`
+                      : ""}
+                    {a.kind === "FALLBACK" && a.fallbackFieldKey
+                      ? `: manager→${a.fallbackFieldKey}`
+                      : ""}
                   </span>
                   <button
                     onClick={() =>
@@ -962,6 +1042,45 @@ function StepEditor({
             >
               + Field user
             </button>
+            <button
+              onClick={() =>
+                updateAssignees([...assignees, { kind: "REQUESTER_MANAGER" }])
+              }
+              className="border-hairline-strong rounded border px-1.5 py-0.5 text-[10px]"
+            >
+              + Manager
+            </button>
+            <button
+              onClick={() =>
+                updateAssignees([
+                  ...assignees,
+                  {
+                    kind: "ACCESS_SERVICE_ROLE",
+                    serviceSnapshotKey: "",
+                    serviceRole: "OWNER",
+                  },
+                ])
+              }
+              className="border-hairline-strong rounded border px-1.5 py-0.5 text-[10px]"
+            >
+              + Service role
+            </button>
+            <button
+              onClick={() =>
+                updateAssignees([
+                  ...assignees,
+                  {
+                    kind: "FALLBACK",
+                    primary: { kind: "REQUESTER_MANAGER" },
+                    fallbackFieldKey: "",
+                    forceFallbackWhenField: "",
+                  },
+                ])
+              }
+              className="border-hairline-strong rounded border px-1.5 py-0.5 text-[10px]"
+            >
+              + Manager+fallback
+            </button>
           </div>
           {/* Assignee detail editors */}
           {assignees.map((a, i) => (
@@ -1011,6 +1130,69 @@ function StepEditor({
                   placeholder="field key (e.g., owner)"
                   className="border-hairline-strong bg-canvas w-full rounded-md border px-2 py-1 font-mono"
                 />
+              )}
+              {a.kind === "ACCESS_SERVICE_ROLE" && (
+                <div className="space-y-1">
+                  <input
+                    value={a.serviceSnapshotKey ?? ""}
+                    onChange={(e) => {
+                      const next = [...assignees];
+                      next[i] = { ...a, serviceSnapshotKey: e.target.value };
+                      updateAssignees(next);
+                    }}
+                    placeholder="Service field key (LOOKUP[ACCESS_SERVICES])"
+                    className="border-hairline-strong bg-canvas w-full rounded-md border px-2 py-1 font-mono text-[11px]"
+                  />
+                  <select
+                    value={a.serviceRole ?? "OWNER"}
+                    onChange={(e) => {
+                      const next = [...assignees];
+                      next[i] = {
+                        ...a,
+                        serviceRole: e.target.value as
+                          | "OWNER"
+                          | "CYBERSECURITY"
+                          | "IMPLEMENTER",
+                      };
+                      updateAssignees(next);
+                    }}
+                    className="border-hairline-strong bg-canvas w-full rounded-md border px-2 py-1 text-[11px]"
+                  >
+                    <option value="OWNER">Owner</option>
+                    <option value="CYBERSECURITY">Cybersecurity</option>
+                    <option value="IMPLEMENTER">Implementer</option>
+                  </select>
+                </div>
+              )}
+              {a.kind === "FALLBACK" && (
+                <div className="space-y-1">
+                  <p className="text-stone text-[10px]">
+                    Primary: Requester&apos;s line manager
+                  </p>
+                  <input
+                    value={a.fallbackFieldKey ?? ""}
+                    onChange={(e) => {
+                      const next = [...assignees];
+                      next[i] = { ...a, fallbackFieldKey: e.target.value };
+                      updateAssignees(next);
+                    }}
+                    placeholder="Fallback USER_PICKER field key"
+                    className="border-hairline-strong bg-canvas w-full rounded-md border px-2 py-1 font-mono text-[11px]"
+                  />
+                  <input
+                    value={a.forceFallbackWhenField ?? ""}
+                    onChange={(e) => {
+                      const next = [...assignees];
+                      next[i] = {
+                        ...a,
+                        forceFallbackWhenField: e.target.value,
+                      };
+                      updateAssignees(next);
+                    }}
+                    placeholder="Skip manager when this field is non-empty (optional)"
+                    className="border-hairline-strong bg-canvas w-full rounded-md border px-2 py-1 font-mono text-[11px]"
+                  />
+                </div>
               )}
             </div>
           ))}
