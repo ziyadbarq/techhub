@@ -509,8 +509,7 @@ export function AccessServicesClient({ initialServices }: Props) {
 
       {/* Side sheet panel */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col shadow-2xl transition-transform duration-300 ease-in-out ${showForm ? "translate-x-0" : "translate-x-full"}`}
-        style={{ background: "hsl(var(--background))" }}
+        className={`bg-card fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col shadow-2xl transition-transform duration-300 ease-in-out ${showForm ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b px-6 py-4">
