@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import type { AccessServiceData } from "@/core/repositories/workflow/access-service.repository.interface";
 import type { AccessServiceRole } from "@/generated/prisma";
@@ -9,7 +9,9 @@ import {
   updateAccessServiceAction,
   toggleAccessServiceStatusAction,
   importAccessServicesAction,
+  listActiveUsersForAssigneeAction,
 } from "@/interface-adapters/controllers/access-service.controller";
+import type { ActiveUserOption } from "@/interface-adapters/controllers/access-service.controller";
 
 interface Props {
   initialServices: AccessServiceData[];
@@ -33,6 +35,131 @@ function Badge({ active }: { active: boolean }) {
   );
 }
 
+// ─── Role Assignee Selector ───────────────────────────────────────────────────
+
+function RoleSelector({
+  label,
+  allUsers,
+  selected,
+  onChange,
+}: {
+  label: string;
+  allUsers: ActiveUserOption[];
+  selected: ActiveUserOption[];
+  onChange: (next: ActiveUserOption[]) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  const selectedIds = new Set(selected.map((u) => u.id));
+
+  const filtered = allUsers.filter(
+    (u) =>
+      !selectedIds.has(u.id) &&
+      (u.name.toLowerCase().includes(query.toLowerCase()) ||
+        u.email.toLowerCase().includes(query.toLowerCase())),
+  );
+
+  function add(user: ActiveUserOption) {
+    onChange([...selected, user]);
+    setQuery("");
+    setOpen(false);
+  }
+
+  function remove(id: string) {
+    onChange(selected.filter((u) => u.id !== id));
+  }
+
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium">{label}</label>
+
+      {/* Search input */}
+      <div ref={containerRef} className="relative">
+        <input
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          placeholder="Search by name or email…"
+          className="w-full rounded-md border px-3 py-2 text-sm"
+        />
+        {open && filtered.length > 0 && (
+          <ul className="bg-background absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border shadow-lg">
+            {filtered.slice(0, 20).map((u) => (
+              <li key={u.id}>
+                <button
+                  type="button"
+                  onClick={() => add(u)}
+                  className="hover:bg-muted flex w-full items-center gap-3 px-3 py-2 text-left text-sm"
+                >
+                  <span className="font-medium">{u.name}</span>
+                  <span className="text-muted-foreground text-xs">
+                    {u.email}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Selected users table */}
+      {selected.length > 0 && (
+        <div className="overflow-hidden rounded-md border">
+          <table className="w-full text-xs">
+            <thead className="bg-muted/40">
+              <tr>
+                <th className="px-3 py-1.5 text-left font-medium">Name</th>
+                <th className="px-3 py-1.5 text-left font-medium">Email</th>
+                <th className="w-8" />
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {selected.map((u) => (
+                <tr key={u.id} className="hover:bg-muted/20">
+                  <td className="px-3 py-1.5">{u.name}</td>
+                  <td className="text-muted-foreground px-3 py-1.5">
+                    {u.email}
+                  </td>
+                  <td className="px-1 py-1.5 text-right">
+                    <button
+                      type="button"
+                      onClick={() => remove(u.id)}
+                      className="text-muted-foreground hover:text-destructive rounded px-1"
+                      aria-label="Remove"
+                    >
+                      ×
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
 export function AccessServicesClient({ initialServices }: Props) {
   const [services, setServices] =
     useState<AccessServiceData[]>(initialServices);
@@ -47,9 +174,13 @@ export function AccessServicesClient({ initialServices }: Props) {
   const [description, setDescription] = useState("");
   const [requireManagerApproval, setRequireManagerApproval] = useState(false);
   const [instructions, setInstructions] = useState("");
-  const [ownerEmails, setOwnerEmails] = useState("");
-  const [cyberEmails, setCyberEmails] = useState("");
-  const [implEmails, setImplEmails] = useState("");
+  const [ownerUsers, setOwnerUsers] = useState<ActiveUserOption[]>([]);
+  const [cyberUsers, setCyberUsers] = useState<ActiveUserOption[]>([]);
+  const [implUsers, setImplUsers] = useState<ActiveUserOption[]>([]);
+
+  // User list for selectors
+  const [allUsers, setAllUsers] = useState<ActiveUserOption[]>([]);
+  const [usersLoaded, setUsersLoaded] = useState(false);
 
   // Import state
   const [importFile, setImportFile] = useState<File | null>(null);
@@ -60,6 +191,27 @@ export function AccessServicesClient({ initialServices }: Props) {
   } | null>(null);
   const [importPending, startImportTransition] = useTransition();
 
+  // Load users once when sheet opens
+  useEffect(() => {
+    if (showForm && !usersLoaded) {
+      listActiveUsersForAssigneeAction().then((res) => {
+        if (res.success && res.data) {
+          setAllUsers(res.data);
+          setUsersLoaded(true);
+        }
+      });
+    }
+  }, [showForm, usersLoaded]);
+
+  function makeUserOptions(
+    svc: AccessServiceData,
+    role: AccessServiceRole,
+  ): ActiveUserOption[] {
+    return (svc.assignees ?? [])
+      .filter((a) => a.role === role)
+      .map((a) => ({ id: a.userId, name: a.userName, email: a.userEmail }));
+  }
+
   function openCreate() {
     setEditingService(null);
     setName("");
@@ -67,9 +219,9 @@ export function AccessServicesClient({ initialServices }: Props) {
     setDescription("");
     setRequireManagerApproval(false);
     setInstructions("");
-    setOwnerEmails("");
-    setCyberEmails("");
-    setImplEmails("");
+    setOwnerUsers([]);
+    setCyberUsers([]);
+    setImplUsers([]);
     setShowForm(true);
   }
 
@@ -80,31 +232,27 @@ export function AccessServicesClient({ initialServices }: Props) {
     setDescription(svc.description ?? "");
     setRequireManagerApproval(svc.requireManagerApproval);
     setInstructions(svc.instructions ?? "");
-    const byRole = (role: AccessServiceRole) =>
-      (svc.assignees ?? [])
-        .filter((a) => a.role === role)
-        .map((a) => a.userEmail)
-        .join(";");
-    setOwnerEmails(byRole("OWNER"));
-    setCyberEmails(byRole("CYBERSECURITY"));
-    setImplEmails(byRole("IMPLEMENTER"));
+    setOwnerUsers(makeUserOptions(svc, "OWNER"));
+    setCyberUsers(makeUserOptions(svc, "CYBERSECURITY"));
+    setImplUsers(makeUserOptions(svc, "IMPLEMENTER"));
     setShowForm(true);
-  }
-
-  function buildEmailAssignees(emails: string, role: AccessServiceRole) {
-    return emails
-      .split(";")
-      .map((e) => e.trim())
-      .filter(Boolean)
-      .map((email) => ({ email, role })); // email resolved to userId server-side
   }
 
   function handleSave() {
     startTransition(async () => {
       const assignees = [
-        ...buildEmailAssignees(ownerEmails, "OWNER"),
-        ...buildEmailAssignees(cyberEmails, "CYBERSECURITY"),
-        ...buildEmailAssignees(implEmails, "IMPLEMENTER"),
+        ...ownerUsers.map((u) => ({
+          userId: u.id,
+          role: "OWNER" as AccessServiceRole,
+        })),
+        ...cyberUsers.map((u) => ({
+          userId: u.id,
+          role: "CYBERSECURITY" as AccessServiceRole,
+        })),
+        ...implUsers.map((u) => ({
+          userId: u.id,
+          role: "IMPLEMENTER" as AccessServiceRole,
+        })),
       ];
 
       const result = editingService
@@ -195,7 +343,6 @@ export function AccessServicesClient({ initialServices }: Props) {
         toast.success(`Imported ${result.data.importedCount} services`);
         setDryRunResult(null);
         setImportFile(null);
-        // Refresh the list
         window.location.reload();
       } else {
         toast.error("Import failed");
@@ -450,36 +597,28 @@ export function AccessServicesClient({ initialServices }: Props) {
               className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
             />
           </div>
-          <div>
-            <label className="text-sm font-medium">
-              Owner emails{" "}
-              <span className="text-muted-foreground text-xs">
-                (semicolon-separated)
-              </span>
-            </label>
-            <input
-              value={ownerEmails}
-              onChange={(e) => setOwnerEmails(e.target.value)}
-              placeholder="owner@example.com;owner2@example.com"
-              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+
+          <div className="space-y-5 pt-1">
+            <RoleSelector
+              label="Owner"
+              allUsers={allUsers}
+              selected={ownerUsers}
+              onChange={setOwnerUsers}
+            />
+            <RoleSelector
+              label="Cybersecurity Approver"
+              allUsers={allUsers}
+              selected={cyberUsers}
+              onChange={setCyberUsers}
+            />
+            <RoleSelector
+              label="Implementer"
+              allUsers={allUsers}
+              selected={implUsers}
+              onChange={setImplUsers}
             />
           </div>
-          <div>
-            <label className="text-sm font-medium">Cybersecurity emails</label>
-            <input
-              value={cyberEmails}
-              onChange={(e) => setCyberEmails(e.target.value)}
-              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium">Implementer emails</label>
-            <input
-              value={implEmails}
-              onChange={(e) => setImplEmails(e.target.value)}
-              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-            />
-          </div>
+
           <p className="text-muted-foreground text-xs">
             Saving with empty role columns is allowed — assignees can be added
             later.

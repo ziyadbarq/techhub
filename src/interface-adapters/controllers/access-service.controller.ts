@@ -26,6 +26,7 @@ import type {
 export type { AccessServiceData } from "@/core/repositories/workflow/access-service.repository.interface";
 import type { AccessServiceRole } from "@/generated/prisma";
 import { getSession } from "@/lib/auth/session";
+import { prisma } from "@/infrastructure/database/prisma/client";
 
 /** Assignee can be specified by userId or by email (email is resolved server-side) */
 export interface AccessServiceAssigneePayload {
@@ -270,6 +271,46 @@ export async function exportAccessServicesAction(): Promise<
       error,
       { function: "exportAccessServicesAction" },
       "Failed to export access services",
+    );
+  }
+}
+
+export interface ActiveUserOption {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export async function listActiveUsersForAssigneeAction(): Promise<
+  ActionResponse<ActiveUserOption[]>
+> {
+  try {
+    await requireFeatureAndPermission(
+      PERMISSIONS.WORKFLOWS_ACCESS_SERVICES_VIEW,
+    );
+    const rows = await prisma.person.findMany({
+      where: { isActive: true, userId: { not: null } },
+      select: {
+        userId: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
+      orderBy: [{ firstName: "asc" }, { lastName: "asc" }],
+    });
+    const data: ActiveUserOption[] = rows
+      .filter((r) => r.userId)
+      .map((r) => ({
+        id: r.userId!,
+        name: `${r.firstName} ${r.lastName}`.trim(),
+        email: r.email,
+      }));
+    return { success: true, data };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "listActiveUsersForAssigneeAction" },
+      "Failed to load users",
     );
   }
 }
