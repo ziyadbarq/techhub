@@ -354,131 +354,154 @@ export function AccessServicesClient({ initialServices }: Props) {
         </table>
       </div>
 
-      {/* Create / Edit Dialog */}
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-background max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-lg p-6 shadow-xl">
-            <h2 className="text-lg font-semibold">
-              {editingService ? "Edit Service" : "Create Service"}
-            </h2>
+      {/* Side sheet backdrop */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${showForm ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+        onClick={() => setShowForm(false)}
+      />
 
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm font-medium">Name *</label>
-                <input
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (!editingService) {
-                      setSlug(
-                        e.target.value
-                          .toLowerCase()
-                          .replace(/[^a-z0-9]+/g, "-")
-                          .replace(/^-|-$/g, ""),
-                      );
-                    }
-                  }}
-                  className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Slug *</label>
-                <input
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value.toLowerCase())}
-                  className="mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Description</label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={2}
-                  className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="req-mgr"
-                  checked={requireManagerApproval}
-                  onChange={(e) => setRequireManagerApproval(e.target.checked)}
-                  className="h-4 w-4"
-                />
-                <label htmlFor="req-mgr" className="text-sm">
-                  Requires manager approval
-                </label>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Instructions</label>
-                <textarea
-                  value={instructions}
-                  onChange={(e) => setInstructions(e.target.value)}
-                  rows={2}
-                  className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">
-                  Owner emails{" "}
-                  <span className="text-muted-foreground text-xs">
-                    (semicolon-separated)
-                  </span>
-                </label>
-                <input
-                  value={ownerEmails}
-                  onChange={(e) => setOwnerEmails(e.target.value)}
-                  placeholder="owner@example.com;owner2@example.com"
-                  className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">
-                  Cybersecurity emails
-                </label>
-                <input
-                  value={cyberEmails}
-                  onChange={(e) => setCyberEmails(e.target.value)}
-                  className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">
-                  Implementer emails
-                </label>
-                <input
-                  value={implEmails}
-                  onChange={(e) => setImplEmails(e.target.value)}
-                  className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                />
-              </div>
-            </div>
-
-            <p className="text-muted-foreground text-xs">
-              Warning: saving with empty role columns is allowed — assignees can
-              be added later. The service will show a warning if required
-              workflow roles have no users.
-            </p>
-
-            <div className="flex justify-end gap-3 pt-2">
-              <button
-                onClick={() => setShowForm(false)}
-                className="rounded-md border px-4 py-2 text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={isPending || !name || !slug}
-                className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm disabled:opacity-50"
-              >
-                {isPending ? "Saving..." : "Save"}
-              </button>
-            </div>
-          </div>
+      {/* Side sheet panel */}
+      <div
+        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col bg-(--color-surface) shadow-2xl transition-transform duration-300 ease-in-out ${showForm ? "translate-x-0" : "translate-x-full"}`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between border-b px-6 py-4">
+          <h2 className="text-base font-semibold">
+            {editingService ? "Edit Service" : "Create Service"}
+          </h2>
+          <button
+            onClick={() => setShowForm(false)}
+            className="text-muted-foreground hover:text-foreground rounded p-1 transition-colors"
+            aria-label="Close"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
         </div>
-      )}
+
+        {/* Scrollable body */}
+        <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
+          <div>
+            <label className="text-sm font-medium">Name *</label>
+            <input
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (!editingService) {
+                  setSlug(
+                    e.target.value
+                      .toLowerCase()
+                      .replace(/[^a-z0-9]+/g, "-")
+                      .replace(/^-|-$/g, ""),
+                  );
+                }
+              }}
+              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Slug *</label>
+            <input
+              value={slug}
+              onChange={(e) => setSlug(e.target.value.toLowerCase())}
+              className="mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={2}
+              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="req-mgr"
+              checked={requireManagerApproval}
+              onChange={(e) => setRequireManagerApproval(e.target.checked)}
+              className="h-4 w-4"
+            />
+            <label htmlFor="req-mgr" className="text-sm">
+              Requires manager approval
+            </label>
+          </div>
+          <div>
+            <label className="text-sm font-medium">Instructions</label>
+            <textarea
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+              rows={2}
+              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium">
+              Owner emails{" "}
+              <span className="text-muted-foreground text-xs">
+                (semicolon-separated)
+              </span>
+            </label>
+            <input
+              value={ownerEmails}
+              onChange={(e) => setOwnerEmails(e.target.value)}
+              placeholder="owner@example.com;owner2@example.com"
+              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Cybersecurity emails</label>
+            <input
+              value={cyberEmails}
+              onChange={(e) => setCyberEmails(e.target.value)}
+              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Implementer emails</label>
+            <input
+              value={implEmails}
+              onChange={(e) => setImplEmails(e.target.value)}
+              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+            />
+          </div>
+          <p className="text-muted-foreground text-xs">
+            Saving with empty role columns is allowed — assignees can be added
+            later.
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end gap-3 border-t px-6 py-4">
+          <button
+            onClick={() => setShowForm(false)}
+            className="rounded-md border px-4 py-2 text-sm"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={isPending || !name || !slug}
+            className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm disabled:opacity-50"
+          >
+            {isPending ? "Saving..." : "Save"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
