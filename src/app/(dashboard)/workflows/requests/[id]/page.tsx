@@ -121,8 +121,34 @@ export default async function RequestDetailPage({
     const v = f.visibility ?? "VISIBLE";
     if (v === "HIDDEN") return false;
     if (v === "ADMINISTRATIVE") return canOverride;
+    // SECTION_HEADER has no value; exclude from data display
+    if (f.type === "SECTION_HEADER") return false;
     return true;
   });
+
+  // Load immutable snapshots for SYSTEM_FIELD and LOOKUP[ACCESS_SERVICES] display
+  const requesterSnapshot = await prisma.requesterIdentitySnapshot.findUnique({
+    where: { requestId: req.id },
+  });
+  const serviceSnapshots = await prisma.accessServiceRequestSnapshot.findMany({
+    where: { requestId: req.id },
+  });
+  // Map from field key to snapshotted service name
+  const serviceNameByFieldKey = new Map<string, string>(
+    serviceSnapshots.map((s) => [s.sourceFieldKey, s.serviceName]),
+  );
+  // System field display values from snapshot (not live session)
+  const systemFieldSnapshotValues: Record<string, string> = {};
+  if (requesterSnapshot) {
+    systemFieldSnapshotValues["REQUESTER_NAME"] =
+      requesterSnapshot.requesterName;
+    systemFieldSnapshotValues["REQUESTER_EMAIL"] =
+      requesterSnapshot.requesterEmail;
+    if (requesterSnapshot.managerName) {
+      systemFieldSnapshotValues["REQUESTER_MANAGER_NAME"] =
+        requesterSnapshot.managerName;
+    }
+  }
 
   // For REQUEST_LINK fields, resolve target request ids → reference numbers.
   const linkIds = new Set<string>();
@@ -228,6 +254,23 @@ export default async function RequestDetailPage({
                   f.type === "REQUEST_LINK" && typeof value === "string"
                     ? linkRefById.get(value)
                     : undefined;
+                // SYSTEM_FIELD: display from immutable snapshot, not live session
+                const systemKey =
+                  f.type === "SYSTEM_FIELD"
+                    ? ((f.config?.systemField as string | undefined) ?? "")
+                    : "";
+                const systemDisplay = systemKey
+                  ? (systemFieldSnapshotValues[systemKey] ?? "—")
+                  : null;
+                // LOOKUP[ACCESS_SERVICES]: display snapshotted service name
+                const isAccessServiceLookup =
+                  f.type === "LOOKUP" &&
+                  (f.config?.dataSource as string | undefined) ===
+                    "ACCESS_SERVICES";
+                const accessServiceName = isAccessServiceLookup
+                  ? (serviceNameByFieldKey.get(f.key) ??
+                    renderFieldValue(value, f))
+                  : null;
                 return (
                   <div key={f.key} className="grid grid-cols-3 gap-4 py-3">
                     <dt className="text-body-sm text-stone flex flex-wrap items-center gap-2">
@@ -239,7 +282,11 @@ export default async function RequestDetailPage({
                       ) : null}
                     </dt>
                     <dd className="text-body-md text-ink col-span-2 wrap-break-word">
-                      {linkInfo ? (
+                      {systemDisplay !== null ? (
+                        systemDisplay
+                      ) : accessServiceName !== null ? (
+                        accessServiceName
+                      ) : linkInfo ? (
                         <span className="inline-flex flex-wrap items-center gap-2">
                           <span className="text-charcoal font-mono">
                             {linkInfo.ref}

@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.8.0
- * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
+ * Prisma Client JS version: 7.7.0
+ * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.8.0",
-  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
+  client: "7.7.0",
+  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
 }
 
 /**
@@ -384,6 +384,11 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
+  AccessService: 'AccessService',
+  AccessServiceAssignee: 'AccessServiceAssignee',
+  AccessServiceRequestSnapshot: 'AccessServiceRequestSnapshot',
+  AccessServiceSnapshotAssignee: 'AccessServiceSnapshotAssignee',
+  RequesterIdentitySnapshot: 'RequesterIdentitySnapshot',
   AssetCategory: 'AssetCategory',
   AssetCategoryField: 'AssetCategoryField',
   AssetModel: 'AssetModel',
@@ -514,10 +519,380 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "reportSchedule" | "request" | "requestFieldValue" | "stepInstance" | "requestLink" | "requestComment" | "requestAttachment" | "savedFilter" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "featureFlag" | "featureFlagAuditLog" | "systemSetting" | "auditEntry" | "fieldHistoryEntry" | "assigneeSnapshot" | "sLAEvent" | "sLAEscalationLog" | "notification" | "emailActionToken" | "calendar" | "maintenanceWindow" | "blackoutPeriod" | "holdReason" | "outcomeCode" | "delegation" | "watcher" | "watcherSubscription" | "watcherChannelPreference" | "form" | "formNotificationBinding" | "formVersion" | "formField" | "workflowDefinition" | "workflowVersion" | "workflowStep" | "rejectionPolicy" | "emailTemplate"
+    modelProps: "accessService" | "accessServiceAssignee" | "accessServiceRequestSnapshot" | "accessServiceSnapshotAssignee" | "requesterIdentitySnapshot" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "reportSchedule" | "request" | "requestFieldValue" | "stepInstance" | "requestLink" | "requestComment" | "requestAttachment" | "savedFilter" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "featureFlag" | "featureFlagAuditLog" | "systemSetting" | "auditEntry" | "fieldHistoryEntry" | "assigneeSnapshot" | "sLAEvent" | "sLAEscalationLog" | "notification" | "emailActionToken" | "calendar" | "maintenanceWindow" | "blackoutPeriod" | "holdReason" | "outcomeCode" | "delegation" | "watcher" | "watcherSubscription" | "watcherChannelPreference" | "form" | "formNotificationBinding" | "formVersion" | "formField" | "workflowDefinition" | "workflowVersion" | "workflowStep" | "rejectionPolicy" | "emailTemplate"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
+    AccessService: {
+      payload: Prisma.$AccessServicePayload<ExtArgs>
+      fields: Prisma.AccessServiceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AccessServiceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AccessServiceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload>
+        }
+        findFirst: {
+          args: Prisma.AccessServiceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AccessServiceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload>
+        }
+        findMany: {
+          args: Prisma.AccessServiceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload>[]
+        }
+        create: {
+          args: Prisma.AccessServiceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload>
+        }
+        createMany: {
+          args: Prisma.AccessServiceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AccessServiceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload>[]
+        }
+        delete: {
+          args: Prisma.AccessServiceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload>
+        }
+        update: {
+          args: Prisma.AccessServiceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload>
+        }
+        deleteMany: {
+          args: Prisma.AccessServiceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AccessServiceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AccessServiceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload>[]
+        }
+        upsert: {
+          args: Prisma.AccessServiceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServicePayload>
+        }
+        aggregate: {
+          args: Prisma.AccessServiceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAccessService>
+        }
+        groupBy: {
+          args: Prisma.AccessServiceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessServiceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AccessServiceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessServiceCountAggregateOutputType> | number
+        }
+      }
+    }
+    AccessServiceAssignee: {
+      payload: Prisma.$AccessServiceAssigneePayload<ExtArgs>
+      fields: Prisma.AccessServiceAssigneeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AccessServiceAssigneeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AccessServiceAssigneeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload>
+        }
+        findFirst: {
+          args: Prisma.AccessServiceAssigneeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AccessServiceAssigneeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload>
+        }
+        findMany: {
+          args: Prisma.AccessServiceAssigneeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload>[]
+        }
+        create: {
+          args: Prisma.AccessServiceAssigneeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload>
+        }
+        createMany: {
+          args: Prisma.AccessServiceAssigneeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AccessServiceAssigneeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload>[]
+        }
+        delete: {
+          args: Prisma.AccessServiceAssigneeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload>
+        }
+        update: {
+          args: Prisma.AccessServiceAssigneeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload>
+        }
+        deleteMany: {
+          args: Prisma.AccessServiceAssigneeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AccessServiceAssigneeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AccessServiceAssigneeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload>[]
+        }
+        upsert: {
+          args: Prisma.AccessServiceAssigneeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceAssigneePayload>
+        }
+        aggregate: {
+          args: Prisma.AccessServiceAssigneeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAccessServiceAssignee>
+        }
+        groupBy: {
+          args: Prisma.AccessServiceAssigneeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessServiceAssigneeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AccessServiceAssigneeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessServiceAssigneeCountAggregateOutputType> | number
+        }
+      }
+    }
+    AccessServiceRequestSnapshot: {
+      payload: Prisma.$AccessServiceRequestSnapshotPayload<ExtArgs>
+      fields: Prisma.AccessServiceRequestSnapshotFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AccessServiceRequestSnapshotFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AccessServiceRequestSnapshotFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload>
+        }
+        findFirst: {
+          args: Prisma.AccessServiceRequestSnapshotFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AccessServiceRequestSnapshotFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload>
+        }
+        findMany: {
+          args: Prisma.AccessServiceRequestSnapshotFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload>[]
+        }
+        create: {
+          args: Prisma.AccessServiceRequestSnapshotCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload>
+        }
+        createMany: {
+          args: Prisma.AccessServiceRequestSnapshotCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AccessServiceRequestSnapshotCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload>[]
+        }
+        delete: {
+          args: Prisma.AccessServiceRequestSnapshotDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload>
+        }
+        update: {
+          args: Prisma.AccessServiceRequestSnapshotUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload>
+        }
+        deleteMany: {
+          args: Prisma.AccessServiceRequestSnapshotDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AccessServiceRequestSnapshotUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AccessServiceRequestSnapshotUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload>[]
+        }
+        upsert: {
+          args: Prisma.AccessServiceRequestSnapshotUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceRequestSnapshotPayload>
+        }
+        aggregate: {
+          args: Prisma.AccessServiceRequestSnapshotAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAccessServiceRequestSnapshot>
+        }
+        groupBy: {
+          args: Prisma.AccessServiceRequestSnapshotGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessServiceRequestSnapshotGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AccessServiceRequestSnapshotCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessServiceRequestSnapshotCountAggregateOutputType> | number
+        }
+      }
+    }
+    AccessServiceSnapshotAssignee: {
+      payload: Prisma.$AccessServiceSnapshotAssigneePayload<ExtArgs>
+      fields: Prisma.AccessServiceSnapshotAssigneeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AccessServiceSnapshotAssigneeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AccessServiceSnapshotAssigneeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload>
+        }
+        findFirst: {
+          args: Prisma.AccessServiceSnapshotAssigneeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AccessServiceSnapshotAssigneeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload>
+        }
+        findMany: {
+          args: Prisma.AccessServiceSnapshotAssigneeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload>[]
+        }
+        create: {
+          args: Prisma.AccessServiceSnapshotAssigneeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload>
+        }
+        createMany: {
+          args: Prisma.AccessServiceSnapshotAssigneeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AccessServiceSnapshotAssigneeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload>[]
+        }
+        delete: {
+          args: Prisma.AccessServiceSnapshotAssigneeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload>
+        }
+        update: {
+          args: Prisma.AccessServiceSnapshotAssigneeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload>
+        }
+        deleteMany: {
+          args: Prisma.AccessServiceSnapshotAssigneeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AccessServiceSnapshotAssigneeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AccessServiceSnapshotAssigneeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload>[]
+        }
+        upsert: {
+          args: Prisma.AccessServiceSnapshotAssigneeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessServiceSnapshotAssigneePayload>
+        }
+        aggregate: {
+          args: Prisma.AccessServiceSnapshotAssigneeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAccessServiceSnapshotAssignee>
+        }
+        groupBy: {
+          args: Prisma.AccessServiceSnapshotAssigneeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessServiceSnapshotAssigneeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AccessServiceSnapshotAssigneeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessServiceSnapshotAssigneeCountAggregateOutputType> | number
+        }
+      }
+    }
+    RequesterIdentitySnapshot: {
+      payload: Prisma.$RequesterIdentitySnapshotPayload<ExtArgs>
+      fields: Prisma.RequesterIdentitySnapshotFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RequesterIdentitySnapshotFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RequesterIdentitySnapshotFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload>
+        }
+        findFirst: {
+          args: Prisma.RequesterIdentitySnapshotFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RequesterIdentitySnapshotFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload>
+        }
+        findMany: {
+          args: Prisma.RequesterIdentitySnapshotFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload>[]
+        }
+        create: {
+          args: Prisma.RequesterIdentitySnapshotCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload>
+        }
+        createMany: {
+          args: Prisma.RequesterIdentitySnapshotCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RequesterIdentitySnapshotCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload>[]
+        }
+        delete: {
+          args: Prisma.RequesterIdentitySnapshotDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload>
+        }
+        update: {
+          args: Prisma.RequesterIdentitySnapshotUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload>
+        }
+        deleteMany: {
+          args: Prisma.RequesterIdentitySnapshotDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RequesterIdentitySnapshotUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RequesterIdentitySnapshotUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload>[]
+        }
+        upsert: {
+          args: Prisma.RequesterIdentitySnapshotUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RequesterIdentitySnapshotPayload>
+        }
+        aggregate: {
+          args: Prisma.RequesterIdentitySnapshotAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRequesterIdentitySnapshot>
+        }
+        groupBy: {
+          args: Prisma.RequesterIdentitySnapshotGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RequesterIdentitySnapshotGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RequesterIdentitySnapshotCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RequesterIdentitySnapshotCountAggregateOutputType> | number
+        }
+      }
+    }
     AssetCategory: {
       payload: Prisma.$AssetCategoryPayload<ExtArgs>
       fields: Prisma.AssetCategoryFieldRefs
@@ -9067,6 +9442,77 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const AccessServiceScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  isActive: 'isActive',
+  requireManagerApproval: 'requireManagerApproval',
+  instructions: 'instructions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById'
+} as const
+
+export type AccessServiceScalarFieldEnum = (typeof AccessServiceScalarFieldEnum)[keyof typeof AccessServiceScalarFieldEnum]
+
+
+export const AccessServiceAssigneeScalarFieldEnum = {
+  id: 'id',
+  accessServiceId: 'accessServiceId',
+  userId: 'userId',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type AccessServiceAssigneeScalarFieldEnum = (typeof AccessServiceAssigneeScalarFieldEnum)[keyof typeof AccessServiceAssigneeScalarFieldEnum]
+
+
+export const AccessServiceRequestSnapshotScalarFieldEnum = {
+  id: 'id',
+  requestId: 'requestId',
+  sourceFieldKey: 'sourceFieldKey',
+  accessServiceId: 'accessServiceId',
+  serviceName: 'serviceName',
+  serviceSlug: 'serviceSlug',
+  requireManagerApproval: 'requireManagerApproval',
+  instructions: 'instructions',
+  createdAt: 'createdAt'
+} as const
+
+export type AccessServiceRequestSnapshotScalarFieldEnum = (typeof AccessServiceRequestSnapshotScalarFieldEnum)[keyof typeof AccessServiceRequestSnapshotScalarFieldEnum]
+
+
+export const AccessServiceSnapshotAssigneeScalarFieldEnum = {
+  id: 'id',
+  snapshotId: 'snapshotId',
+  userId: 'userId',
+  userName: 'userName',
+  userEmail: 'userEmail',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type AccessServiceSnapshotAssigneeScalarFieldEnum = (typeof AccessServiceSnapshotAssigneeScalarFieldEnum)[keyof typeof AccessServiceSnapshotAssigneeScalarFieldEnum]
+
+
+export const RequesterIdentitySnapshotScalarFieldEnum = {
+  id: 'id',
+  requestId: 'requestId',
+  requesterUserId: 'requesterUserId',
+  requesterName: 'requesterName',
+  requesterEmail: 'requesterEmail',
+  managerUserId: 'managerUserId',
+  managerName: 'managerName',
+  managerEmail: 'managerEmail',
+  createdAt: 'createdAt'
+} as const
+
+export type RequesterIdentitySnapshotScalarFieldEnum = (typeof RequesterIdentitySnapshotScalarFieldEnum)[keyof typeof RequesterIdentitySnapshotScalarFieldEnum]
+
+
 export const AssetCategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -11153,6 +11599,13 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -11167,9 +11620,16 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
- * Reference to a field of type 'Boolean'
+ * Reference to a field of type 'AccessServiceRole'
  */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+export type EnumAccessServiceRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessServiceRole'>
+    
+
+
+/**
+ * Reference to a field of type 'AccessServiceRole[]'
+ */
+export type ListEnumAccessServiceRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessServiceRole[]'>
     
 
 
@@ -12287,23 +12747,13 @@ export type PrismaClientOptions = ({
    * ```
    */
   comments?: runtime.SqlCommenterPlugin[]
-  /**
-   * Optional maximum size for the query plan cache. If not provided, a default size will be used.
-   * A value of `0` can be used to disable the cache entirely. A higher cache size can improve
-   * performance for applications that execute a large number of unique queries, while a smaller
-   * cache size can reduce memory usage.
-   * 
-   * @example
-   * ```
-   * const prisma = new PrismaClient({
-   *   adapter,
-   *   queryPlanCacheMaxSize: 100,
-   * })
-   * ```
-   */
-  queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
+  accessService?: Prisma.AccessServiceOmit
+  accessServiceAssignee?: Prisma.AccessServiceAssigneeOmit
+  accessServiceRequestSnapshot?: Prisma.AccessServiceRequestSnapshotOmit
+  accessServiceSnapshotAssignee?: Prisma.AccessServiceSnapshotAssigneeOmit
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotOmit
   assetCategory?: Prisma.AssetCategoryOmit
   assetCategoryField?: Prisma.AssetCategoryFieldOmit
   assetModel?: Prisma.AssetModelOmit

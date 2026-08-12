@@ -1153,6 +1153,28 @@ export const DI_TOKENS = {
   IWorkflowReferenceNumberService: Symbol.for(
     "IWorkflowReferenceNumberService",
   ),
+
+  // ─── Access Management Services ───────────────────────────────────────────
+  IAccessServiceRepository: Symbol.for("IAccessServiceRepository"),
+  IAccessServiceSnapshotRepository: Symbol.for(
+    "IAccessServiceSnapshotRepository",
+  ),
+  IRequesterIdentitySnapshotRepository: Symbol.for(
+    "IRequesterIdentitySnapshotRepository",
+  ),
+  IWorkflowLookupProvider: Symbol.for("IWorkflowLookupProvider"),
+  IWorkflowLookupProviderRegistry: Symbol.for(
+    "IWorkflowLookupProviderRegistry",
+  ),
+  CreateAccessServiceUseCase: Symbol.for("CreateAccessServiceUseCase"),
+  UpdateAccessServiceUseCase: Symbol.for("UpdateAccessServiceUseCase"),
+  ListAccessServicesUseCase: Symbol.for("ListAccessServicesUseCase"),
+  GetAccessServiceUseCase: Symbol.for("GetAccessServiceUseCase"),
+  ToggleAccessServiceStatusUseCase: Symbol.for(
+    "ToggleAccessServiceStatusUseCase",
+  ),
+  ImportAccessServicesUseCase: Symbol.for("ImportAccessServicesUseCase"),
+  ExportAccessServicesUseCase: Symbol.for("ExportAccessServicesUseCase"),
 } as const;
 
 /**

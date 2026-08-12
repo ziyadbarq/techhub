@@ -838,6 +838,22 @@ const BASE_PERMISSIONS: PermissionDefinition[] = [
     displayName: "Manage Watcher Subscriptions",
     description: "Configure role-based watcher subscriptions per form",
   }),
+  createPermission("workflows-access-services", "view", {
+    displayName: "View Access Services",
+    description: "View the access service catalog",
+  }),
+  createPermission("workflows-access-services", "create", {
+    displayName: "Create Access Services",
+    description: "Add new access services to the catalog",
+  }),
+  createPermission("workflows-access-services", "update", {
+    displayName: "Update Access Services",
+    description: "Edit existing access service details and assignees",
+  }),
+  createPermission("workflows-access-services", "manage", {
+    displayName: "Manage Access Services",
+    description: "Activate/deactivate services and perform bulk import/export",
+  }),
 ] as const;
 
 const definedPermissionNames = new Set(
