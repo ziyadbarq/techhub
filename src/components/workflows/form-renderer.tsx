@@ -718,6 +718,7 @@ function AccessServiceCombobox({
   const [loading, setLoading] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const requestRef = useRef<AbortController | null>(null);
+  const optionsCacheRef = useRef(new Map<string, AccessServiceOption[]>());
 
   // Derived: the currently selected option (null when value is empty or not yet resolved)
   const selected = value ? (resolved[value] ?? null) : null;
@@ -737,41 +738,50 @@ function AccessServiceCombobox({
   }, [value, resolved]);
 
   useEffect(() => {
-    if (!open) return;
+    // Prefetch the default list while the form renders. Search results are
+    // cached by query so reopening the picker never flashes a loading state.
+    if (optionsCacheRef.current.has(query)) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      requestRef.current?.abort();
-      const controller = new AbortController();
-      requestRef.current = controller;
-      setLoading(true);
-      fetch(
-        `/api/workflow/lookups/ACCESS_SERVICES?q=${encodeURIComponent(query)}&limit=20`,
-        { signal: controller.signal },
-      )
-        .then((r) => (r.ok ? r.json() : { results: [] }))
-        .then((data: { results: AccessServiceOption[] }) => {
-          setOptions(data.results ?? []);
-          // Cache resolved options so label lookups stay fast
-          setResolved((prev) => {
-            const next = { ...prev };
-            for (const o of data.results ?? []) next[o.id] = o;
-            return next;
+    debounceRef.current = setTimeout(
+      () => {
+        requestRef.current?.abort();
+        const controller = new AbortController();
+        requestRef.current = controller;
+        setLoading(true);
+        fetch(
+          `/api/workflow/lookups/ACCESS_SERVICES?q=${encodeURIComponent(query)}&limit=20`,
+          { signal: controller.signal },
+        )
+          .then((r) => (r.ok ? r.json() : { results: [] }))
+          .then((data: { results: AccessServiceOption[] }) => {
+            const results = data.results ?? [];
+            optionsCacheRef.current.set(query, results);
+            setOptions(results);
+            // Cache resolved options so label lookups stay fast
+            setResolved((prev) => {
+              const next = { ...prev };
+              for (const o of data.results ?? []) next[o.id] = o;
+              return next;
+            });
+          })
+          .catch((error: unknown) => {
+            if (!(
+              error instanceof DOMException && error.name === "AbortError"
+            )) {
+              setOptions([]);
+            }
+          })
+          .finally(() => {
+            if (requestRef.current === controller) setLoading(false);
           });
-        })
-        .catch((error: unknown) => {
-          if (!(error instanceof DOMException && error.name === "AbortError")) {
-            setOptions([]);
-          }
-        })
-        .finally(() => {
-          if (requestRef.current === controller) setLoading(false);
-        });
-    }, 250);
+      },
+      query ? 250 : 0,
+    );
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       requestRef.current?.abort();
     };
-  }, [query, open]);
+  }, [query]);
 
   const instructions = selected?.publicMetadata?.instructions;
 
@@ -794,7 +804,11 @@ function AccessServiceCombobox({
         open={open}
         onOpenChange={(nextOpen) => {
           setOpen(nextOpen);
-          if (!nextOpen) setQuery("");
+          if (!nextOpen) {
+            setQuery("");
+            setOptions(optionsCacheRef.current.get("") ?? options);
+            setLoading(false);
+          }
         }}
       >
         <PopoverTrigger asChild>
@@ -833,7 +847,15 @@ function AccessServiceCombobox({
               className="text-body-sm h-10 w-full rounded-md border border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] pr-3 pl-9 text-[var(--color-ink)] outline-none focus:border-transparent focus:ring-2 focus:ring-[var(--color-brand-yellow)]"
               placeholder="Search by service name…"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                const nextQuery = e.target.value;
+                const cached = optionsCacheRef.current.get(nextQuery);
+                if (cached) {
+                  setOptions(cached);
+                  setLoading(false);
+                }
+                setQuery(nextQuery);
+              }}
             />
           </div>
           <ul className="max-h-64 overflow-y-auto p-1">
