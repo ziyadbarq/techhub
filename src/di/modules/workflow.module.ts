@@ -276,6 +276,15 @@ export function bindWorkflowDependencies(container: Container): void {
   // --------------------------------------------------------------------------
   // Step executors (multi-inject) + registry
   // --------------------------------------------------------------------------
+  // Resolve the engine only when a SUB_WORKFLOW step actually activates.
+  // Eagerly injecting it into SubWorkflowStepExecutor creates this cycle:
+  // engine -> executor registry -> sub-workflow executor -> engine.
+  container
+    .bind<() => IWorkflowEngine>(DI_TOKENS.IWorkflowEngineProvider)
+    .toFactory(
+      (context) => () =>
+        context.get<IWorkflowEngine>(DI_TOKENS.IWorkflowEngine),
+    );
   container
     .bind<IStepExecutor>(DI_TOKENS.IWorkflowStepExecutor)
     .to(ApprovalStepExecutor);
