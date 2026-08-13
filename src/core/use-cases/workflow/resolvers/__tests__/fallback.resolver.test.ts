@@ -40,7 +40,7 @@ describe("FallbackAssigneeResolver", () => {
     it("returns [] without calling registry", async () => {
       const registry = makeRegistry(async () => []);
       const evaluator = makeEvaluator(false);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve({ kind: "REQUESTER" }, makeExec());
 
@@ -53,7 +53,7 @@ describe("FallbackAssigneeResolver", () => {
     it("uses primary result when primary resolves non-empty", async () => {
       const registry = makeRegistry(async () => ["manager-id"]);
       const evaluator = makeEvaluator(false);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {
@@ -70,7 +70,7 @@ describe("FallbackAssigneeResolver", () => {
     it("ignores fallbackFieldKey when primary resolves", async () => {
       const registry = makeRegistry(async () => ["manager-id"]);
       const evaluator = makeEvaluator(false);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {
@@ -89,7 +89,7 @@ describe("FallbackAssigneeResolver", () => {
     it("falls back to fallbackFieldKey string value", async () => {
       const registry = makeRegistry(async () => []);
       const evaluator = makeEvaluator(false);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {
@@ -106,7 +106,7 @@ describe("FallbackAssigneeResolver", () => {
     it("falls back to fallbackFieldKey array value", async () => {
       const registry = makeRegistry(async () => []);
       const evaluator = makeEvaluator(false);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {
@@ -123,7 +123,7 @@ describe("FallbackAssigneeResolver", () => {
     it("returns [] when fallback field is also empty", async () => {
       const registry = makeRegistry(async () => []);
       const evaluator = makeEvaluator(false);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {
@@ -140,7 +140,7 @@ describe("FallbackAssigneeResolver", () => {
     it("returns [] when fallback field is absent", async () => {
       const registry = makeRegistry(async () => []);
       const evaluator = makeEvaluator(false);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {
@@ -159,7 +159,7 @@ describe("FallbackAssigneeResolver", () => {
     it("skips primary and uses fallback when forceFallbackWhen is true", async () => {
       const registry = makeRegistry(async () => ["manager-id"]);
       const evaluator = makeEvaluator(true); // force = true
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {
@@ -185,7 +185,7 @@ describe("FallbackAssigneeResolver", () => {
     it("uses primary when forceFallbackWhen is false", async () => {
       const registry = makeRegistry(async () => ["manager-id"]);
       const evaluator = makeEvaluator(false); // force = false
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {
@@ -210,7 +210,7 @@ describe("FallbackAssigneeResolver", () => {
     it("forceFallbackWhen=true + empty fallback field → returns []", async () => {
       const registry = makeRegistry(async () => ["manager-id"]);
       const evaluator = makeEvaluator(true);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {
@@ -232,7 +232,7 @@ describe("FallbackAssigneeResolver", () => {
     it("evaluates expression against current fieldValues", async () => {
       const evaluator = makeEvaluator(false);
       const registry = makeRegistry(async () => ["mgr"]);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
       const fieldValues = { reason: "nothing" };
 
       await resolver.resolve(
@@ -260,7 +260,7 @@ describe("FallbackAssigneeResolver", () => {
     it("filters non-string items from array fallback value", async () => {
       const registry = makeRegistry(async () => []);
       const evaluator = makeEvaluator(false);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {
@@ -277,7 +277,7 @@ describe("FallbackAssigneeResolver", () => {
     it("treats numeric field value as empty", async () => {
       const registry = makeRegistry(async () => []);
       const evaluator = makeEvaluator(false);
-      const resolver = new FallbackAssigneeResolver(registry, evaluator);
+      const resolver = new FallbackAssigneeResolver(() => registry, evaluator);
 
       const result = await resolver.resolve(
         {

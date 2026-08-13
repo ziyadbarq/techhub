@@ -326,6 +326,17 @@ export function bindWorkflowDependencies(container: Container): void {
   // --------------------------------------------------------------------------
   // Assignee resolvers (multi-inject) + registry
   // --------------------------------------------------------------------------
+  // FALLBACK composes another resolver. Resolve the registry only when the
+  // fallback runs so registry construction does not depend on itself.
+  container
+    .bind<() => IAssigneeResolverRegistry>(
+      DI_TOKENS.IWorkflowAssigneeResolverRegistryProvider,
+    )
+    .toFactory((context) => () =>
+      context.get<IAssigneeResolverRegistry>(
+        DI_TOKENS.IWorkflowAssigneeResolverRegistry,
+      ),
+    );
   container
     .bind<IAssigneeResolver>(DI_TOKENS.IWorkflowAssigneeResolver)
     .to(UserAssigneeResolver);

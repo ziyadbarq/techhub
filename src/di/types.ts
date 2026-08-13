@@ -1103,6 +1103,9 @@ export const DI_TOKENS = {
   // Engine orchestrator + use cases
   IWorkflowEngine: Symbol.for("IWorkflowEngine"),
   IWorkflowEngineProvider: Symbol.for("IWorkflowEngineProvider"),
+  IWorkflowAssigneeResolverRegistryProvider: Symbol.for(
+    "IWorkflowAssigneeResolverRegistryProvider",
+  ),
   WorkflowSubmitUseCase: Symbol.for("WorkflowSubmitUseCase"),
   WorkflowTakeActionUseCase: Symbol.for("WorkflowTakeActionUseCase"),
   WorkflowResubmitUseCase: Symbol.for("WorkflowResubmitUseCase"),

@@ -8,13 +8,15 @@ import type {
 } from "@/core/repositories/workflow";
 import type { IExpressionEvaluator } from "@/infrastructure/services/workflow/expression-evaluator.service";
 
+type AssigneeResolverRegistryProvider = () => IAssigneeResolverRegistry;
+
 @injectable()
 export class FallbackAssigneeResolver implements IAssigneeResolver {
   readonly kind = "FALLBACK" as const;
 
   constructor(
-    @inject(DI_TOKENS.IWorkflowAssigneeResolverRegistry)
-    private readonly registry: IAssigneeResolverRegistry,
+    @inject(DI_TOKENS.IWorkflowAssigneeResolverRegistryProvider)
+    private readonly getRegistry: AssigneeResolverRegistryProvider,
     @inject(DI_TOKENS.IWorkflowExpressionEvaluator)
     private readonly evaluator: IExpressionEvaluator,
   ) {}
@@ -36,7 +38,7 @@ export class FallbackAssigneeResolver implements IAssigneeResolver {
     }
 
     // 2. Try primary resolver
-    const primaryResolver = this.registry.get(spec.primary.kind);
+    const primaryResolver = this.getRegistry().get(spec.primary.kind);
     const primaryIds = await primaryResolver.resolve(spec.primary, exec);
     if (primaryIds.length > 0) return primaryIds;
 
