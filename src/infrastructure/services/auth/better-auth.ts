@@ -191,13 +191,9 @@ function getPrismaWithEncryption(): PrismaClient {
               ) {
                 const encrypted = encryptTokens({
                   accessToken: args.data.accessToken as
-                    | string
-                    | null
-                    | undefined,
+                    string | null | undefined,
                   refreshToken: args.data.refreshToken as
-                    | string
-                    | null
-                    | undefined,
+                    string | null | undefined,
                   idToken: args.data.idToken as string | null | undefined,
                 });
 
@@ -460,6 +456,16 @@ const parseName = (name?: string | null) => {
   return { firstName: first || "New", lastName: rest.join(" ") || "User" };
 };
 
+const meaningfulDisplayName = (name?: string | null): string | null => {
+  const value = name?.trim();
+  if (!value || value.includes("@")) return null;
+  if (/^(unnamed|new) user$/i.test(value)) return null;
+  return value;
+};
+
+const hasPlaceholderPersonName = (firstName: string, lastName: string) =>
+  /^(new|unnamed)$/i.test(firstName.trim()) && /^user$/i.test(lastName.trim());
+
 /**
  * Get the email service from DI container
  * Uses lazy resolution to avoid circular dependencies during module initialization
@@ -488,11 +494,36 @@ const ensurePersonLinkedToUser = async (
           "$extends" | "$transaction" | "$disconnect" | "$connect" | "$on"
         >,
       ): Promise<PersonLinkResult> => {
+        const displayName = meaningfulDisplayName(user.name);
+        const parsedDisplayName = displayName ? parseName(displayName) : null;
+
+        // OAuth providers can enrich an existing Better Auth user on a later
+        // login. Persist that name so accounts initially created without the
+        // Microsoft `name` claim recover automatically.
+        if (displayName) {
+          await tx.user.update({
+            where: { id: user.id },
+            data: { name: displayName },
+          });
+        }
+
         // Already linked
         const existingPerson = await tx.person.findFirst({
           where: { userId: user.id },
         });
         if (existingPerson) {
+          if (
+            parsedDisplayName &&
+            hasPlaceholderPersonName(
+              existingPerson.firstName,
+              existingPerson.lastName,
+            )
+          ) {
+            await tx.person.update({
+              where: { id: existingPerson.id },
+              data: parsedDisplayName,
+            });
+          }
           return { status: "already-linked", personId: existingPerson.id };
         }
 
@@ -514,9 +545,18 @@ const ensurePersonLinkedToUser = async (
               };
             }
 
+            const shouldRepairPlaceholder =
+              parsedDisplayName &&
+              hasPlaceholderPersonName(
+                personByEmail.firstName,
+                personByEmail.lastName,
+              );
             const updated = await tx.person.update({
               where: { id: personByEmail.id },
-              data: { userId: user.id },
+              data: {
+                userId: user.id,
+                ...(shouldRepairPlaceholder ? parsedDisplayName : {}),
+              },
             });
 
             return { status: "linked-existing", personId: updated.id };
@@ -703,8 +743,18 @@ const createAuth = () =>
 
         // Store additional data from Microsoft
         mapProfileToUser: (profile) => ({
-          email: profile.email || profile.userPrincipalName,
-          name: profile.displayName,
+          email:
+            profile.email ||
+            profile.preferred_username ||
+            profile.upn ||
+            profile.userPrincipalName,
+          name:
+            profile.name ||
+            profile.displayName ||
+            [profile.given_name, profile.family_name]
+              .filter(Boolean)
+              .join(" ") ||
+            undefined,
           image: profile.picture || "",
           // Better Auth will convert boolean true to a timestamp when persisting
           emailVerified: true,
