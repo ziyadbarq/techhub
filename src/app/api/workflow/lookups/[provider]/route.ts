@@ -33,6 +33,7 @@ export async function GET(
     }
 
     const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id")?.trim();
     const query = searchParams.get("q") ?? "";
     const limit = Math.min(parseInt(searchParams.get("limit") ?? "20", 10), 50);
 
@@ -40,6 +41,10 @@ export async function GET(
       DI_TOKENS.IWorkflowLookupProviderRegistry,
     );
     const provider = registry.get(providerKey);
+    if (id) {
+      const result = await provider.findById(id, session.user.id);
+      return NextResponse.json({ results: result ? [result] : [] });
+    }
     const results = await provider.search(query, session.user.id, limit);
 
     return NextResponse.json({ results });
