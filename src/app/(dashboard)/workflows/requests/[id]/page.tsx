@@ -9,7 +9,7 @@ import { getCurrentUserId } from "@/lib/auth/session";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { hasPermission, requirePermission } from "@/lib/permissions/server";
+import { hasPermission } from "@/lib/permissions/server";
 
 import { RequestActions } from "./request-actions";
 import { AdminOverridePanel } from "./admin-override-panel";
@@ -55,11 +55,27 @@ export default async function RequestDetailPage({
   });
   if (!req) notFound();
 
-  // Ownership-scoped permission: pass the request's requester as the resource
-  // owner so users with :view (broader) OR :view:own (self only) both pass.
-  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN, {
-    resourceOwnerId: req.requesterId,
-  });
+  // A request is visible to its requester, anyone assigned to any of its
+  // workflow steps (including completed steps), or users with global view.
+  // Redirect explicitly instead of throwing into the dashboard error boundary.
+  const [canViewAll, canViewOwn, hasAssignment] = await Promise.all([
+    hasPermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW),
+    hasPermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN, {
+      resourceOwnerId: req.requesterId,
+    }),
+    prisma.assigneeSnapshot.findFirst({
+      where: {
+        userId,
+        stepInstance: { requestId: req.id },
+      },
+      select: { id: true },
+    }),
+  ]);
+  if (!canViewAll && !canViewOwn && !hasAssignment) {
+    redirect(
+      `/unauthorized?required=${encodeURIComponent(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN)}&path=${encodeURIComponent(`/workflows/requests/${req.id}`)}`,
+    );
+  }
 
   const stepInstances = await prisma.stepInstance.findMany({
     where: { requestId: req.id },
