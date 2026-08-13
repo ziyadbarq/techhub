@@ -86,6 +86,9 @@ export default async function RequestDetailPage({
     select: { id: true, name: true, email: true },
     orderBy: { createdAt: "asc" },
   });
+  const userNameById = new Map(
+    orgUsers.map((user) => [user.id, user.name?.trim() || user.email]),
+  );
 
   const holdReasons = await prisma.holdReason.findMany({
     where: { isActive: true },
@@ -271,6 +274,18 @@ export default async function RequestDetailPage({
                   ? (serviceNameByFieldKey.get(f.key) ??
                     renderFieldValue(value, f))
                   : null;
+                const userPickerDisplay =
+                  f.type === "USER_PICKER" && typeof value === "string"
+                    ? (userNameById.get(value) ?? value)
+                    : f.type === "MULTI_USER_PICKER" && Array.isArray(value)
+                      ? value
+                          .map((id) =>
+                            typeof id === "string"
+                              ? (userNameById.get(id) ?? id)
+                              : String(id),
+                          )
+                          .join(", ")
+                      : null;
                 return (
                   <div key={f.key} className="grid grid-cols-3 gap-4 py-3">
                     <dt className="text-body-sm text-stone flex flex-wrap items-center gap-2">
@@ -286,6 +301,8 @@ export default async function RequestDetailPage({
                         systemDisplay
                       ) : accessServiceName !== null ? (
                         accessServiceName
+                      ) : userPickerDisplay !== null ? (
+                        userPickerDisplay || "—"
                       ) : linkInfo ? (
                         <span className="inline-flex flex-wrap items-center gap-2">
                           <span className="text-charcoal font-mono">

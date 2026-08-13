@@ -5,6 +5,7 @@
  */
 interface StepNode {
   key: string;
+  name?: string;
   type: string;
   position: number;
   next?: { default?: string; onAction?: Record<string, string> };
@@ -92,6 +93,9 @@ export function WorkflowGraph({
 
   const sorted = [...graph.steps].sort((a, b) => a.position - b.position);
   const statusByKey = new Map(stepInstances.map((s) => [s.stepKey, s.status]));
+  const stepNameByKey = new Map(
+    graph.steps.map((step) => [step.key, displayStepName(step)]),
+  );
 
   return (
     <ol className="space-y-2">
@@ -117,15 +121,15 @@ export function WorkflowGraph({
                       : "border-[var(--color-hairline)] bg-[var(--color-canvas)]")
               }
             >
-              {/* Row 1 — number + step key + start/status pill */}
+              {/* Row 1 — number + user-facing step name + start/status pill */}
               <div className="flex min-w-0 items-center gap-3">
                 <span
                   className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${tone.bg} ${tone.text} text-caption-bold`}
                 >
                   {i + 1}
                 </span>
-                <span className="text-body-sm-medium min-w-0 flex-1 truncate font-mono text-[var(--color-ink)]">
-                  {step.key}
+                <span className="text-body-sm-medium min-w-0 flex-1 truncate text-[var(--color-ink)]">
+                  {displayStepName(step)}
                 </span>
                 <div className="flex shrink-0 items-center gap-1.5">
                   {isStart ? (
@@ -154,7 +158,9 @@ export function WorkflowGraph({
               <p className="text-caption mt-1 pl-11 text-[var(--color-stone)]">
                 {step.next && "default" in step.next && step.next.default ? (
                   <>
-                    → <span className="font-mono">{step.next.default}</span>
+                    →{" "}
+                    {stepNameByKey.get(step.next.default) ??
+                      humanizeKey(step.next.default)}
                   </>
                 ) : !step.next ? (
                   <>→ close</>
@@ -169,6 +175,17 @@ export function WorkflowGraph({
       })}
     </ol>
   );
+}
+
+function displayStepName(step: StepNode): string {
+  const name = step.name?.trim();
+  return name || humanizeKey(step.key);
+}
+
+function humanizeKey(value: string): string {
+  return value
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
 function statusPill(status: string): string {

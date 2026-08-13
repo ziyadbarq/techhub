@@ -273,7 +273,7 @@ function summarisePayload(
   if (!payload || typeof payload !== "object") return "";
   const p = payload as Record<string, unknown>;
   if (action === "step.activate" && typeof p.stepKey === "string") {
-    return `${p.stepKey}${p.stepType ? ` · ${String(p.stepType).toLowerCase()}` : ""}`;
+    return `${humanizeIdentifier(p.stepKey)}${p.stepType ? ` · ${humanizeIdentifier(String(p.stepType))}` : ""}`;
   }
   if (
     (action === "request.close" || action === "request.cancel") &&
@@ -288,6 +288,12 @@ function summarisePayload(
     return `${fieldCount} field${fieldCount === 1 ? "" : "s"}`;
   }
   return "";
+}
+
+function humanizeIdentifier(value: string): string {
+  return value
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
 function shouldShowDetails(action: string, payload: unknown): boolean {
