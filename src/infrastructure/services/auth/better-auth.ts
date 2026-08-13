@@ -467,6 +467,55 @@ const hasPlaceholderPersonName = (firstName: string, lastName: string) =>
   /^(new|unnamed)$/i.test(firstName.trim()) && /^user$/i.test(lastName.trim());
 
 /**
+ * Better Auth does not refresh an existing User's profile fields on every
+ * OAuth login. Read the authoritative Microsoft display name from Graph using
+ * the freshly stored, decrypted account access token instead.
+ */
+const fetchMicrosoftDisplayName = async (
+  userId: string,
+): Promise<string | null> => {
+  try {
+    const account = await getPrismaWithEncryption().account.findFirst({
+      where: { userId, provider: "microsoft" },
+      orderBy: { updatedAt: "desc" },
+      select: { accessToken: true },
+    });
+    if (!account?.accessToken) return null;
+
+    const response = await fetch(
+      "https://graph.microsoft.com/v1.0/me?$select=displayName,givenName,surname",
+      {
+        headers: { Authorization: `Bearer ${account.accessToken}` },
+        signal: AbortSignal.timeout(5_000),
+      },
+    );
+    if (!response.ok) {
+      authDebugLog("warn", "Microsoft Graph profile lookup failed", {
+        userId,
+        status: response.status,
+      });
+      return null;
+    }
+
+    const profile = (await response.json()) as {
+      displayName?: string | null;
+      givenName?: string | null;
+      surname?: string | null;
+    };
+    return meaningfulDisplayName(
+      profile.displayName ??
+        [profile.givenName, profile.surname].filter(Boolean).join(" "),
+    );
+  } catch (error) {
+    getLogger().warn("Microsoft Graph profile lookup failed", {
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+};
+
+/**
  * Get the email service from DI container
  * Uses lazy resolution to avoid circular dependencies during module initialization
  */
@@ -986,14 +1035,22 @@ const createAuth = () =>
           });
         }
 
+        const microsoftDisplayName = isOAuthCallback
+          ? await fetchMicrosoftDisplayName(user.id)
+          : null;
+        const userForLinkage = microsoftDisplayName
+          ? { ...user, name: microsoftDisplayName }
+          : user;
+
         authDebugLog("info", "Processing person linkage for user", {
           userId: user.id,
           userEmail: user.email,
+          enrichedFromMicrosoftGraph: Boolean(microsoftDisplayName),
         });
 
         // For OAuth: only link existing Person (no creation)
         // For Email/Password: allow creation (for initial admin setup)
-        const linkResult = await ensurePersonLinkedToUser(user, {
+        const linkResult = await ensurePersonLinkedToUser(userForLinkage, {
           allowCreation: !isOAuthCallback,
         });
 
