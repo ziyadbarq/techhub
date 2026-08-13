@@ -1387,17 +1387,6 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     navOrder: 6,
   },
   {
-    path: "/workflows/admin/access-services",
-    label: "Access Services",
-    icon: ShieldCheck,
-    description: "Manage the IT access service catalog for workflow forms",
-    requiredPermissions: ["WORKFLOWS_ACCESS_SERVICES_VIEW"],
-    featureFlag: "WORKFLOW_ENGINE",
-    visibleInNav: true,
-    navGroup: "workflows",
-    navOrder: 7,
-  },
-  {
     path: "/workflows/admin/forms",
     label: "Forms",
     icon: FileText,

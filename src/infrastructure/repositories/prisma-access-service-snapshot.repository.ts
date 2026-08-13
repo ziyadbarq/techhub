@@ -26,12 +26,44 @@ export class PrismaAccessServiceSnapshotRepository implements IAccessServiceSnap
 
   async createSnapshot(input: CreateSnapshotInput, tx: Tx): Promise<void> {
     const snapshotId = this.idGenerator.generateId();
+    // Retain a hidden compatibility record for the historical snapshot FK.
+    // The live source of truth is the central Service catalog.
+    const existingCompatibilityRecord = await this.db(
+      tx,
+    ).accessService.findFirst({
+      where: {
+        OR: [{ id: input.accessServiceId }, { name: input.serviceName }],
+      },
+      select: { id: true },
+    });
+    const compatibilityRecord = existingCompatibilityRecord
+      ? await this.db(tx).accessService.update({
+          where: { id: existingCompatibilityRecord.id },
+          data: {
+            name: input.serviceName,
+            requireManagerApproval: input.requireManagerApproval,
+            instructions: input.instructions,
+            isActive: true,
+          },
+          select: { id: true },
+        })
+      : await this.db(tx).accessService.create({
+          data: {
+            id: input.accessServiceId,
+            name: input.serviceName,
+            slug: input.serviceSlug,
+            requireManagerApproval: input.requireManagerApproval,
+            instructions: input.instructions,
+            isActive: true,
+          },
+          select: { id: true },
+        });
     await this.db(tx).accessServiceRequestSnapshot.create({
       data: {
         id: snapshotId,
         requestId: input.requestId,
         sourceFieldKey: input.sourceFieldKey,
-        accessServiceId: input.accessServiceId,
+        accessServiceId: compatibilityRecord.id,
         serviceName: input.serviceName,
         serviceSlug: input.serviceSlug,
         requireManagerApproval: input.requireManagerApproval,

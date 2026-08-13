@@ -17,7 +17,6 @@ import {
   FileText,
   Inbox,
   Settings,
-  ShieldCheck,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
@@ -75,14 +74,6 @@ export const workflowsNavGroup: NavGroup = {
       icon: Settings,
       description: "Forms, workflow definitions, calendars, and reference data",
       permission: PERMISSIONS.WORKFLOWS_FORMS_VIEW,
-      featureFlag: "WORKFLOW_ENGINE",
-    },
-    {
-      title: "Access Services",
-      href: "/workflows/admin/access-services",
-      icon: ShieldCheck,
-      description: "Manage the IT access service catalog for workflow forms",
-      permission: PERMISSIONS.WORKFLOWS_ACCESS_SERVICES_VIEW,
       featureFlag: "WORKFLOW_ENGINE",
     },
   ],

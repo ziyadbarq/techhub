@@ -78,6 +78,7 @@ export default async function NewRequestPage({
       lastName: true,
       email: true,
       managerId: true,
+      orgUnit: { select: { managerId: true } },
     },
   });
   const systemFieldValues: Record<string, string> = {};
@@ -85,9 +86,10 @@ export default async function NewRequestPage({
     systemFieldValues["REQUESTER_NAME"] =
       `${person.firstName} ${person.lastName}`.trim();
     systemFieldValues["REQUESTER_EMAIL"] = person.email;
-    if (person.managerId) {
+    const managerPersonId = person.orgUnit.managerId ?? person.managerId;
+    if (managerPersonId) {
       const manager = await prisma.person.findUnique({
-        where: { id: person.managerId },
+        where: { id: managerPersonId },
         select: { firstName: true, lastName: true },
       });
       if (manager) {

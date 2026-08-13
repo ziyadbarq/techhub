@@ -557,10 +557,6 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_FORMS_VIEW],
     description: "Forms, workflow definitions, calendars, and reference data",
   },
-  "/workflows/admin/access-services": {
-    requiredPermissions: [PERMISSIONS.WORKFLOWS_ACCESS_SERVICES_VIEW],
-    description: "Manage the IT access service catalog for workflow forms",
-  },
   "/workflows/admin/forms": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_FORMS_VIEW],
   },

@@ -1416,6 +1416,7 @@ export class WorkflowEngine implements IWorkflowEngine {
         lastName: true,
         email: true,
         managerId: true,
+        orgUnit: { select: { managerId: true } },
       },
     });
 
@@ -1423,9 +1424,10 @@ export class WorkflowEngine implements IWorkflowEngine {
     let managerName: string | null = null;
     let managerEmail: string | null = null;
 
-    if (person?.managerId) {
+    const managerPersonId = person?.orgUnit.managerId ?? person?.managerId;
+    if (managerPersonId) {
       const mgr = await tx.person.findUnique({
-        where: { id: person.managerId },
+        where: { id: managerPersonId },
         select: { firstName: true, lastName: true, email: true, userId: true },
       });
       if (mgr?.userId) {

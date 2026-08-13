@@ -10,6 +10,28 @@ import type {
 import type { Tx } from "@/core/repositories/workflow/types";
 import type { AccessServiceRole } from "@/generated/prisma";
 
+function readAccessManagementConfig(metadata: unknown): {
+  requireManagerApproval: boolean;
+  instructions: string | null;
+} {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
+    return { requireManagerApproval: true, instructions: null };
+  }
+  const raw = (metadata as Record<string, unknown>).accessManagement;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return { requireManagerApproval: true, instructions: null };
+  }
+  const config = raw as Record<string, unknown>;
+  return {
+    requireManagerApproval:
+      typeof config.requireManagerApproval === "boolean"
+        ? config.requireManagerApproval
+        : true,
+    instructions:
+      typeof config.instructions === "string" ? config.instructions : null,
+  };
+}
+
 const ASSIGNEE_INCLUDE = {
   assignees: {
     include: {
@@ -81,11 +103,36 @@ export class PrismaAccessServiceRepository implements IAccessServiceRepository {
   }
 
   async findById(id: string, tx?: Tx): Promise<AccessServiceData | null> {
-    const row = await this.db(tx).accessService.findUnique({
+    const row = await this.db(tx).service.findUnique({
       where: { id },
-      include: ASSIGNEE_INCLUDE,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        supportContact: true,
+        currentStatus: true,
+        deletedAt: true,
+        metadata: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
-    return row ? this.toData(row) : null;
+    if (!row) return null;
+    const metadata = readAccessManagementConfig(row.metadata);
+    return {
+      id: row.id,
+      name: row.name,
+      slug: row.id,
+      description: row.description,
+      isActive: !row.deletedAt && row.currentStatus !== "RETIRED",
+      requireManagerApproval: metadata.requireManagerApproval,
+      instructions:
+        metadata.instructions ?? row.description ?? row.supportContact,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      createdById: null,
+      updatedById: null,
+    };
   }
 
   async findBySlug(slug: string, tx?: Tx): Promise<AccessServiceData | null> {
@@ -121,23 +168,36 @@ export class PrismaAccessServiceRepository implements IAccessServiceRepository {
     role: AccessServiceRole,
     tx?: Tx,
   ): Promise<AccessServiceAssigneeDetail[]> {
-    const rows = await this.db(tx).accessServiceAssignee.findMany({
+    const ownershipTypes: Array<"BUSINESS" | "PRODUCT" | "TECHNICAL"> =
+      role === "OWNER" ? ["BUSINESS", "PRODUCT", "TECHNICAL"] : ["TECHNICAL"];
+    const rows = await this.db(tx).serviceOwnership.findMany({
       where: {
-        accessServiceId: serviceId,
-        role,
-        // Active user = has an active Person record linked to their User account
-        user: { person: { isActive: true } },
+        serviceId,
+        ownershipType: { in: ownershipTypes },
+        person: { isActive: true, userId: { not: null } },
       },
       include: {
-        user: { select: { id: true, name: true, email: true } },
+        person: {
+          select: {
+            userId: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
       },
     });
-    return rows.map((r) => ({
-      userId: r.userId,
-      role: r.role,
-      userName: r.user?.name ?? "",
-      userEmail: r.user?.email ?? "",
-    }));
+    const unique = new Map<string, AccessServiceAssigneeDetail>();
+    for (const row of rows) {
+      if (!row.person.userId) continue;
+      unique.set(row.person.userId, {
+        userId: row.person.userId,
+        role,
+        userName: `${row.person.firstName} ${row.person.lastName}`.trim(),
+        userEmail: row.person.email,
+      });
+    }
+    return Array.from(unique.values());
   }
 
   async create(

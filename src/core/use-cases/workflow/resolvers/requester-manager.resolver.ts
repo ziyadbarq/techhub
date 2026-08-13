@@ -1,9 +1,8 @@
 /**
  * REQUESTER_MANAGER assignee resolver.
  *
- * Resolves to the requester's line manager by traversing the
- * `Person.managerId` chain:
- *   User.id (requester) → Person(userId=User.id) → Person(id=managerId) → userId
+ * Resolves from OrganizationUnit.managerId (the organization chart source of
+ * truth), with Person.managerId retained as a legacy fallback.
  *
  * Returns an empty array (no assignees) if:
  *  - the requester has no linked Person,
@@ -31,12 +30,17 @@ export class RequesterManagerAssigneeResolver implements IAssigneeResolver {
   ): Promise<string[]> {
     const requesterPerson = await exec.tx.person.findFirst({
       where: { userId: exec.requesterId, isActive: true },
-      select: { managerId: true },
+      select: {
+        managerId: true,
+        orgUnit: { select: { managerId: true } },
+      },
     });
-    if (!requesterPerson?.managerId) return [];
+    const managerId =
+      requesterPerson?.orgUnit.managerId ?? requesterPerson?.managerId;
+    if (!managerId) return [];
 
     const manager = await exec.tx.person.findUnique({
-      where: { id: requesterPerson.managerId },
+      where: { id: managerId },
       select: { userId: true, isActive: true },
     });
     if (!manager?.userId || !manager.isActive) return [];
