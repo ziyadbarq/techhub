@@ -998,7 +998,7 @@ function FieldEditor({
             className="border-hairline-strong bg-canvas text-body-sm text-ink mt-1 w-full rounded-md border px-2 py-1.5"
           >
             <option value="static">Static options</option>
-            <option value="ACCESS_SERVICES">TechHub Services catalog</option>
+            <option value="ACCESS_SERVICES">Access Services catalog</option>
           </select>
         </label>
       )}
@@ -1031,7 +1031,7 @@ function FieldEditor({
         (field.config?.dataSource as string | undefined) ===
           "ACCESS_SERVICES" && (
           <p className="text-body-sm text-stone rounded-md border border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)] px-3 py-2">
-            Options are loaded live from the TechHub Services catalog. No manual
+            Options are loaded live from the Access Services catalog. No manual
             options needed.
           </p>
         )}

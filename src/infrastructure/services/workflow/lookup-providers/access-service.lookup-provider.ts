@@ -27,13 +27,12 @@ export class AccessServiceLookupProvider implements ILookupProvider {
     limit: number,
     tx?: Tx,
   ): Promise<LookupOption[]> {
-    const rows = await this.db(tx).service.findMany({
+    const rows = await this.db(tx).accessService.findMany({
       where: {
-        deletedAt: null,
-        currentStatus: { not: "RETIRED" },
+        isActive: true,
         OR: [
           { name: { contains: query, mode: "insensitive" } },
-          { description: { contains: query, mode: "insensitive" } },
+          { slug: { contains: query, mode: "insensitive" } },
         ],
       },
       take: Math.min(limit, 50),
@@ -48,8 +47,8 @@ export class AccessServiceLookupProvider implements ILookupProvider {
     _userId: string,
     tx?: Tx,
   ): Promise<LookupOption | null> {
-    const row = await this.db(tx).service.findFirst({
-      where: { id, deletedAt: null, currentStatus: { not: "RETIRED" } },
+    const row = await this.db(tx).accessService.findUnique({
+      where: { id, isActive: true },
     });
     return row ? this.toOption(row) : null;
   }
@@ -59,13 +58,13 @@ export class AccessServiceLookupProvider implements ILookupProvider {
     _userId: string,
     tx?: Tx,
   ): Promise<LookupValidationResult> {
-    const row = await this.db(tx).service.findUnique({
+    const row = await this.db(tx).accessService.findUnique({
       where: { id },
-      select: { currentStatus: true, deletedAt: true },
+      select: { isActive: true },
     });
-    if (!row) return { valid: false, reason: "Service not found." };
-    if (row.deletedAt || row.currentStatus === "RETIRED")
-      return { valid: false, reason: "Service is inactive or retired." };
+    if (!row) return { valid: false, reason: "Access service not found." };
+    if (!row.isActive)
+      return { valid: false, reason: "Access service is inactive." };
     return { valid: true };
   }
 
@@ -77,41 +76,16 @@ export class AccessServiceLookupProvider implements ILookupProvider {
   private toOption(row: {
     id: string;
     name: string;
-    description: string | null;
-    supportContact: string | null;
-    metadata: unknown;
+    requireManagerApproval: boolean;
+    instructions: string | null;
   }): LookupOption {
-    const accessConfig = readAccessManagementConfig(row.metadata);
     return {
       id: row.id,
       label: row.name,
       publicMetadata: {
-        requireManagerApproval: accessConfig.requireManagerApproval,
-        instructions:
-          accessConfig.instructions ?? row.description ?? row.supportContact,
+        requireManagerApproval: row.requireManagerApproval,
+        instructions: row.instructions ?? null,
       },
     };
   }
-}
-
-function readAccessManagementConfig(metadata: unknown): {
-  requireManagerApproval: boolean;
-  instructions: string | null;
-} {
-  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
-    return { requireManagerApproval: true, instructions: null };
-  }
-  const raw = (metadata as Record<string, unknown>).accessManagement;
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
-    return { requireManagerApproval: true, instructions: null };
-  }
-  const config = raw as Record<string, unknown>;
-  return {
-    requireManagerApproval:
-      typeof config.requireManagerApproval === "boolean"
-        ? config.requireManagerApproval
-        : true,
-    instructions:
-      typeof config.instructions === "string" ? config.instructions : null,
-  };
 }
