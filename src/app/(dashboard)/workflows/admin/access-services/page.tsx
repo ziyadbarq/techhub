@@ -11,7 +11,7 @@ export default async function AccessServicesPage() {
   await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
   await requirePermission(PERMISSIONS.WORKFLOWS_ACCESS_SERVICES_VIEW);
 
-  const result = await listAccessServicesAction();
+  const result = await listAccessServicesAction({ activeOnly: true });
   const services = result.success ? result.data : [];
 
   return <AccessServicesClient initialServices={services ?? []} />;
