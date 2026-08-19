@@ -56,6 +56,11 @@ import type { IDelegationResolver } from "@/infrastructure/services/workflow/del
 import type { IExpressionEvaluator } from "@/infrastructure/services/workflow/expression-evaluator.service";
 import type { INotificationService } from "@/infrastructure/services/workflow/notification.service";
 import type { IReferenceNumberService } from "@/infrastructure/services/workflow/reference-numbers.service";
+import type {
+  IAccessServiceRepository,
+  IAccessServiceSnapshotRepository,
+  IRequesterIdentitySnapshotRepository,
+} from "@/core/repositories/workflow/access-service.repository.interface";
 
 const ACTION_TO_AUDIT: Record<TakeActionInput["action"], string> = {
   APPROVE: "step.approve",
@@ -97,6 +102,12 @@ export class WorkflowEngine implements IWorkflowEngine {
     private readonly expressionEvaluator: IExpressionEvaluator,
     @inject(DI_TOKENS.IWorkflowReferenceNumberService)
     private readonly referenceNumbers: IReferenceNumberService,
+    @inject(DI_TOKENS.IAccessServiceRepository)
+    private readonly accessServices: IAccessServiceRepository,
+    @inject(DI_TOKENS.IAccessServiceSnapshotRepository)
+    private readonly accessServiceSnapshots: IAccessServiceSnapshotRepository,
+    @inject(DI_TOKENS.IRequesterIdentitySnapshotRepository)
+    private readonly requesterIdentitySnapshots: IRequesterIdentitySnapshotRepository,
   ) {}
 
   // --------------------------------------------------------------------------
@@ -117,7 +128,7 @@ export class WorkflowEngine implements IWorkflowEngine {
         throw new ConfigurationError("Form has no published version");
       }
 
-      // Required-field guard (defense-in-depth — UI also validates).
+      // Strip SYSTEM_FIELD / COMPUTED / SECTION_HEADER / _sys_* keys submitted by client.
       const schema = formVersion.schemaJson as unknown as {
         fields?: Array<{
           key: string;
@@ -126,11 +137,42 @@ export class WorkflowEngine implements IWorkflowEngine {
           required?: boolean;
         }>;
       };
+      const STRIP_TYPES = new Set([
+        "SYSTEM_FIELD",
+        "COMPUTED",
+        "SECTION_HEADER",
+      ]);
+      const schemaFieldTypes = new Map(
+        (schema.fields ?? []).map((f) => [f.key, f.type]),
+      );
+      const sanitizedFieldValues: Record<string, unknown> = {};
+      for (const [key, val] of Object.entries(
+        input.fieldValues as Record<string, unknown>,
+      )) {
+        const fieldType = schemaFieldTypes.get(key);
+        if (!fieldType) {
+          // Unknown field — skip silently (defense-in-depth strip)
+          this.logger.warn("workflow.submit: unknown field key stripped", {
+            key,
+          });
+          continue;
+        }
+        if (STRIP_TYPES.has(fieldType) || key.startsWith("_sys_")) {
+          this.logger.warn("workflow.submit: protected field stripped", {
+            key,
+            type: fieldType,
+          });
+          continue;
+        }
+        sanitizedFieldValues[key] = val;
+      }
+
+      // Required-field guard (defense-in-depth — UI also validates).
       const missing: string[] = [];
       for (const f of schema.fields ?? []) {
         if (!f.required) continue;
-        if (f.type === "SECTION_HEADER" || f.type === "COMPUTED") continue;
-        const v = (input.fieldValues as Record<string, unknown>)[f.key];
+        if (STRIP_TYPES.has(f.type)) continue;
+        const v = sanitizedFieldValues[f.key];
         if (
           v === null ||
           v === undefined ||
@@ -173,11 +215,26 @@ export class WorkflowEngine implements IWorkflowEngine {
         submittedAt: new Date(),
       });
 
+      // --- Create RequesterIdentitySnapshot ---
+      await this.createRequesterIdentitySnapshot(
+        tx,
+        request.id,
+        request.requesterId,
+      );
+
+      // --- Create AccessServiceRequestSnapshots for each LOOKUP[ACCESS_SERVICES] field ---
+      await this.createAccessServiceSnapshots(
+        tx,
+        request.id,
+        schema.fields ?? [],
+        sanitizedFieldValues,
+      );
+
       await this.requests.setFieldValues(
         tx,
         request.id,
         formVersion.id,
-        input.fieldValues,
+        sanitizedFieldValues,
       );
 
       // Materialise REQUEST_LINK fields as RequestLink rows. The field
@@ -185,7 +242,7 @@ export class WorkflowEngine implements IWorkflowEngine {
       // so cancel-cascade and parent-gating can identify the relation.
       for (const f of schema.fields ?? []) {
         if (f.type !== "REQUEST_LINK") continue;
-        const targetId = (input.fieldValues as Record<string, unknown>)[f.key];
+        const targetId = sanitizedFieldValues[f.key];
         if (typeof targetId !== "string" || targetId.trim() === "") continue;
         const target = await tx.request.findFirst({
           where: { id: targetId },
@@ -215,19 +272,19 @@ export class WorkflowEngine implements IWorkflowEngine {
         tx,
         request.id,
         formVersion.id,
-        input.fieldValues,
+        sanitizedFieldValues,
       );
 
       const submitAudit = await this.audit.append(tx, {
         ctx,
         requestId: request.id,
         action: "request.submit",
-        payload: { fieldKeys: Object.keys(input.fieldValues) },
+        payload: { fieldKeys: Object.keys(sanitizedFieldValues) },
       });
       await this.audit.appendFieldHistory(tx, {
         requestId: request.id,
         formVersionId: formVersion.id,
-        values: { ...input.fieldValues, ...computed },
+        values: { ...sanitizedFieldValues, ...computed },
         computedValues: computed,
         auditEntryId: submitAudit.id,
       });
@@ -1340,6 +1397,126 @@ export class WorkflowEngine implements IWorkflowEngine {
       payload: body.payload,
       templateKey: body.templateKey,
     });
+  }
+
+  // --------------------------------------------------------------------------
+  // Snapshot helpers (called inside submit transaction)
+  // --------------------------------------------------------------------------
+
+  private async createRequesterIdentitySnapshot(
+    tx: Tx,
+    requestId: string,
+    requesterId: string,
+  ): Promise<void> {
+    const person = await tx.person.findFirst({
+      where: { userId: requesterId },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        managerId: true,
+        orgUnit: { select: { managerId: true } },
+      },
+    });
+
+    let managerUserId: string | null = null;
+    let managerName: string | null = null;
+    let managerEmail: string | null = null;
+
+    const managerPersonId = person?.orgUnit.managerId ?? person?.managerId;
+    if (managerPersonId) {
+      const mgr = await tx.person.findUnique({
+        where: { id: managerPersonId },
+        select: { firstName: true, lastName: true, email: true, userId: true },
+      });
+      if (mgr?.userId) {
+        managerUserId = mgr.userId;
+        managerName = `${mgr.firstName} ${mgr.lastName}`.trim();
+        managerEmail = mgr.email;
+      }
+    }
+
+    const requesterName = person
+      ? `${person.firstName} ${person.lastName}`.trim()
+      : "";
+
+    await this.requesterIdentitySnapshots.create(
+      {
+        requestId,
+        requesterUserId: requesterId,
+        requesterName,
+        requesterEmail: person?.email ?? "",
+        managerUserId,
+        managerName,
+        managerEmail,
+      },
+      tx,
+    );
+  }
+
+  private async createAccessServiceSnapshots(
+    tx: Tx,
+    requestId: string,
+    schemaFields: Array<{ key: string; type: string; config?: unknown }>,
+    fieldValues: Record<string, unknown>,
+  ): Promise<void> {
+    const serviceFields = schemaFields.filter(
+      (f) =>
+        f.type === "LOOKUP" &&
+        (f.config as { dataSource?: string } | undefined)?.dataSource ===
+          "ACCESS_SERVICES",
+    );
+
+    for (const field of serviceFields) {
+      const serviceId = fieldValues[field.key];
+      if (typeof serviceId !== "string" || !serviceId) continue;
+
+      // Re-read service and active assignees inside the transaction (A6: revalidate mutable state).
+      // Using the repository abstraction to keep engine decoupled from Prisma model names.
+      const svcData = await this.accessServices.findById(serviceId, tx);
+      if (!svcData || !svcData.isActive) {
+        throw new ConfigurationError(
+          `Access service "${serviceId}" is inactive or does not exist. ` +
+            `Cannot create request snapshot.`,
+        );
+      }
+
+      // Load active assignees for all three roles via the repository (respects Person.isActive filter).
+      const [owners, cyber, impl] = await Promise.all([
+        this.accessServices.findActiveAssigneesByRole(serviceId, "OWNER", tx),
+        this.accessServices.findActiveAssigneesByRole(
+          serviceId,
+          "CYBERSECURITY",
+          tx,
+        ),
+        this.accessServices.findActiveAssigneesByRole(
+          serviceId,
+          "IMPLEMENTER",
+          tx,
+        ),
+      ]);
+      const activeAssignees = [...owners, ...cyber, ...impl].map((a) => ({
+        userId: a.userId,
+        userName: a.userName,
+        userEmail: a.userEmail,
+        role: a.role,
+      }));
+
+      await this.accessServiceSnapshots.createSnapshot(
+        {
+          requestId,
+          sourceFieldKey: field.key,
+          accessServiceId: svcData.id,
+          serviceName: svcData.name,
+          serviceSlug: svcData.slug,
+          requireManagerApproval: svcData.requireManagerApproval,
+          instructions: svcData.instructions,
+          assignees: activeAssignees,
+        },
+        tx,
+      );
+    }
   }
 }
 

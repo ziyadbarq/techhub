@@ -41,6 +41,20 @@ import { PrismaWorkflowRequestRepository } from "@/infrastructure/repositories/p
 import { PrismaWorkflowStepInstanceRepository } from "@/infrastructure/repositories/prisma-workflow-step-instance.repository";
 import { PrismaWorkflowAuditRepository } from "@/infrastructure/repositories/prisma-workflow-audit.repository";
 import { PrismaWorkflowSLAEventRepository } from "@/infrastructure/repositories/prisma-workflow-sla-event.repository";
+import { PrismaAccessServiceRepository } from "@/infrastructure/repositories/prisma-access-service.repository";
+import { PrismaAccessServiceSnapshotRepository } from "@/infrastructure/repositories/prisma-access-service-snapshot.repository";
+import { PrismaRequesterIdentitySnapshotRepository } from "@/infrastructure/repositories/prisma-requester-identity-snapshot.repository";
+import type {
+  IAccessServiceRepository,
+  IAccessServiceSnapshotRepository,
+  IRequesterIdentitySnapshotRepository,
+} from "@/core/repositories/workflow/access-service.repository.interface";
+import type {
+  ILookupProvider,
+  ILookupProviderRegistry,
+} from "@/core/domain/workflow/lookup-provider.interface";
+import { AccessServiceLookupProvider } from "@/infrastructure/services/workflow/lookup-providers/access-service.lookup-provider";
+import { LookupProviderRegistry } from "@/infrastructure/services/workflow/lookup-providers/registry";
 
 // ============================================================================
 // Services + interfaces
@@ -122,6 +136,19 @@ import { RoleAssigneeResolver } from "@/core/use-cases/workflow/resolvers/role.r
 import { RequesterAssigneeResolver } from "@/core/use-cases/workflow/resolvers/requester.resolver";
 import { FieldUserAssigneeResolver } from "@/core/use-cases/workflow/resolvers/field-user.resolver";
 import { RequesterManagerAssigneeResolver } from "@/core/use-cases/workflow/resolvers/requester-manager.resolver";
+import { AccessServiceRoleAssigneeResolver } from "@/core/use-cases/workflow/resolvers/access-service-role.resolver";
+import { FallbackAssigneeResolver } from "@/core/use-cases/workflow/resolvers/fallback.resolver";
+
+// ============================================================================
+// Access Service use cases
+// ============================================================================
+import { CreateAccessServiceUseCase } from "@/core/use-cases/access-service/create-access-service.use-case";
+import { UpdateAccessServiceUseCase } from "@/core/use-cases/access-service/update-access-service.use-case";
+import { ListAccessServicesUseCase } from "@/core/use-cases/access-service/list-access-services.use-case";
+import { GetAccessServiceUseCase } from "@/core/use-cases/access-service/get-access-service.use-case";
+import { ToggleAccessServiceStatusUseCase } from "@/core/use-cases/access-service/toggle-access-service-status.use-case";
+import { ImportAccessServicesUseCase } from "@/core/use-cases/access-service/import-access-services.use-case";
+import { ExportAccessServicesUseCase } from "@/core/use-cases/access-service/export-access-services.use-case";
 import { WorkflowAssigneeResolverRegistry } from "@/core/use-cases/workflow/resolvers/registry";
 
 // ============================================================================
@@ -249,6 +276,15 @@ export function bindWorkflowDependencies(container: Container): void {
   // --------------------------------------------------------------------------
   // Step executors (multi-inject) + registry
   // --------------------------------------------------------------------------
+  // Resolve the engine only when a SUB_WORKFLOW step actually activates.
+  // Eagerly injecting it into SubWorkflowStepExecutor creates this cycle:
+  // engine -> executor registry -> sub-workflow executor -> engine.
+  container
+    .bind<() => IWorkflowEngine>(DI_TOKENS.IWorkflowEngineProvider)
+    .toFactory(
+      (context) => () =>
+        context.get<IWorkflowEngine>(DI_TOKENS.IWorkflowEngine),
+    );
   container
     .bind<IStepExecutor>(DI_TOKENS.IWorkflowStepExecutor)
     .to(ApprovalStepExecutor);
@@ -290,6 +326,17 @@ export function bindWorkflowDependencies(container: Container): void {
   // --------------------------------------------------------------------------
   // Assignee resolvers (multi-inject) + registry
   // --------------------------------------------------------------------------
+  // FALLBACK composes another resolver. Resolve the registry only when the
+  // fallback runs so registry construction does not depend on itself.
+  container
+    .bind<() => IAssigneeResolverRegistry>(
+      DI_TOKENS.IWorkflowAssigneeResolverRegistryProvider,
+    )
+    .toFactory((context) => () =>
+      context.get<IAssigneeResolverRegistry>(
+        DI_TOKENS.IWorkflowAssigneeResolverRegistry,
+      ),
+    );
   container
     .bind<IAssigneeResolver>(DI_TOKENS.IWorkflowAssigneeResolver)
     .to(UserAssigneeResolver);
@@ -305,6 +352,12 @@ export function bindWorkflowDependencies(container: Container): void {
   container
     .bind<IAssigneeResolver>(DI_TOKENS.IWorkflowAssigneeResolver)
     .to(RequesterManagerAssigneeResolver);
+  container
+    .bind<IAssigneeResolver>(DI_TOKENS.IWorkflowAssigneeResolver)
+    .to(AccessServiceRoleAssigneeResolver);
+  container
+    .bind<IAssigneeResolver>(DI_TOKENS.IWorkflowAssigneeResolver)
+    .to(FallbackAssigneeResolver);
   container
     .bind<IAssigneeResolverRegistry>(
       DI_TOKENS.IWorkflowAssigneeResolverRegistry,
@@ -347,6 +400,65 @@ export function bindWorkflowDependencies(container: Container): void {
       DI_TOKENS.WorkflowOverrideOutcomeUseCase,
     )
     .to(WorkflowOverrideOutcomeUseCase);
+
+  // --------------------------------------------------------------------------
+  // Access Management Services — repositories
+  // --------------------------------------------------------------------------
+  container
+    .bind<IAccessServiceRepository>(DI_TOKENS.IAccessServiceRepository)
+    .to(PrismaAccessServiceRepository)
+    .inSingletonScope();
+  container
+    .bind<IAccessServiceSnapshotRepository>(
+      DI_TOKENS.IAccessServiceSnapshotRepository,
+    )
+    .to(PrismaAccessServiceSnapshotRepository)
+    .inSingletonScope();
+  container
+    .bind<IRequesterIdentitySnapshotRepository>(
+      DI_TOKENS.IRequesterIdentitySnapshotRepository,
+    )
+    .to(PrismaRequesterIdentitySnapshotRepository)
+    .inSingletonScope();
+
+  // --------------------------------------------------------------------------
+  // Access Management Services — lookup provider + registry
+  // --------------------------------------------------------------------------
+  container
+    .bind<ILookupProvider>(DI_TOKENS.IWorkflowLookupProvider)
+    .to(AccessServiceLookupProvider)
+    .inSingletonScope();
+  container
+    .bind<ILookupProviderRegistry>(DI_TOKENS.IWorkflowLookupProviderRegistry)
+    .to(LookupProviderRegistry)
+    .inSingletonScope();
+
+  // --------------------------------------------------------------------------
+  // Access Management Services — use cases
+  // --------------------------------------------------------------------------
+  container
+    .bind<CreateAccessServiceUseCase>(DI_TOKENS.CreateAccessServiceUseCase)
+    .to(CreateAccessServiceUseCase);
+  container
+    .bind<UpdateAccessServiceUseCase>(DI_TOKENS.UpdateAccessServiceUseCase)
+    .to(UpdateAccessServiceUseCase);
+  container
+    .bind<ListAccessServicesUseCase>(DI_TOKENS.ListAccessServicesUseCase)
+    .to(ListAccessServicesUseCase);
+  container
+    .bind<GetAccessServiceUseCase>(DI_TOKENS.GetAccessServiceUseCase)
+    .to(GetAccessServiceUseCase);
+  container
+    .bind<ToggleAccessServiceStatusUseCase>(
+      DI_TOKENS.ToggleAccessServiceStatusUseCase,
+    )
+    .to(ToggleAccessServiceStatusUseCase);
+  container
+    .bind<ImportAccessServicesUseCase>(DI_TOKENS.ImportAccessServicesUseCase)
+    .to(ImportAccessServicesUseCase);
+  container
+    .bind<ExportAccessServicesUseCase>(DI_TOKENS.ExportAccessServicesUseCase)
+    .to(ExportAccessServicesUseCase);
 
   // The engine orchestrator (singleton — composes use cases + shared helpers)
   container

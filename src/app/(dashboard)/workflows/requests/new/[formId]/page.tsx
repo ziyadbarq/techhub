@@ -70,6 +70,35 @@ export default async function NewRequestPage({
   const formNameToId: Record<string, string> = {};
   for (const f of linkedForms) formNameToId[f.name] = f.id;
 
+  // Resolve SYSTEM_FIELD values from requester's Person record
+  const person = await prisma.person.findFirst({
+    where: { userId, isActive: true },
+    select: {
+      firstName: true,
+      lastName: true,
+      email: true,
+      managerId: true,
+      orgUnit: { select: { managerId: true } },
+    },
+  });
+  const systemFieldValues: Record<string, string> = {};
+  if (person) {
+    systemFieldValues["REQUESTER_NAME"] =
+      `${person.firstName} ${person.lastName}`.trim();
+    systemFieldValues["REQUESTER_EMAIL"] = person.email;
+    const managerPersonId = person.orgUnit.managerId ?? person.managerId;
+    if (managerPersonId) {
+      const manager = await prisma.person.findUnique({
+        where: { id: managerPersonId },
+        select: { firstName: true, lastName: true },
+      });
+      if (manager) {
+        systemFieldValues["REQUESTER_MANAGER_NAME"] =
+          `${manager.firstName} ${manager.lastName}`.trim();
+      }
+    }
+  }
+
   return (
     <div className="space-y-6">
       <LinkButton href="/workflows/forms" variant="ghost" size="sm">
@@ -95,6 +124,7 @@ export default async function NewRequestPage({
           schema={form.publishedVersion.schemaJson as never}
           users={orgUsers}
           formNameToId={formNameToId}
+          systemFieldValues={systemFieldValues}
         />
       </Card>
     </div>

@@ -454,6 +454,12 @@ export const PERMISSIONS = {
   WORKFLOWS_BLACKOUT_PERIODS_MANAGE: "workflows-blackout-periods:manage",
   WORKFLOWS_MAINTENANCE_WINDOWS_MANAGE: "workflows-maintenance-windows:manage",
   WORKFLOWS_WATCHERS_MANAGE: "workflows-watchers:manage",
+
+  // Access Services catalog (admin)
+  WORKFLOWS_ACCESS_SERVICES_VIEW: "workflows-access-services:view",
+  WORKFLOWS_ACCESS_SERVICES_CREATE: "workflows-access-services:create",
+  WORKFLOWS_ACCESS_SERVICES_UPDATE: "workflows-access-services:update",
+  WORKFLOWS_ACCESS_SERVICES_MANAGE: "workflows-access-services:manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

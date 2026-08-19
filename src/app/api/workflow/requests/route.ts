@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       form: { select: { id: true, name: true } },
       requester: { select: { id: true, name: true, email: true } },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ submittedAt: "desc" }, { createdAt: "desc" }],
     take: limit,
   });
 

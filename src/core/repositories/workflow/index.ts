@@ -7,3 +7,4 @@ export * from "./step-instance.repository.interface";
 export * from "./audit.repository.interface";
 export * from "./sla-event.repository.interface";
 export * from "./handlers.interface";
+export * from "./access-service.repository.interface";

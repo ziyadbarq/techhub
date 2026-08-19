@@ -1,7 +1,14 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
+import { Check, ChevronsUpDown, LoaderCircle, Search, X } from "lucide-react";
 import { evaluate, evaluateBoolean } from "@/lib/workflow/expression-client";
 import type { Expression } from "@/core/domain/workflow";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import { DateField } from "./date-field";
 import { RequestLinkPicker } from "./request-link-picker";
@@ -57,6 +64,8 @@ interface FormRendererProps {
    *  - "admin": shows ADMINISTRATIVE fields read-only; HIDDEN fields stay hidden.
    */
   mode?: "submit" | "admin";
+  /** Values for SYSTEM_FIELD display (resolved server-side from requester identity). */
+  systemFieldValues?: Record<string, string>;
 }
 
 function resolveFieldState(
@@ -83,6 +92,7 @@ export function FormRenderer({
   invalidFieldKeys = [],
   formNameToId = {},
   mode = "submit",
+  systemFieldValues = {},
 }: FormRendererProps) {
   const invalidSet = new Set(invalidFieldKeys);
   const update = (key: string, value: unknown) => {
@@ -203,6 +213,7 @@ export function FormRenderer({
                 users={users}
                 onChange={(v) => update(field.key, v)}
                 formNameToId={formNameToId}
+                systemFieldValues={systemFieldValues}
               />
             </div>
             {isInvalid ? (
@@ -224,6 +235,7 @@ function FieldInput({
   users,
   onChange,
   formNameToId,
+  systemFieldValues = {},
 }: {
   field: FormFieldDef;
   value: unknown;
@@ -231,6 +243,7 @@ function FieldInput({
   users: UserOption[];
   onChange: (value: unknown) => void;
   formNameToId: Record<string, string>;
+  systemFieldValues?: Record<string, string>;
 }) {
   const inputBase =
     "h-11 w-full rounded-md border border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] px-4 text-body-md text-[var(--color-ink)] outline-none transition-colors placeholder:text-[var(--color-stone)] focus:border-[var(--color-brand-blue)] focus:ring-1 focus:ring-[var(--color-brand-blue)]";
@@ -416,10 +429,38 @@ function FieldInput({
           {value === null || value === undefined ? "—" : String(value)}
         </div>
       );
+    case "SYSTEM_FIELD": {
+      const systemKey =
+        (field.config as { systemField?: string } | undefined)?.systemField ??
+        "";
+      const displayValue = systemFieldValues[systemKey] ?? "(not available)";
+      return (
+        <div
+          className={
+            inputBase +
+            " flex cursor-not-allowed items-center bg-[var(--color-surface-soft)] text-[var(--color-charcoal)]"
+          }
+        >
+          {displayValue}
+        </div>
+      );
+    }
     case "LOOKUP": {
       const cfg = (field.config ?? {}) as {
+        dataSource?: string;
         options?: Array<{ value: string; label: string }> | string[];
       };
+      if (cfg.dataSource === "ACCESS_SERVICES") {
+        return (
+          <AccessServiceCombobox
+            value={(value as string | undefined) ?? ""}
+            onChange={onChange}
+            readOnly={readOnly}
+            inputBase={inputBase}
+            ro={ro}
+          />
+        );
+      }
       const raw = cfg.options ?? [];
       const opts = raw.map((o) =>
         typeof o === "string" ? { value: o, label: o } : o,
@@ -643,4 +684,249 @@ function FieldInput({
         />
       );
   }
+}
+
+interface AccessServiceOption {
+  id: string;
+  label: string;
+  publicMetadata: {
+    requireManagerApproval?: boolean;
+    instructions?: string | null;
+  };
+}
+
+function AccessServiceCombobox({
+  value,
+  onChange,
+  readOnly,
+  inputBase,
+  ro,
+}: {
+  value: string;
+  onChange: (v: unknown) => void;
+  readOnly: boolean;
+  inputBase: string;
+  ro: string;
+}) {
+  const [query, setQuery] = useState("");
+  const [options, setOptions] = useState<AccessServiceOption[]>([]);
+  // Cache of resolved options by id — never cleared synchronously in effects
+  const [resolved, setResolved] = useState<Record<string, AccessServiceOption>>(
+    {},
+  );
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestRef = useRef<AbortController | null>(null);
+  const optionsCacheRef = useRef(new Map<string, AccessServiceOption[]>());
+
+  // Derived: the currently selected option (null when value is empty or not yet resolved)
+  const selected = value ? (resolved[value] ?? null) : null;
+
+  // Resolve label for current value on mount / value change
+  useEffect(() => {
+    if (!value || resolved[value]) return;
+    fetch(
+      `/api/workflow/lookups/ACCESS_SERVICES?id=${encodeURIComponent(value)}`,
+    )
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { results?: AccessServiceOption[] } | null) => {
+        const match = data?.results?.find((o) => o.id === value);
+        if (match) setResolved((prev) => ({ ...prev, [value]: match }));
+      })
+      .catch(() => null);
+  }, [value, resolved]);
+
+  useEffect(() => {
+    // Prefetch the default list while the form renders. Search results are
+    // cached by query so reopening the picker never flashes a loading state.
+    if (optionsCacheRef.current.has(query)) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(
+      () => {
+        requestRef.current?.abort();
+        const controller = new AbortController();
+        requestRef.current = controller;
+        setLoading(true);
+        fetch(
+          `/api/workflow/lookups/ACCESS_SERVICES?q=${encodeURIComponent(query)}&limit=20`,
+          { signal: controller.signal },
+        )
+          .then((r) => (r.ok ? r.json() : { results: [] }))
+          .then((data: { results: AccessServiceOption[] }) => {
+            const results = data.results ?? [];
+            optionsCacheRef.current.set(query, results);
+            setOptions(results);
+            // Cache resolved options so label lookups stay fast
+            setResolved((prev) => {
+              const next = { ...prev };
+              for (const o of data.results ?? []) next[o.id] = o;
+              return next;
+            });
+          })
+          .catch((error: unknown) => {
+            if (!(
+              error instanceof DOMException && error.name === "AbortError"
+            )) {
+              setOptions([]);
+            }
+          })
+          .finally(() => {
+            if (requestRef.current === controller) setLoading(false);
+          });
+      },
+      query ? 250 : 0,
+    );
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      requestRef.current?.abort();
+    };
+  }, [query]);
+
+  const instructions = selected?.publicMetadata?.instructions;
+
+  if (readOnly) {
+    return (
+      <div
+        className={
+          inputBase +
+          " flex cursor-not-allowed items-center bg-[var(--color-surface-soft)] text-[var(--color-charcoal)]"
+        }
+      >
+        {selected?.label ?? (value || "—")}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <Popover
+        open={open}
+        onOpenChange={(nextOpen) => {
+          setOpen(nextOpen);
+          if (!nextOpen) {
+            setQuery("");
+            setOptions(optionsCacheRef.current.get("") ?? options);
+            setLoading(false);
+          }
+        }}
+      >
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            role="combobox"
+            aria-expanded={open}
+            aria-label="Select a service"
+            className={
+              inputBase +
+              ro +
+              " flex w-full cursor-pointer items-center justify-between gap-3 text-left"
+            }
+          >
+            <span
+              className={
+                selected
+                  ? "truncate font-medium text-[var(--color-ink)]"
+                  : "truncate text-[var(--color-stone)]"
+              }
+            >
+              {selected ? selected.label : "Select a service"}
+            </span>
+            <ChevronsUpDown className="h-4 w-4 shrink-0 text-[var(--color-stone)]" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          align="start"
+          className="z-[70] w-[--radix-popover-trigger-width] overflow-hidden rounded-lg border border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] p-0 shadow-lg"
+        >
+          <div className="relative border-b border-[var(--color-hairline-soft)] p-2">
+            <Search className="pointer-events-none absolute top-1/2 left-5 h-4 w-4 -translate-y-1/2 text-[var(--color-stone)]" />
+            <input
+              autoFocus
+              type="text"
+              className="text-body-sm h-10 w-full rounded-md border border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] pr-3 pl-9 text-[var(--color-ink)] outline-none focus:border-transparent focus:ring-2 focus:ring-[var(--color-brand-yellow)]"
+              placeholder="Search by service name…"
+              value={query}
+              onChange={(e) => {
+                const nextQuery = e.target.value;
+                const cached = optionsCacheRef.current.get(nextQuery);
+                if (cached) {
+                  setOptions(cached);
+                  setLoading(false);
+                }
+                setQuery(nextQuery);
+              }}
+            />
+          </div>
+          <ul className="max-h-64 overflow-y-auto p-1">
+            {loading ? (
+              <li className="text-body-sm flex items-center justify-center gap-2 px-3 py-8 text-[var(--color-stone)]">
+                <LoaderCircle className="h-4 w-4 animate-spin" />
+                Loading services…
+              </li>
+            ) : options.length === 0 ? (
+              <li className="text-body-sm px-3 py-8 text-center text-[var(--color-stone)]">
+                {query ? "No matching services found" : "No services available"}
+              </li>
+            ) : (
+              options.map((opt) => (
+                <li key={opt.id}>
+                  <button
+                    type="button"
+                    className="text-body-sm flex w-full cursor-pointer items-start gap-2 rounded-md px-3 py-2.5 text-left text-[var(--color-ink)] hover:bg-[var(--color-surface-soft)] focus:bg-[var(--color-surface-soft)] focus:outline-none"
+                    onClick={() => {
+                      setResolved((prev) => ({ ...prev, [opt.id]: opt }));
+                      onChange(opt.id);
+                      setOpen(false);
+                      setQuery("");
+                    }}
+                  >
+                    <Check
+                      className={
+                        value === opt.id
+                          ? "mt-0.5 h-4 w-4 shrink-0 text-[var(--color-brand-blue)]"
+                          : "mt-0.5 h-4 w-4 shrink-0 opacity-0"
+                      }
+                    />
+                    <span className="min-w-0">
+                      <span className="block truncate font-medium">
+                        {opt.label}
+                      </span>
+                      {opt.publicMetadata.instructions ? (
+                        <span className="text-caption mt-0.5 line-clamp-2 block text-[var(--color-stone)]">
+                          {opt.publicMetadata.instructions}
+                        </span>
+                      ) : null}
+                    </span>
+                  </button>
+                </li>
+              ))
+            )}
+          </ul>
+          {selected && (
+            <div className="border-t border-[var(--color-hairline-soft)] p-2">
+              <button
+                type="button"
+                className="text-caption flex w-full items-center justify-center gap-1.5 rounded-md px-3 py-2 text-[var(--color-coral-dark)] hover:bg-[var(--color-surface-soft)]"
+                onClick={() => {
+                  onChange("");
+                  setOpen(false);
+                }}
+              >
+                <X className="h-3.5 w-3.5" />
+                Clear selection
+              </button>
+            </div>
+          )}
+        </PopoverContent>
+      </Popover>
+      {instructions ? (
+        <div className="mt-2 rounded-md border border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)] px-3 py-2">
+          <p className="text-caption text-[var(--color-stone)]">
+            {instructions}
+          </p>
+        </div>
+      ) : null}
+    </div>
+  );
 }

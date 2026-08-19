@@ -71,7 +71,7 @@ export default async function RequestsListPage({
         form: { select: { name: true } },
         requester: { select: { name: true, email: true } },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ submittedAt: "desc" }, { createdAt: "desc" }],
       take: 100,
     }),
     prisma.savedFilter.findMany({

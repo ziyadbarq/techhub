@@ -1102,6 +1102,10 @@ export const DI_TOKENS = {
 
   // Engine orchestrator + use cases
   IWorkflowEngine: Symbol.for("IWorkflowEngine"),
+  IWorkflowEngineProvider: Symbol.for("IWorkflowEngineProvider"),
+  IWorkflowAssigneeResolverRegistryProvider: Symbol.for(
+    "IWorkflowAssigneeResolverRegistryProvider",
+  ),
   WorkflowSubmitUseCase: Symbol.for("WorkflowSubmitUseCase"),
   WorkflowTakeActionUseCase: Symbol.for("WorkflowTakeActionUseCase"),
   WorkflowResubmitUseCase: Symbol.for("WorkflowResubmitUseCase"),
@@ -1153,6 +1157,28 @@ export const DI_TOKENS = {
   IWorkflowReferenceNumberService: Symbol.for(
     "IWorkflowReferenceNumberService",
   ),
+
+  // ─── Access Management Services ───────────────────────────────────────────
+  IAccessServiceRepository: Symbol.for("IAccessServiceRepository"),
+  IAccessServiceSnapshotRepository: Symbol.for(
+    "IAccessServiceSnapshotRepository",
+  ),
+  IRequesterIdentitySnapshotRepository: Symbol.for(
+    "IRequesterIdentitySnapshotRepository",
+  ),
+  IWorkflowLookupProvider: Symbol.for("IWorkflowLookupProvider"),
+  IWorkflowLookupProviderRegistry: Symbol.for(
+    "IWorkflowLookupProviderRegistry",
+  ),
+  CreateAccessServiceUseCase: Symbol.for("CreateAccessServiceUseCase"),
+  UpdateAccessServiceUseCase: Symbol.for("UpdateAccessServiceUseCase"),
+  ListAccessServicesUseCase: Symbol.for("ListAccessServicesUseCase"),
+  GetAccessServiceUseCase: Symbol.for("GetAccessServiceUseCase"),
+  ToggleAccessServiceStatusUseCase: Symbol.for(
+    "ToggleAccessServiceStatusUseCase",
+  ),
+  ImportAccessServicesUseCase: Symbol.for("ImportAccessServicesUseCase"),
+  ExportAccessServicesUseCase: Symbol.for("ExportAccessServicesUseCase"),
 } as const;
 
 /**

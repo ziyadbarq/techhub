@@ -51,6 +51,11 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  AccessService: 'AccessService',
+  AccessServiceAssignee: 'AccessServiceAssignee',
+  AccessServiceRequestSnapshot: 'AccessServiceRequestSnapshot',
+  AccessServiceSnapshotAssignee: 'AccessServiceSnapshotAssignee',
+  RequesterIdentitySnapshot: 'RequesterIdentitySnapshot',
   AssetCategory: 'AssetCategory',
   AssetCategoryField: 'AssetCategoryField',
   AssetModel: 'AssetModel',
@@ -182,6 +187,77 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const AccessServiceScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  isActive: 'isActive',
+  requireManagerApproval: 'requireManagerApproval',
+  instructions: 'instructions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdById: 'createdById',
+  updatedById: 'updatedById'
+} as const
+
+export type AccessServiceScalarFieldEnum = (typeof AccessServiceScalarFieldEnum)[keyof typeof AccessServiceScalarFieldEnum]
+
+
+export const AccessServiceAssigneeScalarFieldEnum = {
+  id: 'id',
+  accessServiceId: 'accessServiceId',
+  userId: 'userId',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type AccessServiceAssigneeScalarFieldEnum = (typeof AccessServiceAssigneeScalarFieldEnum)[keyof typeof AccessServiceAssigneeScalarFieldEnum]
+
+
+export const AccessServiceRequestSnapshotScalarFieldEnum = {
+  id: 'id',
+  requestId: 'requestId',
+  sourceFieldKey: 'sourceFieldKey',
+  accessServiceId: 'accessServiceId',
+  serviceName: 'serviceName',
+  serviceSlug: 'serviceSlug',
+  requireManagerApproval: 'requireManagerApproval',
+  instructions: 'instructions',
+  createdAt: 'createdAt'
+} as const
+
+export type AccessServiceRequestSnapshotScalarFieldEnum = (typeof AccessServiceRequestSnapshotScalarFieldEnum)[keyof typeof AccessServiceRequestSnapshotScalarFieldEnum]
+
+
+export const AccessServiceSnapshotAssigneeScalarFieldEnum = {
+  id: 'id',
+  snapshotId: 'snapshotId',
+  userId: 'userId',
+  userName: 'userName',
+  userEmail: 'userEmail',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type AccessServiceSnapshotAssigneeScalarFieldEnum = (typeof AccessServiceSnapshotAssigneeScalarFieldEnum)[keyof typeof AccessServiceSnapshotAssigneeScalarFieldEnum]
+
+
+export const RequesterIdentitySnapshotScalarFieldEnum = {
+  id: 'id',
+  requestId: 'requestId',
+  requesterUserId: 'requesterUserId',
+  requesterName: 'requesterName',
+  requesterEmail: 'requesterEmail',
+  managerUserId: 'managerUserId',
+  managerName: 'managerName',
+  managerEmail: 'managerEmail',
+  createdAt: 'createdAt'
+} as const
+
+export type RequesterIdentitySnapshotScalarFieldEnum = (typeof RequesterIdentitySnapshotScalarFieldEnum)[keyof typeof RequesterIdentitySnapshotScalarFieldEnum]
 
 
 export const AssetCategoryScalarFieldEnum = {

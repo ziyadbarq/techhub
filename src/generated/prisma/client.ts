@@ -31,8 +31,8 @@ export * from "./enums.ts"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more AssetCategories
- * const assetCategories = await prisma.assetCategory.findMany()
+ * // Fetch zero or more AccessServices
+ * const accessServices = await prisma.accessService.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -41,6 +41,45 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 export { Prisma }
 
+/**
+ * Model AccessService
+ * A single IT service in the Access Management catalog.
+ * Owned by Workflow Admins. Requesters pick from active services
+ * on the submission form; the engine resolves approvers dynamically.
+ */
+export type AccessService = Prisma.AccessServiceModel
+/**
+ * Model AccessServiceAssignee
+ * Role-based user assignments for an AccessService.
+ * onDelete: Restrict — a user cannot be removed from the system while
+ * assigned to an active service; use service deactivation instead.
+ */
+export type AccessServiceAssignee = Prisma.AccessServiceAssigneeModel
+/**
+ * Model AccessServiceRequestSnapshot
+ * Immutable snapshot of a selected service taken at request submission.
+ * One row per (request, serviceFieldKey) pair — supports forms with
+ * multiple LOOKUP[ACCESS_SERVICES] fields.
+ * 
+ * The ACCESS_SERVICE_ROLE assignee resolver reads exclusively from
+ * AccessServiceSnapshotAssignee rows. Live catalog changes NEVER affect
+ * in-flight requests.
+ */
+export type AccessServiceRequestSnapshot = Prisma.AccessServiceRequestSnapshotModel
+/**
+ * Model AccessServiceSnapshotAssignee
+ * One row per resolved assignee per role in the snapshot.
+ * userId is nullable: if the user is later deleted from the system
+ * the row stays for historical auditability.
+ * userName/userEmail are denormalized at snapshot time.
+ */
+export type AccessServiceSnapshotAssignee = Prisma.AccessServiceSnapshotAssigneeModel
+/**
+ * Model RequesterIdentitySnapshot
+ * Immutable snapshot of the requester's identity taken at submission.
+ * Review/admin pages use this for historical display — not a live Person join.
+ */
+export type RequesterIdentitySnapshot = Prisma.RequesterIdentitySnapshotModel
 /**
  * Model AssetCategory
  * 

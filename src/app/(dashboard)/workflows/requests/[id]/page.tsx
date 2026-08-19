@@ -9,7 +9,7 @@ import { getCurrentUserId } from "@/lib/auth/session";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { hasPermission, requirePermission } from "@/lib/permissions/server";
+import { hasPermission } from "@/lib/permissions/server";
 
 import { RequestActions } from "./request-actions";
 import { AdminOverridePanel } from "./admin-override-panel";
@@ -55,11 +55,27 @@ export default async function RequestDetailPage({
   });
   if (!req) notFound();
 
-  // Ownership-scoped permission: pass the request's requester as the resource
-  // owner so users with :view (broader) OR :view:own (self only) both pass.
-  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN, {
-    resourceOwnerId: req.requesterId,
-  });
+  // A request is visible to its requester, anyone assigned to any of its
+  // workflow steps (including completed steps), or users with global view.
+  // Redirect explicitly instead of throwing into the dashboard error boundary.
+  const [canViewAll, canViewOwn, hasAssignment] = await Promise.all([
+    hasPermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW),
+    hasPermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN, {
+      resourceOwnerId: req.requesterId,
+    }),
+    prisma.assigneeSnapshot.findFirst({
+      where: {
+        userId,
+        stepInstance: { requestId: req.id },
+      },
+      select: { id: true },
+    }),
+  ]);
+  if (!canViewAll && !canViewOwn && !hasAssignment) {
+    redirect(
+      `/unauthorized?required=${encodeURIComponent(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN)}&path=${encodeURIComponent(`/workflows/requests/${req.id}`)}`,
+    );
+  }
 
   const stepInstances = await prisma.stepInstance.findMany({
     where: { requestId: req.id },
@@ -86,6 +102,9 @@ export default async function RequestDetailPage({
     select: { id: true, name: true, email: true },
     orderBy: { createdAt: "asc" },
   });
+  const userNameById = new Map(
+    orgUsers.map((user) => [user.id, user.name?.trim() || user.email]),
+  );
 
   const holdReasons = await prisma.holdReason.findMany({
     where: { isActive: true },
@@ -121,8 +140,34 @@ export default async function RequestDetailPage({
     const v = f.visibility ?? "VISIBLE";
     if (v === "HIDDEN") return false;
     if (v === "ADMINISTRATIVE") return canOverride;
+    // SECTION_HEADER has no value; exclude from data display
+    if (f.type === "SECTION_HEADER") return false;
     return true;
   });
+
+  // Load immutable snapshots for SYSTEM_FIELD and LOOKUP[ACCESS_SERVICES] display
+  const requesterSnapshot = await prisma.requesterIdentitySnapshot.findUnique({
+    where: { requestId: req.id },
+  });
+  const serviceSnapshots = await prisma.accessServiceRequestSnapshot.findMany({
+    where: { requestId: req.id },
+  });
+  // Map from field key to snapshotted service name
+  const serviceNameByFieldKey = new Map<string, string>(
+    serviceSnapshots.map((s) => [s.sourceFieldKey, s.serviceName]),
+  );
+  // System field display values from snapshot (not live session)
+  const systemFieldSnapshotValues: Record<string, string> = {};
+  if (requesterSnapshot) {
+    systemFieldSnapshotValues["REQUESTER_NAME"] =
+      requesterSnapshot.requesterName;
+    systemFieldSnapshotValues["REQUESTER_EMAIL"] =
+      requesterSnapshot.requesterEmail;
+    if (requesterSnapshot.managerName) {
+      systemFieldSnapshotValues["REQUESTER_MANAGER_NAME"] =
+        requesterSnapshot.managerName;
+    }
+  }
 
   // For REQUEST_LINK fields, resolve target request ids → reference numbers.
   const linkIds = new Set<string>();
@@ -228,6 +273,35 @@ export default async function RequestDetailPage({
                   f.type === "REQUEST_LINK" && typeof value === "string"
                     ? linkRefById.get(value)
                     : undefined;
+                // SYSTEM_FIELD: display from immutable snapshot, not live session
+                const systemKey =
+                  f.type === "SYSTEM_FIELD"
+                    ? ((f.config?.systemField as string | undefined) ?? "")
+                    : "";
+                const systemDisplay = systemKey
+                  ? (systemFieldSnapshotValues[systemKey] ?? "—")
+                  : null;
+                // LOOKUP[ACCESS_SERVICES]: display snapshotted service name
+                const isAccessServiceLookup =
+                  f.type === "LOOKUP" &&
+                  (f.config?.dataSource as string | undefined) ===
+                    "ACCESS_SERVICES";
+                const accessServiceName = isAccessServiceLookup
+                  ? (serviceNameByFieldKey.get(f.key) ??
+                    renderFieldValue(value, f))
+                  : null;
+                const userPickerDisplay =
+                  f.type === "USER_PICKER" && typeof value === "string"
+                    ? (userNameById.get(value) ?? value)
+                    : f.type === "MULTI_USER_PICKER" && Array.isArray(value)
+                      ? value
+                          .map((id) =>
+                            typeof id === "string"
+                              ? (userNameById.get(id) ?? id)
+                              : String(id),
+                          )
+                          .join(", ")
+                      : null;
                 return (
                   <div key={f.key} className="grid grid-cols-3 gap-4 py-3">
                     <dt className="text-body-sm text-stone flex flex-wrap items-center gap-2">
@@ -239,7 +313,13 @@ export default async function RequestDetailPage({
                       ) : null}
                     </dt>
                     <dd className="text-body-md text-ink col-span-2 wrap-break-word">
-                      {linkInfo ? (
+                      {systemDisplay !== null ? (
+                        systemDisplay
+                      ) : accessServiceName !== null ? (
+                        accessServiceName
+                      ) : userPickerDisplay !== null ? (
+                        userPickerDisplay || "—"
+                      ) : linkInfo ? (
                         <span className="inline-flex flex-wrap items-center gap-2">
                           <span className="text-charcoal font-mono">
                             {linkInfo.ref}

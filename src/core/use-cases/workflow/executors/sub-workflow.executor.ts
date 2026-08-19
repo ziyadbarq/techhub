@@ -23,13 +23,15 @@ import type {
   IWorkflowEngine,
 } from "@/core/repositories/workflow";
 
+type WorkflowEngineProvider = () => IWorkflowEngine;
+
 @injectable()
 export class SubWorkflowStepExecutor implements IStepExecutor {
   readonly type = "SUB_WORKFLOW" as const;
 
   constructor(
-    @inject(DI_TOKENS.IWorkflowEngine)
-    private readonly engine: IWorkflowEngine,
+    @inject(DI_TOKENS.IWorkflowEngineProvider)
+    private readonly getEngine: WorkflowEngineProvider,
   ) {}
 
   async activate(config: StepConfig, exec: ExecCtx): Promise<ActivationResult> {
@@ -46,7 +48,7 @@ export class SubWorkflowStepExecutor implements IStepExecutor {
       }
     }
 
-    const submission = await this.engine.submit(
+    const submission = await this.getEngine().submit(
       { formId: cfg.childFormId, fieldValues: childValues },
       exec.ctx,
     );

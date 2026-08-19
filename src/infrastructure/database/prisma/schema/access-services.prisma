@@ -1,0 +1,128 @@
+// ============================================
+// ACCESS MANAGEMENT SERVICES
+// ============================================
+//
+// Models: AccessService, AccessServiceAssignee,
+//         AccessServiceRequestSnapshot, AccessServiceSnapshotAssignee,
+//         RequesterIdentitySnapshot
+// Enums: AccessServiceRole
+// Layer: Layer 3 / Workflow Engine Extension
+// Related DI Module: workflow.module.ts
+// Feature Flag: WORKFLOW_ENGINE
+// ============================================
+
+enum AccessServiceRole {
+  OWNER
+  CYBERSECURITY
+  IMPLEMENTER
+
+  @@map("access_service_role")
+}
+
+/// A single IT service in the Access Management catalog.
+/// Owned by Workflow Admins. Requesters pick from active services
+/// on the submission form; the engine resolves approvers dynamically.
+model AccessService {
+  id                     String   @id @default(cuid())
+  name                   String   @unique
+  slug                   String   @unique
+  description            String?  @db.Text
+  isActive               Boolean  @default(true)
+  requireManagerApproval Boolean  @default(false)
+  instructions           String?  @db.Text
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  createdById            String?
+  updatedById            String?
+
+  createdBy  User?                         @relation("AccessServiceCreatedBy",  fields: [createdById],  references: [id], onDelete: SetNull)
+  updatedBy  User?                         @relation("AccessServiceUpdatedBy",  fields: [updatedById],  references: [id], onDelete: SetNull)
+  assignees  AccessServiceAssignee[]
+  snapshots  AccessServiceRequestSnapshot[]
+
+  @@index([isActive])
+  @@map("access_services")
+}
+
+/// Role-based user assignments for an AccessService.
+/// onDelete: Restrict — a user cannot be removed from the system while
+/// assigned to an active service; use service deactivation instead.
+model AccessServiceAssignee {
+  id              String            @id @default(cuid())
+  accessServiceId String
+  userId          String
+  role            AccessServiceRole
+  createdAt       DateTime          @default(now())
+
+  accessService AccessService @relation(fields: [accessServiceId], references: [id], onDelete: Cascade)
+  user          User          @relation("AccessServiceAssignees", fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([accessServiceId, userId, role])
+  @@index([accessServiceId, role])
+  @@map("access_service_assignees")
+}
+
+/// Immutable snapshot of a selected service taken at request submission.
+/// One row per (request, serviceFieldKey) pair — supports forms with
+/// multiple LOOKUP[ACCESS_SERVICES] fields.
+///
+/// The ACCESS_SERVICE_ROLE assignee resolver reads exclusively from
+/// AccessServiceSnapshotAssignee rows. Live catalog changes NEVER affect
+/// in-flight requests.
+model AccessServiceRequestSnapshot {
+  id                     String   @id @default(cuid())
+  requestId              String
+  sourceFieldKey         String   // the LOOKUP field key that held the service ID
+  accessServiceId        String
+  serviceName            String
+  serviceSlug            String
+  requireManagerApproval Boolean
+  instructions           String?  @db.Text
+  createdAt              DateTime @default(now())
+
+  request       Request       @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  accessService AccessService @relation(fields: [accessServiceId], references: [id], onDelete: Restrict)
+  assigneeRows  AccessServiceSnapshotAssignee[]
+
+  @@unique([requestId, sourceFieldKey])
+  @@index([requestId])
+  @@map("access_service_request_snapshots")
+}
+
+/// One row per resolved assignee per role in the snapshot.
+/// userId is nullable: if the user is later deleted from the system
+/// the row stays for historical auditability.
+/// userName/userEmail are denormalized at snapshot time.
+model AccessServiceSnapshotAssignee {
+  id         String            @id @default(cuid())
+  snapshotId String
+  userId     String?
+  userName   String
+  userEmail  String
+  role       AccessServiceRole
+  createdAt  DateTime          @default(now())
+
+  snapshot AccessServiceRequestSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  user     User?                        @relation("AccessServiceSnapshotAssignees", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([snapshotId, role])
+  @@map("access_service_snapshot_assignees")
+}
+
+/// Immutable snapshot of the requester's identity taken at submission.
+/// Review/admin pages use this for historical display — not a live Person join.
+model RequesterIdentitySnapshot {
+  id              String   @id @default(cuid())
+  requestId       String   @unique
+  requesterUserId String
+  requesterName   String
+  requesterEmail  String
+  managerUserId   String?
+  managerName     String?
+  managerEmail    String?
+  createdAt       DateTime @default(now())
+
+  request Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@map("requester_identity_snapshots")
+}

@@ -286,6 +286,8 @@ export type RequestWhereInput = {
   notifications?: Prisma.NotificationListRelationFilter
   comments?: Prisma.RequestCommentListRelationFilter
   attachments?: Prisma.RequestAttachmentListRelationFilter
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotListRelationFilter
+  requesterIdentitySnapshot?: Prisma.XOR<Prisma.RequesterIdentitySnapshotNullableScalarRelationFilter, Prisma.RequesterIdentitySnapshotWhereInput> | null
 }
 
 export type RequestOrderByWithRelationInput = {
@@ -321,6 +323,8 @@ export type RequestOrderByWithRelationInput = {
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   comments?: Prisma.RequestCommentOrderByRelationAggregateInput
   attachments?: Prisma.RequestAttachmentOrderByRelationAggregateInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotOrderByRelationAggregateInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotOrderByWithRelationInput
 }
 
 export type RequestWhereUniqueInput = Prisma.AtLeast<{
@@ -360,6 +364,8 @@ export type RequestWhereUniqueInput = Prisma.AtLeast<{
   notifications?: Prisma.NotificationListRelationFilter
   comments?: Prisma.RequestCommentListRelationFilter
   attachments?: Prisma.RequestAttachmentListRelationFilter
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotListRelationFilter
+  requesterIdentitySnapshot?: Prisma.XOR<Prisma.RequesterIdentitySnapshotNullableScalarRelationFilter, Prisma.RequesterIdentitySnapshotWhereInput> | null
 }, "id" | "formId_referenceNumber">
 
 export type RequestOrderByWithAggregationInput = {
@@ -433,6 +439,8 @@ export type RequestCreateInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateInput = {
@@ -462,6 +470,8 @@ export type RequestUncheckedCreateInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUpdateInput = {
@@ -491,6 +501,8 @@ export type RequestUpdateInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateInput = {
@@ -520,6 +532,8 @@ export type RequestUncheckedUpdateInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestCreateManyInput = {
@@ -571,6 +585,11 @@ export type RequestUncheckedUpdateManyInput = {
   closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RequestScalarRelationFilter = {
+  is?: Prisma.RequestWhereInput
+  isNot?: Prisma.RequestWhereInput
 }
 
 export type RequestListRelationFilter = {
@@ -645,14 +664,37 @@ export type RequestMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type RequestScalarRelationFilter = {
-  is?: Prisma.RequestWhereInput
-  isNot?: Prisma.RequestWhereInput
-}
-
 export type RequestNullableScalarRelationFilter = {
   is?: Prisma.RequestWhereInput | null
   isNot?: Prisma.RequestWhereInput | null
+}
+
+export type RequestCreateNestedOneWithoutAccessServiceSnapshotsInput = {
+  create?: Prisma.XOR<Prisma.RequestCreateWithoutAccessServiceSnapshotsInput, Prisma.RequestUncheckedCreateWithoutAccessServiceSnapshotsInput>
+  connectOrCreate?: Prisma.RequestCreateOrConnectWithoutAccessServiceSnapshotsInput
+  connect?: Prisma.RequestWhereUniqueInput
+}
+
+export type RequestUpdateOneRequiredWithoutAccessServiceSnapshotsNestedInput = {
+  create?: Prisma.XOR<Prisma.RequestCreateWithoutAccessServiceSnapshotsInput, Prisma.RequestUncheckedCreateWithoutAccessServiceSnapshotsInput>
+  connectOrCreate?: Prisma.RequestCreateOrConnectWithoutAccessServiceSnapshotsInput
+  upsert?: Prisma.RequestUpsertWithoutAccessServiceSnapshotsInput
+  connect?: Prisma.RequestWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RequestUpdateToOneWithWhereWithoutAccessServiceSnapshotsInput, Prisma.RequestUpdateWithoutAccessServiceSnapshotsInput>, Prisma.RequestUncheckedUpdateWithoutAccessServiceSnapshotsInput>
+}
+
+export type RequestCreateNestedOneWithoutRequesterIdentitySnapshotInput = {
+  create?: Prisma.XOR<Prisma.RequestCreateWithoutRequesterIdentitySnapshotInput, Prisma.RequestUncheckedCreateWithoutRequesterIdentitySnapshotInput>
+  connectOrCreate?: Prisma.RequestCreateOrConnectWithoutRequesterIdentitySnapshotInput
+  connect?: Prisma.RequestWhereUniqueInput
+}
+
+export type RequestUpdateOneRequiredWithoutRequesterIdentitySnapshotNestedInput = {
+  create?: Prisma.XOR<Prisma.RequestCreateWithoutRequesterIdentitySnapshotInput, Prisma.RequestUncheckedCreateWithoutRequesterIdentitySnapshotInput>
+  connectOrCreate?: Prisma.RequestCreateOrConnectWithoutRequesterIdentitySnapshotInput
+  upsert?: Prisma.RequestUpsertWithoutRequesterIdentitySnapshotInput
+  connect?: Prisma.RequestWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RequestUpdateToOneWithWhereWithoutRequesterIdentitySnapshotInput, Prisma.RequestUpdateWithoutRequesterIdentitySnapshotInput>, Prisma.RequestUncheckedUpdateWithoutRequesterIdentitySnapshotInput>
 }
 
 export type RequestCreateNestedManyWithoutRequesterInput = {
@@ -1059,6 +1101,278 @@ export type RequestUncheckedUpdateManyWithoutWorkflowVersionNestedInput = {
   deleteMany?: Prisma.RequestScalarWhereInput | Prisma.RequestScalarWhereInput[]
 }
 
+export type RequestCreateWithoutAccessServiceSnapshotsInput = {
+  id?: string
+  referenceNumber: string
+  status?: $Enums.RequestStatus
+  outcome?: $Enums.RequestOutcome | null
+  outcomeNotes?: string | null
+  currentStepInstanceId?: string | null
+  submittedAt?: Date | string | null
+  closedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  form: Prisma.FormCreateNestedOneWithoutRequestsInput
+  formVersion: Prisma.FormVersionCreateNestedOneWithoutRequestsInput
+  workflowVersion: Prisma.WorkflowVersionCreateNestedOneWithoutRequestsInput
+  requester: Prisma.UserCreateNestedOneWithoutSubmittedRequestsInput
+  holdReason?: Prisma.HoldReasonCreateNestedOneWithoutRequestsInput
+  outcomeCode?: Prisma.OutcomeCodeCreateNestedOneWithoutRequestsInput
+  fieldValues?: Prisma.RequestFieldValueCreateNestedManyWithoutRequestInput
+  stepInstances?: Prisma.StepInstanceCreateNestedManyWithoutRequestInput
+  outboundLinks?: Prisma.RequestLinkCreateNestedManyWithoutSourceInput
+  inboundLinks?: Prisma.RequestLinkCreateNestedManyWithoutTargetInput
+  fieldHistory?: Prisma.FieldHistoryEntryCreateNestedManyWithoutRequestInput
+  watchers?: Prisma.WatcherCreateNestedManyWithoutRequestInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutRequestInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
+  comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
+  attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
+}
+
+export type RequestUncheckedCreateWithoutAccessServiceSnapshotsInput = {
+  id?: string
+  referenceNumber: string
+  formId: string
+  formVersionId: string
+  workflowVersionId: string
+  requesterId: string
+  status?: $Enums.RequestStatus
+  outcome?: $Enums.RequestOutcome | null
+  outcomeCodeId?: string | null
+  outcomeNotes?: string | null
+  holdReasonId?: string | null
+  currentStepInstanceId?: string | null
+  submittedAt?: Date | string | null
+  closedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  fieldValues?: Prisma.RequestFieldValueUncheckedCreateNestedManyWithoutRequestInput
+  stepInstances?: Prisma.StepInstanceUncheckedCreateNestedManyWithoutRequestInput
+  outboundLinks?: Prisma.RequestLinkUncheckedCreateNestedManyWithoutSourceInput
+  inboundLinks?: Prisma.RequestLinkUncheckedCreateNestedManyWithoutTargetInput
+  fieldHistory?: Prisma.FieldHistoryEntryUncheckedCreateNestedManyWithoutRequestInput
+  watchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutRequestInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutRequestInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
+  comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
+  attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
+}
+
+export type RequestCreateOrConnectWithoutAccessServiceSnapshotsInput = {
+  where: Prisma.RequestWhereUniqueInput
+  create: Prisma.XOR<Prisma.RequestCreateWithoutAccessServiceSnapshotsInput, Prisma.RequestUncheckedCreateWithoutAccessServiceSnapshotsInput>
+}
+
+export type RequestUpsertWithoutAccessServiceSnapshotsInput = {
+  update: Prisma.XOR<Prisma.RequestUpdateWithoutAccessServiceSnapshotsInput, Prisma.RequestUncheckedUpdateWithoutAccessServiceSnapshotsInput>
+  create: Prisma.XOR<Prisma.RequestCreateWithoutAccessServiceSnapshotsInput, Prisma.RequestUncheckedCreateWithoutAccessServiceSnapshotsInput>
+  where?: Prisma.RequestWhereInput
+}
+
+export type RequestUpdateToOneWithWhereWithoutAccessServiceSnapshotsInput = {
+  where?: Prisma.RequestWhereInput
+  data: Prisma.XOR<Prisma.RequestUpdateWithoutAccessServiceSnapshotsInput, Prisma.RequestUncheckedUpdateWithoutAccessServiceSnapshotsInput>
+}
+
+export type RequestUpdateWithoutAccessServiceSnapshotsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+  outcome?: Prisma.NullableEnumRequestOutcomeFieldUpdateOperationsInput | $Enums.RequestOutcome | null
+  outcomeNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStepInstanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  form?: Prisma.FormUpdateOneRequiredWithoutRequestsNestedInput
+  formVersion?: Prisma.FormVersionUpdateOneRequiredWithoutRequestsNestedInput
+  workflowVersion?: Prisma.WorkflowVersionUpdateOneRequiredWithoutRequestsNestedInput
+  requester?: Prisma.UserUpdateOneRequiredWithoutSubmittedRequestsNestedInput
+  holdReason?: Prisma.HoldReasonUpdateOneWithoutRequestsNestedInput
+  outcomeCode?: Prisma.OutcomeCodeUpdateOneWithoutRequestsNestedInput
+  fieldValues?: Prisma.RequestFieldValueUpdateManyWithoutRequestNestedInput
+  stepInstances?: Prisma.StepInstanceUpdateManyWithoutRequestNestedInput
+  outboundLinks?: Prisma.RequestLinkUpdateManyWithoutSourceNestedInput
+  inboundLinks?: Prisma.RequestLinkUpdateManyWithoutTargetNestedInput
+  fieldHistory?: Prisma.FieldHistoryEntryUpdateManyWithoutRequestNestedInput
+  watchers?: Prisma.WatcherUpdateManyWithoutRequestNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutRequestNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
+  comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
+  attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
+}
+
+export type RequestUncheckedUpdateWithoutAccessServiceSnapshotsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  formId?: Prisma.StringFieldUpdateOperationsInput | string
+  formVersionId?: Prisma.StringFieldUpdateOperationsInput | string
+  workflowVersionId?: Prisma.StringFieldUpdateOperationsInput | string
+  requesterId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+  outcome?: Prisma.NullableEnumRequestOutcomeFieldUpdateOperationsInput | $Enums.RequestOutcome | null
+  outcomeCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  holdReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStepInstanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fieldValues?: Prisma.RequestFieldValueUncheckedUpdateManyWithoutRequestNestedInput
+  stepInstances?: Prisma.StepInstanceUncheckedUpdateManyWithoutRequestNestedInput
+  outboundLinks?: Prisma.RequestLinkUncheckedUpdateManyWithoutSourceNestedInput
+  inboundLinks?: Prisma.RequestLinkUncheckedUpdateManyWithoutTargetNestedInput
+  fieldHistory?: Prisma.FieldHistoryEntryUncheckedUpdateManyWithoutRequestNestedInput
+  watchers?: Prisma.WatcherUncheckedUpdateManyWithoutRequestNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutRequestNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
+  comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
+  attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
+}
+
+export type RequestCreateWithoutRequesterIdentitySnapshotInput = {
+  id?: string
+  referenceNumber: string
+  status?: $Enums.RequestStatus
+  outcome?: $Enums.RequestOutcome | null
+  outcomeNotes?: string | null
+  currentStepInstanceId?: string | null
+  submittedAt?: Date | string | null
+  closedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  form: Prisma.FormCreateNestedOneWithoutRequestsInput
+  formVersion: Prisma.FormVersionCreateNestedOneWithoutRequestsInput
+  workflowVersion: Prisma.WorkflowVersionCreateNestedOneWithoutRequestsInput
+  requester: Prisma.UserCreateNestedOneWithoutSubmittedRequestsInput
+  holdReason?: Prisma.HoldReasonCreateNestedOneWithoutRequestsInput
+  outcomeCode?: Prisma.OutcomeCodeCreateNestedOneWithoutRequestsInput
+  fieldValues?: Prisma.RequestFieldValueCreateNestedManyWithoutRequestInput
+  stepInstances?: Prisma.StepInstanceCreateNestedManyWithoutRequestInput
+  outboundLinks?: Prisma.RequestLinkCreateNestedManyWithoutSourceInput
+  inboundLinks?: Prisma.RequestLinkCreateNestedManyWithoutTargetInput
+  fieldHistory?: Prisma.FieldHistoryEntryCreateNestedManyWithoutRequestInput
+  watchers?: Prisma.WatcherCreateNestedManyWithoutRequestInput
+  auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutRequestInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
+  comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
+  attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+}
+
+export type RequestUncheckedCreateWithoutRequesterIdentitySnapshotInput = {
+  id?: string
+  referenceNumber: string
+  formId: string
+  formVersionId: string
+  workflowVersionId: string
+  requesterId: string
+  status?: $Enums.RequestStatus
+  outcome?: $Enums.RequestOutcome | null
+  outcomeCodeId?: string | null
+  outcomeNotes?: string | null
+  holdReasonId?: string | null
+  currentStepInstanceId?: string | null
+  submittedAt?: Date | string | null
+  closedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  fieldValues?: Prisma.RequestFieldValueUncheckedCreateNestedManyWithoutRequestInput
+  stepInstances?: Prisma.StepInstanceUncheckedCreateNestedManyWithoutRequestInput
+  outboundLinks?: Prisma.RequestLinkUncheckedCreateNestedManyWithoutSourceInput
+  inboundLinks?: Prisma.RequestLinkUncheckedCreateNestedManyWithoutTargetInput
+  fieldHistory?: Prisma.FieldHistoryEntryUncheckedCreateNestedManyWithoutRequestInput
+  watchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutRequestInput
+  auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutRequestInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
+  comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
+  attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+}
+
+export type RequestCreateOrConnectWithoutRequesterIdentitySnapshotInput = {
+  where: Prisma.RequestWhereUniqueInput
+  create: Prisma.XOR<Prisma.RequestCreateWithoutRequesterIdentitySnapshotInput, Prisma.RequestUncheckedCreateWithoutRequesterIdentitySnapshotInput>
+}
+
+export type RequestUpsertWithoutRequesterIdentitySnapshotInput = {
+  update: Prisma.XOR<Prisma.RequestUpdateWithoutRequesterIdentitySnapshotInput, Prisma.RequestUncheckedUpdateWithoutRequesterIdentitySnapshotInput>
+  create: Prisma.XOR<Prisma.RequestCreateWithoutRequesterIdentitySnapshotInput, Prisma.RequestUncheckedCreateWithoutRequesterIdentitySnapshotInput>
+  where?: Prisma.RequestWhereInput
+}
+
+export type RequestUpdateToOneWithWhereWithoutRequesterIdentitySnapshotInput = {
+  where?: Prisma.RequestWhereInput
+  data: Prisma.XOR<Prisma.RequestUpdateWithoutRequesterIdentitySnapshotInput, Prisma.RequestUncheckedUpdateWithoutRequesterIdentitySnapshotInput>
+}
+
+export type RequestUpdateWithoutRequesterIdentitySnapshotInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+  outcome?: Prisma.NullableEnumRequestOutcomeFieldUpdateOperationsInput | $Enums.RequestOutcome | null
+  outcomeNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStepInstanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  form?: Prisma.FormUpdateOneRequiredWithoutRequestsNestedInput
+  formVersion?: Prisma.FormVersionUpdateOneRequiredWithoutRequestsNestedInput
+  workflowVersion?: Prisma.WorkflowVersionUpdateOneRequiredWithoutRequestsNestedInput
+  requester?: Prisma.UserUpdateOneRequiredWithoutSubmittedRequestsNestedInput
+  holdReason?: Prisma.HoldReasonUpdateOneWithoutRequestsNestedInput
+  outcomeCode?: Prisma.OutcomeCodeUpdateOneWithoutRequestsNestedInput
+  fieldValues?: Prisma.RequestFieldValueUpdateManyWithoutRequestNestedInput
+  stepInstances?: Prisma.StepInstanceUpdateManyWithoutRequestNestedInput
+  outboundLinks?: Prisma.RequestLinkUpdateManyWithoutSourceNestedInput
+  inboundLinks?: Prisma.RequestLinkUpdateManyWithoutTargetNestedInput
+  fieldHistory?: Prisma.FieldHistoryEntryUpdateManyWithoutRequestNestedInput
+  watchers?: Prisma.WatcherUpdateManyWithoutRequestNestedInput
+  auditEntries?: Prisma.AuditEntryUpdateManyWithoutRequestNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
+  comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
+  attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+}
+
+export type RequestUncheckedUpdateWithoutRequesterIdentitySnapshotInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referenceNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  formId?: Prisma.StringFieldUpdateOperationsInput | string
+  formVersionId?: Prisma.StringFieldUpdateOperationsInput | string
+  workflowVersionId?: Prisma.StringFieldUpdateOperationsInput | string
+  requesterId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+  outcome?: Prisma.NullableEnumRequestOutcomeFieldUpdateOperationsInput | $Enums.RequestOutcome | null
+  outcomeCodeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outcomeNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  holdReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStepInstanceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fieldValues?: Prisma.RequestFieldValueUncheckedUpdateManyWithoutRequestNestedInput
+  stepInstances?: Prisma.StepInstanceUncheckedUpdateManyWithoutRequestNestedInput
+  outboundLinks?: Prisma.RequestLinkUncheckedUpdateManyWithoutSourceNestedInput
+  inboundLinks?: Prisma.RequestLinkUncheckedUpdateManyWithoutTargetNestedInput
+  fieldHistory?: Prisma.FieldHistoryEntryUncheckedUpdateManyWithoutRequestNestedInput
+  watchers?: Prisma.WatcherUncheckedUpdateManyWithoutRequestNestedInput
+  auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutRequestNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
+  comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
+  attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+}
+
 export type RequestCreateWithoutRequesterInput = {
   id?: string
   referenceNumber: string
@@ -1085,6 +1399,8 @@ export type RequestCreateWithoutRequesterInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutRequesterInput = {
@@ -1113,6 +1429,8 @@ export type RequestUncheckedCreateWithoutRequesterInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutRequesterInput = {
@@ -1189,6 +1507,8 @@ export type RequestCreateWithoutFieldValuesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutFieldValuesInput = {
@@ -1217,6 +1537,8 @@ export type RequestUncheckedCreateWithoutFieldValuesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutFieldValuesInput = {
@@ -1261,6 +1583,8 @@ export type RequestUpdateWithoutFieldValuesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutFieldValuesInput = {
@@ -1289,6 +1613,8 @@ export type RequestUncheckedUpdateWithoutFieldValuesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestCreateWithoutStepInstancesInput = {
@@ -1317,6 +1643,8 @@ export type RequestCreateWithoutStepInstancesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutStepInstancesInput = {
@@ -1345,6 +1673,8 @@ export type RequestUncheckedCreateWithoutStepInstancesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutStepInstancesInput = {
@@ -1389,6 +1719,8 @@ export type RequestUpdateWithoutStepInstancesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutStepInstancesInput = {
@@ -1417,6 +1749,8 @@ export type RequestUncheckedUpdateWithoutStepInstancesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestCreateWithoutOutboundLinksInput = {
@@ -1445,6 +1779,8 @@ export type RequestCreateWithoutOutboundLinksInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutOutboundLinksInput = {
@@ -1473,6 +1809,8 @@ export type RequestUncheckedCreateWithoutOutboundLinksInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutOutboundLinksInput = {
@@ -1506,6 +1844,8 @@ export type RequestCreateWithoutInboundLinksInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutInboundLinksInput = {
@@ -1534,6 +1874,8 @@ export type RequestUncheckedCreateWithoutInboundLinksInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutInboundLinksInput = {
@@ -1578,6 +1920,8 @@ export type RequestUpdateWithoutOutboundLinksInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutOutboundLinksInput = {
@@ -1606,6 +1950,8 @@ export type RequestUncheckedUpdateWithoutOutboundLinksInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUpsertWithoutInboundLinksInput = {
@@ -1645,6 +1991,8 @@ export type RequestUpdateWithoutInboundLinksInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutInboundLinksInput = {
@@ -1673,6 +2021,8 @@ export type RequestUncheckedUpdateWithoutInboundLinksInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestCreateWithoutCommentsInput = {
@@ -1701,6 +2051,8 @@ export type RequestCreateWithoutCommentsInput = {
   auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutRequestInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutCommentsInput = {
@@ -1729,6 +2081,8 @@ export type RequestUncheckedCreateWithoutCommentsInput = {
   auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutRequestInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutCommentsInput = {
@@ -1773,6 +2127,8 @@ export type RequestUpdateWithoutCommentsInput = {
   auditEntries?: Prisma.AuditEntryUpdateManyWithoutRequestNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutCommentsInput = {
@@ -1801,6 +2157,8 @@ export type RequestUncheckedUpdateWithoutCommentsInput = {
   auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutRequestNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestCreateWithoutAttachmentsInput = {
@@ -1829,6 +2187,8 @@ export type RequestCreateWithoutAttachmentsInput = {
   auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutRequestInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutAttachmentsInput = {
@@ -1857,6 +2217,8 @@ export type RequestUncheckedCreateWithoutAttachmentsInput = {
   auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutRequestInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutAttachmentsInput = {
@@ -1901,6 +2263,8 @@ export type RequestUpdateWithoutAttachmentsInput = {
   auditEntries?: Prisma.AuditEntryUpdateManyWithoutRequestNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutAttachmentsInput = {
@@ -1929,6 +2293,8 @@ export type RequestUncheckedUpdateWithoutAttachmentsInput = {
   auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutRequestNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestCreateWithoutAuditEntriesInput = {
@@ -1957,6 +2323,8 @@ export type RequestCreateWithoutAuditEntriesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutAuditEntriesInput = {
@@ -1985,6 +2353,8 @@ export type RequestUncheckedCreateWithoutAuditEntriesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutAuditEntriesInput = {
@@ -2029,6 +2399,8 @@ export type RequestUpdateWithoutAuditEntriesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutAuditEntriesInput = {
@@ -2057,6 +2429,8 @@ export type RequestUncheckedUpdateWithoutAuditEntriesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestCreateWithoutFieldHistoryInput = {
@@ -2085,6 +2459,8 @@ export type RequestCreateWithoutFieldHistoryInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutFieldHistoryInput = {
@@ -2113,6 +2489,8 @@ export type RequestUncheckedCreateWithoutFieldHistoryInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutFieldHistoryInput = {
@@ -2157,6 +2535,8 @@ export type RequestUpdateWithoutFieldHistoryInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutFieldHistoryInput = {
@@ -2185,6 +2565,8 @@ export type RequestUncheckedUpdateWithoutFieldHistoryInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestCreateWithoutNotificationsInput = {
@@ -2213,6 +2595,8 @@ export type RequestCreateWithoutNotificationsInput = {
   auditEntries?: Prisma.AuditEntryCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutNotificationsInput = {
@@ -2241,6 +2625,8 @@ export type RequestUncheckedCreateWithoutNotificationsInput = {
   auditEntries?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutNotificationsInput = {
@@ -2285,6 +2671,8 @@ export type RequestUpdateWithoutNotificationsInput = {
   auditEntries?: Prisma.AuditEntryUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutNotificationsInput = {
@@ -2313,6 +2701,8 @@ export type RequestUncheckedUpdateWithoutNotificationsInput = {
   auditEntries?: Prisma.AuditEntryUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestCreateWithoutHoldReasonInput = {
@@ -2341,6 +2731,8 @@ export type RequestCreateWithoutHoldReasonInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutHoldReasonInput = {
@@ -2369,6 +2761,8 @@ export type RequestUncheckedCreateWithoutHoldReasonInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutHoldReasonInput = {
@@ -2423,6 +2817,8 @@ export type RequestCreateWithoutOutcomeCodeInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutOutcomeCodeInput = {
@@ -2451,6 +2847,8 @@ export type RequestUncheckedCreateWithoutOutcomeCodeInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutOutcomeCodeInput = {
@@ -2505,6 +2903,8 @@ export type RequestCreateWithoutWatchersInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutWatchersInput = {
@@ -2533,6 +2933,8 @@ export type RequestUncheckedCreateWithoutWatchersInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutWatchersInput = {
@@ -2577,6 +2979,8 @@ export type RequestUpdateWithoutWatchersInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutWatchersInput = {
@@ -2605,6 +3009,8 @@ export type RequestUncheckedUpdateWithoutWatchersInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestCreateWithoutFormInput = {
@@ -2633,6 +3039,8 @@ export type RequestCreateWithoutFormInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutFormInput = {
@@ -2661,6 +3069,8 @@ export type RequestUncheckedCreateWithoutFormInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutFormInput = {
@@ -2715,6 +3125,8 @@ export type RequestCreateWithoutFormVersionInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutFormVersionInput = {
@@ -2743,6 +3155,8 @@ export type RequestUncheckedCreateWithoutFormVersionInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutFormVersionInput = {
@@ -2797,6 +3211,8 @@ export type RequestCreateWithoutWorkflowVersionInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotCreateNestedOneWithoutRequestInput
 }
 
 export type RequestUncheckedCreateWithoutWorkflowVersionInput = {
@@ -2825,6 +3241,8 @@ export type RequestUncheckedCreateWithoutWorkflowVersionInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRequestInput
   comments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutRequestInput
   attachments?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutRequestInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedCreateNestedManyWithoutRequestInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedCreateNestedOneWithoutRequestInput
 }
 
 export type RequestCreateOrConnectWithoutWorkflowVersionInput = {
@@ -2897,6 +3315,8 @@ export type RequestUpdateWithoutRequesterInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutRequesterInput = {
@@ -2925,6 +3345,8 @@ export type RequestUncheckedUpdateWithoutRequesterInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateManyWithoutRequesterInput = {
@@ -2989,6 +3411,8 @@ export type RequestUpdateWithoutHoldReasonInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutHoldReasonInput = {
@@ -3017,6 +3441,8 @@ export type RequestUncheckedUpdateWithoutHoldReasonInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateManyWithoutHoldReasonInput = {
@@ -3081,6 +3507,8 @@ export type RequestUpdateWithoutOutcomeCodeInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutOutcomeCodeInput = {
@@ -3109,6 +3537,8 @@ export type RequestUncheckedUpdateWithoutOutcomeCodeInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateManyWithoutOutcomeCodeInput = {
@@ -3173,6 +3603,8 @@ export type RequestUpdateWithoutFormInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutFormInput = {
@@ -3201,6 +3633,8 @@ export type RequestUncheckedUpdateWithoutFormInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateManyWithoutFormInput = {
@@ -3265,6 +3699,8 @@ export type RequestUpdateWithoutFormVersionInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutFormVersionInput = {
@@ -3293,6 +3729,8 @@ export type RequestUncheckedUpdateWithoutFormVersionInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateManyWithoutFormVersionInput = {
@@ -3357,6 +3795,8 @@ export type RequestUpdateWithoutWorkflowVersionInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateWithoutWorkflowVersionInput = {
@@ -3385,6 +3825,8 @@ export type RequestUncheckedUpdateWithoutWorkflowVersionInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRequestNestedInput
   comments?: Prisma.RequestCommentUncheckedUpdateManyWithoutRequestNestedInput
   attachments?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutRequestNestedInput
+  accessServiceSnapshots?: Prisma.AccessServiceRequestSnapshotUncheckedUpdateManyWithoutRequestNestedInput
+  requesterIdentitySnapshot?: Prisma.RequesterIdentitySnapshotUncheckedUpdateOneWithoutRequestNestedInput
 }
 
 export type RequestUncheckedUpdateManyWithoutWorkflowVersionInput = {
@@ -3421,6 +3863,7 @@ export type RequestCountOutputType = {
   notifications: number
   comments: number
   attachments: number
+  accessServiceSnapshots: number
 }
 
 export type RequestCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3434,6 +3877,7 @@ export type RequestCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   notifications?: boolean | RequestCountOutputTypeCountNotificationsArgs
   comments?: boolean | RequestCountOutputTypeCountCommentsArgs
   attachments?: boolean | RequestCountOutputTypeCountAttachmentsArgs
+  accessServiceSnapshots?: boolean | RequestCountOutputTypeCountAccessServiceSnapshotsArgs
 }
 
 /**
@@ -3516,6 +3960,13 @@ export type RequestCountOutputTypeCountAttachmentsArgs<ExtArgs extends runtime.T
   where?: Prisma.RequestAttachmentWhereInput
 }
 
+/**
+ * RequestCountOutputType without action
+ */
+export type RequestCountOutputTypeCountAccessServiceSnapshotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccessServiceRequestSnapshotWhereInput
+}
+
 
 export type RequestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3550,6 +4001,8 @@ export type RequestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   notifications?: boolean | Prisma.Request$notificationsArgs<ExtArgs>
   comments?: boolean | Prisma.Request$commentsArgs<ExtArgs>
   attachments?: boolean | Prisma.Request$attachmentsArgs<ExtArgs>
+  accessServiceSnapshots?: boolean | Prisma.Request$accessServiceSnapshotsArgs<ExtArgs>
+  requesterIdentitySnapshot?: boolean | Prisma.Request$requesterIdentitySnapshotArgs<ExtArgs>
   _count?: boolean | Prisma.RequestCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["request"]>
 
@@ -3640,6 +4093,8 @@ export type RequestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   notifications?: boolean | Prisma.Request$notificationsArgs<ExtArgs>
   comments?: boolean | Prisma.Request$commentsArgs<ExtArgs>
   attachments?: boolean | Prisma.Request$attachmentsArgs<ExtArgs>
+  accessServiceSnapshots?: boolean | Prisma.Request$accessServiceSnapshotsArgs<ExtArgs>
+  requesterIdentitySnapshot?: boolean | Prisma.Request$requesterIdentitySnapshotArgs<ExtArgs>
   _count?: boolean | Prisma.RequestCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RequestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3678,6 +4133,8 @@ export type $RequestPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     comments: Prisma.$RequestCommentPayload<ExtArgs>[]
     attachments: Prisma.$RequestAttachmentPayload<ExtArgs>[]
+    accessServiceSnapshots: Prisma.$AccessServiceRequestSnapshotPayload<ExtArgs>[]
+    requesterIdentitySnapshot: Prisma.$RequesterIdentitySnapshotPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4106,6 +4563,8 @@ export interface Prisma__RequestClient<T, Null = never, ExtArgs extends runtime.
   notifications<T extends Prisma.Request$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Request$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.Request$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Request$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RequestCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attachments<T extends Prisma.Request$attachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Request$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RequestAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  accessServiceSnapshots<T extends Prisma.Request$accessServiceSnapshotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Request$accessServiceSnapshotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccessServiceRequestSnapshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  requesterIdentitySnapshot<T extends Prisma.Request$requesterIdentitySnapshotArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Request$requesterIdentitySnapshotArgs<ExtArgs>>): Prisma.Prisma__RequesterIdentitySnapshotClient<runtime.Types.Result.GetResult<Prisma.$RequesterIdentitySnapshotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4827,6 +5286,49 @@ export type Request$attachmentsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.RequestAttachmentScalarFieldEnum | Prisma.RequestAttachmentScalarFieldEnum[]
+}
+
+/**
+ * Request.accessServiceSnapshots
+ */
+export type Request$accessServiceSnapshotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccessServiceRequestSnapshot
+   */
+  select?: Prisma.AccessServiceRequestSnapshotSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccessServiceRequestSnapshot
+   */
+  omit?: Prisma.AccessServiceRequestSnapshotOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccessServiceRequestSnapshotInclude<ExtArgs> | null
+  where?: Prisma.AccessServiceRequestSnapshotWhereInput
+  orderBy?: Prisma.AccessServiceRequestSnapshotOrderByWithRelationInput | Prisma.AccessServiceRequestSnapshotOrderByWithRelationInput[]
+  cursor?: Prisma.AccessServiceRequestSnapshotWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccessServiceRequestSnapshotScalarFieldEnum | Prisma.AccessServiceRequestSnapshotScalarFieldEnum[]
+}
+
+/**
+ * Request.requesterIdentitySnapshot
+ */
+export type Request$requesterIdentitySnapshotArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RequesterIdentitySnapshot
+   */
+  select?: Prisma.RequesterIdentitySnapshotSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RequesterIdentitySnapshot
+   */
+  omit?: Prisma.RequesterIdentitySnapshotOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RequesterIdentitySnapshotInclude<ExtArgs> | null
+  where?: Prisma.RequesterIdentitySnapshotWhereInput
 }
 
 /**

@@ -515,10 +515,6 @@ export type AssetCategoryFieldUncheckedUpdateManyWithoutAssetCategoryNestedInput
   deleteMany?: Prisma.AssetCategoryFieldScalarWhereInput | Prisma.AssetCategoryFieldScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number

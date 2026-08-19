@@ -90,6 +90,7 @@ enum FieldType {
   LOOKUP
   SECTION_HEADER
   COMPUTED
+  SYSTEM_FIELD
 
   @@map("field_type")
 }
@@ -125,16 +126,18 @@ model Request {
   requester       User                @relation("RequestRequester", fields: [requesterId], references: [id], onDelete: Restrict)
   holdReason      HoldReason?         @relation(fields: [holdReasonId], references: [id], onDelete: Restrict)
   outcomeCode     OutcomeCode?        @relation(fields: [outcomeCodeId], references: [id], onDelete: SetNull)
-  fieldValues     RequestFieldValue[]
-  stepInstances   StepInstance[]
-  outboundLinks   RequestLink[]       @relation("LinkSource")
-  inboundLinks    RequestLink[]       @relation("LinkTarget")
-  fieldHistory    FieldHistoryEntry[]
-  watchers        Watcher[]
-  auditEntries    AuditEntry[]
-  notifications   Notification[]
-  comments        RequestComment[]
-  attachments     RequestAttachment[]
+  fieldValues               RequestFieldValue[]
+  stepInstances             StepInstance[]
+  outboundLinks             RequestLink[]                  @relation("LinkSource")
+  inboundLinks              RequestLink[]                  @relation("LinkTarget")
+  fieldHistory              FieldHistoryEntry[]
+  watchers                  Watcher[]
+  auditEntries              AuditEntry[]
+  notifications             Notification[]
+  comments                  RequestComment[]
+  attachments               RequestAttachment[]
+  accessServiceSnapshots    AccessServiceRequestSnapshot[]
+  requesterIdentitySnapshot RequesterIdentitySnapshot?
 
   @@unique([formId, referenceNumber])
   @@index([status, createdAt])

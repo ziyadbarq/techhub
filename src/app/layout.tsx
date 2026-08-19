@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
+import { ConfirmHost } from "@/components/design";
 import { Toaster } from "@/components/ui/sonner";
 import { BRANDING, getPageTitle, getPageDescription } from "@/config/branding";
 
@@ -32,6 +33,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <ConfirmHost />
           <Toaster />
         </ThemeProvider>
       </body>

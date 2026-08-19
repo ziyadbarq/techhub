@@ -388,15 +388,16 @@ const NestedNavItem = React.memo(function NestedNavItem({
         "relative flex min-w-0 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
         // Default state
         "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-        // Active state - accent background with yellow border
+        // Active state - accent background with yellow border (exact match only)
         isActive &&
+          !isSection &&
           "bg-sidebar-accent text-sidebar-accent-foreground border-barq-yellow border-l-3 font-semibold",
-        // Section state - subtle highlight
-        isSection && !isActive && "bg-sidebar-accent/50",
+        // Section state - subtle highlight (parent of active route, or prefix match)
+        isSection && "bg-sidebar-accent/50",
         // Collapsed state centering
         isCollapsed && "justify-center px-2",
         // Hover effects
-        !isActive && "hover:scale-[1.02] hover:shadow-sm",
+        !(isActive && !isSection) && "hover:scale-[1.02] hover:shadow-sm",
       )}
       style={{
         paddingLeft: !isCollapsed && paddingLeft ? paddingLeft : undefined,

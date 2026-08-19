@@ -1,10 +1,10 @@
 "use client";
 
 import * as PopoverPrimitive from "@radix-ui/react-popover";
-import { Calendar as CalendarIcon, Clock as ClockIcon } from "lucide-react";
+import { Clock as ClockIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { Calendar } from "@/components/ui/calendar";
+import { DatePicker } from "@/components/ui/date-picker";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/utils/date-format";
 
@@ -29,17 +29,18 @@ export function DateField({
   /** When true, shows an additional time slot input next to the date. */
   withTime?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
-
   const dateStr = withTime ? (value ?? "").slice(0, 10) : (value ?? "");
   const timeStr = withTime ? (value ?? "").slice(11, 16) : "";
 
-  const selected = dateStr ? new Date(`${dateStr}T00:00:00`) : undefined;
-
-  const display = formatDisplay(value, withTime);
+  const parsedDate = dateStr ? new Date(`${dateStr}T00:00:00`) : undefined;
+  const selected =
+    parsedDate && !Number.isNaN(parsedDate.getTime()) ? parsedDate : undefined;
 
   const updateDate = (d: Date | undefined) => {
-    if (!d) return;
+    if (!d) {
+      onChange("");
+      return;
+    }
     const yyyy = d.getFullYear();
     const mm = String(d.getMonth() + 1).padStart(2, "0");
     const dd = String(d.getDate()).padStart(2, "0");
@@ -50,7 +51,6 @@ export function DateField({
     } else {
       onChange(newDate);
     }
-    if (!withTime) setOpen(false);
   };
 
   const updateTime = (t: string) => {
@@ -68,63 +68,25 @@ export function DateField({
 
   return (
     <div className="flex items-center gap-2">
-      <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
-        <PopoverPrimitive.Trigger asChild>
-          <button
-            type="button"
-            disabled={readOnly}
-            className={cn(
-              "text-body-sm flex h-10 flex-1 items-center justify-between gap-2 rounded-md border px-3 transition-colors",
-              "border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:border-[var(--color-hairline-strong)]",
-              "focus:border-transparent focus:ring-2 focus:ring-[var(--color-brand-yellow)] focus:outline-none",
-              !value && "text-[var(--color-stone)]",
-              readOnly &&
-                "cursor-not-allowed bg-[var(--color-surface-soft)] text-[var(--color-stone)]",
-            )}
-          >
-            <span className="truncate">{display || "Select a date"}</span>
-            <CalendarIcon
-              className="h-4 w-4 shrink-0 text-[var(--color-stone)]"
-              strokeWidth={1.75}
-            />
-          </button>
-        </PopoverPrimitive.Trigger>
-        <PopoverPrimitive.Portal>
-          <PopoverPrimitive.Content
-            align="start"
-            sideOffset={6}
-            className="data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 z-50 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas)] p-3 shadow-[var(--shadow-3)]"
-          >
-            <Calendar
-              mode="single"
-              selected={selected}
-              onSelect={updateDate}
-              showOutsideDays
-              weekStartsOn={0}
-              className="p-0"
-            />
-            <div className="mt-2 flex items-center justify-between border-t border-[var(--color-hairline-soft)] pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  onChange("");
-                  setOpen(false);
-                }}
-                className="text-caption-bold text-[var(--color-stone)] hover:text-[var(--color-ink)]"
-              >
-                Clear
-              </button>
-              <button
-                type="button"
-                onClick={() => updateDate(new Date())}
-                className="text-caption-bold text-[var(--color-charcoal)] hover:text-[var(--color-ink)]"
-              >
-                Today
-              </button>
-            </div>
-          </PopoverPrimitive.Content>
-        </PopoverPrimitive.Portal>
-      </PopoverPrimitive.Root>
+      <DatePicker
+        value={selected}
+        onChange={updateDate}
+        placeholder="Select a date"
+        clearable
+        clearLabel="Clear date"
+        disabledTrigger={readOnly}
+        renderValue={(date) => formatDate(date)}
+        buttonClassName={cn(
+          "text-body-sm h-10 flex-1 justify-between rounded-md px-3",
+          "border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]",
+          "hover:border-[var(--color-hairline-strong)] hover:bg-[var(--color-canvas)]",
+          "focus-visible:ring-2 focus-visible:ring-[var(--color-brand-yellow)]",
+          readOnly &&
+            "cursor-not-allowed bg-[var(--color-surface-soft)] text-[var(--color-stone)]",
+        )}
+        contentClassName="z-[70]"
+        calendarProps={{ showOutsideDays: true, weekStartsOn: 0 }}
+      />
 
       {withTime ? (
         <TimePicker value={timeStr} onChange={updateTime} readOnly={readOnly} />
@@ -302,14 +264,4 @@ function TimeColumn({
       </div>
     </div>
   );
-}
-
-function formatDisplay(value: string | undefined, withTime: boolean): string {
-  if (!value) return "";
-  const dateStr = value.slice(0, 10);
-  const d = new Date(`${dateStr}T00:00:00`);
-  if (Number.isNaN(d.getTime())) return value;
-  const datePart = formatDate(d);
-  if (!withTime) return datePart;
-  return `${datePart} · ${value.slice(11, 16)}`;
 }
