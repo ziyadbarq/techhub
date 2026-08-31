@@ -43,6 +43,12 @@ variables:
   # $$ so GitLab does not expand these before the job shell runs.
   NODE_NPM_BUILD_CMD: "git fetch --tags --force; git fetch --unshallow || true; eval \"$$(node scripts/release/compute-version.mjs --format=env)\"; npm pkg set version=\"$$APP_VERSION\"; npm run db:generate && npm run build:fast"
 
+  # Dockerfile copies pre-built .next + node_modules from kaniko context. Repo .dockerignore
+  # excludes node_modules/ for local builds; legacy pipeline swapped it before kaniko.
+  NODE_PACKAGE_PREPARE_CMD: |
+    mv .dockerignore .dockerignore.tmp
+    printf '%s\n' '.git/' '.npm/' '.husky/' 'coverage/' 'docs/' 'roadmap/' '*.md' '.vscode/' '.idea/' > .dockerignore
+
   # engines.node >= 22. OCI jobs also run on globalnodegcp, so DEV_OCI_IMAGE must be GAR.
   DEV_GCP_IMAGE: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/gitlab-runner-node-22-alpine:latest"
   DEV_OCI_IMAGE: "me-central2-docker.pkg.dev/gcp-brq-shd-prd-prj-74ba/gcp-brq-docker-repo/gitlab-runner-node-22-alpine:latest"
