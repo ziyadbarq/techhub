@@ -28,6 +28,9 @@ variables:
       - "build_only"
       - "build_and_deploy"
 
+  GITLAB_UN: $GITLAB_UN_VAL
+  GITLAB_TOKEN: $GITLAB_TOKEN_VAL    
+
   # In-repo Dockerfile expects npm ci + prisma generate + next build:fast on the
   # runner, then copies .next / prisma / node_modules. Shared Nest-style
   # Dockerfiles from deployment-configs cannot package that output.
