@@ -28,8 +28,9 @@ variables:
       - "build_only"
       - "build_and_deploy"
 
-  GITLAB_UN: $GITLAB_UN_VAL
-  GITLAB_TOKEN: $GITLAB_TOKEN_VAL    
+  # deployment-configs clone uses GITLAB_UN/GITLAB_TOKEN from the web-dev group.
+  # Do not alias GITLAB_UN_VAL here — _VAL only has values-yaml-npd access.
+  # GCP GitOps still uses _VAL via GCP_GITOPS_* defaults in ci-templates vars/base.yml.
 
   # In-repo Dockerfile expects npm ci + prisma generate + next build:fast on the
   # runner, then copies .next / prisma / node_modules. Shared Nest-style
