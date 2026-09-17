@@ -117,7 +117,7 @@ workflow:
     - node_modules/
     - .npm/
     - .next/cache/
-  policy: pull
+  policy: pull-push
 
 .build_metrics_after_script: &build_metrics_after_script
   - echo "Job Duration:${CI_JOB_DURATION}s" | tee -a ${BUILD_METRICS_FILE}
@@ -140,7 +140,7 @@ workflow:
   - npx vitest --run
 
 validate-gcp:
-  timeout: 15m
+  timeout: 30m
   image: $DEV_GCP_IMAGE
   stage: validate
   cache:
@@ -155,7 +155,7 @@ validate-gcp:
   script: *validate_script
 
 validate-oci:
-  timeout: 15m
+  timeout: 30m
   image: $DEV_OCI_IMAGE
   stage: validate
   cache:
