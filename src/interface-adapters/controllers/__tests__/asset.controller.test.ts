@@ -88,6 +88,7 @@ const mockPersonRepository = {
   findById: vi.fn(),
   findByUserId: vi.fn(),
   findByEmail: vi.fn(),
+  findActive: vi.fn(),
 };
 
 const mockAssetRepository = {
@@ -203,6 +204,12 @@ describe("Asset Controller", () => {
     mockPersonRepository.findById.mockResolvedValue(null);
     mockPersonRepository.findByUserId.mockResolvedValue(null);
     mockPersonRepository.findByEmail.mockResolvedValue(null);
+    mockPersonRepository.findActive.mockResolvedValue([
+      {
+        id: "person-ahmed",
+        email: "Ahmed.Alharbi@barq.com",
+      },
+    ]);
 
     // Mock related entity lists for enrichment
     mockListAssetCategoriesUseCase.execute.mockResolvedValue([
@@ -799,6 +806,10 @@ describe("Asset Controller", () => {
         expect(result.data.vendorMap).toHaveProperty("DELL");
         expect(result.data.locationMap).toHaveProperty("HQ");
         expect(result.data.stateMap).toHaveProperty("ACTIVE");
+        expect(result.data.personEmailMap).toHaveProperty(
+          "ahmed.alharbi@barq.com",
+          "person-ahmed",
+        );
       }
     });
 
