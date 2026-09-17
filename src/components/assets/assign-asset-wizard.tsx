@@ -76,7 +76,17 @@ export function AssignAssetWizard({
     () =>
       persons.map((p) => ({
         value: p.id,
-        label: `${p.firstName} ${p.lastName}${p.employeeId ? ` (${p.employeeId})` : ""}`,
+        label: `${p.firstName} ${p.lastName}${p.email ? ` (${p.email})` : p.employeeId ? ` (${p.employeeId})` : ""}`,
+        searchText: [
+          p.firstName,
+          p.lastName,
+          p.email,
+          p.employeeId,
+          p.title,
+          p.department,
+        ]
+          .filter(Boolean)
+          .join(" "),
       })),
     [persons],
   );
@@ -282,7 +292,11 @@ export function AssignAssetWizard({
                     <div>
                       <span className="font-medium">Assign to:</span>{" "}
                       {getSelectedPerson()
-                        ? `${getSelectedPerson()?.firstName} ${getSelectedPerson()?.lastName}`
+                        ? `${getSelectedPerson()?.firstName} ${getSelectedPerson()?.lastName}${
+                            getSelectedPerson()?.email
+                              ? ` (${getSelectedPerson()?.email})`
+                              : ""
+                          }`
                         : "Not selected"}
                     </div>
                     <div>

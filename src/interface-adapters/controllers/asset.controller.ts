@@ -752,6 +752,8 @@ export async function bulkCreateAssetsAction(
     });
     log.info("Bulk asset import started");
 
+    const performedById = await resolveCurrentPersonId(container);
+
     const results = {
       successCount: 0,
       failureCount: 0,
@@ -785,6 +787,7 @@ export async function bulkCreateAssetsAction(
           currentStockLocationId: validated.currentStockLocationId ?? undefined,
           attributes: validated.attributes ?? undefined,
           note: validated.note ?? undefined,
+          performedById: performedById ?? undefined,
         });
 
         results.successCount++;
@@ -855,6 +858,7 @@ export async function getImportLookupMapsAction(): Promise<
     vendorMap: Record<string, string>;
     locationMap: Record<string, string>;
     stateMap: Record<string, string>;
+    personEmailMap: Record<string, string>;
   }>
 > {
   try {
@@ -862,21 +866,27 @@ export async function getImportLookupMapsAction(): Promise<
 
     const container = getContainer();
 
-    const [categories, models, vendors, locations, states] = await Promise.all([
-      container
-        .get<ListAssetCategoriesUseCase>(DI_TOKENS.ListAssetCategoriesUseCase)
-        .execute(),
-      container
-        .get<ListAssetModelsUseCase>(DI_TOKENS.ListAssetModelsUseCase)
-        .execute(),
-      container.get<ListVendorsUseCase>(DI_TOKENS.ListVendorsUseCase).execute(),
-      container
-        .get<ListStockLocationsUseCase>(DI_TOKENS.ListStockLocationsUseCase)
-        .execute(),
-      container
-        .get<ListLifecycleStatesUseCase>(DI_TOKENS.ListLifecycleStatesUseCase)
-        .execute(),
-    ]);
+    const [categories, models, vendors, locations, states, persons] =
+      await Promise.all([
+        container
+          .get<ListAssetCategoriesUseCase>(DI_TOKENS.ListAssetCategoriesUseCase)
+          .execute(),
+        container
+          .get<ListAssetModelsUseCase>(DI_TOKENS.ListAssetModelsUseCase)
+          .execute(),
+        container
+          .get<ListVendorsUseCase>(DI_TOKENS.ListVendorsUseCase)
+          .execute(),
+        container
+          .get<ListStockLocationsUseCase>(DI_TOKENS.ListStockLocationsUseCase)
+          .execute(),
+        container
+          .get<ListLifecycleStatesUseCase>(DI_TOKENS.ListLifecycleStatesUseCase)
+          .execute(),
+        container
+          .get<IPersonRepository>(DI_TOKENS.IPersonRepository)
+          .findActive(),
+      ]);
 
     // Convert to code -> id maps
     const categoryMap: Record<string, string> = {};
@@ -904,6 +914,11 @@ export async function getImportLookupMapsAction(): Promise<
       stateMap[s.code.toUpperCase()] = s.id;
     });
 
+    const personEmailMap: Record<string, string> = {};
+    persons.forEach((p) => {
+      personEmailMap[p.email.toLowerCase()] = p.id;
+    });
+
     return {
       success: true,
       data: {
@@ -912,6 +927,7 @@ export async function getImportLookupMapsAction(): Promise<
         vendorMap,
         locationMap,
         stateMap,
+        personEmailMap,
       },
     };
   } catch (error) {

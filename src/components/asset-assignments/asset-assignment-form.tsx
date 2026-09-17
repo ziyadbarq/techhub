@@ -104,6 +104,16 @@ export function AssetAssignmentForm({
       persons.map((person) => ({
         value: person.id,
         label: `${person.firstName} ${person.lastName} (${person.email})`,
+        searchText: [
+          person.firstName,
+          person.lastName,
+          person.email,
+          person.employeeId,
+          person.title,
+          person.department,
+        ]
+          .filter(Boolean)
+          .join(" "),
       })),
     [persons],
   );

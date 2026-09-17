@@ -9,6 +9,7 @@ import * as XLSX from "xlsx";
 const ASSET_IMPORT_HEADERS = [
   "assetTag*",
   "categoryCode*",
+  "ownerEmail",
   "modelCode",
   "vendorCode",
   "serialNumber",
@@ -26,6 +27,7 @@ const ASSET_IMPORT_HEADERS = [
 const ASSET_IMPORT_INSTRUCTIONS = [
   "Required: Unique asset identifier",
   "Required: Asset category code (must exist)",
+  "Optional: Person email to assign the asset to (must exist if provided)",
   "Optional: Asset model code (must exist if provided)",
   "Optional: Vendor code (must exist if provided)",
   "Optional: Manufacturer serial number",
@@ -43,6 +45,7 @@ const ASSET_IMPORT_INSTRUCTIONS = [
 const ASSET_IMPORT_EXAMPLE_ROW = [
   "LAPTOP-001",
   "LAPTOP",
+  "ahmed@barq.com",
   "MBP-M3",
   "APPLE",
   "C02XYZ123ABC",

@@ -146,6 +146,7 @@ export function ImportAssetsWizard({
       vendorMap: new Map(Object.entries(lookupResult.data.vendorMap)),
       locationMap: new Map(Object.entries(lookupResult.data.locationMap)),
       stateMap: new Map(Object.entries(lookupResult.data.stateMap)),
+      personEmailMap: new Map(Object.entries(lookupResult.data.personEmailMap)),
     };
 
     // Convert valid CSV rows to DTOs

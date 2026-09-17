@@ -32,6 +32,7 @@ import {
 export interface SearchableSelectOption {
   value: string;
   label: string;
+  searchText?: string;
   disabled?: boolean;
 }
 
@@ -73,6 +74,7 @@ export function SearchableSelect({
     return options.filter(
       (opt) =>
         opt.label.toLowerCase().includes(searchLower) ||
+        opt.searchText?.toLowerCase().includes(searchLower) ||
         opt.value.toLowerCase().includes(searchLower),
     );
   }, [options, search]);

@@ -9,6 +9,7 @@ import * as XLSX from "xlsx";
 export interface CSVImportRow {
   assetTag: string;
   categoryCode: string;
+  ownerEmail?: string;
   modelCode?: string;
   vendorCode?: string;
   serialNumber?: string;
@@ -39,6 +40,7 @@ export interface CSVParseResult {
 export interface AssetCreateLike {
   assetTag: string;
   assetCategoryId: string;
+  ownerPersonId?: string | null;
   assetModelId?: string | null;
   vendorId?: string | null;
   serialNumber?: string | null;
@@ -56,6 +58,7 @@ export interface AssetCreateLike {
 const ASSET_IMPORT_HEADERS = [
   "assetTag",
   "categoryCode",
+  "ownerEmail",
   "modelCode",
   "vendorCode",
   "serialNumber",
@@ -222,6 +225,13 @@ function validateCSVRow(row: CSVImportRow, _rowNumber: number): string[] {
     errors.push("Category code is required");
   }
 
+  if (row.ownerEmail && row.ownerEmail.trim().length > 0) {
+    const email = row.ownerEmail.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.push("Owner email must be a valid email address");
+    }
+  }
+
   // Validate dates if provided
   if (row.purchaseDate && !isValidDate(row.purchaseDate)) {
     errors.push("Purchase date must be in YYYY-MM-DD format");
@@ -297,6 +307,7 @@ export function csvRowToDTO(
     vendorMap: Map<string, string>; // code -> id
     locationMap: Map<string, string>; // code -> id
     stateMap: Map<string, string>; // code -> id
+    personEmailMap?: Map<string, string>; // email -> person id
   },
 ): { dto: Partial<AssetCreateLike>; errors: string[] } {
   const errors: string[] = [];
@@ -307,6 +318,15 @@ export function csvRowToDTO(
   );
   if (!categoryId) {
     errors.push(`Category code '${row.categoryCode}' not found`);
+  }
+
+  let ownerPersonId: string | null = null;
+  if (row.ownerEmail && row.ownerEmail.trim().length > 0) {
+    const ownerEmail = row.ownerEmail.trim().toLowerCase();
+    ownerPersonId = lookupMaps.personEmailMap?.get(ownerEmail) || null;
+    if (!ownerPersonId) {
+      errors.push(`Owner email '${row.ownerEmail}' not found`);
+    }
   }
 
   // Map model code to ID (optional)
@@ -354,6 +374,7 @@ export function csvRowToDTO(
   const dto: Partial<AssetCreateLike> = {
     assetTag: row.assetTag.trim(),
     assetCategoryId: categoryId || "",
+    ownerPersonId,
     assetModelId: modelId,
     vendorId: vendorId,
     serialNumber: row.serialNumber?.trim() || null,
@@ -382,6 +403,7 @@ export function exportFailedRowsToCSV(failedAssets: ParsedAsset[]): void {
     "Errors",
     "assetTag*",
     "categoryCode*",
+    "ownerEmail",
     "modelCode",
     "vendorCode",
     "serialNumber",
@@ -401,6 +423,7 @@ export function exportFailedRowsToCSV(failedAssets: ParsedAsset[]): void {
     asset.errors.join("; "),
     asset.data.assetTag || "",
     asset.data.categoryCode || "",
+    asset.data.ownerEmail || "",
     asset.data.modelCode || "",
     asset.data.vendorCode || "",
     asset.data.serialNumber || "",
