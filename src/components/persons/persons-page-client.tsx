@@ -32,7 +32,7 @@ import {
   togglePersonExclusionAction,
 } from "@/interface-adapters/controllers/person.controller";
 import {
-  syncUsersFromGraphAction,
+  enqueueUsersFromGraphSyncAction,
   getPersonSyncDefaultsAction,
 } from "@/interface-adapters/controllers/microsoft-graph.controller";
 import { DirectorySearch } from "@/components/employee-directory/directory-search";
@@ -331,19 +331,16 @@ export function PersonsPageClient({
         return;
       }
 
-      const result = await syncUsersFromGraphAction({
+      const result = await enqueueUsersFromGraphSyncAction({
         includeDisabled: false,
         includeGuests: false,
         defaultOrgUnitId: defaults.data.orgUnitId,
+        defaultPrimaryRoleId: defaults.data.roleId,
         deactivateMissing: true,
       });
 
       if (result.success) {
-        toast.success(
-          `Sync complete: ${result.data.created} created, ${result.data.updated} updated`,
-        );
-        reloadData();
-        loadExcludedCount();
+        toast.success("Microsoft Graph sync started in the background");
       } else {
         toast.error(result.error || "Sync failed");
       }
@@ -352,7 +349,7 @@ export function PersonsPageClient({
     } finally {
       setIsSyncing(false);
     }
-  }, [reloadData, loadExcludedCount]);
+  }, []);
 
   // Auto-scroll to chart when switching to orgchart view
   useEffect(() => {

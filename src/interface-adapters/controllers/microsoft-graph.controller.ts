@@ -11,14 +11,18 @@ import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
 import { requirePermission } from "@/lib/permissions/server";
+import { getCurrentUserId } from "@/lib/auth/session";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 import type { SyncUsersFromGraphUseCase } from "@/core/use-cases/foundation/person";
 import type { CreateOrganizationUnitUseCase } from "@/core/use-cases/foundation/organization-unit";
 import { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
+import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
 import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
+import type { UserSyncFromGraphJobData } from "@/core/domain/jobs/job-data.types";
+import { MAINTENANCE_JOBS, QUEUE_NAMES } from "@/core/domain/jobs/job-names";
 import type { SyncResult } from "@/lib/schemas/graph-user.schema";
 import { OrganizationUnitType } from "@/core/domain/value-objects/foundation-enums";
 import { z } from "zod";
@@ -50,6 +54,10 @@ export interface SyncResultDTO {
     email?: string;
     error: string;
   }>;
+}
+
+export interface EnqueuedSyncResultDTO {
+  jobId: string;
 }
 
 /**
@@ -150,6 +158,58 @@ export async function syncUsersFromGraphAction(
       error,
       { function: "syncUsersFromGraphAction" },
       "Failed to sync users from Microsoft Graph",
+    );
+  }
+}
+
+/**
+ * Queue Microsoft Graph user sync in the background.
+ *
+ * The full sync can exceed the HTTP gateway timeout, so UI-triggered syncs
+ * should enqueue the maintenance job and return immediately.
+ */
+export async function enqueueUsersFromGraphSyncAction(
+  options: SyncOptionsDTO & { defaultPrimaryRoleId: string },
+): Promise<ActionResponse<EnqueuedSyncResultDTO>> {
+  try {
+    await requirePermission(PERMISSIONS.PERSONS_SYNC);
+
+    const validated = SyncOptionsSchema.extend({
+      defaultPrimaryRoleId: z.string().min(1, "Primary role is required"),
+    }).parse(options);
+
+    const container = getContainer();
+    const jobQueue = container.get<IJobQueueService>(
+      DI_TOKENS.IJobQueueService,
+    );
+    const currentUserId = await getCurrentUserId();
+
+    const jobId = await jobQueue.addJob<UserSyncFromGraphJobData>(
+      QUEUE_NAMES.MAINTENANCE,
+      MAINTENANCE_JOBS.USER_SYNC_FROM_GRAPH,
+      {
+        includeDisabled: validated.includeDisabled,
+        includeGuests: validated.includeGuests,
+        defaultOrgUnitId: validated.defaultOrgUnitId,
+        defaultPrimaryRoleId: validated.defaultPrimaryRoleId,
+        deactivateMissing: validated.deactivateMissing,
+        triggeredBy: currentUserId ?? undefined,
+        createdAt: Date.now(),
+      },
+      {
+        priority: 7,
+        attempts: 1,
+        removeOnComplete: 25,
+        removeOnFail: 50,
+      },
+    );
+
+    return { success: true, data: { jobId } };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "enqueueUsersFromGraphSyncAction" },
+      "Failed to queue Microsoft Graph user sync",
     );
   }
 }
