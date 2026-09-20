@@ -17,12 +17,10 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { SyncUsersFromGraphUseCase } from "@/core/use-cases/foundation/person";
 import type { CreateOrganizationUnitUseCase } from "@/core/use-cases/foundation/organization-unit";
 import { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
-import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
-import type { UserSyncFromGraphJobData } from "@/core/domain/jobs/job-data.types";
-import { MAINTENANCE_JOBS, QUEUE_NAMES } from "@/core/domain/jobs/job-names";
 import type { SyncResult } from "@/lib/schemas/graph-user.schema";
 import { OrganizationUnitType } from "@/core/domain/value-objects/foundation-enums";
 import { z } from "zod";
@@ -163,10 +161,10 @@ export async function syncUsersFromGraphAction(
 }
 
 /**
- * Queue Microsoft Graph user sync in the background.
+ * Start Microsoft Graph user sync in the background.
  *
  * The full sync can exceed the HTTP gateway timeout, so UI-triggered syncs
- * should enqueue the maintenance job and return immediately.
+ * start the work without waiting for completion.
  */
 export async function enqueueUsersFromGraphSyncAction(
   options: SyncOptionsDTO & { defaultPrimaryRoleId: string },
@@ -179,32 +177,43 @@ export async function enqueueUsersFromGraphSyncAction(
     }).parse(options);
 
     const container = getContainer();
-    const jobQueue = container.get<IJobQueueService>(
-      DI_TOKENS.IJobQueueService,
-    );
     const currentUserId = await getCurrentUserId();
+    await ensureModuleLoaded("microsoft-graph");
 
-    const jobId = await jobQueue.addJob<UserSyncFromGraphJobData>(
-      QUEUE_NAMES.MAINTENANCE,
-      MAINTENANCE_JOBS.USER_SYNC_FROM_GRAPH,
-      {
+    const useCase = container.get<SyncUsersFromGraphUseCase>(
+      DI_TOKENS.SyncUsersFromGraphUseCase,
+    );
+    const logger = container
+      .get<ILoggerService>(DI_TOKENS.ILoggerService)
+      .child({ controller: "microsoft-graph" });
+
+    void useCase
+      .execute({
         includeDisabled: validated.includeDisabled,
         includeGuests: validated.includeGuests,
         defaultOrgUnitId: validated.defaultOrgUnitId,
-        defaultPrimaryRoleId: validated.defaultPrimaryRoleId,
         deactivateMissing: validated.deactivateMissing,
-        triggeredBy: currentUserId ?? undefined,
-        createdAt: Date.now(),
-      },
-      {
-        priority: 7,
-        attempts: 1,
-        removeOnComplete: 25,
-        removeOnFail: 50,
-      },
-    );
+      })
+      .then((result) => {
+        logger.info("Background Microsoft Graph sync completed", {
+          triggeredBy: currentUserId,
+          created: result.created,
+          updated: result.updated,
+          deactivated: result.deactivated,
+          excluded: result.excluded,
+          errorCount: result.errors.length,
+        });
+        revalidatePath("/persons");
+      })
+      .catch((error) => {
+        logger.error(
+          "Background Microsoft Graph sync failed",
+          error instanceof Error ? error : new Error(String(error)),
+          { triggeredBy: currentUserId },
+        );
+      });
 
-    return { success: true, data: { jobId } };
+    return { success: true, data: { jobId: `background-${Date.now()}` } };
   } catch (error) {
     return handleControllerError(
       error,
