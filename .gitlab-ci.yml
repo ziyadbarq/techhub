@@ -354,18 +354,35 @@ build-and-push-gcp-to-argo:
     - export IMAGE_NAME="${FULL_IMAGE_NAME}"
     - git clone --depth 1 http://${GITLAB_UN_VAL}:${GITLAB_TOKEN_VAL}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd.git
     - cd values-yaml-npd
-    - yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" ${PROJECT}/${DEV_GCP_VALUES}
     - export COMMIT_ID="${commit_id}" APP_VER="${version}" ITAG="${IMAGE_TAG}"
-    - yq e -i '(.deployment.env[] | select(.name == "GIT_COMMIT")).value = strenv(COMMIT_ID)' ${PROJECT}/${DEV_GCP_VALUES}
-    - yq e -i '(.deployment.env[] | select(.name == "APP_VERSION")).value = strenv(APP_VER)' ${PROJECT}/${DEV_GCP_VALUES}
-    - yq e -i '(.deployment.env[] | select(.name == "IMAGE_TAG")).value = strenv(ITAG)' ${PROJECT}/${DEV_GCP_VALUES}
-    - cat ${PROJECT}/${DEV_GCP_VALUES}
     - git config --global user.email "sdev@barq.com"
     - git config --global user.name ${GITLAB_UN_VAL}
     - git remote set-url origin "http://${GITLAB_UN_VAL}:${GITLAB_TOKEN_VAL}@gitlab.dev.baraq.com.internal/baraq-engineering/devops/values-yaml-npd.git"
-    - git add ${PROJECT}/${DEV_GCP_VALUES}
-    - git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
-    - git push origin -o ci.skip HEAD:main
+    - |
+      for attempt in 1 2 3; do
+        git fetch origin main
+        git reset --hard origin/main
+
+        yq e -i ".deployment.imageName = strenv(IMAGE_NAME)" ${PROJECT}/${DEV_GCP_VALUES}
+        yq e -i '(.deployment.env[] | select(.name == "GIT_COMMIT")).value = strenv(COMMIT_ID)' ${PROJECT}/${DEV_GCP_VALUES}
+        yq e -i '(.deployment.env[] | select(.name == "APP_VERSION")).value = strenv(APP_VER)' ${PROJECT}/${DEV_GCP_VALUES}
+        yq e -i '(.deployment.env[] | select(.name == "IMAGE_TAG")).value = strenv(ITAG)' ${PROJECT}/${DEV_GCP_VALUES}
+        cat ${PROJECT}/${DEV_GCP_VALUES}
+
+        git add ${PROJECT}/${DEV_GCP_VALUES}
+        git commit -m "🚀 Update ${PROJECT} DEV image to ${IMAGE_TAG}"
+
+        if git push origin -o ci.skip HEAD:main; then
+          break
+        fi
+
+        if [ "$attempt" -eq 3 ]; then
+          echo "Failed to push ${PROJECT}/${DEV_GCP_VALUES} after ${attempt} attempts"
+          exit 1
+        fi
+
+        sleep $((attempt * 5))
+      done
     - cd $CI_PROJECT_DIR
     - mv .dockerignore .dockerignore.tmp
     - echo ".git/" > .dockerignore
