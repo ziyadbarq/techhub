@@ -17,6 +17,8 @@ export interface ListEmployeeDirectoryInput {
   isExcluded?: boolean;
   hasManager?: boolean;
   managerId?: string;
+  skip?: number;
+  take?: number;
 }
 
 export interface ListEmployeeDirectoryOutput {
@@ -42,17 +44,33 @@ export class ListEmployeeDirectoryUseCase {
     const filters = {
       ...input,
       isActive: input.isActive ?? true,
+      skip: input.skip ?? 0,
+      take: input.take ?? 100,
     };
 
-    const employees = await this.personRepository.findAllForDirectory(filters);
+    const countFilters = {
+      search: filters.search,
+      orgUnitIds: filters.orgUnitIds,
+      locationIds: filters.locationIds,
+      isActive: filters.isActive,
+      isExcluded: filters.isExcluded,
+      hasManager: filters.hasManager,
+      managerId: filters.managerId,
+    };
+
+    const [employees, total] = await Promise.all([
+      this.personRepository.findAllForDirectory(filters),
+      this.personRepository.countForDirectory(countFilters),
+    ]);
 
     this.logger.debug("Employee directory fetch complete", {
       count: employees.length,
+      total,
     });
 
     return {
       employees,
-      total: employees.length,
+      total,
     };
   }
 }

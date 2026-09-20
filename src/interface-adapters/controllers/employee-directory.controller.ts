@@ -58,6 +58,8 @@ export async function listEmployeeDirectoryAction(
       isExcluded: validated.isExcluded,
       hasManager: validated.hasManager,
       managerId: validated.managerId,
+      skip: validated.skip,
+      take: validated.take,
     });
 
     const employees = presentEmployeesDirectory(result.employees);

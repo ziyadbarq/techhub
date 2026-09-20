@@ -16,6 +16,8 @@ export const EmployeeDirectoryFilterSchema = z.object({
   isExcluded: z.boolean().optional(),
   hasManager: z.boolean().optional(),
   managerId: z.string().optional(),
+  skip: z.number().int().min(0).optional(),
+  take: z.number().int().min(1).max(500).optional(),
 });
 
 export type EmployeeDirectoryFilterDTO = z.infer<

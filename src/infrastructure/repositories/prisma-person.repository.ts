@@ -509,58 +509,19 @@ export class PrismaPersonRepository implements IPersonRepository {
     isExcluded?: boolean;
     hasManager?: boolean;
     managerId?: string;
+    skip?: number;
+    take?: number;
   }): Promise<PersonWithDirectoryRelations[]> {
     const timer = this.logger.startTimer();
 
     try {
-      // Build where clause
-      const where: Prisma.PersonWhereInput = {};
-
-      // Active status filter (defaults to true in caller)
-      if (options?.isActive !== undefined) {
-        where.isActive = options.isActive;
-      }
-
-      // Excluded status filter
-      if (options?.isExcluded !== undefined) {
-        where.isExcluded = options.isExcluded;
-      }
-
-      // Search across multiple fields
-      if (options?.search) {
-        const query = options.search.trim();
-        where.OR = [
-          { firstName: { contains: query, mode: "insensitive" } },
-          { lastName: { contains: query, mode: "insensitive" } },
-          { email: { contains: query, mode: "insensitive" } },
-          { title: { contains: query, mode: "insensitive" } },
-          { department: { contains: query, mode: "insensitive" } },
-          { employeeId: { contains: query, mode: "insensitive" } },
-        ];
-      }
-
-      // Filter by org units
-      if (options?.orgUnitIds && options.orgUnitIds.length > 0) {
-        where.orgUnitId = { in: options.orgUnitIds };
-      }
-
-      // Filter by locations
-      if (options?.locationIds && options.locationIds.length > 0) {
-        where.locationId = { in: options.locationIds };
-      }
-
-      // Filter by manager
-      if (options?.hasManager !== undefined) {
-        where.managerId = options.hasManager ? { not: null } : null;
-      }
-
-      if (options?.managerId) {
-        where.managerId = options.managerId;
-      }
+      const where = this.buildDirectoryWhere(options);
 
       // Fetch persons with relations
       const persons = await this.prisma.person.findMany({
         where,
+        skip: options?.skip,
+        take: options?.take,
         include: {
           orgUnit: {
             select: { id: true, name: true, code: true },
@@ -599,6 +560,69 @@ export class PrismaPersonRepository implements IPersonRepository {
       );
       throw error;
     }
+  }
+
+  async countForDirectory(options?: {
+    search?: string;
+    orgUnitIds?: string[];
+    locationIds?: string[];
+    isActive?: boolean;
+    isExcluded?: boolean;
+    hasManager?: boolean;
+    managerId?: string;
+  }): Promise<number> {
+    const where = this.buildDirectoryWhere(options);
+    return await this.prisma.person.count({ where });
+  }
+
+  private buildDirectoryWhere(options?: {
+    search?: string;
+    orgUnitIds?: string[];
+    locationIds?: string[];
+    isActive?: boolean;
+    isExcluded?: boolean;
+    hasManager?: boolean;
+    managerId?: string;
+  }): Prisma.PersonWhereInput {
+    const where: Prisma.PersonWhereInput = {};
+
+    if (options?.isActive !== undefined) {
+      where.isActive = options.isActive;
+    }
+
+    if (options?.isExcluded !== undefined) {
+      where.isExcluded = options.isExcluded;
+    }
+
+    if (options?.search) {
+      const query = options.search.trim();
+      where.OR = [
+        { firstName: { contains: query, mode: "insensitive" } },
+        { lastName: { contains: query, mode: "insensitive" } },
+        { email: { contains: query, mode: "insensitive" } },
+        { title: { contains: query, mode: "insensitive" } },
+        { department: { contains: query, mode: "insensitive" } },
+        { employeeId: { contains: query, mode: "insensitive" } },
+      ];
+    }
+
+    if (options?.orgUnitIds && options.orgUnitIds.length > 0) {
+      where.orgUnitId = { in: options.orgUnitIds };
+    }
+
+    if (options?.locationIds && options.locationIds.length > 0) {
+      where.locationId = { in: options.locationIds };
+    }
+
+    if (options?.hasManager !== undefined) {
+      where.managerId = options.hasManager ? { not: null } : null;
+    }
+
+    if (options?.managerId) {
+      where.managerId = options.managerId;
+    }
+
+    return where;
   }
 
   async findDirectReports(managerId: string): Promise<Person[]> {

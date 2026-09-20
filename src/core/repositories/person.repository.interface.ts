@@ -205,7 +205,22 @@ export interface IPersonRepository {
     isExcluded?: boolean;
     hasManager?: boolean;
     managerId?: string;
+    skip?: number;
+    take?: number;
   }): Promise<PersonWithDirectoryRelations[]>;
+
+  /**
+   * Count employees matching directory filters without loading rows
+   */
+  countForDirectory(options?: {
+    search?: string;
+    orgUnitIds?: string[];
+    locationIds?: string[];
+    isActive?: boolean;
+    isExcluded?: boolean;
+    hasManager?: boolean;
+    managerId?: string;
+  }): Promise<number>;
 
   /**
    * Find direct reports for a specific person

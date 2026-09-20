@@ -32,6 +32,7 @@ export default async function PersonsPage() {
   const result = await listEmployeeDirectoryAction({
     isActive: true,
     isExcluded: false,
+    take: 100,
   });
 
   const initialPersons = result.success ? result.data.employees : [];

@@ -151,6 +151,7 @@ export function PersonsPageClient({
           selectedLocations.length > 0 ? selectedLocations : undefined,
         isActive: statusFilter === "active" ? true : undefined,
         isExcluded: statusFilter === "excluded" ? true : false,
+        take: 100,
       });
 
       if (result.success) {
@@ -169,7 +170,10 @@ export function PersonsPageClient({
   // Load excluded count for badge
   const loadExcludedCount = useCallback(async () => {
     try {
-      const result = await listEmployeeDirectoryAction({ isExcluded: true });
+      const result = await listEmployeeDirectoryAction({
+        isExcluded: true,
+        take: 1,
+      });
       if (result.success) {
         setExcludedCount(result.data.total);
       }
@@ -384,6 +388,11 @@ export function PersonsPageClient({
                   selectedDepartments.length > 0 ||
                   selectedLocations.length > 0) && (
                   <span className="ml-1 text-sm">(filtered)</span>
+                )}
+                {total > persons.length && (
+                  <span className="ml-1 text-sm">
+                    (showing first {persons.length})
+                  </span>
                 )}
               </>
             )}
