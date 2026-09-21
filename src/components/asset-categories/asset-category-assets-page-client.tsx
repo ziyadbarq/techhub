@@ -136,6 +136,7 @@ export function AssetCategoryAssetsPageClient({
         loading={isLoading}
         onEdit={handleEdit}
         onRefresh={loadAssets}
+        detailReturnTo={`/asset-categories/${category.id}/assets`}
       />
 
       <AssetForm

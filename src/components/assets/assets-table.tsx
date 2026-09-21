@@ -27,6 +27,7 @@ interface AssetsTableProps {
   onEdit: (asset: AssetDTO) => void;
   onRefresh: () => void;
   onSelectionChange?: (selectedAssets: AssetDTO[]) => void;
+  detailReturnTo?: string;
 }
 
 export function AssetsTable({
@@ -35,6 +36,7 @@ export function AssetsTable({
   onEdit,
   onRefresh,
   onSelectionChange,
+  detailReturnTo,
 }: AssetsTableProps) {
   // Use reusable hooks
   const deleteDialog = useDeleteDialog<AssetDTO>({
@@ -61,7 +63,11 @@ export function AssetsTable({
           return (
             <div className="flex flex-col gap-1">
               <Link
-                href={`/assets/${asset.assetTag}`}
+                href={
+                  detailReturnTo
+                    ? `/assets/${encodeURIComponent(asset.assetTag)}?returnTo=${encodeURIComponent(detailReturnTo)}`
+                    : `/assets/${encodeURIComponent(asset.assetTag)}`
+                }
                 className="text-primary font-medium hover:underline"
               >
                 {assetTag}
@@ -276,7 +282,7 @@ export function AssetsTable({
         },
       },
     ],
-    [calculateSARAmount],
+    [calculateSARAmount, detailReturnTo],
   );
 
   // Actions column using reusable builder

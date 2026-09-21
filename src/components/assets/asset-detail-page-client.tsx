@@ -4,7 +4,7 @@
 
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
   Pencil,
@@ -87,6 +87,7 @@ export function AssetDetailPageClient({
   asset: initialAsset,
 }: AssetDetailPageClientProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { hasPermission } = usePermissions();
   const [asset, setAsset] = useState(initialAsset);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -124,6 +125,14 @@ export function AssetDetailPageClient({
   const canViewIntune =
     isIntuneEnabled && hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
   const isLoadingCounts = tabCounts === null;
+  const returnTo = searchParams.get("returnTo");
+  const backHref =
+    returnTo?.startsWith("/") && !returnTo.startsWith("//")
+      ? returnTo
+      : "/assets";
+  const backLabel = backHref.startsWith("/asset-categories/")
+    ? "Back to Category Assets"
+    : "Back to Assets";
 
   // Fetch updated asset data from server
   const refreshAsset = useCallback(async () => {
@@ -352,11 +361,11 @@ export function AssetDetailPageClient({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push("/assets")}
+              onClick={() => router.push(backHref)}
               className="w-fit"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Assets
+              {backLabel}
             </Button>
             <div className="flex gap-4">
               <div className="bg-primary/10 text-primary flex h-14 w-14 items-center justify-center rounded-xl">
