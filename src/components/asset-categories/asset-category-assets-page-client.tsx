@@ -11,6 +11,7 @@ import { toast } from "sonner";
 
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { AssetForm } from "@/components/assets/asset-form";
+import { BulkActionBar } from "@/components/assets/bulk-action-bar";
 import { AssetsTable } from "@/components/assets/assets-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { listAssetsAction } from "@/interface-adapters/controllers/asset.controller";
 import type { AssetCategoryDTO } from "@/interface-adapters/presenters/asset-category.presenter";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
+import { exportAssetsToXLSX } from "@/lib/xlsx-export";
 
 interface AssetCategoryAssetsPageClientProps {
   category: AssetCategoryDTO;
@@ -34,6 +36,8 @@ export function AssetCategoryAssetsPageClient({
   const [isLoading, setIsLoading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<AssetDTO | null>(null);
+  const [selectedAssets, setSelectedAssets] = useState<AssetDTO[]>([]);
+  const [selectionKey, setSelectionKey] = useState(0);
 
   const goBack = () => {
     // Prefer real browser history so we land back on whichever page the
@@ -50,12 +54,32 @@ export function AssetCategoryAssetsPageClient({
     }
   };
 
+  const clearSelection = useCallback(() => {
+    setSelectedAssets([]);
+    setSelectionKey((key) => key + 1);
+  }, []);
+
+  const handleExportSelected = useCallback(
+    (selected: AssetDTO[]) => {
+      if (selected.length === 0) {
+        toast.error("No assets selected");
+        return;
+      }
+
+      exportAssetsToXLSX(selected, {
+        filename: `${category.code || category.name}-assets-selected-${selected.length}`,
+      });
+    },
+    [category.code, category.name],
+  );
+
   const loadAssets = useCallback(async () => {
     setIsLoading(true);
     try {
       const result = await listAssetsAction({ assetCategoryId: category.id });
       if (result.success && result.data) {
         setAssets(result.data);
+        clearSelection();
       } else if (!result.success) {
         toast.error(result.error);
       }
@@ -64,7 +88,7 @@ export function AssetCategoryAssetsPageClient({
     } finally {
       setIsLoading(false);
     }
-  }, [category.id]);
+  }, [category.id, clearSelection]);
 
   const handleEdit = (asset: AssetDTO) => {
     setEditingAsset(asset);
@@ -131,11 +155,21 @@ export function AssetCategoryAssetsPageClient({
         </CardContent>
       </Card>
 
+      <BulkActionBar
+        selectedAssets={selectedAssets}
+        onClearSelection={clearSelection}
+        onSuccess={loadAssets}
+        onExportSelected={handleExportSelected}
+        filterOptions={null}
+      />
+
       <AssetsTable
+        key={selectionKey}
         data={assets}
         loading={isLoading}
         onEdit={handleEdit}
         onRefresh={loadAssets}
+        onSelectionChange={setSelectedAssets}
         detailReturnTo={`/asset-categories/${category.id}/assets`}
       />
 

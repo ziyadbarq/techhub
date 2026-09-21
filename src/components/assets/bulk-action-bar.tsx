@@ -62,6 +62,8 @@ export function BulkActionBar({
 
   const canDelete = hasPermission(PERMISSIONS.ASSETS_DELETE);
   const canUpdate = hasPermission(PERMISSIONS.ASSETS_UPDATE);
+  const canChangeStatus =
+    canUpdate && (filterOptions?.lifecycleStates.length ?? 0) > 0;
 
   const handleBulkDelete = async () => {
     if (selectedAssets.length === 0) return;
@@ -175,7 +177,7 @@ export function BulkActionBar({
             </Button>
 
             {/* Change Status */}
-            {canUpdate && (
+            {canChangeStatus && (
               <Button
                 variant="outline"
                 size="sm"
