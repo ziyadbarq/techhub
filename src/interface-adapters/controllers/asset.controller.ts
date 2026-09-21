@@ -1401,6 +1401,7 @@ export async function bulkDeleteAssetsAction(assetIds: string[]): Promise<
     const result = await useCase.execute(assetIds);
 
     revalidatePath("/assets");
+    revalidatePath("/asset-categories");
 
     return {
       success: true,

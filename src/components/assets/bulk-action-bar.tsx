@@ -215,8 +215,10 @@ export function BulkActionBar({
               Delete {selectedAssets.length} Asset(s)?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. Assets with active assignments will
-              be skipped.
+              This will hide the selected assets from active lists while
+              preserving audit history. Assets with active assignments,
+              reservations, disposals, kit checkouts, or linked configuration
+              items will be skipped.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
