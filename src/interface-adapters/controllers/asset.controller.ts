@@ -23,7 +23,7 @@ import type {
   ListAssetsUseCase,
   ListAssetsPaginatedUseCase,
   UpdateAssetUseCase,
-  DeleteAssetUseCase,
+  DeleteAssetWithConfirmationUseCase,
   GetAssetStatisticsUseCase,
   BulkDeleteAssetsUseCase,
   BulkUpdateAssetStatusUseCase,
@@ -692,13 +692,22 @@ export async function deleteAssetAction(
       };
     }
 
-    const useCase = container.get<DeleteAssetUseCase>(
-      DI_TOKENS.DeleteAssetUseCase,
+    const useCase = container.get<DeleteAssetWithConfirmationUseCase>(
+      DI_TOKENS.DeleteAssetWithConfirmationUseCase,
     );
 
-    await useCase.execute(existingAsset.id);
+    const confirmation = await useCase.execute({ id: existingAsset.id });
+    if (!confirmation.canDelete) {
+      return {
+        success: false,
+        error: `Cannot delete asset "${assetTag}". ${confirmation.blockers.join(" ")}`,
+      };
+    }
+
+    await useCase.executeSoftDelete(existingAsset.id);
 
     revalidatePath("/assets");
+    revalidatePath("/asset-categories");
 
     return {
       success: true,

@@ -816,7 +816,6 @@ export const DI_TOKENS = {
     "GetUnassignedAssetsReportUseCase",
   ),
   UpdateAssetUseCase: Symbol.for("UpdateAssetUseCase"),
-  DeleteAssetUseCase: Symbol.for("DeleteAssetUseCase"),
   DeleteAssetWithConfirmationUseCase: Symbol.for(
     "DeleteAssetWithConfirmationUseCase",
   ),

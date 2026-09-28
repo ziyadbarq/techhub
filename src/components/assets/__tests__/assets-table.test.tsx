@@ -58,6 +58,15 @@ vi.mock("sonner", () => ({
   },
 }));
 
+// Mock next/navigation router
+const mockPush = vi.fn();
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 // Import after mocks
 import { deleteAssetAction } from "@/interface-adapters/controllers/asset.controller";
 
@@ -243,7 +252,7 @@ describe("AssetsTable", () => {
         expect(screen.getByRole("alertdialog")).toBeInTheDocument();
         expect(screen.getByText("Delete Asset?")).toBeInTheDocument();
         expect(
-          screen.getByText(/This action cannot be undone/),
+          screen.getByText(/hide the asset from active lists/),
         ).toBeInTheDocument();
       });
     });
@@ -366,7 +375,7 @@ describe("AssetsTable", () => {
       const user = userEvent.setup();
       (deleteAssetAction as Mock).mockResolvedValue({
         success: false,
-        error: "Asset has active assignments",
+        error: "Deletion failed",
       });
 
       const assets = [createMockAsset()];
@@ -387,10 +396,45 @@ describe("AssetsTable", () => {
 
       // Verify error toast with specific message
       await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith("Deletion failed");
+      });
+    });
+
+    it("should show a 'View Asset' action and navigate there when blocked by an active assignment", async () => {
+      const user = userEvent.setup();
+      (deleteAssetAction as Mock).mockResolvedValue({
+        success: false,
+        error: 'Cannot delete asset "LAPTOP-001". 1 active assignment(s).',
+      });
+
+      const assets = [createMockAsset()];
+
+      render(
+        <AssetsTable
+          data={assets}
+          onEdit={mockOnEdit}
+          onRefresh={mockOnRefresh}
+        />,
+      );
+
+      const menuButton = screen.getByRole("button", { name: /open menu/i });
+      await user.click(menuButton);
+      await user.click(screen.getByText("Delete"));
+      await user.click(screen.getByRole("button", { name: /^delete$/i }));
+
+      await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(
-          "Asset has active assignments",
+          'Cannot delete asset "LAPTOP-001". 1 active assignment(s).',
+          expect.objectContaining({
+            action: expect.objectContaining({ label: "View Asset" }),
+          }),
         );
       });
+
+      const [, options] = (toast.error as Mock).mock.calls[0];
+      options.action.onClick();
+
+      expect(mockPush).toHaveBeenCalledWith("/assets/LAPTOP-001");
     });
 
     it("should NOT call onRefresh when deletion fails", async () => {

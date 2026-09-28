@@ -133,6 +133,20 @@ export function AssetDetailPageClient({
   const backLabel = backHref.startsWith("/asset-categories/")
     ? "Back to Category Assets"
     : "Back to Assets";
+  const goBack = () => {
+    // Prefer real browser history so we don't stack duplicate entries on
+    // top of the page we came from. Fall back to backHref on direct URL
+    // entry (no prior same-origin history).
+    if (
+      typeof window !== "undefined" &&
+      window.history.length > 1 &&
+      document.referrer.startsWith(window.location.origin)
+    ) {
+      router.back();
+    } else {
+      router.push(backHref);
+    }
+  };
 
   // Fetch updated asset data from server
   const refreshAsset = useCallback(async () => {
@@ -252,6 +266,13 @@ export function AssetDetailPageClient({
       if (result.success) {
         toast.success("Asset deleted successfully");
         router.push("/assets");
+      } else if (result.error.includes("active assignment")) {
+        toast.error(result.error, {
+          action: {
+            label: "End Assignment",
+            onClick: () => setIsReturnWizardOpen(true),
+          },
+        });
       } else {
         toast.error(result.error);
       }
@@ -361,7 +382,7 @@ export function AssetDetailPageClient({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push(backHref)}
+              onClick={goBack}
               className="w-fit"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -679,8 +700,10 @@ export function AssetDetailPageClient({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Asset?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete asset &quot;{asset.assetTag}&quot;.
-              This action cannot be undone.
+              This will hide asset &quot;{asset.assetTag}&quot; from active
+              lists while preserving audit history. Assets with active
+              assignments, reservations, disposals, kit checkouts, or linked
+              configuration items cannot be deleted until those are resolved.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -11,8 +11,11 @@ export { GetAssetValueByCategoryReportUseCase } from "./get-asset-value-by-categ
 export { GetAssetsByDepartmentReportUseCase } from "./get-assets-by-department-report.use-case";
 export { GetUnassignedAssetsReportUseCase } from "./get-unassigned-assets-report.use-case";
 export { UpdateAssetUseCase } from "./update-asset.use-case";
-export { DeleteAssetUseCase } from "./delete-asset.use-case";
-export { DeleteAssetWithConfirmationUseCase } from "./delete-asset-with-confirmation.use-case";
+export {
+  DeleteAssetWithConfirmationUseCase,
+  type DeleteAssetConfirmationRequest,
+  type DeleteAssetConfirmationResponse,
+} from "./delete-asset-with-confirmation.use-case";
 export { GetAssetStatisticsUseCase } from "./get-asset-statistics.use-case";
 export {
   BulkDeleteAssetsUseCase,

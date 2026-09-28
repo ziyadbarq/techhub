@@ -7,8 +7,10 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { CurrencyDisplay } from "@/components/ui/currency-display";
@@ -39,11 +41,27 @@ export function AssetsTable({
   detailReturnTo,
 }: AssetsTableProps) {
   // Use reusable hooks
+  const router = useRouter();
   const deleteDialog = useDeleteDialog<AssetDTO>({
     onDelete: (asset) => deleteAssetAction(asset.assetTag),
     onSuccess: onRefresh,
     getItemName: (asset) => asset.assetTag,
     entityName: "Asset",
+    description:
+      "This will hide the asset from active lists while preserving audit history. Assets with active assignments, reservations, disposals, kit checkouts, or linked configuration items cannot be deleted until those are resolved.",
+    onError: (error, asset) => {
+      if (error.includes("active assignment")) {
+        toast.error(error, {
+          action: {
+            label: "View Asset",
+            onClick: () =>
+              router.push(`/assets/${encodeURIComponent(asset.assetTag)}`),
+          },
+        });
+      } else {
+        toast.error(error);
+      }
+    },
   });
 
   const { calculateSARAmount } = useExchangeRates();

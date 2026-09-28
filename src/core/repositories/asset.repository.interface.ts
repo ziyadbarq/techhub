@@ -196,16 +196,6 @@ export interface IAssetRepository {
   ): Promise<boolean>;
 
   /**
-   * Check if asset has assignments
-   */
-  hasAssignments(id: string): Promise<boolean>;
-
-  /**
-   * Check if asset has stock movements
-   */
-  hasStockMovements(id: string): Promise<boolean>;
-
-  /**
    * Search assets with pagination - returns items and metadata
    */
   searchPaginated(options: AssetSearchOptions): Promise<PaginatedResult<Asset>>;

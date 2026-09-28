@@ -54,7 +54,6 @@ import { GetAssetUseCase } from "@/core/use-cases/asset/asset/get-asset.use-case
 import { ListAssetsUseCase } from "@/core/use-cases/asset/asset/list-assets.use-case";
 import { ListAssetsPaginatedUseCase } from "@/core/use-cases/asset/asset/list-assets-paginated.use-case";
 import { UpdateAssetUseCase } from "@/core/use-cases/asset/asset/update-asset.use-case";
-import { DeleteAssetUseCase } from "@/core/use-cases/asset/asset/delete-asset.use-case";
 import { DeleteAssetWithConfirmationUseCase } from "@/core/use-cases/asset/asset/delete-asset-with-confirmation.use-case";
 import { GetAssetStatisticsUseCase } from "@/core/use-cases/asset/asset/get-asset-statistics.use-case";
 import { BulkDeleteAssetsUseCase } from "@/core/use-cases/asset/asset/bulk-delete-assets.use-case";
@@ -291,11 +290,6 @@ export function bindAssetDependencies(container: Container): void {
   container
     .bind<UpdateAssetUseCase>(DI_TOKENS.UpdateAssetUseCase)
     .to(UpdateAssetUseCase)
-    .inTransientScope();
-
-  container
-    .bind<DeleteAssetUseCase>(DI_TOKENS.DeleteAssetUseCase)
-    .to(DeleteAssetUseCase)
     .inTransientScope();
 
   container

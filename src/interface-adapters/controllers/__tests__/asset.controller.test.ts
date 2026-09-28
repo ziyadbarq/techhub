@@ -52,8 +52,9 @@ const mockUpdateAssetUseCase = {
   execute: vi.fn(),
 };
 
-const mockDeleteAssetUseCase = {
+const mockDeleteAssetWithConfirmationUseCase = {
   execute: vi.fn(),
+  executeSoftDelete: vi.fn(),
 };
 
 const mockListAssetsUseCase = {
@@ -155,8 +156,10 @@ vi.mock("@/di/container", () => ({
       if (tokenKey === Symbol.for("UpdateAssetUseCase").toString()) {
         return mockUpdateAssetUseCase;
       }
-      if (tokenKey === Symbol.for("DeleteAssetUseCase").toString()) {
-        return mockDeleteAssetUseCase;
+      if (
+        tokenKey === Symbol.for("DeleteAssetWithConfirmationUseCase").toString()
+      ) {
+        return mockDeleteAssetWithConfirmationUseCase;
       }
       if (tokenKey === Symbol.for("ListAssetsUseCase").toString()) {
         return mockListAssetsUseCase;
@@ -633,7 +636,13 @@ describe("Asset Controller", () => {
       // Arrange
       const existingAsset = createMockAsset();
       mockAssetRepository.findByAssetTag.mockResolvedValue(existingAsset);
-      mockDeleteAssetUseCase.execute.mockResolvedValue(undefined);
+      mockDeleteAssetWithConfirmationUseCase.execute.mockResolvedValue({
+        canDelete: true,
+        blockers: [],
+      });
+      mockDeleteAssetWithConfirmationUseCase.executeSoftDelete.mockResolvedValue(
+        undefined,
+      );
 
       // Act
       const result = await deleteAssetAction("LAPTOP-001");
@@ -649,13 +658,24 @@ describe("Asset Controller", () => {
       // Arrange
       const existingAsset = createMockAsset();
       mockAssetRepository.findByAssetTag.mockResolvedValue(existingAsset);
-      mockDeleteAssetUseCase.execute.mockResolvedValue(undefined);
+      mockDeleteAssetWithConfirmationUseCase.execute.mockResolvedValue({
+        canDelete: true,
+        blockers: [],
+      });
+      mockDeleteAssetWithConfirmationUseCase.executeSoftDelete.mockResolvedValue(
+        undefined,
+      );
 
       // Act
       await deleteAssetAction("LAPTOP-001");
 
       // Assert
-      expect(mockDeleteAssetUseCase.execute).toHaveBeenCalledWith("asset-1");
+      expect(
+        mockDeleteAssetWithConfirmationUseCase.execute,
+      ).toHaveBeenCalledWith({ id: "asset-1" });
+      expect(
+        mockDeleteAssetWithConfirmationUseCase.executeSoftDelete,
+      ).toHaveBeenCalledWith("asset-1");
     });
 
     it("should return error when asset not found", async () => {
@@ -672,12 +692,36 @@ describe("Asset Controller", () => {
       }
     });
 
+    it("should return error and skip soft delete when asset has blockers", async () => {
+      // Arrange
+      const existingAsset = createMockAsset();
+      mockAssetRepository.findByAssetTag.mockResolvedValue(existingAsset);
+      mockDeleteAssetWithConfirmationUseCase.execute.mockResolvedValue({
+        canDelete: false,
+        blockers: ["1 active assignment(s). Unassign the asset first."],
+      });
+
+      // Act
+      const result = await deleteAssetAction("LAPTOP-001");
+
+      // Assert
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(
+          'Cannot delete asset "LAPTOP-001". 1 active assignment(s). Unassign the asset first.',
+        );
+      }
+      expect(
+        mockDeleteAssetWithConfirmationUseCase.executeSoftDelete,
+      ).not.toHaveBeenCalled();
+    });
+
     it("should return error response on use case error", async () => {
       // Arrange
       const existingAsset = createMockAsset();
       mockAssetRepository.findByAssetTag.mockResolvedValue(existingAsset);
-      mockDeleteAssetUseCase.execute.mockRejectedValue(
-        new Error("Asset has active assignments"),
+      mockDeleteAssetWithConfirmationUseCase.execute.mockRejectedValue(
+        new Error("Asset with ID not found"),
       );
 
       // Act
@@ -686,7 +730,7 @@ describe("Asset Controller", () => {
       // Assert
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error).toBe("Asset has active assignments");
+        expect(result.error).toBe("Asset with ID not found");
       }
     });
   });

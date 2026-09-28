@@ -439,7 +439,7 @@ export class PrismaAssetRepository implements IAssetRepository {
   private buildWhereClause(
     options: AssetSearchOptions,
   ): Prisma.AssetWhereInput {
-    const where: Prisma.AssetWhereInput = {};
+    const where: Prisma.AssetWhereInput = { deletedAt: null };
 
     // Category filter
     if (options.assetCategoryId) {
@@ -531,7 +531,7 @@ export class PrismaAssetRepository implements IAssetRepository {
   }
 
   async count(): Promise<number> {
-    return await this.prisma.asset.count();
+    return await this.prisma.asset.count({ where: { deletedAt: null } });
   }
 
   async countBySearch(options: AssetSearchOptions): Promise<number> {
@@ -710,22 +710,6 @@ export class PrismaAssetRepository implements IAssetRepository {
         serialNumber,
         ...(excludeId && { id: { not: excludeId } }),
       },
-    });
-
-    return count > 0;
-  }
-
-  async hasAssignments(id: string): Promise<boolean> {
-    const count = await this.prisma.assetAssignment.count({
-      where: { assetId: id },
-    });
-
-    return count > 0;
-  }
-
-  async hasStockMovements(id: string): Promise<boolean> {
-    const count = await this.prisma.stockMovement.count({
-      where: { assetId: id },
     });
 
     return count > 0;

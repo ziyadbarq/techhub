@@ -54,6 +54,8 @@ export interface UseDeleteDialogOptions<T> {
   entityName?: string;
   /** Custom description for the dialog */
   description?: string;
+  /** Custom error toast handler - receives the error message and the item that failed to delete. Falls back to a plain toast.error when omitted. */
+  onError?: (error: string, item: T) => void;
 }
 
 export interface UseDeleteDialogReturn<T> {
@@ -73,6 +75,7 @@ export function useDeleteDialog<T>({
   getItemName,
   entityName = "item",
   description,
+  onError,
 }: UseDeleteDialogOptions<T>): UseDeleteDialogReturn<T> {
   const [isOpen, setIsOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<T | null>(null);
@@ -95,16 +98,20 @@ export function useDeleteDialog<T>({
         setIsOpen(false);
         setItemToDelete(null);
       } else {
-        toast.error(
-          result.error || `Failed to delete ${entityName.toLowerCase()}`,
-        );
+        const message =
+          result.error || `Failed to delete ${entityName.toLowerCase()}`;
+        if (onError) {
+          onError(message, itemToDelete);
+        } else {
+          toast.error(message);
+        }
       }
     } catch (_error) {
       toast.error(`Failed to delete ${entityName.toLowerCase()}`);
     } finally {
       setIsDeleting(false);
     }
-  }, [itemToDelete, onDelete, onSuccess, entityName]);
+  }, [itemToDelete, onDelete, onSuccess, entityName, onError]);
 
   const DialogComponent = useCallback(
     () => (
