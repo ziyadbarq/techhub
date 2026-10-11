@@ -18,6 +18,7 @@ export interface CSVImportRow {
   currency?: string;
   stockLocationCode?: string;
   lifecycleStateCode?: string;
+  owningCompanyCode?: string;
   depreciationModel?: string;
   depreciationStart?: string;
   depreciationEnd?: string;
@@ -49,6 +50,7 @@ export interface AssetCreateLike {
   currency?: string | null;
   currentStockLocationId?: string | null;
   lifecycleStateId?: string | null;
+  owningOrgUnitId?: string | null;
   depreciationModel?: string | null;
   depreciationStart?: Date | null;
   depreciationEnd?: Date | null;
@@ -67,6 +69,7 @@ const ASSET_IMPORT_HEADERS = [
   "currency",
   "stockLocationCode",
   "lifecycleStateCode",
+  "owningCompanyCode",
   "depreciationModel",
   "depreciationStart",
   "depreciationEnd",
@@ -307,6 +310,7 @@ export function csvRowToDTO(
     vendorMap: Map<string, string>; // code -> id
     locationMap: Map<string, string>; // code -> id
     stateMap: Map<string, string>; // code -> id
+    owningCompanyMap?: Map<string, string>; // code -> COMPANY org unit id
     personEmailMap?: Map<string, string>; // email -> person id
   },
 ): { dto: Partial<AssetCreateLike>; errors: string[] } {
@@ -371,6 +375,18 @@ export function csvRowToDTO(
     }
   }
 
+  // Map owning company code to ID (optional)
+  let owningOrgUnitId: string | null = null;
+  if (row.owningCompanyCode && row.owningCompanyCode.trim().length > 0) {
+    owningOrgUnitId =
+      lookupMaps.owningCompanyMap?.get(
+        row.owningCompanyCode.trim().toUpperCase(),
+      ) || null;
+    if (!owningOrgUnitId) {
+      errors.push(`Owning company code '${row.owningCompanyCode}' not found`);
+    }
+  }
+
   const dto: Partial<AssetCreateLike> = {
     assetTag: row.assetTag.trim(),
     assetCategoryId: categoryId || "",
@@ -383,6 +399,7 @@ export function csvRowToDTO(
     currency: row.currency?.trim().toUpperCase() || null,
     currentStockLocationId: locationId,
     lifecycleStateId: stateId,
+    owningOrgUnitId,
     depreciationModel: row.depreciationModel?.trim() || null,
     depreciationStart: row.depreciationStart
       ? new Date(row.depreciationStart)
@@ -412,6 +429,7 @@ export function exportFailedRowsToCSV(failedAssets: ParsedAsset[]): void {
     "currency",
     "stockLocationCode",
     "lifecycleStateCode",
+    "owningCompanyCode",
     "depreciationModel",
     "depreciationStart",
     "depreciationEnd",
@@ -432,6 +450,7 @@ export function exportFailedRowsToCSV(failedAssets: ParsedAsset[]): void {
     asset.data.currency || "",
     asset.data.stockLocationCode || "",
     asset.data.lifecycleStateCode || "",
+    asset.data.owningCompanyCode || "",
     asset.data.depreciationModel || "",
     asset.data.depreciationStart || "",
     asset.data.depreciationEnd || "",

@@ -48,6 +48,7 @@ export const CreateAssetSchema = z.object({
   depreciationStart: dateSchema,
   depreciationEnd: dateSchema,
   currentStockLocationId: z.string().optional().nullable(),
+  owningOrgUnitId: z.string().optional().nullable(),
   attributes: z.record(z.string(), z.unknown()).optional().nullable(),
   note: z
     .string()
@@ -92,6 +93,7 @@ export const UpdateAssetSchema = z.object({
   depreciationStart: dateSchema,
   depreciationEnd: dateSchema,
   currentStockLocationId: z.string().optional().nullable(),
+  owningOrgUnitId: z.string().optional().nullable(),
   attributes: z.record(z.string(), z.unknown()).optional().nullable(),
   note: z
     .string()
@@ -114,6 +116,7 @@ export const AssetSearchSchema = z.object({
   vendorId: z.string().optional(),
   lifecycleStateId: z.string().optional(),
   currentStockLocationId: z.string().optional(),
+  owningOrgUnitId: z.string().optional(),
   contractId: z.string().optional(),
   searchTerm: z.string().optional(),
   depreciationStatus: z.enum(["active", "complete", "none"]).optional(),

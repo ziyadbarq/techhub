@@ -13,8 +13,15 @@
 
 import { useMemo } from "react";
 import { Filter, X, Search } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -24,6 +31,15 @@ import {
 } from "@/components/ui/select";
 import type { AssetsFilters } from "@/hooks/use-assets-filters";
 import type { AssetFilterOptions } from "@/interface-adapters/controllers/asset.controller";
+
+/**
+ * A select filter is "unset" when it holds the "all" sentinel; text filters are
+ * "unset" when empty. Treating "all" as a real value is what used to render
+ * meaningless `Category: all` pills and keep the Clear button always visible.
+ */
+function isActiveFilterValue(value: string | undefined): boolean {
+  return !!value && value !== "all";
+}
 
 interface AssetsToolbarProps {
   filters: AssetsFilters;
@@ -51,18 +67,21 @@ export function AssetsToolbar({
       filters.lifecycleStateId,
       filters.currentStockLocationId,
       filters.vendorId,
+      filters.owningOrgUnitId,
       filters.assignedUserTerm,
       filters.hostNameTerm,
-    ].filter(Boolean).length;
+    ].filter(isActiveFilterValue).length;
   }, [filters]);
 
   const hasActiveFilters = activeFilterCount > 0 || !!filters.searchTerm;
 
+  // The page stores "unset" as the literal "all" (useTableFilters convention),
+  // so pass the sentinel straight through instead of converting to undefined.
   const handleFilterChange = (
     key: keyof AssetsFilters,
     value: string | undefined,
   ) => {
-    onFilterChange(key, value === "all" ? undefined : value);
+    onFilterChange(key, value ?? "all");
   };
 
   const getSelectedLabel = (
@@ -73,11 +92,74 @@ export function AssetsToolbar({
     return options.find((o) => o.value === value)?.label;
   };
 
+  const selectFilters: Array<{
+    key: keyof AssetsFilters;
+    label: string;
+    allLabel: string;
+    value: string | undefined;
+    options: Array<{ value: string; label: string }> | undefined;
+  }> = [
+    {
+      key: "assetCategoryId",
+      label: "Category",
+      allLabel: "All Categories",
+      value: filters.assetCategoryId,
+      options: filterOptions?.categories,
+    },
+    {
+      key: "lifecycleStateId",
+      label: "Status",
+      allLabel: "All Status",
+      value: filters.lifecycleStateId,
+      options: filterOptions?.lifecycleStates,
+    },
+    {
+      key: "currentStockLocationId",
+      label: "Location",
+      allLabel: "All Locations",
+      value: filters.currentStockLocationId,
+      options: filterOptions?.stockLocations,
+    },
+    {
+      key: "vendorId",
+      label: "Manufacturer",
+      allLabel: "All Manufacturers",
+      value: filters.vendorId,
+      options: filterOptions?.vendors,
+    },
+    {
+      key: "owningOrgUnitId",
+      label: "Company",
+      allLabel: "All Companies",
+      value: filters.owningOrgUnitId,
+      options: filterOptions?.owningCompanies,
+    },
+  ];
+
+  const textFilters: Array<{
+    key: keyof AssetsFilters;
+    label: string;
+    placeholder: string;
+    value: string | undefined;
+  }> = [
+    {
+      key: "assignedUserTerm",
+      label: "User",
+      placeholder: "Name or email...",
+      value: filters.assignedUserTerm,
+    },
+    {
+      key: "hostNameTerm",
+      label: "Host Name",
+      placeholder: "Host name...",
+      value: filters.hostNameTerm,
+    },
+  ];
+
   return (
-    <div className="space-y-4">
-      {/* Search and Filter Row */}
-      <div className="flex flex-wrap items-center gap-3">
-        {/* Search Input */}
+    <div className="space-y-3">
+      {/* Search + filter panel trigger */}
+      <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[250px] flex-1">
           <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
@@ -89,126 +171,79 @@ export function AssetsToolbar({
           />
         </div>
 
-        {/* Category Filter */}
-        <Select
-          value={filters.assetCategoryId ?? "all"}
-          onValueChange={(value) =>
-            handleFilterChange("assetCategoryId", value)
-          }
-          disabled={loading || !filterOptions}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="All Categories" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {filterOptions?.categories.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="gap-2" disabled={loading}>
+              <Filter className="h-4 w-4" />
+              Filters
+              {activeFilterCount > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="ml-1 h-5 min-w-5 justify-center px-1 tabular-nums"
+                >
+                  {activeFilterCount}
+                </Badge>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-80 space-y-4">
+            {selectFilters.map((filter) => (
+              <div key={String(filter.key)} className="space-y-1.5">
+                <Label className="text-xs font-medium">{filter.label}</Label>
+                <Select
+                  value={filter.value ?? "all"}
+                  onValueChange={(value) =>
+                    handleFilterChange(filter.key, value)
+                  }
+                  disabled={loading || !filterOptions}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={filter.allLabel} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{filter.allLabel}</SelectItem>
+                    {filter.options?.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             ))}
-          </SelectContent>
-        </Select>
 
-        {/* Lifecycle State Filter */}
-        <Select
-          value={filters.lifecycleStateId ?? "all"}
-          onValueChange={(value) =>
-            handleFilterChange("lifecycleStateId", value)
-          }
-          disabled={loading || !filterOptions}
-        >
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="All Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            {filterOptions?.lifecycleStates.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
+            {textFilters.map((filter) => (
+              <div key={String(filter.key)} className="space-y-1.5">
+                <Label className="text-xs font-medium">{filter.label}</Label>
+                <Input
+                  placeholder={filter.placeholder}
+                  value={filter.value ?? ""}
+                  onChange={(event) =>
+                    onFilterChange(filter.key, event.target.value)
+                  }
+                  disabled={loading}
+                />
+              </div>
             ))}
-          </SelectContent>
-        </Select>
 
-        {/* Location Filter */}
-        <Select
-          value={filters.currentStockLocationId ?? "all"}
-          onValueChange={(value) =>
-            handleFilterChange("currentStockLocationId", value)
-          }
-          disabled={loading || !filterOptions}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="All Locations" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Locations</SelectItem>
-            {filterOptions?.stockLocations.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {/* Manufacturer Filter */}
-        <Select
-          value={filters.vendorId ?? "all"}
-          onValueChange={(value) => handleFilterChange("vendorId", value)}
-          disabled={loading || !filterOptions}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="All Manufacturers" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Manufacturers</SelectItem>
-            {filterOptions?.vendors.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {/* Clear Filters Button */}
-        {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClearFilters}
-            className="gap-1"
-          >
-            <X className="h-4 w-4" />
-            Clear
-          </Button>
-        )}
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClearFilters}
+                className="w-full gap-1"
+              >
+                <X className="h-4 w-4" />
+                Clear all filters
+              </Button>
+            )}
+          </PopoverContent>
+        </Popover>
       </div>
 
-      {/* Asset metadata filters */}
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Input
-          placeholder="Filter by user..."
-          value={filters.assignedUserTerm ?? ""}
-          onChange={(event) =>
-            onFilterChange("assignedUserTerm", event.target.value)
-          }
-          disabled={loading}
-        />
-        <Input
-          placeholder="Filter by host name..."
-          value={filters.hostNameTerm ?? ""}
-          onChange={(event) =>
-            onFilterChange("hostNameTerm", event.target.value)
-          }
-          disabled={loading}
-        />
-      </div>
-
-      {/* Active Filters Pills */}
+      {/* Active filter pills - only rendered for filters that are actually set */}
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2">
-          <Filter className="text-muted-foreground h-4 w-4" />
           {filters.searchTerm && (
             <FilterPill
               label="Search"
@@ -216,68 +251,29 @@ export function AssetsToolbar({
               onClear={() => onSearchChange("")}
             />
           )}
-          {filters.assetCategoryId && (
-            <FilterPill
-              label="Category"
-              value={
-                getSelectedLabel(
-                  filterOptions?.categories,
-                  filters.assetCategoryId,
-                ) || filters.assetCategoryId
-              }
-              onClear={() => handleFilterChange("assetCategoryId", undefined)}
-            />
-          )}
-          {filters.lifecycleStateId && (
-            <FilterPill
-              label="Status"
-              value={
-                getSelectedLabel(
-                  filterOptions?.lifecycleStates,
-                  filters.lifecycleStateId,
-                ) || filters.lifecycleStateId
-              }
-              onClear={() => handleFilterChange("lifecycleStateId", undefined)}
-            />
-          )}
-          {filters.currentStockLocationId && (
-            <FilterPill
-              label="Location"
-              value={
-                getSelectedLabel(
-                  filterOptions?.stockLocations,
-                  filters.currentStockLocationId,
-                ) || filters.currentStockLocationId
-              }
-              onClear={() =>
-                handleFilterChange("currentStockLocationId", undefined)
-              }
-            />
-          )}
-          {filters.vendorId && (
-            <FilterPill
-              label="Manufacturer"
-              value={
-                getSelectedLabel(filterOptions?.vendors, filters.vendorId) ||
-                filters.vendorId
-              }
-              onClear={() => handleFilterChange("vendorId", undefined)}
-            />
-          )}
-          {filters.assignedUserTerm && (
-            <FilterPill
-              label="User"
-              value={filters.assignedUserTerm}
-              onClear={() => onFilterChange("assignedUserTerm", "")}
-            />
-          )}
-          {filters.hostNameTerm && (
-            <FilterPill
-              label="Host Name"
-              value={filters.hostNameTerm}
-              onClear={() => onFilterChange("hostNameTerm", "")}
-            />
-          )}
+          {selectFilters
+            .filter((filter) => isActiveFilterValue(filter.value))
+            .map((filter) => (
+              <FilterPill
+                key={String(filter.key)}
+                label={filter.label}
+                value={
+                  getSelectedLabel(filter.options, filter.value) ||
+                  filter.value!
+                }
+                onClear={() => handleFilterChange(filter.key, "all")}
+              />
+            ))}
+          {textFilters
+            .filter((filter) => isActiveFilterValue(filter.value))
+            .map((filter) => (
+              <FilterPill
+                key={String(filter.key)}
+                label={filter.label}
+                value={filter.value!}
+                onClear={() => onFilterChange(filter.key, "")}
+              />
+            ))}
         </div>
       )}
     </div>

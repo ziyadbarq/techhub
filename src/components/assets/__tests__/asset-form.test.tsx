@@ -26,6 +26,21 @@ vi.mock("server-only", () => ({}));
 vi.mock("@/interface-adapters/controllers/asset.controller", () => ({
   createAssetAction: vi.fn(),
   updateAssetAction: vi.fn(),
+  getAssetFilterOptionsAction: vi.fn(() =>
+    Promise.resolve({
+      success: true,
+      data: {
+        categories: [],
+        lifecycleStates: [],
+        stockLocations: [],
+        vendors: [],
+        owningCompanies: [
+          { value: "org-barq", label: "Barq" },
+          { value: "org-aoun", label: "Aoun" },
+        ],
+      },
+    }),
+  ),
 }));
 
 vi.mock("@/interface-adapters/controllers/asset-category.controller", () => ({
@@ -136,6 +151,7 @@ const createMockAsset = (overrides?: Partial<AssetDTO>): AssetDTO => ({
   depreciationEnd: null,
   condition: "NEW",
   currentStockLocationId: "loc-1",
+  owningOrgUnitId: null,
   attributes: null,
   note: "Test note",
   createdAt: "2024-01-15T00:00:00.000Z",

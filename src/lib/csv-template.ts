@@ -18,6 +18,7 @@ const ASSET_IMPORT_HEADERS = [
   "currency",
   "stockLocationCode",
   "lifecycleStateCode",
+  "owningCompanyCode",
   "depreciationModel",
   "depreciationStart",
   "depreciationEnd",
@@ -36,6 +37,7 @@ const ASSET_IMPORT_INSTRUCTIONS = [
   "Optional: 3-letter ISO code (USD, EUR, etc.)",
   "Optional: Stock location code (must exist if provided)",
   "Optional: Lifecycle state code (must exist if provided)",
+  "Optional: Owning company code - see Reference sheet (e.g. BARQ, AOUN)",
   "Optional: Depreciation model name",
   "Optional: Format YYYY-MM-DD",
   "Optional: Format YYYY-MM-DD",
@@ -54,6 +56,7 @@ const ASSET_IMPORT_EXAMPLE_ROW = [
   "USD",
   "HQ-WAREHOUSE",
   "IN-USE",
+  "BARQ",
   "STRAIGHT-LINE",
   "2024-01-15",
   "2027-01-15",
@@ -108,9 +111,79 @@ export function downloadAssetCSVTemplate(): void {
 }
 
 /**
- * Download asset Excel import template
+ * Codes the importer accepts, grouped for the template's Reference sheet.
+ * Passing real values lets someone fill the template without guessing codes.
  */
-export function downloadAssetExcelTemplate(): void {
+export interface AssetTemplateReferenceData {
+  owningCompanies?: Array<{ code: string; name: string }>;
+  categories?: Array<{ code: string; name: string }>;
+  stockLocations?: Array<{ code: string; name: string }>;
+  lifecycleStates?: Array<{ code: string; name: string }>;
+}
+
+/**
+ * Build the "Reference" sheet rows: one section per code list.
+ */
+function buildReferenceRows(reference: AssetTemplateReferenceData): string[][] {
+  const sections: Array<{
+    column: string;
+    title: string;
+    items?: Array<{ code: string; name: string }>;
+  }> = [
+    {
+      column: "owningCompanyCode",
+      title: "Owning companies",
+      items: reference.owningCompanies,
+    },
+    {
+      column: "categoryCode*",
+      title: "Asset categories",
+      items: reference.categories,
+    },
+    {
+      column: "stockLocationCode",
+      title: "Stock locations",
+      items: reference.stockLocations,
+    },
+    {
+      column: "lifecycleStateCode",
+      title: "Lifecycle states",
+      items: reference.lifecycleStates,
+    },
+  ];
+
+  const rows: string[][] = [
+    ["Column", "Valid code", "Name"],
+    [
+      "Copy a code from this sheet into the matching column on the Assets sheet.",
+      "",
+      "",
+    ],
+    ["", "", ""],
+  ];
+
+  for (const section of sections) {
+    if (!section.items || section.items.length === 0) continue;
+
+    rows.push([section.title, "", ""]);
+    for (const item of section.items) {
+      rows.push([section.column, item.code, item.name]);
+    }
+    rows.push(["", "", ""]);
+  }
+
+  return rows;
+}
+
+/**
+ * Download asset Excel import template.
+ *
+ * @param reference - Live codes to list on the Reference sheet. Omit to get the
+ *   bare template; the sheet is then skipped rather than shown empty.
+ */
+export function downloadAssetExcelTemplate(
+  reference: AssetTemplateReferenceData = {},
+): void {
   const worksheet = XLSX.utils.aoa_to_sheet([
     ASSET_IMPORT_HEADERS,
     ASSET_IMPORT_INSTRUCTIONS,
@@ -121,8 +194,26 @@ export function downloadAssetExcelTemplate(): void {
     wch: Math.max(header.length + 4, 18),
   }));
 
+  // Keep the header row visible while scrolling down a long import.
+  worksheet["!freeze"] = { xSplit: "0", ySplit: "1", topLeftCell: "A2" };
+  worksheet["!autofilter"] = {
+    ref: XLSX.utils.encode_range({
+      s: { r: 0, c: 0 },
+      e: { r: 0, c: ASSET_IMPORT_HEADERS.length - 1 },
+    }),
+  };
+
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Assets");
+
+  const referenceRows = buildReferenceRows(reference);
+  // Row 0 is the header and rows 1-2 are guidance, so anything longer than
+  // that means at least one code list was supplied.
+  if (referenceRows.length > 3) {
+    const referenceSheet = XLSX.utils.aoa_to_sheet(referenceRows);
+    referenceSheet["!cols"] = [{ wch: 24 }, { wch: 22 }, { wch: 40 }];
+    XLSX.utils.book_append_sheet(workbook, referenceSheet, "Reference");
+  }
 
   XLSX.writeFile(
     workbook,

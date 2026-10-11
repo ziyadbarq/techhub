@@ -104,6 +104,14 @@ export async function seedAssetConfig(prisma: PrismaClient) {
       });
 
       if (existing) {
+        // Keep uiOrder authoritative from config so inserting a field into
+        // an existing mapping reorders the others instead of colliding.
+        if (existing.uiOrder !== i + 1) {
+          await prisma.assetCategoryField.update({
+            where: { id: existing.id },
+            data: { uiOrder: i + 1 },
+          });
+        }
         categoryFieldCount++;
         continue;
       }

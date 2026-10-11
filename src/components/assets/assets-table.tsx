@@ -22,6 +22,7 @@ import { useDeleteDialog } from "@/hooks/use-delete-dialog";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
 import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
+import { useCustomFieldColumns } from "./custom-field-columns";
 
 interface AssetsTableProps {
   data: AssetDTO[];
@@ -30,6 +31,13 @@ interface AssetsTableProps {
   onRefresh: () => void;
   onSelectionChange?: (selectedAssets: AssetDTO[]) => void;
   detailReturnTo?: string;
+  /**
+   * localStorage key for column visibility. Scope it per screen so hiding a
+   * column in one context does not change another's layout.
+   */
+  columnStorageKey?: string;
+  /** Column ids to hide by default; the user can still enable them. */
+  hiddenColumnIds?: string[];
 }
 
 export function AssetsTable({
@@ -39,6 +47,8 @@ export function AssetsTable({
   onRefresh,
   onSelectionChange,
   detailReturnTo,
+  columnStorageKey = "assets-table-columns",
+  hiddenColumnIds,
 }: AssetsTableProps) {
   // Use reusable hooks
   const router = useRouter();
@@ -190,6 +200,26 @@ export function AssetsTable({
         },
         meta: {
           label: "Host Name",
+          // Only populated for assets synced from Intune, so it is empty in
+          // most views. Available from the Columns menu when it matters.
+          hiddenByDefault: true,
+        },
+      },
+      {
+        accessorKey: "owningCompanyName",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Company" />
+        ),
+        cell: ({ row }) => {
+          const companyName = row.original.owningCompanyName;
+          return (
+            <span className="text-sm">
+              {companyName || <span className="text-muted-foreground">—</span>}
+            </span>
+          );
+        },
+        meta: {
+          label: "Company",
         },
       },
       {
@@ -325,16 +355,20 @@ export function AssetsTable({
     [onEdit, deleteDialog.openDialog],
   );
 
-  // Merge static columns + actions column
+  // Custom field columns, derived from the categories present in `data`
+  const { columns: customFieldColumns } = useCustomFieldColumns(data);
+
+  // Merge static columns + custom field columns + actions column
   const allColumns = React.useMemo(() => {
-    return [...baseColumns, actionsColumn];
-  }, [baseColumns, actionsColumn]);
+    return [...baseColumns, ...customFieldColumns, actionsColumn];
+  }, [baseColumns, customFieldColumns, actionsColumn]);
 
   // Use enhanced column visibility hook with localStorage persistence
   const { visibility, onVisibilityChange } =
     useColumnVisibilityEnhanced<AssetDTO>({
-      storageKey: "assets-table-columns",
+      storageKey: columnStorageKey,
       columns: allColumns,
+      extraHiddenColumnIds: hiddenColumnIds,
     });
 
   return (

@@ -70,6 +70,7 @@ const createMockAsset = (overrides?: Partial<AssetDTO>): AssetDTO => ({
   depreciationEnd: null,
   condition: "NEW",
   currentStockLocationId: "loc-1",
+  owningOrgUnitId: null,
   attributes: null,
   note: null,
   createdAt: "2024-01-15T00:00:00.000Z",

@@ -81,6 +81,10 @@ const mockListLifecycleStatesUseCase = {
   execute: vi.fn(),
 };
 
+const mockListOrganizationUnitsUseCase = {
+  execute: vi.fn(),
+};
+
 const mockAssetAssignmentRepository = {
   findAll: vi.fn(),
 };
@@ -179,6 +183,9 @@ vi.mock("@/di/container", () => ({
       if (tokenKey === Symbol.for("ListLifecycleStatesUseCase").toString()) {
         return mockListLifecycleStatesUseCase;
       }
+      if (tokenKey === Symbol.for("ListOrganizationUnitsUseCase").toString()) {
+        return mockListOrganizationUnitsUseCase;
+      }
       if (tokenKey === Symbol.for("IAssetRepository").toString()) {
         return mockAssetRepository;
       }
@@ -229,6 +236,11 @@ describe("Asset Controller", () => {
     ]);
     mockListLifecycleStatesUseCase.execute.mockResolvedValue([
       { id: "state-active", name: "Active", code: "ACTIVE" },
+    ]);
+    mockListOrganizationUnitsUseCase.execute.mockResolvedValue([
+      { id: "org-barq", name: "Barq", code: "BARQ", unitType: "COMPANY" },
+      { id: "org-aoun", name: "Aoun", code: "AOUN", unitType: "COMPANY" },
+      { id: "org-it", name: "IT", code: "IT", unitType: "DEPARTMENT" },
     ]);
   });
 

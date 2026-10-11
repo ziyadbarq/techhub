@@ -6,7 +6,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, FolderTree, Plus } from "lucide-react";
+import { ArrowLeft, FileSpreadsheet, FolderTree, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
@@ -73,6 +73,18 @@ export function AssetCategoryAssetsPageClient({
     [category.code, category.name],
   );
 
+  const handleExportAll = useCallback(() => {
+    if (assets.length === 0) {
+      toast.error("No assets to export");
+      return;
+    }
+
+    exportAssetsToXLSX(assets, {
+      filename: `${category.code || category.name}-assets-${assets.length}`,
+    });
+    toast.success(`Exported ${assets.length} asset(s) to Excel`);
+  }, [assets, category.code, category.name]);
+
   const loadAssets = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -125,15 +137,29 @@ export function AssetCategoryAssetsPageClient({
           </div>
         </div>
 
-        <PermissionGuard permission={PERMISSIONS.ASSETS_CREATE}>
-          <Button
-            onClick={() => setIsFormOpen(true)}
-            className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            New Asset
-          </Button>
-        </PermissionGuard>
+        <div className="flex flex-wrap gap-2">
+          <PermissionGuard permission={PERMISSIONS.ASSETS_VIEW}>
+            <Button
+              variant="outline"
+              onClick={handleExportAll}
+              disabled={isLoading || assets.length === 0}
+              className="gap-2"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
+              Export Excel
+            </Button>
+          </PermissionGuard>
+
+          <PermissionGuard permission={PERMISSIONS.ASSETS_CREATE}>
+            <Button
+              onClick={() => setIsFormOpen(true)}
+              className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              New Asset
+            </Button>
+          </PermissionGuard>
+        </div>
       </div>
 
       <Card>
@@ -171,6 +197,10 @@ export function AssetCategoryAssetsPageClient({
         onRefresh={loadAssets}
         onSelectionChange={setSelectedAssets}
         detailReturnTo={`/asset-categories/${category.id}/assets`}
+        // Own storage key so hiding a column here does not reshape /assets.
+        columnStorageKey="asset-category-assets-table-columns"
+        // Every row in this view shares one category, so the column is noise.
+        hiddenColumnIds={["categoryName"]}
       />
 
       <AssetForm

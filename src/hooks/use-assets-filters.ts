@@ -20,6 +20,7 @@ export interface AssetsFilters {
   lifecycleStateId?: string;
   currentStockLocationId?: string;
   vendorId?: string;
+  owningOrgUnitId?: string;
   assignedUserTerm?: string;
   hostNameTerm?: string;
   sortBy?: "assetTag" | "createdAt" | "purchaseDate" | "purchaseCost";
@@ -64,6 +65,7 @@ const DEFAULT_FILTERS: AssetsFilters = {
   lifecycleStateId: undefined,
   currentStockLocationId: undefined,
   vendorId: undefined,
+  owningOrgUnitId: undefined,
   assignedUserTerm: undefined,
   hostNameTerm: undefined,
   sortBy: "assetTag",
@@ -150,6 +152,7 @@ export function useAssetsFilters(
       filters.lifecycleStateId ||
       filters.currentStockLocationId ||
       filters.vendorId ||
+      filters.owningOrgUnitId ||
       filters.assignedUserTerm ||
       filters.hostNameTerm
     );
@@ -163,6 +166,7 @@ export function useAssetsFilters(
     if (filters.lifecycleStateId) count++;
     if (filters.currentStockLocationId) count++;
     if (filters.vendorId) count++;
+    if (filters.owningOrgUnitId) count++;
     if (filters.assignedUserTerm) count++;
     if (filters.hostNameTerm) count++;
     return count;
@@ -176,6 +180,7 @@ export function useAssetsFilters(
       lifecycleStateId: filters.lifecycleStateId || undefined,
       currentStockLocationId: filters.currentStockLocationId || undefined,
       vendorId: filters.vendorId || undefined,
+      owningOrgUnitId: filters.owningOrgUnitId || undefined,
       sortBy: filters.sortBy,
       sortOrder: filters.sortOrder,
     };

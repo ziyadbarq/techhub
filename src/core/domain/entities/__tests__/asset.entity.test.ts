@@ -44,6 +44,7 @@ describe("Asset Entity", () => {
     depreciationEnd: new Date("2029-01-15"),
     condition: "NEW",
     currentStockLocationId: "stock-001",
+    owningOrgUnitId: null,
     attributes: { ram: "16GB", storage: "512GB SSD" },
     note: "Company laptop for engineering team",
     createdAt: new Date("2024-01-15"),
@@ -563,6 +564,7 @@ describe("Asset Entity", () => {
       const asset = Asset.create({
         ...validCreateProps,
         currentStockLocationId: "warehouse-001",
+        owningOrgUnitId: null,
       });
 
       asset.setStockLocation(null);

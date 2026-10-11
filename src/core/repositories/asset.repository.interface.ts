@@ -11,6 +11,7 @@ export interface AssetSearchOptions {
   vendorId?: string;
   lifecycleStateId?: string;
   currentStockLocationId?: string;
+  owningOrgUnitId?: string;
   contractId?: string;
   searchTerm?: string; // Search in assetTag, serialNumber, note
   depreciationStatus?: "active" | "complete" | "none"; // Filter by depreciation status

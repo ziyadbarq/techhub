@@ -22,6 +22,7 @@ export interface AssetProps {
   depreciationEnd: Date | null;
   condition: string | null;
   currentStockLocationId: string | null;
+  owningOrgUnitId: string | null;
   attributes: Record<string, unknown> | null;
   note: string | null;
   createdAt: Date;
@@ -45,6 +46,7 @@ export interface CreateAssetProps {
   depreciationEnd?: Date | null;
   condition?: string | null;
   currentStockLocationId?: string | null;
+  owningOrgUnitId?: string | null;
   attributes?: Record<string, unknown> | null;
   note?: string | null;
   /** Person ID of the user performing the action (used for movement tracking) */
@@ -98,6 +100,7 @@ export class Asset {
       depreciationEnd: props.depreciationEnd || null,
       condition: props.condition || null,
       currentStockLocationId: props.currentStockLocationId || null,
+      owningOrgUnitId: props.owningOrgUnitId || null,
       attributes: props.attributes || null,
       note: props.note?.trim() || null,
       createdAt: now,
@@ -131,6 +134,7 @@ export class Asset {
     depreciationEnd?: Date | null;
     condition?: string | null;
     currentStockLocationId?: string | null;
+    owningOrgUnitId?: string | null;
     attributes?: Record<string, unknown> | null;
     note?: string | null;
   }): void {
@@ -202,6 +206,10 @@ export class Asset {
 
     if (props.currentStockLocationId !== undefined) {
       this.props.currentStockLocationId = props.currentStockLocationId;
+    }
+
+    if (props.owningOrgUnitId !== undefined) {
+      this.props.owningOrgUnitId = props.owningOrgUnitId;
     }
 
     if (props.attributes !== undefined) {
@@ -386,6 +394,10 @@ export class Asset {
 
   get currentStockLocationId(): string | null {
     return this.props.currentStockLocationId;
+  }
+
+  get owningOrgUnitId(): string | null {
+    return this.props.owningOrgUnitId;
   }
 
   get attributes(): Record<string, unknown> | null {

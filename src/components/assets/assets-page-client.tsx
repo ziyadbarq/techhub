@@ -7,6 +7,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import {
+  ChevronDown,
   Download,
   FileSpreadsheet,
   GripVertical,
@@ -31,8 +32,20 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import {
   listAssetsAction,
@@ -102,6 +115,7 @@ export function AssetsPageClient({
     lifecycleStateId: string;
     currentStockLocationId: string;
     vendorId: string;
+    owningOrgUnitId: string;
     assignedUserTerm: string;
     hostNameTerm: string;
   }>({
@@ -110,6 +124,7 @@ export function AssetsPageClient({
       lifecycleStateId: "all",
       currentStockLocationId: "all",
       vendorId: "all",
+      owningOrgUnitId: "all",
       assignedUserTerm: "",
       hostNameTerm: "",
     },
@@ -206,6 +221,13 @@ export function AssetsPageClient({
     if (filters.filters.vendorId !== "all") {
       result = result.filter(
         (asset) => asset.vendorId === filters.filters.vendorId,
+      );
+    }
+
+    // Apply owning company filter
+    if (filters.filters.owningOrgUnitId !== "all") {
+      result = result.filter(
+        (asset) => asset.owningOrgUnitId === filters.filters.owningOrgUnitId,
       );
     }
 
@@ -330,36 +352,37 @@ export function AssetsPageClient({
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h2 className="text-2xl font-bold">Assets</h2>
-          <p className="text-muted-foreground">
-            {filteredAssets.length.toLocaleString()} asset
-            {filteredAssets.length !== 1 ? "s" : ""}
-            {assets.length !== filteredAssets.length &&
-              ` (filtered from ${assets.length})`}
-            {filters.searchTerm && ` • Search: "${filters.searchTerm}"`}
-          </p>
+          {/* The unfiltered total already lives in the summary cards, so only
+              say something here when the view is actually narrowed down. */}
+          {assets.length !== filteredAssets.length && (
+            <p className="text-muted-foreground">
+              Showing {filteredAssets.length.toLocaleString()} of{" "}
+              {assets.length.toLocaleString()}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-2">
           <PermissionGuard permission={PERMISSIONS.ASSETS_VIEW}>
-            <Button
-              variant="outline"
-              onClick={handleExportCSV}
-              className="gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export CSV
-            </Button>
-          </PermissionGuard>
-
-          <PermissionGuard permission={PERMISSIONS.ASSETS_VIEW}>
-            <Button
-              variant="outline"
-              onClick={handleExportXLSX}
-              className="gap-2"
-            >
-              <FileSpreadsheet className="h-4 w-4" />
-              Export Excel
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Download className="h-4 w-4" />
+                  Export
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleExportXLSX} className="gap-2">
+                  <FileSpreadsheet className="h-4 w-4" />
+                  Export Excel
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportCSV} className="gap-2">
+                  <Download className="h-4 w-4" />
+                  Export CSV
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </PermissionGuard>
 
           <PermissionGuard permission={PERMISSIONS.ASSETS_CREATE}>
@@ -399,6 +422,7 @@ export function AssetsPageClient({
           lifecycleStateId: filters.filters.lifecycleStateId,
           currentStockLocationId: filters.filters.currentStockLocationId,
           vendorId: filters.filters.vendorId,
+          owningOrgUnitId: filters.filters.owningOrgUnitId,
           assignedUserTerm: filters.filters.assignedUserTerm,
           hostNameTerm: filters.filters.hostNameTerm,
         }}
@@ -409,6 +433,7 @@ export function AssetsPageClient({
             key === "lifecycleStateId" ||
             key === "currentStockLocationId" ||
             key === "vendorId" ||
+            key === "owningOrgUnitId" ||
             key === "assignedUserTerm" ||
             key === "hostNameTerm"
           ) {
@@ -468,6 +493,11 @@ interface AssetCategoryCardsProps {
 
 function AssetCategoryCards({ categories }: AssetCategoryCardsProps) {
   const [isEditingOrder, setIsEditingOrder] = useState(false);
+  // Collapsed by default so the table is reachable without a long scroll.
+  const [isOpen, setIsOpen] = useLocalStorage<boolean>(
+    "assets-category-cards-open",
+    false,
+  );
   const [categoryOrder, setCategoryOrder] = useLocalStorage<string[]>(
     "assets-category-card-order",
     [],
@@ -535,57 +565,74 @@ function AssetCategoryCards({ categories }: AssetCategoryCardsProps) {
   }
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold">Asset Categories</h3>
-          <p className="text-muted-foreground text-sm">
-            Inventory count by category
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {isEditingOrder && (
+    <Collapsible asChild open={isOpen} onOpenChange={setIsOpen}>
+      <section className="space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <CollapsibleTrigger asChild>
             <Button
               type="button"
               variant="ghost"
-              size="sm"
-              onClick={resetOrder}
+              className="h-auto gap-2 px-2 py-1"
             >
-              Reset order
-            </Button>
-          )}
-          <Button
-            type="button"
-            variant={isEditingOrder ? "default" : "outline"}
-            size="sm"
-            onClick={() => setIsEditingOrder((value) => !value)}
-          >
-            {isEditingOrder ? "Done" : "Edit order"}
-          </Button>
-        </div>
-      </div>
-
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={orderedCategories.map((category) => category.id)}
-          strategy={rectSortingStrategy}
-        >
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-            {orderedCategories.map((category) => (
-              <SortableCategoryCard
-                key={category.id}
-                category={category}
-                isEditingOrder={isEditingOrder}
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 transition-transform",
+                  !isOpen && "-rotate-90",
+                )}
               />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
-    </section>
+              <span className="text-lg font-semibold">Asset Categories</span>
+              <Badge variant="secondary">{categories.length}</Badge>
+            </Button>
+          </CollapsibleTrigger>
+
+          {isOpen && (
+            <div className="flex items-center gap-2">
+              {isEditingOrder && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetOrder}
+                >
+                  Reset order
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant={isEditingOrder ? "default" : "outline"}
+                size="sm"
+                onClick={() => setIsEditingOrder((value) => !value)}
+              >
+                {isEditingOrder ? "Done" : "Edit order"}
+              </Button>
+            </div>
+          )}
+        </div>
+
+        <CollapsibleContent>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={orderedCategories.map((category) => category.id)}
+              strategy={rectSortingStrategy}
+            >
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+                {orderedCategories.map((category) => (
+                  <SortableCategoryCard
+                    key={category.id}
+                    category={category}
+                    isEditingOrder={isEditingOrder}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </CollapsibleContent>
+      </section>
+    </Collapsible>
   );
 }
 

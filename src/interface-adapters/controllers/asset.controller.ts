@@ -48,8 +48,10 @@ import type { ListAssetModelsUseCase } from "@/core/use-cases/asset/asset-model"
 import type { ListVendorsUseCase } from "@/core/use-cases/foundation/vendor";
 import type { ListStockLocationsUseCase } from "@/core/use-cases/inventory/stock-location";
 import type { ListLifecycleStatesUseCase } from "@/core/use-cases/foundation/lifecycle-state";
+import type { ListOrganizationUnitsUseCase } from "@/core/use-cases/foundation/organization-unit";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { OWNING_COMPANY_UNIT_TYPE } from "@/core/domain/value-objects/foundation-enums";
 import { getSession } from "@/lib/auth/session";
 
 /**
@@ -114,6 +116,13 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
         .filter((id): id is string => id !== null),
     ),
   ];
+  const owningOrgUnitIds = [
+    ...new Set(
+      assets
+        .map((a) => a.owningOrgUnitId)
+        .filter((id): id is string => id !== null),
+    ),
+  ];
   const assetIds = assets.map((asset) => asset.id);
 
   const isActiveAssignment = (assignment: { endDate: Date | null }) =>
@@ -156,6 +165,7 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
     vendorsMap,
     stockLocationsMap,
     lifecycleStatesMap,
+    owningCompaniesMap,
     assignmentInfoMap,
     intuneDeviceMap,
   ] = await Promise.all([
@@ -225,6 +235,20 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
         states
           .filter((s) => lifecycleStateIds.includes(s.id))
           .map((s) => [s.id, s.name]),
+      );
+    })(),
+    (async () => {
+      if (owningOrgUnitIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListOrganizationUnitsUseCase>(
+        DI_TOKENS.ListOrganizationUnitsUseCase,
+      );
+      const orgUnits = await useCase.execute();
+
+      return new Map(
+        orgUnits
+          .filter((unit) => owningOrgUnitIds.includes(unit.id))
+          .map((unit) => [unit.id, unit.name]),
       );
     })(),
     (async () => {
@@ -320,6 +344,9 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
     const lifecycleStateName = asset.lifecycleStateId
       ? lifecycleStatesMap.get(asset.lifecycleStateId) || null
       : null;
+    const owningCompanyName = asset.owningOrgUnitId
+      ? owningCompaniesMap.get(asset.owningOrgUnitId) || null
+      : null;
     const assignmentInfo = assignmentInfoMap.get(asset.id);
     const intuneDevice = intuneDeviceMap.get(asset.id);
     const hostName =
@@ -347,6 +374,7 @@ async function enrichAssets(assets: Asset[]): Promise<AssetDTO[]> {
       assignedUserEmail:
         assignmentInfo?.assignedUserEmail ?? intuneDevice?.userPrincipalName,
       hostName,
+      owningCompanyName,
     });
   });
 }
@@ -867,6 +895,7 @@ export async function getImportLookupMapsAction(): Promise<
     vendorMap: Record<string, string>;
     locationMap: Record<string, string>;
     stateMap: Record<string, string>;
+    owningCompanyMap: Record<string, string>;
     personEmailMap: Record<string, string>;
   }>
 > {
@@ -875,7 +904,7 @@ export async function getImportLookupMapsAction(): Promise<
 
     const container = getContainer();
 
-    const [categories, models, vendors, locations, states, persons] =
+    const [categories, models, vendors, locations, states, orgUnits, persons] =
       await Promise.all([
         container
           .get<ListAssetCategoriesUseCase>(DI_TOKENS.ListAssetCategoriesUseCase)
@@ -891,6 +920,11 @@ export async function getImportLookupMapsAction(): Promise<
           .execute(),
         container
           .get<ListLifecycleStatesUseCase>(DI_TOKENS.ListLifecycleStatesUseCase)
+          .execute(),
+        container
+          .get<ListOrganizationUnitsUseCase>(
+            DI_TOKENS.ListOrganizationUnitsUseCase,
+          )
           .execute(),
         container
           .get<IPersonRepository>(DI_TOKENS.IPersonRepository)
@@ -923,6 +957,13 @@ export async function getImportLookupMapsAction(): Promise<
       stateMap[s.code.toUpperCase()] = s.id;
     });
 
+    const owningCompanyMap: Record<string, string> = {};
+    orgUnits
+      .filter((unit) => unit.unitType === OWNING_COMPANY_UNIT_TYPE)
+      .forEach((unit) => {
+        owningCompanyMap[unit.code.toUpperCase()] = unit.id;
+      });
+
     const personEmailMap: Record<string, string> = {};
     persons.forEach((p) => {
       personEmailMap[p.email.toLowerCase()] = p.id;
@@ -936,6 +977,7 @@ export async function getImportLookupMapsAction(): Promise<
         vendorMap,
         locationMap,
         stateMap,
+        owningCompanyMap,
         personEmailMap,
       },
     };
@@ -944,6 +986,61 @@ export async function getImportLookupMapsAction(): Promise<
       error,
       { function: "getImportLookupMapsAction" },
       "Failed to get lookup maps",
+    );
+  }
+}
+
+/**
+ * Code + display name lists for the import template's Reference sheet.
+ * Separate from getImportLookupMapsAction, which returns code -> id for
+ * resolution; here the names are what make the sheet readable.
+ */
+export async function getAssetTemplateReferenceAction(): Promise<
+  ActionResponse<{
+    owningCompanies: Array<{ code: string; name: string }>;
+    categories: Array<{ code: string; name: string }>;
+    stockLocations: Array<{ code: string; name: string }>;
+    lifecycleStates: Array<{ code: string; name: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const container = getContainer();
+
+    const [categories, locations, states, orgUnits] = await Promise.all([
+      container
+        .get<ListAssetCategoriesUseCase>(DI_TOKENS.ListAssetCategoriesUseCase)
+        .execute(),
+      container
+        .get<ListStockLocationsUseCase>(DI_TOKENS.ListStockLocationsUseCase)
+        .execute(),
+      container
+        .get<ListLifecycleStatesUseCase>(DI_TOKENS.ListLifecycleStatesUseCase)
+        .execute(),
+      container
+        .get<ListOrganizationUnitsUseCase>(
+          DI_TOKENS.ListOrganizationUnitsUseCase,
+        )
+        .execute(),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        owningCompanies: orgUnits
+          .filter((unit) => unit.unitType === OWNING_COMPANY_UNIT_TYPE)
+          .map((unit) => ({ code: unit.code, name: unit.name })),
+        categories: categories.map((c) => ({ code: c.code, name: c.name })),
+        stockLocations: locations.map((l) => ({ code: l.code, name: l.name })),
+        lifecycleStates: states.map((s) => ({ code: s.code, name: s.name })),
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getAssetTemplateReferenceAction" },
+      "Failed to get template reference data",
     );
   }
 }
@@ -1322,6 +1419,8 @@ export interface AssetFilterOptions {
   lifecycleStates: Array<{ value: string; label: string }>;
   stockLocations: Array<{ value: string; label: string }>;
   vendors: Array<{ value: string; label: string }>;
+  /** COMPANY-level org units an asset can be owned by. */
+  owningCompanies: Array<{ value: string; label: string }>;
 }
 
 /**
@@ -1335,7 +1434,7 @@ export async function getAssetFilterOptionsAction(): Promise<
 
     const container = getContainer();
 
-    const [categories, lifecycleStates, stockLocations, vendors] =
+    const [categories, lifecycleStates, stockLocations, vendors, orgUnits] =
       await Promise.all([
         container
           .get<ListAssetCategoriesUseCase>(DI_TOKENS.ListAssetCategoriesUseCase)
@@ -1348,6 +1447,11 @@ export async function getAssetFilterOptionsAction(): Promise<
           .execute(),
         container
           .get<ListVendorsUseCase>(DI_TOKENS.ListVendorsUseCase)
+          .execute(),
+        container
+          .get<ListOrganizationUnitsUseCase>(
+            DI_TOKENS.ListOrganizationUnitsUseCase,
+          )
           .execute(),
       ]);
 
@@ -1364,6 +1468,9 @@ export async function getAssetFilterOptionsAction(): Promise<
           label: l.name,
         })),
         vendors: vendors.map((v) => ({ value: v.id, label: v.name })),
+        owningCompanies: orgUnits
+          .filter((unit) => unit.unitType === OWNING_COMPANY_UNIT_TYPE)
+          .map((unit) => ({ value: unit.id, label: unit.name })),
       },
     };
   } catch (error) {

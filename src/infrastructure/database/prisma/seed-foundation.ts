@@ -272,6 +272,12 @@ export async function seedFoundation(prisma: PrismaClient) {
       description: "Operating system version",
     },
     {
+      name: "Device Name",
+      code: "DEVICE_NAME",
+      dataType: "STRING",
+      description: "Device/computer name as registered on the network",
+    },
+    {
       name: "IP Address",
       code: "IP_ADDR",
       dataType: "STRING",

@@ -181,6 +181,7 @@ model Asset {
   depreciationEnd        DateTime?
   condition              AssetConditionEnum? // Asset condition: NEW, GOOD, FAIR, POOR
   currentStockLocationId String?
+  owningOrgUnitId        String? // Legal owner of the asset; must be a COMPANY-level org unit
   attributes             Json? // dynamic fields per AssetCategoryField
   note                   String?                @db.Text
   createdAt              DateTime               @default(now())
@@ -201,6 +202,7 @@ model Asset {
   contract             Contract?              @relation(fields: [contractId], references: [id], onDelete: SetNull)
   lifecycleState       LifecycleState?        @relation(fields: [lifecycleStateId], references: [id], onDelete: SetNull)
   currentStockLocation StockLocation?         @relation(fields: [currentStockLocationId], references: [id], onDelete: SetNull)
+  owningOrgUnit        OrganizationUnit?      @relation("AssetOwningCompany", fields: [owningOrgUnitId], references: [id], onDelete: SetNull)
   warranties           Warranty[]
   configurationItems   ConfigurationItem[]
   stockMovements       StockMovement[]
@@ -225,6 +227,7 @@ model Asset {
   @@index([lifecycleStateId])
   @@index([serialNumber])
   @@index([currentStockLocationId])
+  @@index([owningOrgUnitId]) // Filter/report assets by owning company
   @@index([condition]) // High-priority: Filter by condition
   @@index([assetCategoryId, lifecycleStateId]) // High-priority: Dashboard queries
   @@index([condition, lifecycleStateId]) // High-priority: Filter by condition + state

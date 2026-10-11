@@ -47,6 +47,7 @@ import {
 import {
   bulkCreateAssetsAction,
   getImportLookupMapsAction,
+  getAssetTemplateReferenceAction,
 } from "@/interface-adapters/controllers/asset.controller";
 import type { CreateAssetDTO } from "@/interface-adapters/dtos/generated/asset.dto";
 
@@ -146,6 +147,9 @@ export function ImportAssetsWizard({
       vendorMap: new Map(Object.entries(lookupResult.data.vendorMap)),
       locationMap: new Map(Object.entries(lookupResult.data.locationMap)),
       stateMap: new Map(Object.entries(lookupResult.data.stateMap)),
+      owningCompanyMap: new Map(
+        Object.entries(lookupResult.data.owningCompanyMap),
+      ),
       personEmailMap: new Map(Object.entries(lookupResult.data.personEmailMap)),
     };
 
@@ -223,9 +227,18 @@ export function ImportAssetsWizard({
     }
   };
 
-  const handleDownloadTemplate = () => {
-    downloadAssetExcelTemplate();
-    toast.success("Excel template downloaded");
+  const handleDownloadTemplate = async () => {
+    // Fetch live codes so the Reference sheet lists what this instance accepts.
+    const result = await getAssetTemplateReferenceAction();
+    downloadAssetExcelTemplate(result.success ? result.data : {});
+
+    if (result.success) {
+      toast.success("Excel template downloaded");
+    } else {
+      toast.warning(
+        "Template downloaded without the Reference sheet - could not load codes",
+      );
+    }
   };
 
   const handleDownloadCSVTemplate = () => {

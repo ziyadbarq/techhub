@@ -46,6 +46,7 @@ function makeAsset(): Asset {
     depreciationEnd: null,
     condition: null,
     currentStockLocationId: null,
+    owningOrgUnitId: null,
     attributes: null,
     note: null,
     createdAt: new Date("2024-01-01"),

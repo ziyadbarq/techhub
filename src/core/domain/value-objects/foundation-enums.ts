@@ -121,6 +121,12 @@ export enum OrganizationUnitType {
 }
 
 /**
+ * Org unit type that may legally own an asset. An asset belongs to a company
+ * (Barq, Aoun, ...), never to a department or team within one.
+ */
+export const OWNING_COMPANY_UNIT_TYPE = OrganizationUnitType.COMPANY;
+
+/**
  * Vendor types
  */
 export enum VendorType {

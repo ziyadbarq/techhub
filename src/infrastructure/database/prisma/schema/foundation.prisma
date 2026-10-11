@@ -38,6 +38,7 @@ model OrganizationUnit {
   configurationItems ConfigurationItem[]
   dataOwnerships     DataOwnership[]     @relation("DataOwnershipOrgUnit")
   reservations       AssetReservation[]  @relation("ReservationForOrgUnit")
+  ownedAssets        Asset[]             @relation("AssetOwningCompany")
   deletedBy          Person?             @relation("OrgUnitDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes

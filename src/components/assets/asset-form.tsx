@@ -62,6 +62,7 @@ import { listAssetModelsAction } from "@/interface-adapters/controllers/asset-mo
 import { listVendorsAction } from "@/interface-adapters/controllers/vendor.controller";
 import { listStockLocationsAction } from "@/interface-adapters/controllers/stock-location.controller";
 import { listLifecycleStatesAction } from "@/interface-adapters/controllers/lifecycle-state.controller";
+import { getAssetFilterOptionsAction } from "@/interface-adapters/controllers/asset.controller";
 import type { AssetCategoryDTO } from "@/interface-adapters/presenters/asset-category.presenter";
 import type { AssetModelDTO } from "@/interface-adapters/presenters/asset-model.presenter";
 import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter";
@@ -116,6 +117,9 @@ export function AssetForm({
   const [lifecycleStates, setLifecycleStates] = useState<LifecycleStateDTO[]>(
     [],
   );
+  const [owningCompanies, setOwningCompanies] = useState<
+    Array<{ value: string; label: string }>
+  >([]);
   const [isModelFormOpen, setIsModelFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -170,6 +174,17 @@ export function AssetForm({
     [stockLocations],
   );
 
+  const owningCompanyOptions: SearchableSelectOption[] = useMemo(
+    () => [
+      { value: NONE_OPTION_VALUE, label: "None" },
+      ...owningCompanies.map((company) => ({
+        value: company.value,
+        label: company.label,
+      })),
+    ],
+    [owningCompanies],
+  );
+
   const lifecycleStateOptions: SearchableSelectOption[] = useMemo(
     () => [
       { value: NONE_OPTION_VALUE, label: "None" },
@@ -204,6 +219,7 @@ export function AssetForm({
       assetModelId: asset?.assetModelId ?? null,
       vendorId: asset?.vendorId ?? null,
       currentStockLocationId: asset?.currentStockLocationId ?? null,
+      owningOrgUnitId: asset?.owningOrgUnitId ?? null,
       lifecycleStateId: asset?.lifecycleStateId ?? null,
       serialNumber: asset?.serialNumber ?? "",
       condition: normalizeCondition(asset?.condition),
@@ -265,12 +281,14 @@ export function AssetForm({
         vendorsResult,
         stockLocationsResult,
         lifecycleStatesResult,
+        filterOptionsResult,
       ] = await Promise.all([
         listAssetCategoriesAction(),
         listAssetModelsAction(),
         listVendorsAction(),
         listStockLocationsAction(),
         listLifecycleStatesAction(),
+        getAssetFilterOptionsAction(),
       ]);
 
       if (categoriesResult.success) {
@@ -292,6 +310,10 @@ export function AssetForm({
       if (lifecycleStatesResult.success) {
         setLifecycleStates(lifecycleStatesResult.data);
       }
+
+      if (filterOptionsResult.success) {
+        setOwningCompanies(filterOptionsResult.data.owningCompanies);
+      }
     } catch (_error) {
       toast.error("Failed to load form data");
     } finally {
@@ -306,6 +328,7 @@ export function AssetForm({
       assetModelId: asset?.assetModelId ?? null,
       vendorId: asset?.vendorId ?? null,
       currentStockLocationId: asset?.currentStockLocationId ?? null,
+      owningOrgUnitId: asset?.owningOrgUnitId ?? null,
       lifecycleStateId: asset?.lifecycleStateId ?? null,
       serialNumber: asset?.serialNumber ?? "",
       condition: normalizeCondition(asset?.condition),
@@ -529,6 +552,34 @@ export function AssetForm({
                 <AccordionItem value="location-status">
                   <AccordionTrigger>Location & Status</AccordionTrigger>
                   <AccordionContent className="space-y-4">
+                    {/* Owning Company */}
+                    <FormField
+                      control={form.control}
+                      name="owningOrgUnitId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Owning Company</FormLabel>
+                          <SearchableSelect
+                            options={owningCompanyOptions}
+                            value={field.value ?? NONE_OPTION_VALUE}
+                            onValueChange={(value) =>
+                              field.onChange(
+                                value === NONE_OPTION_VALUE ? null : value,
+                              )
+                            }
+                            placeholder="Select a company..."
+                            searchPlaceholder="Search companies..."
+                            emptyMessage="No companies found"
+                            disabled={loading}
+                          />
+                          <FormDescription>
+                            Legal entity that owns this asset
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     {/* Stock Location */}
                     <FormField
                       control={form.control}

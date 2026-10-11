@@ -363,6 +363,7 @@ export const AssetScalarFieldEnum = {
   depreciationEnd: 'depreciationEnd',
   condition: 'condition',
   currentStockLocationId: 'currentStockLocationId',
+  owningOrgUnitId: 'owningOrgUnitId',
   attributes: 'attributes',
   note: 'note',
   createdAt: 'createdAt',

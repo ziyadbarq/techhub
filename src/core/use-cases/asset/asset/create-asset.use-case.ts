@@ -17,6 +17,8 @@ import type { ISarConversionService } from "@/core/services/sar-conversion.servi
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
+import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
+import { assertOwningCompany } from "./validate-owning-company";
 
 @injectable()
 export class CreateAssetUseCase {
@@ -34,6 +36,9 @@ export class CreateAssetUseCase {
 
     @inject(DI_TOKENS.IIdGenerator)
     private readonly idGenerator: IIdGenerator,
+
+    @inject(DI_TOKENS.IOrganizationUnitRepository)
+    private readonly organizationUnitRepository: IOrganizationUnitRepository,
   ) {}
 
   async execute(props: CreateAssetProps): Promise<Asset> {
@@ -61,6 +66,12 @@ export class CreateAssetUseCase {
         );
       }
     }
+
+    // Business Rule: an asset can only be owned by a COMPANY-level org unit
+    await assertOwningCompany(
+      this.organizationUnitRepository,
+      props.owningOrgUnitId,
+    );
 
     // Calculate SAR snapshot for purchase cost
     const purchaseCostSar =

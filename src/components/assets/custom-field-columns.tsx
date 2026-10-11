@@ -102,6 +102,16 @@ function extractUniqueFields(
 }
 
 /**
+ * Whether any of the given assets actually carries a value for this field.
+ */
+function fieldHasValues(assets: AssetDTO[], field: CustomFieldInfo): boolean {
+  return assets.some((asset) => {
+    const value = asset.attributes?.[field.fieldName];
+    return value !== null && value !== undefined && value !== "";
+  });
+}
+
+/**
  * Render a custom field value based on data type
  */
 function CustomFieldCell({
@@ -297,7 +307,10 @@ function CustomFieldCell({
 /**
  * Generate a column definition for a custom field
  */
-function createCustomFieldColumn(field: CustomFieldInfo): ColumnDef<AssetDTO> {
+function createCustomFieldColumn(
+  field: CustomFieldInfo,
+  hasValues: boolean,
+): ColumnDef<AssetDTO> {
   return {
     id: `custom_${field.fieldName}`,
     accessorFn: (row) => row.attributes?.[field.fieldName],
@@ -310,6 +323,10 @@ function createCustomFieldColumn(field: CustomFieldInfo): ColumnDef<AssetDTO> {
     },
     meta: {
       label: field.fieldLabel,
+      // A field defined for the category but filled in on no visible asset
+      // would only add an all-dashes column, so start it hidden. It stays
+      // available in the Columns menu.
+      hiddenByDefault: !hasValues,
     },
     // Enable filtering and sorting based on data type
     enableSorting: [
@@ -355,6 +372,11 @@ export function useCustomFieldColumns(assets: AssetDTO[]): {
   // Track previous category IDs to avoid unnecessary fetches
   const prevCategoryIdsRef = React.useRef<string[]>([]);
 
+  // Read the latest rows inside the effect without making it re-fetch on
+  // every data change - only the set of categories should trigger a reload.
+  const assetsRef = React.useRef(assets);
+  assetsRef.current = assets;
+
   React.useEffect(() => {
     // Check if category IDs have changed
     const sortedCurrent = [...categoryIds].sort().join(",");
@@ -380,7 +402,12 @@ export function useCustomFieldColumns(assets: AssetDTO[]): {
         setCustomFields(uniqueFields);
 
         // Generate columns for each unique field
-        const newColumns = uniqueFields.map(createCustomFieldColumn);
+        const newColumns = uniqueFields.map((field) =>
+          createCustomFieldColumn(
+            field,
+            fieldHasValues(assetsRef.current, field),
+          ),
+        );
         setColumns(newColumns);
       } catch {
         // Silently fail

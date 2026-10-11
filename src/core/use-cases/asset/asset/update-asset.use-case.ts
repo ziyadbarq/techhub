@@ -13,6 +13,8 @@ import type { ISarConversionService } from "@/core/services/sar-conversion.servi
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { NotFoundError } from "@/core/domain/errors/not-found.error";
+import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
+import { assertOwningCompany } from "./validate-owning-company";
 
 export interface UpdateAssetInput {
   id: string;
@@ -29,6 +31,7 @@ export interface UpdateAssetInput {
   depreciationStart?: Date | null;
   depreciationEnd?: Date | null;
   currentStockLocationId?: string | null;
+  owningOrgUnitId?: string | null;
   attributes?: Record<string, unknown> | null;
   note?: string | null;
   /** Person ID of the user performing the action (used for movement tracking) */
@@ -46,6 +49,9 @@ export class UpdateAssetUseCase {
     private readonly assetMovementService: IAssetMovementService,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+
+    @inject(DI_TOKENS.IOrganizationUnitRepository)
+    private readonly organizationUnitRepository: IOrganizationUnitRepository,
   ) {}
 
   async execute(input: UpdateAssetInput): Promise<Asset> {
@@ -84,6 +90,12 @@ export class UpdateAssetUseCase {
       }
     }
 
+    // Business Rule: an asset can only be owned by a COMPANY-level org unit
+    await assertOwningCompany(
+      this.organizationUnitRepository,
+      input.owningOrgUnitId,
+    );
+
     // Check if SAR recalculation is needed (when cost or currency changes)
     const sarCheck = this.sarConversionService.shouldRecalculateSar(
       { amount: input.purchaseCost, currency: input.currency },
@@ -115,6 +127,7 @@ export class UpdateAssetUseCase {
       depreciationStart: input.depreciationStart,
       depreciationEnd: input.depreciationEnd,
       currentStockLocationId: input.currentStockLocationId,
+      owningOrgUnitId: input.owningOrgUnitId,
       attributes: input.attributes,
       note: input.note,
     });

@@ -337,7 +337,14 @@ export const MAINTENANCE_TEMPLATES = {
 
 export const ASSET_CATEGORY_FIELD_MAPPINGS: Record<string, string[]> = {
   // Computing devices get hardware specs
-  LAPTOP: ["CPU_MODEL", "RAM_GB", "STORAGE_GB", "OS_VERSION", "MAC_ADDR"],
+  LAPTOP: [
+    "DEVICE_NAME",
+    "CPU_MODEL",
+    "RAM_GB",
+    "STORAGE_GB",
+    "OS_VERSION",
+    "MAC_ADDR",
+  ],
   DESKTOP: ["CPU_MODEL", "RAM_GB", "STORAGE_GB", "OS_VERSION", "MAC_ADDR"],
   SERVER: [
     "CPU_MODEL",

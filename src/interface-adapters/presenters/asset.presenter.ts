@@ -23,6 +23,7 @@ export interface AssetDTO {
   depreciationEnd: string | null;
   condition: string | null;
   currentStockLocationId: string | null;
+  owningOrgUnitId: string | null;
   attributes: Record<string, unknown> | null;
   note: string | null;
   createdAt: string;
@@ -39,6 +40,7 @@ export interface AssetDTO {
   assignedUserName?: string | null;
   assignedUserEmail?: string | null;
   hostName?: string | null;
+  owningCompanyName?: string | null;
 }
 
 /**
@@ -55,6 +57,7 @@ export function presentAsset(
     assignedUserName?: string | null;
     assignedUserEmail?: string | null;
     hostName?: string | null;
+    owningCompanyName?: string | null;
   },
 ): AssetDTO {
   return {
@@ -75,6 +78,7 @@ export function presentAsset(
     depreciationEnd: asset.depreciationEnd?.toISOString() || null,
     condition: asset.condition,
     currentStockLocationId: asset.currentStockLocationId,
+    owningOrgUnitId: asset.owningOrgUnitId,
     attributes: asset.attributes,
     note: asset.note,
     createdAt: asset.createdAt.toISOString(),
@@ -91,6 +95,7 @@ export function presentAsset(
     assignedUserName: enrichment?.assignedUserName,
     assignedUserEmail: enrichment?.assignedUserEmail,
     hostName: enrichment?.hostName,
+    owningCompanyName: enrichment?.owningCompanyName,
   };
 }
 

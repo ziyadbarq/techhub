@@ -11,6 +11,7 @@ export interface AssetExportInput {
   categoryName?: string | null;
   modelName?: string | null;
   vendorName?: string | null;
+  owningCompanyName?: string | null;
   stockLocationName?: string | null;
   lifecycleStateName?: string | null;
   condition?: string | null;
@@ -75,6 +76,7 @@ function assetsToCSV<T extends AssetExportInput>(assets: T[]): string {
     "Category",
     "Model",
     "Vendor",
+    "Company",
     "Location",
     "Status",
     "Condition",
@@ -91,6 +93,7 @@ function assetsToCSV<T extends AssetExportInput>(assets: T[]): string {
       asset.categoryName || "",
       asset.modelName || "",
       asset.vendorName || "",
+      asset.owningCompanyName || "",
       asset.stockLocationName || "",
       asset.lifecycleStateName || "",
       asset.condition || "",

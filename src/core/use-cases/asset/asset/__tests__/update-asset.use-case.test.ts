@@ -17,6 +17,7 @@ import type { ISarConversionService } from "@/core/services/sar-conversion.servi
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { Asset } from "@/core/domain/entities/asset.entity";
+import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
 
 /**
  * Mock Asset Repository
@@ -46,6 +47,7 @@ class MockAssetRepository implements Partial<IAssetRepository> {
       depreciationEnd: null,
       condition: null,
       currentStockLocationId: null,
+      owningOrgUnitId: null,
       attributes: null,
       note: null,
       createdAt: new Date("2024-01-01"),
@@ -74,6 +76,7 @@ class MockAssetRepository implements Partial<IAssetRepository> {
       depreciationEnd: null,
       condition: null,
       currentStockLocationId: null,
+      owningOrgUnitId: null,
       attributes: null,
       note: null,
       createdAt: new Date("2024-01-01"),
@@ -191,23 +194,42 @@ class MockLoggerService implements Partial<ILoggerService> {
   }
 }
 
+/**
+ * Org unit repository stub. Assets may only be owned by COMPANY-level units,
+ * so the use case resolves the unit and checks its type.
+ */
+class MockOrganizationUnitRepository {
+  async findById(id: string) {
+    if (id === "org-department") {
+      return { id, name: "Finance", unitType: "DEPARTMENT" };
+    }
+    if (id === "org-missing") {
+      return null;
+    }
+    return { id, name: "Barq", unitType: "COMPANY" };
+  }
+}
+
 describe("UpdateAssetUseCase", () => {
   let useCase: UpdateAssetUseCase;
   let mockRepository: MockAssetRepository;
   let mockSarConversionService: MockSarConversionService;
   let mockAssetMovementService: MockAssetMovementService;
   let mockLoggerService: MockLoggerService;
+  let mockOrganizationUnitRepository: MockOrganizationUnitRepository;
 
   beforeEach(() => {
     mockRepository = new MockAssetRepository();
     mockSarConversionService = new MockSarConversionService();
     mockAssetMovementService = new MockAssetMovementService();
     mockLoggerService = new MockLoggerService();
+    mockOrganizationUnitRepository = new MockOrganizationUnitRepository();
     useCase = new UpdateAssetUseCase(
       mockRepository as unknown as IAssetRepository,
       mockSarConversionService as unknown as ISarConversionService,
       mockAssetMovementService as unknown as IAssetMovementService,
       mockLoggerService as unknown as ILoggerService,
+      mockOrganizationUnitRepository as unknown as IOrganizationUnitRepository,
     );
   });
 

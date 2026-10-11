@@ -14,6 +14,7 @@ export interface AssetExportInput {
   categoryName?: string | null;
   modelName?: string | null;
   vendorName?: string | null;
+  owningCompanyName?: string | null;
   stockLocationName?: string | null;
   lifecycleStateName?: string | null;
   condition?: string | null;
@@ -73,6 +74,7 @@ export function exportAssetsToXLSX<T extends AssetExportInput>(
       Category: asset.categoryName || "",
       Model: asset.modelName || "",
       Vendor: asset.vendorName || "",
+      Company: asset.owningCompanyName || "",
       Location: asset.stockLocationName || "",
       Status: asset.lifecycleStateName || "",
       Condition: asset.condition || "",
@@ -101,6 +103,7 @@ export function exportAssetsToXLSX<T extends AssetExportInput>(
     { wch: 15 }, // Category
     { wch: 20 }, // Model
     { wch: 15 }, // Vendor
+    { wch: 15 }, // Company
     { wch: 15 }, // Location
     { wch: 12 }, // Status
     { wch: 10 }, // Condition

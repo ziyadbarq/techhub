@@ -17,6 +17,7 @@ import type { ISarConversionService } from "@/core/services/sar-conversion.servi
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
+import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
 
 /**
  * Mock Asset Repository
@@ -122,6 +123,22 @@ const mockIdGenerator: IIdGenerator = {
   generateId: vi.fn(() => "test-cuid-clx7abc123"),
 };
 
+/**
+ * Org unit repository stub. Assets may only be owned by COMPANY-level units,
+ * so the use case resolves the unit and checks its type.
+ */
+class MockOrganizationUnitRepository {
+  async findById(id: string) {
+    if (id === "org-department") {
+      return { id, name: "Finance", unitType: "DEPARTMENT" };
+    }
+    if (id === "org-missing") {
+      return null;
+    }
+    return { id, name: "Barq", unitType: "COMPANY" };
+  }
+}
+
 describe("CreateAssetUseCase", () => {
   let useCase: CreateAssetUseCase;
   let mockRepository: MockAssetRepository;
@@ -129,6 +146,7 @@ describe("CreateAssetUseCase", () => {
   let mockSarConversionService: MockSarConversionService;
   let mockAssetMovementService: MockAssetMovementService;
   let mockLoggerService: MockLoggerService;
+  let mockOrganizationUnitRepository: MockOrganizationUnitRepository;
 
   beforeEach(() => {
     mockRepository = new MockAssetRepository();
@@ -136,6 +154,7 @@ describe("CreateAssetUseCase", () => {
     mockSarConversionService = new MockSarConversionService();
     mockAssetMovementService = new MockAssetMovementService();
     mockLoggerService = new MockLoggerService();
+    mockOrganizationUnitRepository = new MockOrganizationUnitRepository();
     useCase = new CreateAssetUseCase(
       mockRepository as unknown as IAssetRepository,
       mockCodeGenerator as unknown as ICodeGeneratorService,
@@ -143,6 +162,7 @@ describe("CreateAssetUseCase", () => {
       mockAssetMovementService as unknown as IAssetMovementService,
       mockLoggerService as unknown as ILoggerService,
       mockIdGenerator,
+      mockOrganizationUnitRepository as unknown as IOrganizationUnitRepository,
     );
   });
 

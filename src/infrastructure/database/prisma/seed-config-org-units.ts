@@ -8,6 +8,12 @@ export const ORG_UNIT_DATA = [
     unitType: "COMPANY",
   },
   {
+    // Second legal entity. Assets are owned by one COMPANY-level unit.
+    name: "Aoun",
+    code: "AOUN",
+    unitType: "COMPANY",
+  },
+  {
     name: "Business & Partnerships",
     code: "BIZ",
     parentCode: "BARQ",

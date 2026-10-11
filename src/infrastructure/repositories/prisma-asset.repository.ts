@@ -51,6 +51,7 @@ export class PrismaAssetRepository implements IAssetRepository {
           depreciationStart: asset.depreciationStart,
           depreciationEnd: asset.depreciationEnd,
           currentStockLocationId: asset.currentStockLocationId,
+          owningOrgUnitId: asset.owningOrgUnitId,
           attributes: toJsonValue(asset.attributes),
           note: asset.note,
         },
@@ -466,6 +467,10 @@ export class PrismaAssetRepository implements IAssetRepository {
       where.currentStockLocationId = options.currentStockLocationId;
     }
 
+    if (options.owningOrgUnitId) {
+      where.owningOrgUnitId = options.owningOrgUnitId;
+    }
+
     // Contract filter
     if (options.contractId) {
       where.contractId = options.contractId;
@@ -656,6 +661,7 @@ export class PrismaAssetRepository implements IAssetRepository {
           depreciationStart: asset.depreciationStart,
           depreciationEnd: asset.depreciationEnd,
           currentStockLocationId: asset.currentStockLocationId,
+          owningOrgUnitId: asset.owningOrgUnitId,
           attributes: toJsonValue(asset.attributes),
           note: asset.note,
           updatedAt: asset.updatedAt,
@@ -741,6 +747,7 @@ export class PrismaAssetRepository implements IAssetRepository {
       depreciationEnd: prismaAsset.depreciationEnd,
       condition: prismaAsset.condition,
       currentStockLocationId: prismaAsset.currentStockLocationId,
+      owningOrgUnitId: prismaAsset.owningOrgUnitId,
       attributes: fromJsonValue(prismaAsset.attributes),
       note: prismaAsset.note,
       createdAt: prismaAsset.createdAt,
