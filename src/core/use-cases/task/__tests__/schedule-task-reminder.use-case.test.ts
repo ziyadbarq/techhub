@@ -386,14 +386,25 @@ describe("ScheduleTaskReminderUseCase", () => {
       );
       mockTaskRepository.setTask(task);
 
-      const futureDate = new Date(Date.now() + 1);
-      const input: ScheduleTaskReminderInput = {
-        taskId: "task-22",
-        reminderDate: futureDate,
-      };
+      // Freeze the clock: the use case awaits a repository lookup before
+      // comparing against Date.now(), so with real timers a 1ms margin has
+      // already elapsed by then and the date reads as past. Pinning time
+      // tests the boundary itself rather than how fast the machine is.
+      vi.useFakeTimers();
+      try {
+        vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
 
-      // Act & Assert
-      await expect(useCase.execute(input)).resolves.toBeDefined();
+        const futureDate = new Date(Date.now() + 1);
+        const input: ScheduleTaskReminderInput = {
+          taskId: "task-22",
+          reminderDate: futureDate,
+        };
+
+        // Act & Assert
+        await expect(useCase.execute(input)).resolves.toBeDefined();
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it("should handle far future dates", async () => {
