@@ -34,6 +34,7 @@ import { AssetAttachmentsTab } from "./asset-attachments-tab";
 import { listAttachmentsByTarget } from "@/interface-adapters/controllers/attachment.controller";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -82,6 +83,16 @@ import {
   CountedTabs,
   type CountedTabConfig,
 } from "@/components/ui/counted-tabs";
+
+/** Value + caption placeholder inside a quick status card. */
+function StatusLinesSkeleton() {
+  return (
+    <div className="space-y-1.5 pt-0.5">
+      <Skeleton className="h-4 w-28" />
+      <Skeleton className="h-3 w-20" />
+    </div>
+  );
+}
 
 interface AssetDetailPageClientProps {
   asset: AssetDTO;
@@ -399,7 +410,11 @@ export function AssetDetailPageClient({
       canView: canViewAttachments,
       showWhenZero: true,
       content: (
-        <AssetAttachmentsTab assetId={asset.id} onChange={fetchTabCounts} />
+        <AssetAttachmentsTab
+          assetId={asset.id}
+          assetTag={asset.assetTag}
+          onChange={fetchTabCounts}
+        />
       ),
       triggerClassName: "gap-2",
     },
@@ -568,20 +583,22 @@ export function AssetDetailPageClient({
               </div>
               <div className="space-y-1">
                 <p className="text-muted-foreground text-xs uppercase">Owner</p>
-                <p className="leading-tight font-semibold">
-                  {isAssignmentLoading
-                    ? "Checking owner..."
-                    : activeAssignment
-                      ? activeAssignment.assigneeName || "Unknown owner"
-                      : "Unassigned"}
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  {isAssignmentLoading
-                    ? "Fetching current owner"
-                    : activeAssignment
-                      ? `Since ${formatDate(activeAssignment.startDate)}`
-                      : "No active owner"}
-                </p>
+                {isAssignmentLoading ? (
+                  <StatusLinesSkeleton />
+                ) : (
+                  <>
+                    <p className="leading-tight font-semibold">
+                      {activeAssignment
+                        ? activeAssignment.assigneeName || "Unknown owner"
+                        : "Unassigned"}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {activeAssignment
+                        ? `Since ${formatDate(activeAssignment.startDate)}`
+                        : "No active owner"}
+                    </p>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -601,18 +618,20 @@ export function AssetDetailPageClient({
                 <p className="text-muted-foreground text-xs uppercase">
                   Device Status
                 </p>
-                <p className="leading-tight font-semibold">
-                  {isAssignmentLoading
-                    ? "Checking status..."
-                    : activeAssignment
-                      ? "In use"
-                      : "In stock"}
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  {activeAssignment
-                    ? "Currently assigned"
-                    : "Available in inventory"}
-                </p>
+                {isAssignmentLoading ? (
+                  <StatusLinesSkeleton />
+                ) : (
+                  <>
+                    <p className="leading-tight font-semibold">
+                      {activeAssignment ? "In use" : "In stock"}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {activeAssignment
+                        ? "Currently assigned"
+                        : "Available in inventory"}
+                    </p>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -629,13 +648,15 @@ export function AssetDetailPageClient({
                 <p className="leading-tight font-semibold">
                   {asset.stockLocationName || "No stock location"}
                 </p>
-                <p className="text-muted-foreground text-xs">
-                  {isLoadingCounts
-                    ? "Loading movements..."
-                    : `${tabCounts?.movements ?? 0} movement${
-                        (tabCounts?.movements ?? 0) === 1 ? "" : "s"
-                      } logged`}
-                </p>
+                {isLoadingCounts ? (
+                  <Skeleton className="h-3 w-24" />
+                ) : (
+                  <p className="text-muted-foreground text-xs">
+                    {`${tabCounts?.movements ?? 0} movement${
+                      (tabCounts?.movements ?? 0) === 1 ? "" : "s"
+                    } logged`}
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -649,20 +670,22 @@ export function AssetDetailPageClient({
                 <p className="text-muted-foreground text-xs uppercase">
                   Coverage
                 </p>
-                <p className="leading-tight font-semibold">
-                  {isLoadingCounts
-                    ? "Loading warranties..."
-                    : `${tabCounts?.warranties ?? 0} warrant${
+                {isLoadingCounts ? (
+                  <StatusLinesSkeleton />
+                ) : (
+                  <>
+                    <p className="leading-tight font-semibold">
+                      {`${tabCounts?.warranties ?? 0} warrant${
                         (tabCounts?.warranties ?? 0) === 1 ? "y" : "ies"
                       }`}
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  {isLoadingCounts
-                    ? "Loading reservations..."
-                    : `${tabCounts?.reservations ?? 0} reservation${
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {`${tabCounts?.reservations ?? 0} reservation${
                         (tabCounts?.reservations ?? 0) === 1 ? "" : "s"
                       } in history`}
-                </p>
+                    </p>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -676,22 +699,24 @@ export function AssetDetailPageClient({
                 <p className="text-muted-foreground text-xs uppercase">
                   Linked Items
                 </p>
-                <p className="leading-tight font-semibold">
-                  {isLoadingCounts
-                    ? "Loading links..."
-                    : canViewCmdb || canViewServices || canViewIntune
-                      ? `${linkedTotal} linked item${
-                          linkedTotal === 1 ? "" : "s"
-                        }`
-                      : "Access limited"}
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  {isLoadingCounts
-                    ? "Loading linked records..."
-                    : canViewCmdb || canViewServices || canViewIntune
-                      ? linkedBreakdown || "No linked records"
-                      : "Request access to view services or devices"}
-                </p>
+                {isLoadingCounts ? (
+                  <StatusLinesSkeleton />
+                ) : (
+                  <>
+                    <p className="leading-tight font-semibold">
+                      {canViewCmdb || canViewServices || canViewIntune
+                        ? `${linkedTotal} linked item${
+                            linkedTotal === 1 ? "" : "s"
+                          }`
+                        : "Access limited"}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {canViewCmdb || canViewServices || canViewIntune
+                        ? linkedBreakdown || "No linked records"
+                        : "Request access to view services or devices"}
+                    </p>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -699,7 +724,7 @@ export function AssetDetailPageClient({
       </div>
 
       <CountedTabs
-        defaultValue="overview"
+        defaultValue={searchParams.get("tab") ?? "overview"}
         tabs={tabs}
         loading={isLoadingCounts}
         tabsClassName="space-y-6"

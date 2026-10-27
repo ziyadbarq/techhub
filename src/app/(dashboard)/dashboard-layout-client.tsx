@@ -21,9 +21,17 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
 
   const isDocsPage = pathname?.startsWith("/docs");
 
-  const mainClasses = isDocsPage
-    ? "flex-1 overflow-y-auto bg-muted/40"
-    : "flex-1 overflow-y-auto bg-muted/40 p-4 md:p-6 lg:p-8";
+  // Printable documents (asset delivery note) stay inside the dashboard so
+  // the shell and its providers are not torn down and rebuilt on the way
+  // back, but render without app chrome or a scroll container, so "Print"
+  // captures only the sheet.
+  const isPrintPage = pathname?.endsWith("/delivery-note") ?? false;
+
+  const mainClasses = isPrintPage
+    ? "flex-1 bg-neutral-200 py-6 print:bg-white print:py-0"
+    : isDocsPage
+      ? "flex-1 overflow-y-auto bg-muted/40"
+      : "flex-1 overflow-y-auto bg-muted/40 p-4 md:p-6 lg:p-8";
 
   return (
     <ErrorBoundary>
@@ -34,7 +42,7 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
               <CommandPaletteProvider>
                 <div className="bg-background relative flex min-h-screen">
                   {/* Sidebar with Suspense for non-blocking load */}
-                  {!hideSidebar ? (
+                  {!hideSidebar && !isPrintPage ? (
                     <Suspense fallback={<SidebarSkeleton />}>
                       <Sidebar />
                     </Suspense>
@@ -43,9 +51,11 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
                   {/* Main Content Area */}
                   <div className="flex min-h-screen flex-1 flex-col">
                     {/* Header with Suspense for non-blocking load */}
-                    <Suspense fallback={<HeaderSkeleton />}>
-                      <Header />
-                    </Suspense>
+                    {!isPrintPage && (
+                      <Suspense fallback={<HeaderSkeleton />}>
+                        <Header />
+                      </Suspense>
+                    )}
 
                     {/* Page Content */}
                     <main className={mainClasses}>

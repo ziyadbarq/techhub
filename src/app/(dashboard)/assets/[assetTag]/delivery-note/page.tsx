@@ -3,7 +3,8 @@
  *
  * Printable handover form for a single asset, pre-filled with the current
  * holder. Printed, signed by hand, scanned, then uploaded back onto the
- * asset from its Attachments tab.
+ * asset from its Attachments tab. Lives in the dashboard group (chrome is
+ * hidden by the layout) so returning to the asset does not rebuild the shell.
  */
 
 import { notFound } from "next/navigation";
@@ -12,9 +13,13 @@ import { DeliveryNotePrint } from "@/components/assets/delivery-note-print";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getActiveAssignmentAction } from "@/interface-adapters/controllers/asset-assignment.controller";
 import { getAssetAction } from "@/interface-adapters/controllers/asset.controller";
+import { getOrganizationUnitAction } from "@/interface-adapters/controllers/organization-unit.controller";
 import { getPersonAction } from "@/interface-adapters/controllers/person.controller";
 import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
 import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
+
+/** Forms are dated in Riyadh time regardless of the server's zone. */
+const TIME_ZONE = "Asia/Riyadh";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +55,10 @@ export default async function DeliveryNotePage({
   let person: PersonDTO | null = null;
 
   const assignmentResult = await getActiveAssignmentAction(asset.id);
-  if (assignmentResult.success && assignmentResult.data) {
+  if (
+    assignmentResult.success &&
+    assignmentResult.data?.assigneeType === "PERSON"
+  ) {
     const personResult = await getPersonAction(
       assignmentResult.data.assigneeId,
     );
@@ -59,5 +67,35 @@ export default async function DeliveryNotePage({
     }
   }
 
-  return <DeliveryNotePrint asset={asset} person={person} />;
+  // Department as the Persons page shows it: the Microsoft "department"
+  // when synced, otherwise the person's organization unit. getPersonAction
+  // does not join the unit, so look its name up here.
+  if (person && !person.department && !person.orgUnitName) {
+    const unitResult = await getOrganizationUnitAction(
+      person.organizationUnitId,
+    );
+    if (unitResult.success) {
+      person = { ...person, orgUnitName: unitResult.data.name };
+    }
+  }
+
+  const now = new Date();
+  const ymd = new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE })
+    .format(now)
+    .replaceAll("-", "");
+  const issuedOn = new Intl.DateTimeFormat("en-GB", {
+    timeZone: TIME_ZONE,
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(now);
+
+  return (
+    <DeliveryNotePrint
+      asset={asset}
+      person={person}
+      reference={`DN-${asset.assetTag}-${ymd}`}
+      issuedOn={issuedOn}
+    />
+  );
 }

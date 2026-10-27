@@ -7,7 +7,7 @@
 
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -39,6 +39,11 @@ export function CountedTabs({
   tabsClassName,
   listClassName,
 }: CountedTabsProps) {
+  // null until the user picks a tab. Until then the active tab is derived on
+  // every render, so a requested tab (e.g. ?tab=attachments) that only
+  // becomes visible once permissions load is still the one that opens.
+  const [selected, setSelected] = useState<string | null>(null);
+
   const visibleTabs = tabs.filter((tab) => {
     if (tab.canView === false) return false;
 
@@ -53,8 +58,17 @@ export function CountedTabs({
     ? defaultValue
     : visibleTabs[0]?.value || defaultValue;
 
+  const activeValue =
+    selected && visibleTabs.some((tab) => tab.value === selected)
+      ? selected
+      : safeDefaultValue;
+
   return (
-    <Tabs defaultValue={safeDefaultValue} className={tabsClassName}>
+    <Tabs
+      value={activeValue}
+      onValueChange={setSelected}
+      className={tabsClassName}
+    >
       <TabsList className={cn("flex-wrap", listClassName)}>
         {visibleTabs.map((tab) => {
           const Icon = tab.icon;

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { WarrantyDTO } from "@/interface-adapters/presenters/warranty.presenter";
 import { listWarrantiesByAssetAction } from "@/interface-adapters/controllers/warranty.controller";
 import { WarrantyForm } from "./warranty-form";
@@ -112,7 +113,16 @@ export function AssetWarrantyPanel({
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <p className="text-muted-foreground text-sm">Loading...</p>
+              <div className="space-y-3 rounded-lg border p-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              </div>
             ) : warranties.length === 0 ? (
               <p className="text-muted-foreground text-sm">
                 No warranty information available for this asset.
