@@ -32,10 +32,7 @@ export default async function DelegationsPage() {
       <LinkButton href="/workflows/admin" variant="ghost" size="sm">
         ← Admin
       </LinkButton>
-      <header className="space-y-2">
-        <span className="text-micro-uppercase text-stone">
-          Admin · Delegations
-        </span>
+      <header className="space-y-1">
         <h1 className="text-h2">Delegations</h1>
         <p className="text-subtitle text-slate max-w-2xl">
           Out-of-office routing. When a user has an active delegation, every

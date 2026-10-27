@@ -1,3 +1,4 @@
+import { Inbox as InboxIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -56,36 +57,35 @@ export default async function InboxPage() {
   return (
     <div className="space-y-8">
       <AutoRefresh intervalMs={15_000} />
-      <header className="flex flex-col gap-3">
-        <span className="text-micro-uppercase text-stone">Inbox</span>
-        <h1 className="text-h2">
+      <header className="space-y-1">
+        <h1 className="text-h2">Inbox</h1>
+        <p className="text-subtitle text-slate max-w-2xl">
           {steps.length === 0 ? (
-            "All caught up."
+            "Nothing is waiting on you."
           ) : (
             <>
               <AnimatedCount value={steps.length} /> request
-              {steps.length === 1 ? "" : "s"} need your action.
+              {steps.length === 1 ? "" : "s"} waiting for your action.
             </>
           )}
-        </h1>
-        <p className="text-subtitle text-slate max-w-2xl">
-          Active steps where you appear in the assignee snapshot. Click any
-          request to take an action.
         </p>
       </header>
 
       {steps.length === 0 ? (
-        <Card tone="teal" size="feature">
-          <h3 className="text-h4">Nothing waiting on you.</h3>
-          <p className="text-body-md text-charcoal/80 mt-2">
-            New steps will appear here as soon as they&apos;re assigned to you.
+        <div className="bg-card flex flex-col items-center rounded-xl border px-6 py-12 text-center shadow-sm">
+          <div className="bg-muted grid h-12 w-12 place-items-center rounded-full">
+            <InboxIcon className="text-muted-foreground h-6 w-6" />
+          </div>
+          <h3 className="mt-4 font-semibold">No pending approvals</h3>
+          <p className="text-muted-foreground mt-1 max-w-sm text-sm">
+            Steps assigned to you will appear here.
           </p>
           <div className="mt-5">
-            <LinkButton href="/workflows/forms" variant="primary">
+            <LinkButton href="/workflows/forms" variant="primary" size="sm">
               Submit a request
             </LinkButton>
           </div>
-        </Card>
+        </div>
       ) : (
         <div className="space-y-3">
           {steps.map((s) => {

@@ -12,10 +12,10 @@ export function PillTab({ href, active, children }: PillTabProps) {
     <Link
       href={href}
       className={[
-        "inline-flex h-9 items-center rounded-full px-4 text-[14px] font-medium transition-colors",
+        "inline-flex h-7 items-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors",
         active
-          ? "text-on-ink border border-[var(--color-ink)] bg-[var(--color-ink)]"
-          : "border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-steel)] hover:text-[var(--color-ink)]",
+          ? "bg-background text-foreground dark:bg-input/30 shadow-sm"
+          : "text-muted-foreground hover:text-foreground",
       ].join(" ")}
     >
       {children}
@@ -24,5 +24,10 @@ export function PillTab({ href, active, children }: PillTabProps) {
 }
 
 export function PillTabs({ children }: { children: ReactNode }) {
-  return <div className="flex flex-wrap items-center gap-2">{children}</div>;
+  // Segmented control, like TechHub's tab lists.
+  return (
+    <div className="bg-muted text-muted-foreground inline-flex w-fit flex-wrap items-center gap-1 rounded-lg p-1">
+      {children}
+    </div>
+  );
 }

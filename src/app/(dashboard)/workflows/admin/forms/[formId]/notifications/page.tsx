@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Badge, Card, LinkButton } from "@/components/design";
@@ -54,35 +55,36 @@ export default async function FormNotificationsPage({
         ← Form
       </LinkButton>
 
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <span className="text-micro-uppercase text-stone">
-            Form · Notifications
-          </span>
-          <h1 className="text-h2 mt-1 inline-flex items-center gap-3">
-            {form.name}
-            {form.isBuiltIn ? <Badge tone="neutral">Built-in</Badge> : null}
-          </h1>
-          <p className="text-subtitle text-slate mt-1">
-            Bind email templates to events on this form. The notification
-            dispatcher reads these bindings when an event fires.
-          </p>
-        </div>
+      <header>
+        {/* block, not inline: an inline-flex h1 sits beside the eyebrow
+            instead of under it. */}
+        <h1 className="text-h2 mt-1 flex flex-wrap items-center gap-3">
+          {form.name}
+          {form.isBuiltIn ? <Badge tone="neutral">Built-in</Badge> : null}
+        </h1>
+        <p className="text-subtitle text-slate mt-2 max-w-2xl">
+          Bind email templates to events on this form. The notification
+          dispatcher reads these bindings when an event fires.
+        </p>
       </header>
 
       {emailTemplates.length === 0 ? (
         <Card>
-          <p className="text-body-sm text-charcoal">
-            No email templates found. Create one in{" "}
-            <LinkButton
+          <div className="space-y-3">
+            <p className="text-body-sm text-charcoal max-w-2xl">
+              No email templates exist yet, so there is nothing to bind to this
+              form&apos;s events. Create a template first, then come back here
+              to choose which event sends it.
+            </p>
+            {/* A real link rather than a ghost button: inside a sentence the
+                button variant renders without visible text. */}
+            <Link
               href="/workflows/admin/email-templates"
-              variant="ghost"
-              size="sm"
+              className="text-body-sm text-ink font-medium underline underline-offset-4"
             >
-              Email templates
-            </LinkButton>{" "}
-            first, then come back here to bind it to a form event.
-          </p>
+              Go to Email templates
+            </Link>
+          </div>
         </Card>
       ) : (
         <NotificationBindingsClient

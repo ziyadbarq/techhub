@@ -1,3 +1,11 @@
+import {
+  CheckCircle2,
+  Inbox,
+  PauseCircle,
+  TrendingUp,
+  XCircle,
+  type LucideIcon,
+} from "lucide-react";
 import { AnimatedCount, Card } from "@/components/design";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
@@ -129,7 +137,6 @@ export default async function AnalyticsPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <span className="text-micro-uppercase text-stone">Analytics</span>
         <h1 className="text-h2">Workflow analytics</h1>
         <p className="text-subtitle text-slate">
           Last {DAYS_BACK} days · <AnimatedCount value={totalRequests} /> total
@@ -138,15 +145,16 @@ export default async function AnalyticsPage() {
       </header>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
-        <Stat label="Open" value={open} tone="yellow" />
-        <Stat label="On hold" value={onHold} tone="blush" />
-        <Stat label="Closed" value={closed} tone="mint" />
-        <Stat label="Cancelled" value={cancelled} tone="sand" />
+        <Stat label="Open" value={open} tone="yellow" icon={Inbox} />
+        <Stat label="On hold" value={onHold} tone="blush" icon={PauseCircle} />
+        <Stat label="Closed" value={closed} tone="mint" icon={CheckCircle2} />
+        <Stat label="Cancelled" value={cancelled} tone="sand" icon={XCircle} />
         <Stat
           label="Success rate"
           value={successRate}
           suffix="%"
           tone="lavender"
+          icon={TrendingUp}
         />
       </div>
 
@@ -207,31 +215,16 @@ export default async function AnalyticsPage() {
   );
 }
 
-const STAT_TONES: Record<string, { card: string; label: string }> = {
-  yellow: {
-    card: "bg-[var(--color-yellow-light)]",
-    label: "text-[var(--color-yellow-dark)]",
-  },
-  mint: {
-    card: "bg-[var(--color-mint-light)]",
-    label: "text-[var(--color-moss-dark)]",
-  },
-  blush: {
-    card: "bg-[var(--color-blush-light)]",
-    label: "text-[var(--color-coral-dark)]",
-  },
-  sand: {
-    card: "bg-[var(--color-sand-light)]",
-    label: "text-[var(--color-charcoal)]",
-  },
-  lavender: {
-    card: "bg-[var(--color-surface-featured)]",
-    label: "text-[var(--color-ink-deep)]",
-  },
-  white: {
-    card: "bg-[var(--color-canvas)]",
-    label: "text-[var(--color-stone)]",
-  },
+// Same shape as TechHub's quick status cards: neutral card, coloured icon.
+const STAT_TONES: Record<string, string> = {
+  yellow:
+    "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200",
+  mint: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200",
+  blush: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200",
+  sand: "bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-200",
+  lavender:
+    "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-200",
+  white: "bg-muted text-foreground",
 };
 
 function Stat({
@@ -239,22 +232,32 @@ function Stat({
   value,
   suffix,
   tone = "white",
+  icon: Icon,
 }: {
   label: string;
   value: number;
   suffix?: string;
   tone?: keyof typeof STAT_TONES;
+  icon: LucideIcon;
 }) {
-  const t = STAT_TONES[tone] ?? STAT_TONES.white;
   return (
-    <div className={`rounded-xl ${t.card} p-4`}>
-      <span className={`text-micro-uppercase ${t.label}`}>{label}</span>
-      <p className="text-h3 text-ink mt-2">
-        <AnimatedCount value={value} />
-        {suffix ? (
-          <span className="text-body-md text-stone">{suffix}</span>
-        ) : null}
-      </p>
+    <div className="bg-card flex items-start gap-3 rounded-xl border p-4 shadow-sm">
+      <div
+        className={`rounded-full p-2 ${STAT_TONES[tone] ?? STAT_TONES.white}`}
+      >
+        <Icon className="h-4 w-4" />
+      </div>
+      <div className="space-y-1">
+        <p className="text-muted-foreground text-xs">{label}</p>
+        <p className="text-2xl leading-none font-bold">
+          <AnimatedCount value={value} />
+          {suffix ? (
+            <span className="text-muted-foreground text-sm font-normal">
+              {suffix}
+            </span>
+          ) : null}
+        </p>
+      </div>
     </div>
   );
 }

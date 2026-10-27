@@ -22,10 +22,7 @@ export default async function BlackoutPeriodsPage() {
       <LinkButton href="/workflows/admin" variant="ghost" size="sm">
         ← Admin
       </LinkButton>
-      <header className="space-y-2">
-        <span className="text-micro-uppercase text-stone">
-          Admin · Blackout periods
-        </span>
+      <header className="space-y-1">
         <h1 className="text-h2">Blackout periods</h1>
         <p className="text-subtitle text-slate max-w-2xl">
           Date ranges where Schedule steps must BLOCK / WARN / IGNORE.

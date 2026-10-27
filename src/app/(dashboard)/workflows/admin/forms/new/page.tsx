@@ -24,8 +24,7 @@ export default async function NewFormPage() {
         ← Forms
       </LinkButton>
 
-      <header className="space-y-2">
-        <span className="text-micro-uppercase text-stone">Admin · Forms</span>
+      <header className="space-y-1">
         <h1 className="text-h2">New form</h1>
         <p className="text-subtitle text-slate max-w-2xl">
           A form is a request type. It links to one workflow.

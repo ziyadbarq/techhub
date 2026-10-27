@@ -9,6 +9,8 @@ import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { requirePermission } from "@/lib/permissions/server";
 
+import { workflowLabel } from "@/components/workflows/status-label";
+
 import { SavedFiltersBar } from "./saved-filters-bar";
 
 export const dynamic = "force-dynamic";
@@ -27,14 +29,19 @@ function statusBadge(status: string, outcome: string | null) {
   if (status === "CLOSED") {
     return (
       <Badge tone={outcome === "SUCCESSFUL" ? "success" : "neutral"}>
-        {outcome ?? status}
+        {workflowLabel(outcome ?? status)}
       </Badge>
     );
   }
-  if (status === "CANCELLED") return <Badge tone="danger">CANCELLED</Badge>;
-  if (status === "ON_HOLD") return <Badge tone="yellow">ON HOLD</Badge>;
-  if (status === "DRAFT") return <Badge tone="neutral">DRAFT</Badge>;
-  return <Badge tone="purple">{status}</Badge>;
+  const tone =
+    status === "CANCELLED"
+      ? "danger"
+      : status === "ON_HOLD"
+        ? "yellow"
+        : status === "DRAFT"
+          ? "neutral"
+          : "purple";
+  return <Badge tone={tone}>{workflowLabel(status)}</Badge>;
 }
 
 export default async function RequestsListPage({
@@ -93,12 +100,11 @@ export default async function RequestsListPage({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <span className="text-micro-uppercase text-stone">Requests</span>
-          <h1 className="text-h2 mt-1">
-            {scope === "mine" ? "My requests" : "All requests"}
+        <div className="space-y-1">
+          <h1 className="text-h2">
+            {scope === "mine" ? "My Requests" : "All Requests"}
           </h1>
-          <p className="text-subtitle text-slate mt-1">
+          <p className="text-subtitle text-slate">
             {scope === "mine"
               ? "Requests you submitted."
               : "Everything submitted across your organization."}
@@ -120,32 +126,24 @@ export default async function RequestsListPage({
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-micro-uppercase text-stone">Status</span>
-            <Link
-              href={`?scope=${scope}${formIdFilter ? `&formId=${formIdFilter}` : ""}`}
-              className={
-                "text-caption-bold rounded-full border px-3 py-1 " +
-                (statusFilter === null
-                  ? "text-on-ink border-[var(--color-ink)] bg-[var(--color-ink)]"
-                  : "border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-charcoal)]")
-              }
-            >
-              All
-            </Link>
-            {STATUSES.map((s) => (
-              <Link
-                key={s}
-                href={`?scope=${scope}&status=${s}${formIdFilter ? `&formId=${formIdFilter}` : ""}`}
-                className={
-                  "text-caption-bold rounded-full border px-3 py-1 " +
-                  (statusFilter === s
-                    ? "text-on-ink border-[var(--color-ink)] bg-[var(--color-ink)]"
-                    : "border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-charcoal)]")
-                }
+            <span className="text-muted-foreground text-sm">Status</span>
+            <PillTabs>
+              <PillTab
+                href={`?scope=${scope}${formIdFilter ? `&formId=${formIdFilter}` : ""}`}
+                active={statusFilter === null}
               >
-                {s}
-              </Link>
-            ))}
+                All
+              </PillTab>
+              {STATUSES.map((s) => (
+                <PillTab
+                  key={s}
+                  href={`?scope=${scope}&status=${s}${formIdFilter ? `&formId=${formIdFilter}` : ""}`}
+                  active={statusFilter === s}
+                >
+                  {workflowLabel(s)}
+                </PillTab>
+              ))}
+            </PillTabs>
           </div>
           <SavedFiltersBar
             filters={savedFilters.map((f) => ({
@@ -162,8 +160,8 @@ export default async function RequestsListPage({
       <Card className="overflow-hidden p-0">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left">
-            <thead className="border-b border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)]">
-              <tr className="text-micro-uppercase text-stone">
+            <thead className="border-b">
+              <tr className="text-muted-foreground text-sm font-medium">
                 <th className="px-5 py-3">Reference</th>
                 <th className="px-5 py-3">Form</th>
                 <th className="px-5 py-3">Requester</th>
@@ -176,7 +174,7 @@ export default async function RequestsListPage({
               {requests.map((r) => (
                 <tr
                   key={r.id}
-                  className="border-b border-[var(--color-hairline-soft)] last:border-0"
+                  className="hover:bg-muted/50 border-b transition-colors last:border-0"
                 >
                   <td className="text-caption text-charcoal px-5 py-3 font-mono">
                     {r.referenceNumber}
@@ -198,9 +196,9 @@ export default async function RequestsListPage({
                   <td className="px-5 py-3 text-right">
                     <Link
                       href={`/workflows/requests/${r.id}`}
-                      className="text-body-sm-medium text-[var(--color-brand-blue)] hover:underline"
+                      className="text-body-sm-medium hover:underline"
                     >
-                      Open →
+                      Open
                     </Link>
                   </td>
                 </tr>

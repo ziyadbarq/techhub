@@ -30,7 +30,6 @@ export default async function AdminFormsListPage() {
 
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <span className="text-micro-uppercase text-stone">Admin · Forms</span>
           <h1 className="text-h2 mt-1">Forms</h1>
           <p className="text-subtitle text-slate mt-1">
             {forms.length} form{forms.length === 1 ? "" : "s"} in this

@@ -23,10 +23,7 @@ export default async function CalendarsPage() {
         ← Admin
       </LinkButton>
 
-      <header className="space-y-2">
-        <span className="text-micro-uppercase text-stone">
-          Admin · Calendars
-        </span>
+      <header className="space-y-1">
         <h1 className="text-h2">Business calendars</h1>
         <p className="text-subtitle text-slate max-w-2xl">
           Working hours and holidays used by SLA computations.

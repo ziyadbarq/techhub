@@ -42,17 +42,17 @@ export default async function NotificationsPage() {
     <div className="space-y-6">
       <AutoRefresh intervalMs={20_000} />
       <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <span className="text-micro-uppercase text-stone">Notifications</span>
-          <h1 className="text-h2 mt-1">
+        <div className="space-y-1">
+          <h1 className="text-h2">Notifications</h1>
+          <p className="text-subtitle text-slate">
             {unreadCount > 0 ? (
               <>
                 <AnimatedCount value={unreadCount} /> unread
               </>
             ) : (
-              "All caught up."
+              "You're all caught up."
             )}
-          </h1>
+          </p>
         </div>
         {unreadCount > 0 ? <NotificationsActions /> : null}
       </header>

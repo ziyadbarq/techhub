@@ -18,10 +18,7 @@ export default async function NewWorkflowPage() {
         ← Workflows
       </LinkButton>
 
-      <header className="space-y-2">
-        <span className="text-micro-uppercase text-stone">
-          Admin · Workflows
-        </span>
+      <header className="space-y-1">
         <h1 className="text-h2">New workflow</h1>
         <p className="text-subtitle text-slate max-w-2xl">
           Define the steps a request goes through.

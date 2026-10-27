@@ -29,9 +29,6 @@ export default async function AdminWorkflowsListPage() {
 
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <span className="text-micro-uppercase text-stone">
-            Admin · Workflows
-          </span>
           <h1 className="text-h2 mt-1">Workflows</h1>
           <p className="text-subtitle text-slate mt-1">
             {definitions.length} workflow

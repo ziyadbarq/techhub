@@ -10,15 +10,21 @@ type Tone =
   | "neutral"
   | "danger";
 
+// Soft status colours, as used by TechHub's status badges.
 const TONE_STYLES: Record<Tone, string> = {
-  yellow: "bg-[var(--color-surface-yellow)] text-[var(--color-yellow-dark)]",
-  purple: "bg-[var(--color-surface-featured)] text-[var(--color-brand-blue)]",
-  coral: "bg-[var(--color-coral-light)] text-[var(--color-coral-dark)]",
-  rose: "bg-[var(--color-rose-light)] text-[var(--color-coral-dark)]",
-  teal: "bg-[var(--color-teal-light)] text-[var(--color-moss-dark)]",
-  success: "bg-[var(--color-success-accent)] text-white",
-  neutral: "bg-[var(--color-surface-soft)] text-[var(--color-slate)]",
-  danger: "bg-[var(--color-brand-red)] text-[var(--color-coral-dark)]",
+  yellow:
+    "border-transparent bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200",
+  purple:
+    "border-transparent bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-200",
+  coral:
+    "border-transparent bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
+  rose: "border-transparent bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-200",
+  teal: "border-transparent bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-200",
+  success:
+    "border-transparent bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200",
+  neutral: "bg-transparent text-foreground",
+  danger:
+    "border-transparent bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
 };
 
 export function Badge({
@@ -33,8 +39,8 @@ export function Badge({
   return (
     <span
       className={[
-        "inline-flex items-center gap-1 rounded-full px-2.5 py-1",
-        "text-[13px] leading-none font-semibold tracking-tight",
+        "inline-flex w-fit shrink-0 items-center gap-1 rounded-md border px-2 py-0.5",
+        "text-xs font-medium whitespace-nowrap",
         TONE_STYLES[tone],
         className ?? "",
       ]

@@ -6,7 +6,7 @@ import type {
 } from "react";
 
 const INPUT_BASE =
-  "h-11 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] px-4 text-[16px] text-[var(--color-ink)] outline-none transition-colors placeholder:text-[var(--color-stone)] focus:border-[var(--color-brand-blue)] focus:ring-1 focus:ring-[var(--color-brand-blue)] disabled:bg-[var(--color-surface-soft)] disabled:text-[var(--color-stone)]";
+  "h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30";
 
 export function TextInput(
   props: InputHTMLAttributes<HTMLInputElement> & { className?: string },
@@ -29,7 +29,7 @@ export function TextArea({
     <textarea
       rows={rows}
       className={[
-        "w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] px-4 py-3 text-[16px] text-[var(--color-ink)] transition-colors outline-none placeholder:text-[var(--color-stone)] focus:border-[var(--color-brand-blue)] focus:ring-1 focus:ring-[var(--color-brand-blue)] disabled:bg-[var(--color-surface-soft)]",
+        "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
         className ?? "",
       ]
         .filter(Boolean)
@@ -48,15 +48,13 @@ export function Select({
     <select
       className={[
         INPUT_BASE,
-        "appearance-none bg-[length:16px_16px] bg-[right_16px_center] bg-no-repeat pr-10",
+        "appearance-none bg-[length:16px_16px] bg-[right_10px_center] bg-no-repeat pr-9",
         className ?? "",
       ]
         .filter(Boolean)
         .join(" ")}
-      style={{
-        backgroundImage:
-          "url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231c1c1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")",
-      }}
+      // Theme-aware chevron (globals.css flips its stroke in dark mode).
+      style={{ backgroundImage: "var(--select-chevron)" }}
       {...rest}
     >
       {children}
@@ -74,15 +72,13 @@ export function FieldLabel({
   helper?: ReactNode;
 }) {
   return (
-    <label className="block text-[14px] font-medium text-[var(--color-ink)]">
+    <label className="block text-sm font-medium">
       <span>
         {children}
-        {required ? (
-          <span className="text-[var(--color-brand-blue)]"> *</span>
-        ) : null}
+        {required ? <span className="text-destructive"> *</span> : null}
       </span>
       {helper ? (
-        <span className="mt-1 block text-[13px] font-normal text-[var(--color-stone)]">
+        <span className="text-muted-foreground mt-1 block text-xs font-normal">
           {helper}
         </span>
       ) : null}

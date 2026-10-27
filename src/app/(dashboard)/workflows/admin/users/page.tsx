@@ -83,7 +83,6 @@ export default async function AdminUsersPage() {
 
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <span className="text-micro-uppercase text-stone">Admin · Users</span>
           <h1 className="text-h2 mt-1">Workflow users</h1>
           <p className="text-subtitle text-slate mt-1">
             {users.length} user{users.length === 1 ? "" : "s"} in this

@@ -29,10 +29,7 @@ export default async function OutcomeCodesPage() {
       <LinkButton href="/workflows/admin" variant="ghost" size="sm">
         ← Admin
       </LinkButton>
-      <header className="space-y-2">
-        <span className="text-micro-uppercase text-stone">
-          Admin · Outcome codes
-        </span>
+      <header className="space-y-1">
         <h1 className="text-h2">Outcome codes</h1>
         <p className="text-subtitle text-slate max-w-2xl">
           Domain-specific outcome labels that admins can attach when closing or

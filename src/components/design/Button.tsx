@@ -21,27 +21,25 @@ interface BaseProps {
   fullWidth?: boolean;
 }
 
+// Same variant names the workflows pages already use, rendered with
+// TechHub's shadcn button styles so the module matches the rest of the app.
 const VARIANT_STYLES: Record<Variant, string> = {
-  primary:
-    "bg-[var(--color-ink)] text-on-ink hover:bg-[var(--color-charcoal)] active:bg-[var(--color-charcoal)] disabled:bg-[var(--color-hairline)] disabled:text-[var(--color-stone)]",
-  yellow:
-    "bg-[var(--color-brand-yellow)] text-[var(--color-ink)] hover:bg-[var(--color-brand-yellow-deep)] disabled:bg-[var(--color-hairline)] disabled:text-[var(--color-stone)]",
-  blue: "bg-[var(--color-brand-blue)] text-[var(--color-on-primary)] hover:bg-[var(--color-blue-pressed)] disabled:bg-[var(--color-hairline)] disabled:text-[var(--color-stone)]",
+  primary: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+  yellow: "bg-barq-yellow text-barq-black shadow-xs hover:bg-barq-yellow/90",
+  blue: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
   secondary:
-    "bg-transparent text-[var(--color-ink)] border border-[var(--color-hairline-strong)] hover:bg-[var(--color-surface-soft)] disabled:text-[var(--color-stone)] disabled:border-[var(--color-hairline)]",
+    "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
   "on-dark":
-    "bg-white text-[var(--color-ink)] hover:bg-[var(--color-surface-soft)] disabled:opacity-60",
-  ghost:
-    "bg-transparent text-[var(--color-ink)] hover:bg-[var(--color-surface-soft)] disabled:text-[var(--color-stone)]",
-  success:
-    "bg-[var(--color-success-accent)] text-white hover:opacity-90 disabled:bg-[var(--color-hairline)] disabled:text-[var(--color-stone)]",
+    "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+  ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+  success: "bg-emerald-600 text-white shadow-xs hover:bg-emerald-600/90",
   danger:
-    "bg-[var(--color-coral-dark)] text-white hover:opacity-90 disabled:bg-[var(--color-hairline)] disabled:text-[var(--color-stone)]",
+    "bg-destructive text-white shadow-xs hover:bg-destructive/90 dark:bg-destructive/60",
 };
 
 const SIZE_STYLES: Record<Size, string> = {
-  sm: "h-9 px-4 text-[13px]",
-  md: "h-11 px-6 text-[14px]",
+  sm: "h-8 gap-1.5 px-3 text-sm",
+  md: "h-9 px-4 text-sm",
 };
 
 function classes({
@@ -53,12 +51,11 @@ function classes({
   fullWidth?: boolean;
   className?: string;
 }) {
-  const isGhost = variant === "ghost";
-  const radius = isGhost ? "rounded-md" : "rounded-[var(--radius-full)]";
   return [
-    "inline-flex items-center justify-center gap-2 font-medium transition-colors",
-    "disabled:cursor-not-allowed select-none whitespace-nowrap",
-    radius,
+    "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-all",
+    "outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+    "disabled:pointer-events-none disabled:opacity-50 select-none whitespace-nowrap",
+    "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     SIZE_STYLES[size],
     VARIANT_STYLES[variant],
     fullWidth ? "w-full" : "",

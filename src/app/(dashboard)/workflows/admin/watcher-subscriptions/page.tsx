@@ -36,10 +36,7 @@ export default async function WatcherSubscriptionsPage() {
       <LinkButton href="/workflows/admin" variant="ghost" size="sm">
         ← Admin
       </LinkButton>
-      <header className="space-y-2">
-        <span className="text-micro-uppercase text-stone">
-          Admin · Watcher subscriptions
-        </span>
+      <header className="space-y-1">
         <h1 className="text-h2">Watcher subscriptions</h1>
         <p className="text-subtitle text-slate max-w-2xl">
           Auto-add every member of a role as a watcher on every request

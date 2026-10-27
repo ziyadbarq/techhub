@@ -105,8 +105,7 @@ export default async function NewRequestPage({
         ← Pick a different form
       </LinkButton>
 
-      <header className="space-y-2">
-        <span className="text-micro-uppercase text-stone">New request</span>
+      <header className="space-y-1">
         <h1 className="text-h2">{form.name}</h1>
         {form.description ? (
           <p className="text-subtitle text-slate max-w-2xl">

@@ -23,10 +23,7 @@ export default async function RejectionPoliciesPage() {
         ← Admin
       </LinkButton>
 
-      <header className="space-y-2">
-        <span className="text-micro-uppercase text-stone">
-          Admin · Rejection policies
-        </span>
+      <header className="space-y-1">
         <h1 className="text-h2">Rejection policies</h1>
         <p className="text-subtitle text-slate max-w-2xl">
           What happens when a request is rejected — full restart vs resume from

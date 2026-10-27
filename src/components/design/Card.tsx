@@ -24,21 +24,26 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
   bordered?: boolean;
 }
 
-const TONE_STYLES: Record<Tone, string> = {
-  white: "bg-[var(--color-canvas)] text-[var(--color-ink)]",
-  yellow: "bg-[var(--color-brand-yellow)] text-[var(--color-ink)]",
-  rose: "bg-[var(--color-rose-light)] text-[var(--color-ink)]",
-  coral: "bg-[var(--color-coral-light)] text-[var(--color-ink)]",
-  teal: "bg-[var(--color-teal-light)] text-[var(--color-ink)]",
-  orange: "bg-[var(--color-brand-orange-light)] text-[var(--color-ink)]",
-  lavender: "bg-[var(--color-surface-featured)] text-[var(--color-ink)]",
-  lemon: "bg-[var(--color-lemon-light)] text-[var(--color-ink)]",
-  blush: "bg-[var(--color-blush-light)] text-[var(--color-ink)]",
-  sky: "bg-[var(--color-sky-light)] text-[var(--color-ink)]",
-  mint: "bg-[var(--color-mint-light)] text-[var(--color-ink)]",
-  sand: "bg-[var(--color-sand-light)] text-[var(--color-ink)]",
-  lilac: "bg-[var(--color-lilac-light)] text-[var(--color-ink)]",
-  dark: "bg-[var(--color-ink)] text-on-ink",
+/*
+ * TechHub cards are neutral: bg-card, border, rounded-xl, subtle shadow.
+ * Tones survive only as a thin accent on the left edge so pages that used
+ * colour to group things still read as grouped, without pastel blocks.
+ */
+const TONE_ACCENT: Record<Tone, string> = {
+  white: "",
+  yellow: "border-l-4 border-l-barq-yellow",
+  rose: "border-l-4 border-l-rose-400",
+  coral: "border-l-4 border-l-red-400",
+  teal: "border-l-4 border-l-teal-500",
+  orange: "border-l-4 border-l-orange-400",
+  lavender: "border-l-4 border-l-violet-400",
+  lemon: "border-l-4 border-l-yellow-400",
+  blush: "border-l-4 border-l-pink-400",
+  sky: "border-l-4 border-l-sky-400",
+  mint: "border-l-4 border-l-emerald-400",
+  sand: "border-l-4 border-l-amber-500",
+  lilac: "border-l-4 border-l-purple-400",
+  dark: "",
 };
 
 export function Card({
@@ -49,20 +54,21 @@ export function Card({
   children,
   ...rest
 }: CardProps) {
-  const radius = size === "feature" ? "rounded-[28px]" : "rounded-[16px]";
-  const padding = size === "feature" ? "p-8" : "p-6";
-  const border =
-    bordered && tone === "white"
-      ? "border border-[var(--color-hairline-soft)]"
-      : "";
+  const surface =
+    tone === "dark"
+      ? "bg-muted text-foreground"
+      : "bg-card text-card-foreground";
+  const padding = size === "feature" ? "p-6" : "p-5";
+  const border = bordered || tone !== "white" ? "border shadow-sm" : "";
 
   return (
     <div
       className={[
-        TONE_STYLES[tone],
-        radius,
+        surface,
+        "rounded-xl",
         padding,
         border,
+        TONE_ACCENT[tone],
         "transition-shadow",
         className ?? "",
       ]
