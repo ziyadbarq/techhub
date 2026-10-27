@@ -63,6 +63,16 @@ export const ATTACHMENT_TYPES = [
     isActive: true,
   },
   {
+    name: "Signed Delivery Note",
+    code: "ATT-DELIV",
+    description:
+      "Asset handover form signed by the employee, scanned by the help desk",
+    // Scanners commonly output images rather than PDF, so both are allowed.
+    allowedExtensions: ["pdf", "jpg", "jpeg", "png"],
+    maxFileSizeMB: 10,
+    isActive: true,
+  },
+  {
     name: "Audit Report",
     code: "ATT-AUDIT",
     description: "Compliance and internal audit reports",

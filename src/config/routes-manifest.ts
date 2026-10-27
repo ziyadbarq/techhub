@@ -514,6 +514,17 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     parentRoute: "/assets",
   },
   {
+    path: "/assets/[assetTag]/delivery-note",
+    label: "Delivery Note",
+    icon: Package,
+    description: "Printable asset handover form for wet-signature",
+    requiredPermissions: ["ASSETS_VIEW"],
+    featureFlag: "ASSETS",
+    visibleInNav: false,
+    isChildRoute: true,
+    parentRoute: "/assets",
+  },
+  {
     path: "/asset-assignments",
     label: "Asset Assignments",
     icon: ClipboardList,

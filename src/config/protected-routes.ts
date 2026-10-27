@@ -138,6 +138,10 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.ASSETS_VIEW],
     description: "View specific asset details (360-degree view)",
   },
+  "/assets/[assetTag]/delivery-note": {
+    requiredPermissions: [PERMISSIONS.ASSETS_VIEW],
+    description: "Printable asset handover form for wet-signature",
+  },
   "/asset-assignments": {
     requiredPermissions: [PERMISSIONS.ASSET_ASSIGNMENTS_VIEW],
     description: "Asset assignment tracking",

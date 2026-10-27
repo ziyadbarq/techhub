@@ -19,6 +19,8 @@ import {
   Server,
   Globe,
   Laptop,
+  Paperclip,
+  Printer,
   Activity,
   MapPin,
   ShieldCheck,
@@ -28,6 +30,8 @@ import {
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { AssetAttachmentsTab } from "./asset-attachments-tab";
+import { listAttachmentsByTarget } from "@/interface-adapters/controllers/attachment.controller";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -108,6 +112,7 @@ export function AssetDetailPageClient({
     cmdb: number;
     services: number;
     intune: number;
+    attachments: number;
   } | null>(null);
 
   // Feature flag checks (type-safe)
@@ -124,6 +129,7 @@ export function AssetDetailPageClient({
     isServicesEnabled && hasPermission(PERMISSIONS.SERVICES_VIEW);
   const canViewIntune =
     isIntuneEnabled && hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
+  const canViewAttachments = hasPermission(PERMISSIONS.ATTACHMENTS_VIEW);
   const isLoadingCounts = tabCounts === null;
   const returnTo = searchParams.get("returnTo");
   const backHref =
@@ -198,6 +204,7 @@ export function AssetDetailPageClient({
         cmdbResult,
         servicesResult,
         intuneResult,
+        attachmentsResult,
       ] = await Promise.all([
         listWarrantiesByAssetAction(asset.id),
         listAssetAssignmentsAction({ assetId: asset.id }),
@@ -211,6 +218,9 @@ export function AssetDetailPageClient({
           : Promise.resolve({ success: true, data: [] }),
         canViewIntune
           ? getIntuneDevicesByAssetAction(asset.id)
+          : Promise.resolve({ success: true, data: [] }),
+        canViewAttachments
+          ? listAttachmentsByTarget("ASSET", asset.id)
           : Promise.resolve({ success: true, data: [] }),
       ]);
 
@@ -226,6 +236,9 @@ export function AssetDetailPageClient({
         cmdb: cmdbResult.success ? cmdbResult.data.length : 0,
         services: servicesResult.success ? servicesResult.data.length : 0,
         intune: intuneResult.success ? intuneResult.data.length : 0,
+        attachments: attachmentsResult.success
+          ? attachmentsResult.data.length
+          : 0,
       });
     } catch (_error) {
       setTabCounts({
@@ -236,9 +249,16 @@ export function AssetDetailPageClient({
         cmdb: 0,
         services: 0,
         intune: 0,
+        attachments: 0,
       });
     }
-  }, [asset.id, canViewCmdb, canViewIntune, canViewServices]);
+  }, [
+    asset.id,
+    canViewCmdb,
+    canViewIntune,
+    canViewServices,
+    canViewAttachments,
+  ]);
 
   useEffect(() => {
     fetchTabCounts();
@@ -371,6 +391,18 @@ export function AssetDetailPageClient({
       content: <AssetIntuneTab assetId={asset.id} />,
       triggerClassName: "gap-2",
     },
+    {
+      value: "attachments",
+      label: "Attachments",
+      icon: Paperclip,
+      count: tabCount(tabCounts?.attachments),
+      canView: canViewAttachments,
+      showWhenZero: true,
+      content: (
+        <AssetAttachmentsTab assetId={asset.id} onChange={fetchTabCounts} />
+      ),
+      triggerClassName: "gap-2",
+    },
   ];
 
   return (
@@ -479,6 +511,22 @@ export function AssetDetailPageClient({
             </PermissionGuard>
 
             {/* Standard Actions */}
+            <PermissionGuard permission={PERMISSIONS.ASSETS_VIEW}>
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2"
+                onClick={() =>
+                  router.push(
+                    `/assets/${encodeURIComponent(asset.assetTag)}/delivery-note`,
+                  )
+                }
+              >
+                <Printer className="h-4 w-4" />
+                Delivery Note
+              </Button>
+            </PermissionGuard>
+
             <PermissionGuard permission={PERMISSIONS.ASSETS_UPDATE}>
               <Button
                 size="sm"

@@ -30,6 +30,155 @@ import {
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { TargetObjectTypeEnum } from "@/generated/prisma";
+import type { GetAttachmentTypeUseCase } from "@/core/use-cases/attachments/attachment-type";
+import type { IFileStorageService } from "@/core/services/file-storage.service.interface";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
+import { getSession } from "@/lib/auth/session";
+
+/**
+ * Resolve the Person record behind the signed-in user.
+ *
+ * Attachment.uploadedById is a Person foreign key, not a Better Auth user id,
+ * so the session user has to be mapped before anything is written.
+ */
+async function resolveCurrentPersonId(): Promise<string | null> {
+  const { user } = await getSession();
+  if (!user) {
+    return null;
+  }
+
+  const container = getContainer();
+  const personRepository = container.get<IPersonRepository>(
+    DI_TOKENS.IPersonRepository,
+  );
+
+  const person =
+    (await personRepository.findByUserId(user.id)) ||
+    (user.email ? await personRepository.findByEmail(user.email) : null);
+
+  return person?.id ?? null;
+}
+
+/**
+ * Store an uploaded file and record it as an attachment.
+ *
+ * Takes FormData so the bytes stream to the server instead of being
+ * base64-encoded into a JSON payload. The uploader is deliberately not
+ * trusted for identity: the Person id comes from the session here, never
+ * from the client.
+ */
+export async function uploadAttachmentFile(
+  formData: FormData,
+): Promise<ActionResponse<AttachmentDTO>> {
+  try {
+    await requirePermission(PERMISSIONS.ATTACHMENTS_CREATE);
+
+    const file = formData.get("file");
+    const attachmentTypeId = String(formData.get("attachmentTypeId") ?? "");
+    const targetType = String(formData.get("targetType") ?? "");
+    const targetId = String(formData.get("targetId") ?? "");
+    const noteValue = formData.get("note");
+    const note = typeof noteValue === "string" ? noteValue.trim() : "";
+
+    if (!(file instanceof File) || file.size === 0) {
+      return { success: false, error: "No file was provided" };
+    }
+
+    if (!attachmentTypeId || !targetType || !targetId) {
+      return {
+        success: false,
+        error: "Attachment type and target are required",
+      };
+    }
+
+    const personId = await resolveCurrentPersonId();
+    if (!personId) {
+      return {
+        success: false,
+        error:
+          "Your user account is not linked to a person record, so uploads cannot be attributed.",
+      };
+    }
+
+    const container = getContainer();
+
+    // Enforce the type's own rules before writing anything to disk.
+    const attachmentType = await container
+      .get<GetAttachmentTypeUseCase>(DI_TOKENS.GetAttachmentTypeUseCase)
+      .execute({ id: attachmentTypeId });
+
+    if (!attachmentType.isActive) {
+      return {
+        success: false,
+        error: `Attachment type "${attachmentType.name}" is inactive`,
+      };
+    }
+
+    const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
+    const allowed = attachmentType.allowedExtensions.map((e) =>
+      e.toLowerCase(),
+    );
+    if (!allowed.includes(extension)) {
+      return {
+        success: false,
+        error: `"${attachmentType.name}" accepts only: ${allowed.join(", ")}`,
+      };
+    }
+
+    const maxBytes = attachmentType.maxFileSizeMB * 1024 * 1024;
+    if (file.size > maxBytes) {
+      return {
+        success: false,
+        error: `File exceeds the ${attachmentType.maxFileSizeMB} MB limit for "${attachmentType.name}"`,
+      };
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const mimeType = file.type || "application/octet-stream";
+
+    // The storage service re-checks the magic number against the declared
+    // MIME type, so a renamed executable is rejected here rather than stored.
+    const fileStorage = container.get<IFileStorageService>(
+      DI_TOKENS.IFileStorageService,
+    );
+    const storagePath = await fileStorage.uploadFile(
+      buffer,
+      file.name,
+      mimeType,
+    );
+
+    const useCase = container.get<CreateAttachmentUseCase>(
+      DI_TOKENS.CreateAttachmentUseCase,
+    );
+
+    const attachment = await useCase.execute(
+      CreateAttachmentSchema.parse({
+        attachmentTypeId,
+        targetType,
+        targetId,
+        fileName: file.name,
+        filePath: storagePath,
+        mimeType,
+        sizeBytes: BigInt(file.size),
+        uploadedById: personId,
+        note: note || null,
+      }),
+    );
+
+    revalidatePath("/attachments");
+
+    return {
+      success: true,
+      data: AttachmentPresenter.toDTO(attachment),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to upload attachment",
+    };
+  }
+}
 
 /**
  * Create a new attachment
@@ -219,9 +368,12 @@ export async function downloadAttachment(
 
     const attachment = await useCase.execute({ id });
 
-    // Return the public URL for the file
-    // Files are stored in /public/uploads/... so we need to prepend with /
-    const url = `/${attachment.filePath}`;
+    // Storage paths are project-relative ("public/uploads/..."); the service
+    // maps them to the URL Next actually serves ("/uploads/...").
+    const fileStorage = container.get<IFileStorageService>(
+      DI_TOKENS.IFileStorageService,
+    );
+    const url = fileStorage.getFileUrl(attachment.filePath);
 
     return {
       success: true,

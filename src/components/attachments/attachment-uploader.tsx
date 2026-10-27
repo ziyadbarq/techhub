@@ -22,11 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createAttachment } from "@/interface-adapters/controllers/attachment.controller";
+import { uploadAttachmentFile } from "@/interface-adapters/controllers/attachment.controller";
 import { listAttachmentTypes } from "@/interface-adapters/controllers/attachment-type.controller";
 import type { AttachmentTypeDTO } from "@/interface-adapters/presenters/attachment-type.presenter";
 import type { TargetObjectTypeEnum } from "@/generated/prisma";
-import { getCurrentUserId } from "@/lib/auth/session";
 
 interface AttachmentUploaderProps {
   targetType: TargetObjectTypeEnum;
@@ -140,33 +139,16 @@ export function AttachmentUploader({
     setIsUploading(true);
 
     try {
-      // Get current user ID
-      const userId = await getCurrentUserId();
-      if (!userId) {
-        toast.error("User not authenticated");
-        setIsUploading(false);
-        return;
-      }
+      // Send the bytes as FormData; the server stores the file, enforces the
+      // attachment type's rules, and attributes the upload from the session.
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("attachmentTypeId", selectedTypeId);
+      formData.append("targetType", targetType);
+      formData.append("targetId", targetId);
+      formData.append("note", note.trim());
 
-      // For now, we'll create a simplified storage path
-      // The actual file upload will be integrated with LocalFileStorageService later
-      // TODO: Implement actual file upload using LocalFileStorageService
-      const timestamp = Date.now();
-      const sanitizedFileName = selectedFile.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-      const storagePath = `uploads/${timestamp}_${sanitizedFileName}`;
-
-      // Create attachment record
-      const result = await createAttachment({
-        attachmentTypeId: selectedTypeId,
-        targetType,
-        targetId,
-        fileName: selectedFile.name,
-        filePath: storagePath,
-        mimeType: selectedFile.type || null,
-        sizeBytes: BigInt(selectedFile.size),
-        uploadedById: userId,
-        note: note.trim() || null,
-      });
+      const result = await uploadAttachmentFile(formData);
 
       if (result.success) {
         toast.success("File uploaded successfully");
@@ -215,7 +197,7 @@ export function AttachmentUploader({
               <SelectItem key={type.id} value={type.id}>
                 {type.name}
                 {type.allowedExtensions.length > 0 && (
-                  <span className="ml-2 text-xs text-muted-foreground">
+                  <span className="text-muted-foreground ml-2 text-xs">
                     ({type.allowedExtensions.join(", ")})
                   </span>
                 )}
@@ -241,13 +223,13 @@ export function AttachmentUploader({
           <div className="flex flex-col items-center justify-center p-8 text-center">
             {selectedFile ? (
               <div className="space-y-2">
-                <FileText className="mx-auto size-12 text-primary" />
+                <FileText className="text-primary mx-auto size-12" />
                 <div className="space-y-1">
                   <p className="font-medium">{selectedFile.name}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {formatFileSize(selectedFile.size)}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     Type: {selectedFile.type || "Unknown"}
                   </p>
                 </div>
@@ -268,11 +250,11 @@ export function AttachmentUploader({
               </div>
             ) : (
               <>
-                <Upload className="mb-4 size-12 text-muted-foreground" />
+                <Upload className="text-muted-foreground mb-4 size-12" />
                 <p className="mb-2 text-sm font-medium">
                   Drag and drop a file here, or click to browse
                 </p>
-                <p className="mb-4 text-xs text-muted-foreground">
+                <p className="text-muted-foreground mb-4 text-xs">
                   Maximum file size: 100MB
                 </p>
                 <Button
@@ -308,7 +290,7 @@ export function AttachmentUploader({
           rows={3}
           maxLength={2000}
         />
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {note.length}/2000 characters
         </p>
       </div>
