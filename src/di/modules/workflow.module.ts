@@ -332,10 +332,11 @@ export function bindWorkflowDependencies(container: Container): void {
     .bind<() => IAssigneeResolverRegistry>(
       DI_TOKENS.IWorkflowAssigneeResolverRegistryProvider,
     )
-    .toFactory((context) => () =>
-      context.get<IAssigneeResolverRegistry>(
-        DI_TOKENS.IWorkflowAssigneeResolverRegistry,
-      ),
+    .toFactory(
+      (context) => () =>
+        context.get<IAssigneeResolverRegistry>(
+          DI_TOKENS.IWorkflowAssigneeResolverRegistry,
+        ),
     );
   container
     .bind<IAssigneeResolver>(DI_TOKENS.IWorkflowAssigneeResolver)

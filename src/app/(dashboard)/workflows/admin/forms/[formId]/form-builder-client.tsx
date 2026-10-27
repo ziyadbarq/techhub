@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { confirm } from "@/components/design";
 import { FormRenderer } from "@/components/workflows/form-renderer";
+import { FormAiAssistant } from "@/components/workflows/form-ai-assistant";
 
 interface Form {
   id: string;
@@ -102,13 +103,17 @@ export function FormBuilderClient({
   form,
   siblingForms = [],
   workflows = [],
+  accessServiceNames = [],
 }: {
   form: Form;
   siblingForms?: Array<{ id: string; name: string }>;
   workflows?: WorkflowOption[];
+  /** Catalog services, so a LOOKUP field can point at them. */
+  accessServiceNames?: string[];
 }) {
   const router = useRouter();
   const [fields, setFields] = useState<FieldDef[]>([]);
+  const [aiOpen, setAiOpen] = useState(false);
   const [perStepFieldState, setPerStepFieldState] = useState<
     Record<string, Record<string, FieldStateValue>>
   >({});
@@ -404,6 +409,13 @@ export function FormBuilderClient({
             Notifications
           </a>
           <button
+            type="button"
+            onClick={() => setAiOpen((v) => !v)}
+            className="border-hairline-strong hover:bg-surface rounded-md border px-3 py-1.5 text-sm font-medium"
+          >
+            Draft with AI
+          </button>
+          <button
             onClick={saveDraft}
             disabled={!!busy}
             className="border-hairline-strong hover:bg-surface rounded-md border px-3 py-1.5 text-sm font-medium disabled:opacity-50"
@@ -424,6 +436,31 @@ export function FormBuilderClient({
         <div className="bg-brand-red/40 text-coral-dark rounded-md border border-(--color-brand-red-dark) px-3 py-2 text-sm">
           {error}
         </div>
+      ) : null}
+
+      {aiOpen ? (
+        <FormAiAssistant
+          existingFieldKeys={fields.map((f) => f.key)}
+          formName={form.name}
+          accessServiceNames={accessServiceNames}
+          onClose={() => setAiOpen(false)}
+          onApply={(result) => {
+            // Replaces the canvas with what the user just reviewed. Still a
+            // local draft — Save draft and Publish stay manual.
+            setFields(
+              result.fields.map((field, i) => ({
+                key: field.key,
+                label: field.label,
+                type: field.type,
+                required: field.required,
+                position: i + 1,
+                visibility: field.visibility,
+                config: field.config,
+              })),
+            );
+            setAiOpen(false);
+          }}
+        />
       ) : null}
 
       <div className="border-hairline flex gap-1 border-b">
@@ -716,7 +753,7 @@ function SettingsTab({
               type="button"
               onClick={() => void onSave()}
               disabled={busy || isBuiltIn}
-              className="bg-ink text-button-md text-on-dark rounded-full px-5 py-2 transition disabled:opacity-50"
+              className="bg-ink text-button-md text-on-ink rounded-full px-5 py-2 transition disabled:opacity-50"
             >
               {busy ? "Saving…" : "Save settings"}
             </button>

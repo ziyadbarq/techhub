@@ -22,6 +22,7 @@ import {
 import { confirm } from "@/components/design";
 import { StepFieldVisibilityCard } from "@/components/workflows/step-field-visibility-card";
 import { formatTime } from "@/lib/utils/date-format";
+import { WorkflowAiAssistant } from "@/components/workflows/workflow-ai-assistant";
 
 interface Definition {
   id: string;
@@ -81,7 +82,9 @@ interface StepDef {
   key: string;
   type: StepType;
   position: number;
-  next?: { default?: string };
+  // APPROVAL steps branch per action; everything else follows one default
+  // edge. Readers narrow with `"default" in next` before reading either.
+  next?: { default?: string } | { onAction: Record<string, string> };
   config: Record<string, unknown>;
 }
 
@@ -238,11 +241,13 @@ export function WorkflowBuilderClient({
   definition,
   users,
   roles,
+  accessServiceNames,
   linkedForms = [],
 }: {
   definition: Definition;
   users: User[];
   roles: Role[];
+  accessServiceNames?: string[];
   linkedForms?: LinkedFormRef[];
 }) {
   const router = useRouter();
@@ -252,6 +257,7 @@ export function WorkflowBuilderClient({
   const [error, setError] = useState<string | null>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [tab, setTab] = useState<"steps" | "fieldState">("steps");
+  const [aiOpen, setAiOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -416,6 +422,13 @@ export function WorkflowBuilderClient({
         </div>
         <div className="flex gap-2">
           <button
+            type="button"
+            onClick={() => setAiOpen((v) => !v)}
+            className="border-hairline-strong hover:bg-surface rounded-md border px-3 py-1.5 text-sm font-medium"
+          >
+            Draft with AI
+          </button>
+          <button
             onClick={saveDraft}
             disabled={!!busy}
             className="border-hairline-strong hover:bg-surface rounded-md border px-3 py-1.5 text-sm font-medium disabled:opacity-50"
@@ -436,6 +449,33 @@ export function WorkflowBuilderClient({
         <div className="bg-brand-red/40 text-coral-dark rounded-md border border-(--color-brand-red-dark) px-3 py-2 text-sm">
           {error}
         </div>
+      ) : null}
+
+      {aiOpen ? (
+        <WorkflowAiAssistant
+          existingStepKeys={graph.steps.map((s) => s.key)}
+          workflowName={definition.name}
+          workflowDescription={definition.description}
+          roleNames={roles.map((r) => r.name)}
+          accessServiceNames={accessServiceNames ?? []}
+          onClose={() => setAiOpen(false)}
+          onApply={(result) => {
+            // Replaces the canvas with what the user just reviewed. Still a
+            // local draft — Save draft and Publish stay manual.
+            setGraph({
+              start: result.start,
+              steps: result.steps.map((step) => ({
+                key: step.key,
+                type: step.type as StepType,
+                position: step.position,
+                next: step.next,
+                config: step.config,
+              })),
+            });
+            setSelectedKey(result.start);
+            setAiOpen(false);
+          }}
+        />
       ) : null}
 
       <div className="border-hairline-soft flex gap-1 border-b">
@@ -865,9 +905,7 @@ function StepEditor({
         kind: "ACCESS_SERVICE_ROLE",
         serviceSnapshotKey: (s.serviceSnapshotKey as string) ?? "",
         serviceRole: ((s.role as string) ?? "OWNER") as
-          | "OWNER"
-          | "CYBERSECURITY"
-          | "IMPLEMENTER",
+          "OWNER" | "CYBERSECURITY" | "IMPLEMENTER",
       };
     }
     if (s.kind === "FALLBACK") {
@@ -1150,9 +1188,7 @@ function StepEditor({
                       next[i] = {
                         ...a,
                         serviceRole: e.target.value as
-                          | "OWNER"
-                          | "CYBERSECURITY"
-                          | "IMPLEMENTER",
+                          "OWNER" | "CYBERSECURITY" | "IMPLEMENTER",
                       };
                       updateAssignees(next);
                     }}

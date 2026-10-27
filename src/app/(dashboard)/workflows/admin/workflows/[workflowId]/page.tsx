@@ -38,13 +38,20 @@ export default async function EditWorkflowPage({
   });
   if (!def) notFound();
 
-  const [users, roles] = await Promise.all([
+  const [users, roles, accessServices] = await Promise.all([
     prisma.user.findMany({
       select: { id: true, name: true, email: true },
       orderBy: { createdAt: "asc" },
     }),
     prisma.role.findMany({
       select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+    // Offered to the AI assistant so it can route steps at the people who
+    // own a service rather than at a fixed role.
+    prisma.accessService.findMany({
+      where: { isActive: true },
+      select: { name: true },
       orderBy: { name: "asc" },
     }),
   ]);
@@ -62,6 +69,7 @@ export default async function EditWorkflowPage({
       }}
       users={users}
       roles={roles}
+      accessServiceNames={accessServices.map((s) => s.name)}
       linkedForms={linkedForms}
     />
   );

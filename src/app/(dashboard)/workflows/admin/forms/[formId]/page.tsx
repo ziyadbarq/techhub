@@ -58,6 +58,13 @@ export default async function EditFormPage({
   });
 
   // All workflow definitions — for the inline workflow picker.
+  // Offered to the AI assistant so a LOOKUP field can point at the catalog.
+  const accessServices = await prisma.accessService.findMany({
+    where: { isActive: true },
+    select: { name: true },
+    orderBy: { name: "asc" },
+  });
+
   const workflows = await prisma.workflowDefinition.findMany({
     select: {
       id: true,
@@ -71,6 +78,7 @@ export default async function EditFormPage({
     <FormBuilderClient
       form={form as never}
       siblingForms={siblingForms}
+      accessServiceNames={accessServices.map((s) => s.name)}
       workflows={workflows.map((w) => ({
         id: w.id,
         name: w.name,

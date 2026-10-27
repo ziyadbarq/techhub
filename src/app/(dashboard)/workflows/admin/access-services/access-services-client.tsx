@@ -160,6 +160,20 @@ function RoleSelector({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
+/**
+ * Build a URL/API-safe identifier from a display name.
+ *
+ * Only a-z0-9 survive, so a name with no Latin characters (an Arabic-only
+ * service name, for instance) yields an empty string; callers must handle
+ * that rather than assume a slug always comes back.
+ */
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export function AccessServicesClient({ initialServices }: Props) {
   const [services, setServices] =
     useState<AccessServiceData[]>(initialServices);
@@ -171,6 +185,10 @@ export function AccessServicesClient({ initialServices }: Props) {
   // Form state
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  // The slug is derived from the name and stays hidden unless someone opts in.
+  // Once edited by hand, typing in Name must stop overwriting that choice.
+  const [showSlugField, setShowSlugField] = useState(false);
+  const [slugTouched, setSlugTouched] = useState(false);
   const [description, setDescription] = useState("");
   const [requireManagerApproval, setRequireManagerApproval] = useState(false);
   const [instructions, setInstructions] = useState("");
@@ -216,6 +234,8 @@ export function AccessServicesClient({ initialServices }: Props) {
     setEditingService(null);
     setName("");
     setSlug("");
+    setShowSlugField(false);
+    setSlugTouched(false);
     setDescription("");
     setRequireManagerApproval(false);
     setInstructions("");
@@ -229,6 +249,9 @@ export function AccessServicesClient({ initialServices }: Props) {
     setEditingService(svc);
     setName(svc.name);
     setSlug(svc.slug);
+    // An existing slug is part of the record's identity, so never auto-rewrite it.
+    setShowSlugField(false);
+    setSlugTouched(true);
     setDescription(svc.description ?? "");
     setRequireManagerApproval(svc.requireManagerApproval);
     setInstructions(svc.instructions ?? "");
@@ -545,27 +568,59 @@ export function AccessServicesClient({ initialServices }: Props) {
             <input
               value={name}
               onChange={(e) => {
-                setName(e.target.value);
-                if (!editingService) {
-                  setSlug(
-                    e.target.value
-                      .toLowerCase()
-                      .replace(/[^a-z0-9]+/g, "-")
-                      .replace(/^-|-$/g, ""),
-                  );
+                const nextName = e.target.value;
+                setName(nextName);
+
+                if (slugTouched) return;
+
+                const generated = slugify(nextName);
+                setSlug(generated);
+
+                // slugify keeps only a-z0-9, so a name written entirely in
+                // Arabic yields an empty slug. Saving is blocked on an empty
+                // slug, so surface the field instead of leaving the user with
+                // a disabled button and no explanation.
+                if (nextName.trim() && !generated) {
+                  setShowSlugField(true);
                 }
               }}
               className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
             />
           </div>
-          <div>
-            <label className="text-sm font-medium">Slug *</label>
-            <input
-              value={slug}
-              onChange={(e) => setSlug(e.target.value.toLowerCase())}
-              className="mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm"
-            />
-          </div>
+
+          {showSlugField ? (
+            <div>
+              <label className="text-sm font-medium">Slug *</label>
+              <input
+                value={slug}
+                onChange={(e) => {
+                  setSlugTouched(true);
+                  setSlug(slugify(e.target.value));
+                }}
+                placeholder="e.g. email-access"
+                className="mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm"
+              />
+              <p className="text-muted-foreground mt-1 text-xs">
+                {name.trim() && !slug
+                  ? "Could not build an identifier from this name — please type one using English letters, numbers and hyphens."
+                  : "Used in links and APIs. Lowercase letters, numbers and hyphens only."}
+              </p>
+            </div>
+          ) : (
+            name.trim() && (
+              <p className="text-muted-foreground text-xs">
+                Identifier:{" "}
+                <span className="text-foreground font-mono">{slug}</span>
+                <button
+                  type="button"
+                  onClick={() => setShowSlugField(true)}
+                  className="text-primary ml-2 underline underline-offset-2"
+                >
+                  Edit
+                </button>
+              </p>
+            )
+          )}
           <div>
             <label className="text-sm font-medium">Description</label>
             <textarea
