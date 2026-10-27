@@ -37,6 +37,9 @@ export const BRANDING = {
     icon: {
       default: "/logos/barq-icon-black.png",
       whiteBG: "/logos/barq-icon-black-whiteBG-margined.png",
+      // Browser tab icon: transparent, turns white on dark tab bars (SVG)
+      favicon: "/logos/barq-favicon.svg?v=2",
+      faviconPng: "/logos/barq-favicon-192.png?v=2",
     },
     full: {
       light: "/logos/logo-black.svg",

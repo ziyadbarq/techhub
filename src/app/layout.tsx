@@ -12,7 +12,15 @@ export const metadata: Metadata = {
   title: getPageTitle("home"),
   description: getPageDescription("default"),
   icons: {
-    icon: BRANDING.logos.icon.whiteBG,
+    icon: [
+      { url: BRANDING.logos.icon.favicon, type: "image/svg+xml" },
+      {
+        url: BRANDING.logos.icon.faviconPng,
+        type: "image/png",
+        sizes: "192x192",
+      },
+    ],
+    // iOS home-screen icons must be opaque, so keep the white-background one
     apple: BRANDING.logos.icon.whiteBG,
   },
 };
