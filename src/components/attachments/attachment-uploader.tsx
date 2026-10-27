@@ -31,12 +31,15 @@ interface AttachmentUploaderProps {
   targetType: TargetObjectTypeEnum;
   targetId: string;
   onUploadComplete?: () => void;
+  /** Attachment type code to preselect when it exists, e.g. "ATT-DELIV". */
+  defaultTypeCode?: string;
 }
 
 export function AttachmentUploader({
   targetType,
   targetId,
   onUploadComplete,
+  defaultTypeCode,
 }: AttachmentUploaderProps) {
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [attachmentTypes, setAttachmentTypes] = React.useState<
@@ -58,9 +61,11 @@ export function AttachmentUploader({
     const result = await listAttachmentTypes({ activeOnly: true });
     if (result.success) {
       setAttachmentTypes(result.data);
-      // Auto-select first type if available
-      if (result.data.length > 0) {
-        setSelectedTypeId(result.data[0].id);
+      // Preselect the caller's preferred type, else the first available
+      const preferred = result.data.find((t) => t.code === defaultTypeCode);
+      const initial = preferred ?? result.data[0];
+      if (initial) {
+        setSelectedTypeId(initial.id);
       }
     } else {
       toast.error("Failed to load attachment types");
@@ -255,7 +260,10 @@ export function AttachmentUploader({
                   Drag and drop a file here, or click to browse
                 </p>
                 <p className="text-muted-foreground mb-4 text-xs">
-                  Maximum file size: 100MB
+                  Maximum file size:{" "}
+                  {attachmentTypes.find((t) => t.id === selectedTypeId)
+                    ?.maxFileSizeMB ?? 100}
+                  MB
                 </p>
                 <Button
                   type="button"

@@ -20,6 +20,10 @@ import { DI_TOKENS } from "../types";
 import type { IFileStorageService } from "@/core/services/file-storage.service.interface";
 import type { IImageOptimizationService } from "@/core/services/image-optimization.service.interface";
 import { LocalFileStorageService } from "@/infrastructure/services/local-file-storage.service";
+import {
+  GcsFileStorageService,
+  getGcsBucketName,
+} from "@/infrastructure/services/file-storage/gcs-file-storage.service";
 import { ImageOptimizationService } from "@/infrastructure/services/image-optimization.service";
 
 /**
@@ -44,12 +48,19 @@ export function bindFileStorageDependencies(container: Container): void {
   // Bind File Storage Service
   // ==========================================
 
-  // Bind IFileStorageService to LocalFileStorageService implementation
-  // Singleton ensures consistent storage operations and shared state
+  // GCS when a bucket is configured, local disk otherwise. Deployed
+  // environments set GCS_BUCKET_NAME; a developer without GCP credentials
+  // keeps working against ./public/uploads with no extra setup.
+  const useGcs = !!getGcsBucketName();
+
   container
     .bind<IFileStorageService>(DI_TOKENS.IFileStorageService)
-    .to(LocalFileStorageService)
+    .to(useGcs ? GcsFileStorageService : LocalFileStorageService)
     .inSingletonScope();
+
+  logger
+    .scope("DI")
+    .info("bind", `[DI] File storage backend: ${useGcs ? "gcs" : "local"}`);
 
   // ==========================================
   // Bind Image Optimization Service

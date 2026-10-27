@@ -35,6 +35,13 @@ import type { IFileStorageService } from "@/core/services/file-storage.service.i
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import { getSession } from "@/lib/auth/session";
 
+const MIME_BY_EXTENSION: Record<string, string> = {
+  pdf: "application/pdf",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+};
+
 /**
  * Resolve the Person record behind the signed-in user.
  *
@@ -134,7 +141,10 @@ export async function uploadAttachmentFile(
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const mimeType = file.type || "application/octet-stream";
+    // Some browsers and scanner apps send no type; fall back to the
+    // extension so a real PDF is not rejected by the magic-number check.
+    const mimeType =
+      file.type || MIME_BY_EXTENSION[extension] || "application/octet-stream";
 
     // The storage service re-checks the magic number against the declared
     // MIME type, so a renamed executable is rejected here rather than stored.
@@ -368,12 +378,9 @@ export async function downloadAttachment(
 
     const attachment = await useCase.execute({ id });
 
-    // Storage paths are project-relative ("public/uploads/..."); the service
-    // maps them to the URL Next actually serves ("/uploads/...").
-    const fileStorage = container.get<IFileStorageService>(
-      DI_TOKENS.IFileStorageService,
-    );
-    const url = fileStorage.getFileUrl(attachment.filePath);
+    // Always the gated route, never a storage URL: permission is re-checked
+    // on every fetch, and the bytes never become publicly reachable.
+    const url = `/api/attachments/${attachment.id}/download`;
 
     return {
       success: true,

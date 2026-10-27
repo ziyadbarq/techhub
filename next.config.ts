@@ -69,6 +69,12 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "10mb",
     },
+    // Reuse a dynamic page's RSC payload for 30s on client navigation, so
+    // going back to a page just visited (asset -> delivery note -> asset)
+    // does not refetch it. Server actions that revalidate still invalidate.
+    staleTimes: {
+      dynamic: 30,
+    },
   },
   // Exclude server-only packages from client bundle
   serverExternalPackages: [
@@ -80,6 +86,7 @@ const nextConfig: NextConfig = {
     "inversify",
     "reflect-metadata",
     "better-auth",
+    "@google-cloud/storage",
   ],
   // Image optimization configuration
   images: {
@@ -175,6 +182,20 @@ const nextConfig: NextConfig = {
               "base-uri 'self'",
               "form-action 'self'",
             ].join("; "),
+          },
+        ],
+      },
+      // Attachment preview is shown in an <iframe> on our own pages, so it
+      // overrides the global DENY / frame-ancestors 'none' for this route
+      // only. Later entries win for the same header key.
+      {
+        source: "/api/attachments/:id/preview",
+        headers: [
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          {
+            key: "Content-Security-Policy",
+            value:
+              "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; frame-ancestors 'self'",
           },
         ],
       },

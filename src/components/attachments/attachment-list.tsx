@@ -12,6 +12,7 @@ import {
   Image as ImageIcon,
   File,
   Download,
+  Eye,
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -38,6 +39,12 @@ import type { AttachmentDTO } from "@/interface-adapters/presenters/attachment.p
 import type { TargetObjectTypeEnum } from "@/generated/prisma";
 import { formatDateTime } from "@/lib/utils/date-format";
 
+import {
+  AttachmentPreviewDialog,
+  attachmentDownloadUrl,
+  canPreviewAttachment,
+} from "./attachment-preview-dialog";
+
 interface AttachmentListProps {
   targetType: TargetObjectTypeEnum;
   targetId: string;
@@ -54,6 +61,9 @@ export function AttachmentList({
   const [attachments, setAttachments] = React.useState<AttachmentDTO[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
+  const [previewing, setPreviewing] = React.useState<AttachmentDTO | null>(
+    null,
+  );
 
   const loadAttachments = React.useCallback(async () => {
     setIsLoading(true);
@@ -93,16 +103,6 @@ export function AttachmentList({
     } finally {
       setDeletingId(null);
     }
-  };
-
-  const handleDownload = (attachment: AttachmentDTO) => {
-    // For now, we'll show a toast. This will be enhanced with actual file download later
-    toast.info(
-      `Download functionality will be implemented soon: ${attachment.fileName}`,
-    );
-    // TODO: Implement actual file download using filePath
-    // const url = `/api/attachments/${attachment.id}/download`;
-    // window.open(url, '_blank');
   };
 
   const getFileIcon = (attachment: AttachmentDTO) => {
@@ -158,20 +158,42 @@ export function AttachmentList({
             {/* File Info */}
             <div className="min-w-0 flex-1">
               <div className="mb-1 flex items-start justify-between gap-2">
-                <h4
-                  className="truncate font-medium"
-                  title={attachment.fileName}
-                >
-                  {attachment.fileName}
-                </h4>
-                <div className="flex flex-shrink-0 gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDownload(attachment)}
-                    title="Download"
+                {canPreviewAttachment(attachment) ? (
+                  <button
+                    type="button"
+                    onClick={() => setPreviewing(attachment)}
+                    className="truncate text-left font-medium hover:underline"
+                    title={`Preview ${attachment.fileName}`}
                   >
-                    <Download className="size-4" />
+                    {attachment.fileName}
+                  </button>
+                ) : (
+                  <h4
+                    className="truncate font-medium"
+                    title={attachment.fileName}
+                  >
+                    {attachment.fileName}
+                  </h4>
+                )}
+                <div className="flex flex-shrink-0 gap-1">
+                  {canPreviewAttachment(attachment) && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPreviewing(attachment)}
+                      title="Preview"
+                      aria-label={`Preview ${attachment.fileName}`}
+                    >
+                      <Eye className="size-4" />
+                    </Button>
+                  )}
+                  <Button asChild variant="ghost" size="sm" title="Download">
+                    <a
+                      href={attachmentDownloadUrl(attachment.id)}
+                      aria-label={`Download ${attachment.fileName}`}
+                    >
+                      <Download className="size-4" />
+                    </a>
                   </Button>
                   {showDelete && (
                     <AlertDialog>
@@ -239,6 +261,11 @@ export function AttachmentList({
           </div>
         </Card>
       ))}
+
+      <AttachmentPreviewDialog
+        attachment={previewing}
+        onOpenChange={(open) => !open && setPreviewing(null)}
+      />
     </div>
   );
 }
