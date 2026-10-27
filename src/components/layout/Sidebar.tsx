@@ -385,19 +385,19 @@ const NestedNavItem = React.memo(function NestedNavItem({
       aria-current={isActive ? "page" : undefined}
       aria-expanded={itemHasChildren ? isExpanded : undefined}
       className={cn(
-        "relative flex min-w-0 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+        // The left border is always present (transparent until active) so the
+        // icon and label never shift sideways when an item becomes active.
+        "relative flex min-w-0 items-center gap-3 rounded-lg border-l-3 border-transparent px-3 py-2.5 text-sm font-medium transition-colors duration-200",
         // Default state
         "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         // Active state - accent background with yellow border (exact match only)
         isActive &&
           !isSection &&
-          "bg-sidebar-accent text-sidebar-accent-foreground border-barq-yellow border-l-3 font-semibold",
+          "bg-sidebar-accent text-sidebar-accent-foreground border-barq-yellow font-semibold",
         // Section state - subtle highlight (parent of active route, or prefix match)
         isSection && "bg-sidebar-accent/50",
         // Collapsed state centering
         isCollapsed && "justify-center px-2",
-        // Hover effects
-        !(isActive && !isSection) && "hover:scale-[1.02] hover:shadow-sm",
       )}
       style={{
         paddingLeft: !isCollapsed && paddingLeft ? paddingLeft : undefined,
@@ -458,13 +458,8 @@ const NestedNavItem = React.memo(function NestedNavItem({
 
   return (
     <div>
-      <motion.div
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        {navItemWithTooltip}
-      </motion.div>
+      {/* No mount animation: items sliding in on every load read as a shake. */}
+      {navItemWithTooltip}
 
       {/* Nested Children */}
       {itemHasChildren && !isCollapsed && (

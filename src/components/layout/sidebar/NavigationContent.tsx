@@ -119,6 +119,15 @@ export const NavigationContent = React.memo(function NavigationContent({
     const elementRect = element.getBoundingClientRect();
     const scrollTop = viewport.scrollTop;
 
+    // Already fully visible (e.g. the item the user just clicked): leave the
+    // scroll position alone, otherwise the menu jumps under the cursor.
+    if (
+      elementRect.top >= viewportRect.top &&
+      elementRect.bottom <= viewportRect.bottom
+    ) {
+      return;
+    }
+
     // Calculate the center position
     const elementCenter = elementRect.top - viewportRect.top + scrollTop;
     const viewportCenter = viewport.clientHeight / 2;
