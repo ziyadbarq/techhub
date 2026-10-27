@@ -71,7 +71,7 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/src/infrastructure/database/prisma ./src/infrastructure/database/prisma
 
 RUN mkdir -p local/logs local/uploads && \
-    chown -R nextjs:nodejs /app
+    chown -R nextjs:nodejs local
 
 USER nextjs
 

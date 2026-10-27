@@ -736,6 +736,11 @@ const createAuth = () =>
         providerId: "provider",
         accessTokenExpiresAt: "expiresAt",
       },
+      accountLinking: {
+        enabled: true,
+        trustedProviders: ["microsoft"],
+        requireLocalEmailVerified: false,
+      },
     },
 
     // Email/Password authentication (always enabled to allow login)
