@@ -4,10 +4,10 @@
 # profiles/node.yml. This stub only sets identity and the values that differ
 # from vars/base.yml + vars/node.yml.
 include:
-  - project: 'baraq-engineering/devops/ci-templates'
-    ref: 'main'
+  - project: "baraq-engineering/devops/ci-templates"
+    ref: "main"
     file:
-      - '/templates/profiles/node.yml'
+      - "/templates/profiles/node.yml"
 
 variables:
   PROJECT: "techhub"
@@ -35,13 +35,13 @@ variables:
   # In-repo Dockerfile expects npm ci + prisma generate + next build:fast on the
   # runner, then copies .next / prisma / node_modules. Shared Nest-style
   # Dockerfiles from deployment-configs cannot package that output.
-  POST_DOCKERFILE_PREPARE_CMD: "cp Dockerfile \"${OCI_DOCKERFILE}\"; cp Dockerfile \"${GCP_DOCKERFILE}\""
+  POST_DOCKERFILE_PREPARE_CMD: 'cp Dockerfile "${OCI_DOCKERFILE}"; cp Dockerfile "${GCP_DOCKERFILE}"'
 
   NODE_PACKAGE_MANAGER: "npm"
   NODE_NPM_INSTALL_CMD: "npm ci --prefer-offline --cache $NPM_CACHE_DIR --legacy-peer-deps"
   # package.json version is 1.0.0; image tags use scripts/release/compute-version.mjs.
   # $$ so GitLab does not expand these before the job shell runs.
-  NODE_NPM_BUILD_CMD: "git fetch --tags --force; git fetch --unshallow || true; eval \"$$(node scripts/release/compute-version.mjs --format=env)\"; npm pkg set version=\"$$APP_VERSION\"; npm run db:generate && npm run build:fast"
+  NODE_NPM_BUILD_CMD: 'git fetch --tags --force; git fetch --unshallow || true; eval "$$(node scripts/release/compute-version.mjs --format=env)"; npm pkg set version="$$APP_VERSION"; npm run db:generate && npm run build:fast'
 
   # Dockerfile copies pre-built .next + node_modules from kaniko context. Repo .dockerignore
   # excludes node_modules/ for local builds; legacy pipeline swapped it before kaniko.
