@@ -55,10 +55,14 @@ COPY scripts ./scripts
 ARG BASE_REGISTRY
 FROM ${BASE_REGISTRY}/node:22-alpine AS runner
 
-# Install system dependencies
+# Install system dependencies.
+# git + yq must be in this stage: kaniko unpacks it over the CI job rootfs, then
+# build/node.yml still runs `git clone` and `yq` in that same container.
 # NOTE: Use http mirrors to avoid local TLS MITM issues
 RUN sed -i 's/https/http/g' /etc/apk/repositories && \
-    apk add --no-cache libc6-compat curl postgresql-client
+    apk add --no-cache libc6-compat curl postgresql-client git && \
+    curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq && \
+    chmod +x /usr/local/bin/yq
 
 WORKDIR /app
 
