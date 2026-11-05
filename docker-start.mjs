@@ -224,8 +224,31 @@ async function runSeedIfEmpty() {
 console.log(`[TechHub] NODE_ENV=${process.env.NODE_ENV} | LOG_LEVEL=${process.env.LOG_LEVEL ?? "default"} | config=${CONFIG_SERVER_URL ? "config-server" : "local"}`);
 
 await loadConfig();
-await runMigrations();
-await runSeedIfEmpty();
 
-console.log("[TechHub] Starting Next.js server...");
-await import("./server.js");
+if (process.argv.includes("--seed-config-only")) {
+  // One-shot Kubernetes Job: run only approved reference-data seeds.
+  // Do not start Next.js or invoke the first-boot-only auto-seeder.
+  if (!process.env.DATABASE_URL) {
+    throw new Error("[seed-config-only] DATABASE_URL is missing");
+  }
+  const { spawnSync } = await import("node:child_process");
+  const result = spawnSync(
+    process.execPath,
+    [
+      "node_modules/tsx/dist/cli.mjs",
+      "src/infrastructure/database/prisma/seed-config-only.ts",
+    ],
+    { stdio: "inherit", env: process.env, cwd: process.cwd() },
+  );
+  if (result.error) throw result.error;
+  if (result.status !== 0) {
+    throw new Error(`[seed-config-only] Job failed (exit ${result.status ?? "unknown"})`);
+  }
+  console.log("[seed-config-only] Job completed successfully.");
+} else {
+  await runMigrations();
+  await runSeedIfEmpty();
+
+  console.log("[TechHub] Starting Next.js server...");
+  await import("./server.js");
+}
