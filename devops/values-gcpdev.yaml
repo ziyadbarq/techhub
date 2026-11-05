@@ -99,15 +99,10 @@ deployment:
       value: "1.5.0-f7b9c6e0-185665"
     # - name: HOST
     #   value: "0.0.0.0"
+    # Connection credentials must come from the approved Config Server/Secret.
     # Fallback so app starts if config server is unreachable; config server overrides when loaded
-    # - name: DATABASE_URL
-    #   value: "postgresql://techhub:YG%3C2KH%60r%29I%2CkHjMO@172.17.19.3:5432/techhub"
     - name: REDIS_URL
       value: redis://redis.dev.barq.com:6379
-    # - name: ENCRYPTION_KEY
-    #   value: "0ba0bf6dea177b8442c5fed421d0fbda50eb415e73deefd975e9a5775e8564cc"
-    # - name: BETTER_AUTH_SECRET
-    #   value: "XmPMOa+T2AUH13vPJqJoAllUC6njO9RwkFdYJpYWdNE="
     - name: NEXT_PUBLIC_APP_URL
       value: "https://techhub.dev.barq.com"
     - name: BETTER_AUTH_URL
@@ -199,10 +194,15 @@ networkPolicy:
     - podSelector:
         matchLabels:
           app.kubernetes.io/name: techhub
+# ONE-TIME GCP Dev reference-data seed using the existing Helm jobs.migrate hook.
+# Helm chart support for a dedicated jobs.seed key has not been verified.
+# Requires a NEW TechHub image that includes --seed-config-only mode.
+# Once the Job succeeds, change enabled back to false to avoid replay on sync.
+# Do not use the old image tag below until it has been rebuilt/deployed.
 jobs:
   migrate:
-    enabled: false
-    command: "node docker-start.mjs"
+    enabled: true
+    command: "node docker-start.mjs --seed-config-only"
     resources:
       limits:
         memory: 1024Mi
