@@ -13,6 +13,15 @@ variables:
   PROJECT: "techhub"
   REPO_URL: "git@gitlab.dev.baraq.com.internal:baraq-engineering/webdev/techhub.git"
 
+  # Run pipeline form. Default false writes jobs.migrate.enabled=false.
+  # Pick true on that run to turn the seed job on in values.
+  npm_migration:
+    description: "Set jobs.migrate.enabled in the values file"
+    value: "false"
+    options:
+      - "false"
+      - "true"
+
   # Live Argo is GCP (argocd-gcp/apps/dev/horizontal-services/techhub.yaml).
   CLOUD:
     description: "Select on which cloud you need to deploy"
