@@ -70,3 +70,6 @@ yarn.lock
 .env.production
 
 .claude/scheduled_tasks.lock
+
+# DevOps deployment values and environment-specific configuration
+/devops/
