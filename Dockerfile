@@ -116,9 +116,10 @@ COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/scripts ./scripts
 
-# Create directories for logs and uploads
-RUN mkdir -p local/logs local/uploads && \
-    chown -R nextjs:nodejs local
+# Create writable directories for uploads and the Helm PreSync hook script.
+# The shared Helm chart writes /opt/app/script.sh at Job startup.
+RUN mkdir -p local/logs local/uploads /opt/app && \
+    chown -R nextjs:nodejs local /opt/app
 
 # Switch to non-root user
 USER nextjs
