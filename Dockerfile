@@ -60,7 +60,7 @@ FROM ${BASE_REGISTRY}/node:22-alpine AS runner
 # build/node.yml still runs `git clone` and `yq` in that same container.
 # NOTE: Use http mirrors to avoid local TLS MITM issues
 RUN sed -i 's/https/http/g' /etc/apk/repositories && \
-    apk add --no-cache libc6-compat curl postgresql-client git && \
+    apk add --no-cache libc6-compat curl postgresql-client git bash && \
     curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq && \
     chmod +x /usr/local/bin/yq
 
