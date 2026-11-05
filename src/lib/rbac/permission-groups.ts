@@ -434,6 +434,17 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     ],
   },
   {
+    id: "workflow-engine",
+    label: "Workflow Engine",
+    description:
+      "Forms, workflow definitions, requests, approvals, inbox, notifications, and workflow administration",
+    icon: "GitBranch",
+    // Keep new workflow permissions discoverable without updating this group manually.
+    permissions: Object.values(PERMISSIONS).filter((permission) =>
+      permission.startsWith("workflows-"),
+    ),
+  },
+  {
     id: "development",
     label: "Development & Testing",
     description: "Task management and development-related permissions",
@@ -448,6 +459,25 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     ],
   },
 ];
+
+// Ensure every declared permission can be assigned through the Roles UI.
+// Historically, new permissions without a matching category were omitted here.
+const categorizedPermissions = new Set(
+  PERMISSION_GROUPS.flatMap((group) => group.permissions),
+);
+const uncategorizedPermissions = Object.values(PERMISSIONS).filter(
+  (permission) => !categorizedPermissions.has(permission),
+);
+
+if (uncategorizedPermissions.length > 0) {
+  PERMISSION_GROUPS.push({
+    id: "other-permissions",
+    label: "Other Permissions",
+    description: "Available permissions not yet assigned to a dedicated category",
+    icon: "List",
+    permissions: uncategorizedPermissions,
+  });
+}
 
 /**
  * Get all permissions in a flat array
