@@ -549,6 +549,14 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT],
     description: "Available request forms",
   },
+  "/request": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT],
+    description: "Standalone service request portal for published forms",
+  },
+  "/request/[formId]": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT],
+    description: "Standalone page for submitting a published form",
+  },
   "/workflows/notifications": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW],
     description: "In-app workflow notifications",

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { ChevronRight, FileText } from "lucide-react";
+import { ArrowUpRight, ChevronRight, FileText } from "lucide-react";
 
 import { Badge, Card } from "@/components/design";
 import { prisma } from "@/infrastructure/database/prisma/client";
@@ -28,12 +28,17 @@ export default async function WorkflowFormsPage() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-h1">Browse Forms</h1>
-        <p className="text-subtitle text-slate max-w-2xl">
-          Pick a request type to fill it out and send it for approval.
-        </p>
-      </header>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <header className="space-y-1">
+          <h1 className="text-h1">Browse Forms</h1>
+          <p className="text-subtitle text-slate max-w-2xl">
+            Pick a request type to fill it out and send it for approval.
+          </p>
+        </header>
+        <Link href="/request" className="inline-flex items-center gap-2 rounded-xl border border-[var(--color-hairline-soft)] px-4 py-2.5 text-sm font-medium transition-colors hover:bg-[var(--color-surface-soft)]">
+          Open request portal <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+        </Link>
+      </div>
 
       {forms.length === 0 ? (
         <Card>

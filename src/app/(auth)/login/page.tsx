@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { BRANDING, getCopyrightWithTagline } from "@/config/branding";
 import { useRouter } from "next/navigation";
+import { safeReturnPath } from "@/lib/auth/safe-return-path";
 
 export default function LoginPage() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -38,7 +39,7 @@ export default function LoginPage() {
       .getSession()
       .then((session) => {
         if (session?.data?.user) {
-          router.replace("/dashboard");
+          router.replace(safeReturnPath(new URLSearchParams(window.location.search).get("from")));
         } else {
           // User not logged in, show the login page
           setIsCheckingAuth(false);
@@ -67,7 +68,7 @@ export default function LoginPage() {
   const handleMicrosoftLogin = async () => {
     await authClient.signIn.social({
       provider: "microsoft",
-      callbackURL: "/dashboard",
+      callbackURL: safeReturnPath(new URLSearchParams(window.location.search).get("from")),
     });
   };
 
