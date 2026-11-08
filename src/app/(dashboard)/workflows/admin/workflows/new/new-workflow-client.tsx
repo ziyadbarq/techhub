@@ -34,7 +34,7 @@ export function NewWorkflowClient() {
       const body = (await response.json()) as {
         definition: { id: string };
       };
-      router.push(`/workflows/admin/workflows/${body.definition.id}`);
+      router.push(`/workflows/designer/${body.definition.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {

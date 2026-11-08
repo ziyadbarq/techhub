@@ -14,7 +14,7 @@ export default async function NewWorkflowPage() {
 
   return (
     <div className="space-y-6">
-      <LinkButton href="/workflows/admin/workflows" variant="ghost" size="sm">
+      <LinkButton href="/workflows/designer" variant="ghost" size="sm">
         ← Workflows
       </LinkButton>
 

@@ -577,6 +577,15 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   "/workflows/admin/workflows/[workflowId]": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_UPDATE],
   },
+  "/workflows/designer": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_VIEW],
+  },
+  "/workflows/designer/new": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_CREATE],
+  },
+  "/workflows/designer/[workflowId]": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_UPDATE],
+  },
   "/workflows/admin/calendars": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_CALENDARS_MANAGE],
   },

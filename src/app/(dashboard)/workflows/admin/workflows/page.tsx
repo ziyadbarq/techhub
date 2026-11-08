@@ -35,7 +35,7 @@ export default async function AdminWorkflowsListPage() {
             {definitions.length === 1 ? "" : "s"}.
           </p>
         </div>
-        <LinkButton href="/workflows/admin/workflows/new" variant="primary">
+        <LinkButton href="/workflows/designer/new" variant="primary">
           New workflow
         </LinkButton>
       </header>
@@ -83,7 +83,7 @@ export default async function AdminWorkflowsListPage() {
                   </td>
                   <td className="px-5 py-3 text-right">
                     <Link
-                      href={`/workflows/admin/workflows/${d.id}`}
+                      href={`/workflows/designer/${d.id}`}
                       className="text-body-sm-medium text-[var(--color-brand-blue)] hover:underline"
                     >
                       {d.isBuiltIn ? "View →" : "Edit →"}
