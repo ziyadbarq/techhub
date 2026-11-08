@@ -4,6 +4,8 @@ import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { requirePermission } from "@/lib/permissions/server";
+import { getMicrosoftPortalAccess } from "@/lib/auth/microsoft-portal-access";
+import { MicrosoftPortalGate } from "@/components/auth/microsoft-portal-gate";
 import { RequestCatalog } from "./request-catalog";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +16,10 @@ export const metadata: Metadata = {
 
 export default async function RequestPortalPage() {
   await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
+  const access = await getMicrosoftPortalAccess();
+  if (!access.allowed) {
+    return <MicrosoftPortalGate returnTo="/request" authenticated={access.authenticated} />;
+  }
   await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT);
   const forms = await prisma.form.findMany({
     where: { isActive: true, publishedVersionId: { not: null } },

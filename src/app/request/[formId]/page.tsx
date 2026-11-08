@@ -4,12 +4,21 @@ import { ArrowLeft, ArrowUpRight, CheckCircle2, FileText, LockKeyhole } from "lu
 import { CopyRequestLink } from "@/components/workflows/copy-request-link";
 import { loadRequestFormData } from "@/lib/workflows/load-request-form";
 import { SubmitRequestForm } from "@/app/(dashboard)/workflows/requests/new/[formId]/submit-form";
+import { getMicrosoftPortalAccess } from "@/lib/auth/microsoft-portal-access";
+import { MicrosoftPortalGate } from "@/components/auth/microsoft-portal-gate";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+import { requireFeature } from "@/lib/features/server";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Submit a Request | TechHub" };
 
 export default async function StandaloneRequestPage({ params }: { params: Promise<{ formId: string }> }) {
   const { formId } = await params;
+  await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
+  const access = await getMicrosoftPortalAccess();
+  if (!access.allowed) {
+    return <MicrosoftPortalGate returnTo={"/request/" + encodeURIComponent(formId)} authenticated={access.authenticated} />;
+  }
   const { form, orgUsers, formNameToId, systemFieldValues } = await loadRequestFormData(formId);
 
   return (
@@ -39,7 +48,7 @@ export default async function StandaloneRequestPage({ params }: { params: Promis
               <li className="flex items-start gap-3"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 dark:bg-blue-400/15 dark:text-blue-200">2</span><span className="pt-1 text-slate-600 dark:text-slate-300">Submit securely with your TechHub account.</span></li>
               <li className="flex items-start gap-3"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 dark:bg-blue-400/15 dark:text-blue-200">3</span><span className="pt-1 text-slate-600 dark:text-slate-300">Receive a reference number for tracking.</span></li>
             </ol>
-            <div className="mt-6 flex items-start gap-2 rounded-xl bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-500 dark:bg-white/5 dark:text-slate-400"><LockKeyhole className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" /> Only authorized employees can submit this form.</div>
+            <div className="mt-6 flex items-start gap-2 rounded-xl bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-500 dark:bg-white/5 dark:text-slate-400"><LockKeyhole className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" /> Microsoft sign-in and TechHub permissions are required to submit.</div>
           </div>
         </aside>
         <section className="min-w-0 overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_14px_48px_-34px_rgba(10,27,54,0.45)] dark:border-white/10 dark:bg-[#111a2b]">
@@ -48,7 +57,7 @@ export default async function StandaloneRequestPage({ params }: { params: Promis
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300"><CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" /> Ready to submit</span>
           </div>
           <div className="px-6 py-8 sm:px-9 sm:py-10">
-            <SubmitRequestForm formId={form.id} schema={form.publishedVersion.schemaJson as never} users={orgUsers} formNameToId={formNameToId} systemFieldValues={systemFieldValues} successMode="inline" />
+            <SubmitRequestForm formId={form.id} schema={form.publishedVersion.schemaJson as never} users={orgUsers} formNameToId={formNameToId} systemFieldValues={systemFieldValues} successMode="inline" submitEndpoint="/api/workflow/portal/requests" />
           </div>
         </section>
       </div>

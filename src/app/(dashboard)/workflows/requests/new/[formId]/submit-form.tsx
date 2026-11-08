@@ -40,6 +40,7 @@ export function SubmitRequestForm({
   formNameToId,
   systemFieldValues,
   successMode = "redirect",
+  submitEndpoint = "/api/workflow/requests",
 }: {
   formId: string;
   schema: FormSchema;
@@ -47,6 +48,7 @@ export function SubmitRequestForm({
   formNameToId?: Record<string, string>;
   systemFieldValues?: Record<string, string>;
   successMode?: "redirect" | "inline";
+  submitEndpoint?: string;
 }) {
   const router = useRouter();
   const [values, setValues] = useState<Record<string, unknown>>({});
@@ -80,7 +82,7 @@ export function SubmitRequestForm({
     setMissing([]);
     setSubmitting(true);
     try {
-      const response = await fetch("/api/workflow/requests", {
+      const response = await fetch(submitEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ formId, fieldValues: values }),

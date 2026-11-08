@@ -1100,6 +1100,38 @@ const createAuth = () =>
             personId: linkResult.personId,
           });
         }
+
+        // Mark only the newly established Microsoft OAuth session. The account
+        // being linked to Microsoft or the user's lastLoginMethod is NOT proof
+        // that this particular session authenticated through Microsoft.
+        if (isOAuthCallback) {
+          const sessionToken = ctx.context.newSession?.session?.token;
+          if (!sessionToken) {
+            getLogger().warn("Microsoft OAuth callback did not expose a new session token", {
+              userId: user.id,
+            });
+            return;
+          }
+
+          try {
+            const marked = await getPrismaWithEncryption().session.updateMany({
+              where: { sessionToken, userId: user.id },
+              data: { authProvider: "microsoft" },
+            });
+            if (marked.count !== 1) {
+              getLogger().warn("Microsoft OAuth session marker could not be stored", {
+                userId: user.id,
+              });
+            }
+          } catch (error) {
+            getLogger().error(
+              "Failed to mark Microsoft OAuth session for request portal",
+              error instanceof Error ? error : new Error(String(error)),
+              { userId: user.id },
+            );
+            // Fail closed: portal access requires this DB marker.
+          }
+        }
       }),
     },
   });

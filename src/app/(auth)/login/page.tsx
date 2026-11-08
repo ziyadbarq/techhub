@@ -13,22 +13,18 @@ import { Shield, Lock, ShieldCheck, FileCheck, Moon, Sun } from "lucide-react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { Separator } from "@/components/ui/separator";
 import { Suspense, useEffect, useState } from "react";
-import { useClientSetting } from "@/hooks/use-client-settings";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { BRANDING, getCopyrightWithTagline } from "@/config/branding";
 import { useRouter } from "next/navigation";
 import { safeReturnPath } from "@/lib/auth/safe-return-path";
+import { MicrosoftSignInButton } from "@/components/auth/microsoft-sign-in-button";
 
 export default function LoginPage() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const router = useRouter();
-
-  // Authentication method controls (DB override → build-time env fallback)
-  const msAuthSetting = useClientSetting("NEXT_PUBLIC_ENABLE_MS_AUTH");
-  const isMSAuthEnabled = msAuthSetting !== "false";
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -64,13 +60,6 @@ export default function LoginPage() {
       </div>
     );
   }
-
-  const handleMicrosoftLogin = async () => {
-    await authClient.signIn.social({
-      provider: "microsoft",
-      callbackURL: safeReturnPath(new URLSearchParams(window.location.search).get("from")),
-    });
-  };
 
   return (
     <div className="relative flex min-h-screen">
@@ -220,33 +209,10 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Microsoft Login Button */}
-            <Button
-              onClick={handleMicrosoftLogin}
-              className="w-full"
-              size="lg"
-              variant="outline"
-              disabled={!isMSAuthEnabled}
-            >
-              <svg
-                className="mr-2 h-5 w-5"
-                viewBox="0 0 21 21"
-                fill="currentColor"
-              >
-                <rect x="1" y="1" width="9" height="9" fill="#F25022" />
-                <rect x="1" y="11" width="9" height="9" fill="#00A4EF" />
-                <rect x="11" y="1" width="9" height="9" fill="#7FBA00" />
-                <rect x="11" y="11" width="9" height="9" fill="#FFB900" />
-              </svg>
-              Continue with Microsoft
-            </Button>
-
-            {/* Disabled Microsoft Button Tooltip */}
-            {!isMSAuthEnabled && (
-              <p className="text-muted-foreground text-center text-xs">
-                Microsoft authentication is currently disabled
-              </p>
-            )}
+            {/* Shared Microsoft SSO button - same flow as request portal. */}
+            <MicrosoftSignInButton
+              callbackURL={typeof window === "undefined" ? "/dashboard" : safeReturnPath(new URLSearchParams(window.location.search).get("from"))}
+            />
 
             {/* Footer */}
             <div className="space-y-4 pt-4">
