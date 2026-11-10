@@ -41,9 +41,10 @@ export async function POST(request: NextRequest) {
     const userId = await requireKnowledgeAccess(permission);
     await requireClassification(metadata.classification);
 
-    let existing: Awaited<ReturnType<typeof prisma.knowledgeArticle.findUnique>> = null;
+    const existing = id
+      ? await prisma.knowledgeArticle.findUnique({ where: { id } })
+      : null;
     if (id) {
-      existing = await prisma.knowledgeArticle.findUnique({ where: { id } });
       if (!existing || existing.isArchived || existing.sourceType !== "PDF") {
         throw new KnowledgeError(404, "PDF_ARTICLE_NOT_FOUND");
       }

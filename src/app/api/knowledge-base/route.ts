@@ -44,12 +44,14 @@ export async function GET(request: NextRequest) {
     const publishedById = new Map(revisions.map((r) => [r.articleId, r]));
 
     const filtered = items.flatMap((item) => {
-      const active = manage ? item : publishedById.get(item.id);
+      const publishedRevision = publishedById.get(item.id);
+      const active = manage ? item : publishedRevision;
       if (!active) return [];
       if (active.classification === "RESTRICTED" && !restricted) return [];
       const searchText = manage
         ? item.title + " " + (item.summary ?? "")
-        : active.title + " " + (active.summary ?? "") + " " + (active.plainText ?? "");
+        : (publishedRevision?.title ?? "") + " " +
+          (publishedRevision?.summary ?? "") + " " + (publishedRevision?.plainText ?? "");
       if (q && !searchText.toLowerCase().includes(q)) return [];
       return [{
         id: item.id,
