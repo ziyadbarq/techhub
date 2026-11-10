@@ -4,10 +4,10 @@ import { prisma } from "@/infrastructure/database/prisma/client";
 import { getSession } from "@/lib/auth/session";
 
 /**
- * Microsoft provenance belongs to the current session, NOT to the user account.
+ * Microsoft provenance for request submission belongs to the current session, NOT to the user account.
  * A linked Microsoft account or lastLoginMethod can also exist on email sessions.
  */
-export async function getMicrosoftPortalAccess(): Promise<{
+export async function getMicrosoftRequestAccess(): Promise<{
   authenticated: boolean;
   allowed: boolean;
 }> {

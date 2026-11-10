@@ -1,5 +1,9 @@
 import { Card, LinkButton } from "@/components/design";
 import { loadRequestFormData } from "@/lib/workflows/load-request-form";
+import { getMicrosoftRequestAccess } from "@/lib/auth/microsoft-request-access";
+import { MicrosoftRequestGate } from "@/components/auth/microsoft-request-gate";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+import { requireFeature } from "@/lib/features/server";
 import { SubmitRequestForm } from "./submit-form";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +14,19 @@ export default async function NewRequestPage({
   params: Promise<{ formId: string }>;
 }) {
   const { formId } = await params;
+  await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
+
+  // Keep Microsoft SSO mandatory when forms are submitted from the dashboard.
+  const access = await getMicrosoftRequestAccess();
+  if (!access.allowed) {
+    return (
+      <MicrosoftRequestGate
+        returnTo={"/workflows/requests/new/" + encodeURIComponent(formId)}
+        authenticated={access.authenticated}
+      />
+    );
+  }
+
   const { form, orgUsers, formNameToId, systemFieldValues } =
     await loadRequestFormData(formId);
 
