@@ -12,7 +12,6 @@
 
 import {
   BarChart3,
-  Bell,
   ClipboardList,
   FileText,
   Inbox,
@@ -51,15 +50,6 @@ export const workflowsNavGroup: NavGroup = {
       description: "Available request forms",
       permission: PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT,
       featureFlag: "WORKFLOW_ENGINE",
-    },
-    {
-      title: "Notifications",
-      href: "/workflows/notifications",
-      icon: Bell,
-      description: "In-app workflow notifications",
-      permission: PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW,
-      featureFlag: "WORKFLOW_ENGINE",
-      badge: "dynamic",
     },
     {
       title: "Analytics",

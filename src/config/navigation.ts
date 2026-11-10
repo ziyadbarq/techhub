@@ -45,6 +45,7 @@ import { assetcatalogNavGroup } from "./navigation-groups/asset-catalog";
 import { assetsNavGroup } from "./navigation-groups/assets";
 import { servicescmdbNavGroup } from "./navigation-groups/services-cmdb";
 import { workflowsNavGroup } from "./navigation-groups/workflows";
+import { ClipboardList } from "lucide-react";
 import { complianceNavGroup } from "./navigation-groups/compliance";
 import { systemNavGroup } from "./navigation-groups/system";
 import { rbacNavGroup } from "./navigation-groups/rbac";
@@ -67,6 +68,34 @@ import { rbacNavGroup } from "./navigation-groups/rbac";
  * 7. System & Operations
  * 8. RBAC & Access Control
  */
+// The generated manifest remains the source of route definitions; navigation
+// grouping happens here to support a permission-filtered Requests dropdown.
+const requestPaths = new Set(["/workflows/forms", "/workflows/requests"]);
+const workflowsWithRequestMenu = {
+  ...workflowsNavGroup,
+  permission: undefined,
+  items: [
+    ...workflowsNavGroup.items.filter((item) => item.href === "/workflows/inbox"),
+    {
+      title: "Requests",
+      href: "/workflows",
+      icon: ClipboardList,
+      description: "New requests and submitted requests",
+      featureFlag: "WORKFLOW_ENGINE",
+      children: workflowsNavGroup.items
+        .filter((item) => requestPaths.has(item.href))
+        .sort((a, b) => a.href === "/workflows/forms" ? -1 : b.href === "/workflows/forms" ? 1 : 0)
+        .map((item) => ({
+          ...item,
+          title: item.href === "/workflows/forms" ? "New Request" : "My Requests",
+        })),
+    },
+    ...workflowsNavGroup.items.filter((item) =>
+      item.href !== "/workflows/inbox" && !requestPaths.has(item.href)
+    ),
+  ],
+};
+
 export const navGroups = [
   // Core navigation (always visible)
   mainNavGroup,
@@ -84,7 +113,7 @@ export const navGroups = [
   servicescmdbNavGroup,
 
   // Workflows (forms, requests, inbox, admin)
-  workflowsNavGroup,
+  workflowsWithRequestMenu,
 
   // Compliance, licensing, contracts, governance, and attachments
   complianceNavGroup,

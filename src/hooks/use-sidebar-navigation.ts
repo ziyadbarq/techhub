@@ -168,6 +168,19 @@ export function useSidebarNavigation() {
     }
   }, [navGroups, collapsedGroups, setCollapsedGroups]);
 
+  // Keep the Requests dropdown expanded when navigating to an active child.
+  React.useEffect(() => {
+    if (!pathname || navGroups.length === 0) return;
+    for (const group of navGroups) {
+      for (const item of group.items) {
+        if (!item.children?.some((child) => isNavItemActive(child.href, pathname))) continue;
+        setExpandedItems((previous) =>
+          previous[item.href] ? previous : { ...previous, [item.href]: true },
+        );
+      }
+    }
+  }, [pathname, navGroups]);
+
   // Auto-expand group containing active page
   React.useEffect(() => {
     if (!pathname || navGroups.length === 0) return;

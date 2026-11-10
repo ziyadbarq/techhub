@@ -551,15 +551,15 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   },
   "/request": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT],
-    description: "Standalone service request portal for published forms",
+    description: "Legacy portal link redirects to dashboard forms",
   },
   "/request/[formId]": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT],
-    description: "Standalone page for submitting a published form",
+    description: "Legacy form link redirects to dashboard submission",
   },
   "/workflows/notifications": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW],
-    description: "In-app workflow notifications",
+    description: "Legacy workflow notifications link (redirects to TechHub notifications)",
   },
   "/workflows/analytics": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_ANALYTICS_VIEW],

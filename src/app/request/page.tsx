@@ -1,30 +1,6 @@
-import type { Metadata } from "next";
-import { prisma } from "@/infrastructure/database/prisma/client";
-import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
-import { requireFeature } from "@/lib/features/server";
-import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { requirePermission } from "@/lib/permissions/server";
-import { getMicrosoftPortalAccess } from "@/lib/auth/microsoft-portal-access";
-import { MicrosoftPortalGate } from "@/components/auth/microsoft-portal-gate";
-import { RequestCatalog } from "./request-catalog";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Service Requests | TechHub",
-  description: "Submit a service request through TechHub's standalone portal.",
-};
-
-export default async function RequestPortalPage() {
-  await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
-  const access = await getMicrosoftPortalAccess();
-  if (!access.allowed) {
-    return <MicrosoftPortalGate returnTo="/request" authenticated={access.authenticated} />;
-  }
-  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT);
-  const forms = await prisma.form.findMany({
-    where: { isActive: true, publishedVersionId: { not: null } },
-    select: { id: true, name: true, description: true },
-    orderBy: { name: "asc" },
-  });
-  return <RequestCatalog forms={forms} />;
+// Old shared URLs remain valid, but all forms now live in the dashboard.
+export default function LegacyRequestRedirect() {
+  redirect("/workflows/forms");
 }

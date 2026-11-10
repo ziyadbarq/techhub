@@ -68,19 +68,19 @@ export function filterItems(
         item.visible !== false &&
         checkItemPermission(item, userPermissions, enabledFeatures),
     )
-    .map((item) => {
+    .flatMap((item) => {
       if (item.children) {
         const filteredChildren = filterItems(
           item.children,
           userPermissions,
           enabledFeatures,
         );
-        return {
-          ...item,
-          children: filteredChildren.length > 0 ? filteredChildren : undefined,
-        };
+        // Avoid a dropdown that has no visible children for this user's RBAC.
+        return filteredChildren.length > 0
+          ? [{ ...item, children: filteredChildren }]
+          : [];
       }
-      return item;
+      return [item];
     });
 }
 
