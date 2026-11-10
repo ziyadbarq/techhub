@@ -25,26 +25,30 @@ describe("Microsoft SSO requirement for dashboard form submission", () => {
   });
 
   it("denies an email session even if that user previously linked Microsoft", async () => {
-    mockSession.mockResolvedValue({ session: { token: "email-session" }, user: { id: "u1" } } as never);
+    mockSession.mockResolvedValue({ session: { id: "email-session" }, user: { id: "u1" } } as never);
     mockFind.mockResolvedValue({ userId: "u1", authProvider: null, expires: new Date(Date.now() + 60000) } as never);
     expect((await getMicrosoftRequestAccess()).allowed).toBe(false);
   });
 
   it("denies a session belonging to another user", async () => {
-    mockSession.mockResolvedValue({ session: { token: "token" }, user: { id: "u1" } } as never);
+    mockSession.mockResolvedValue({ session: { id: "token" }, user: { id: "u1" } } as never);
     mockFind.mockResolvedValue({ userId: "u2", authProvider: "microsoft", expires: new Date(Date.now() + 60000) } as never);
     expect((await getMicrosoftRequestAccess()).allowed).toBe(false);
   });
 
   it("denies an expired Microsoft session", async () => {
-    mockSession.mockResolvedValue({ session: { token: "token" }, user: { id: "u1" } } as never);
+    mockSession.mockResolvedValue({ session: { id: "token" }, user: { id: "u1" } } as never);
     mockFind.mockResolvedValue({ userId: "u1", authProvider: "microsoft", expires: new Date(Date.now() - 60000) } as never);
     expect((await getMicrosoftRequestAccess()).allowed).toBe(false);
   });
 
   it("accepts only a current Microsoft-authenticated session", async () => {
-    mockSession.mockResolvedValue({ session: { token: "token" }, user: { id: "u1" } } as never);
+    mockSession.mockResolvedValue({ session: { id: "token" }, user: { id: "u1" } } as never);
     mockFind.mockResolvedValue({ userId: "u1", authProvider: "microsoft", expires: new Date(Date.now() + 60000) } as never);
     expect(await getMicrosoftRequestAccess()).toEqual({ authenticated: true, allowed: true });
+    expect(mockFind).toHaveBeenCalledWith({
+      where: { id: "token" },
+      select: { userId: true, expires: true, authProvider: true },
+    });
   });
 });

@@ -8,6 +8,10 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { SESSION_COOKIE_NAMES } from "@/lib/auth/cookie-names";
 
+// Better Auth's inferred Session is the { session, user } envelope.
+// Server helpers return its inner session, not the envelope itself.
+type ServerSession = Session["session"];
+
 const moduleLogger = logger.scope("Session");
 
 /**
@@ -22,7 +26,7 @@ const moduleLogger = logger.scope("Session");
  */
 const getSessionInternal = cache(
   async (): Promise<{
-    session: Session | null;
+    session: ServerSession | null;
     user: User | null;
   }> => {
     try {
@@ -55,7 +59,7 @@ const getSessionInternal = cache(
       }
 
       return {
-        session: result.session as unknown as Session,
+        session: result.session as ServerSession,
         user: result.user as User,
       };
     } catch (error) {
@@ -72,7 +76,7 @@ const getSessionInternal = cache(
  * Public wrapper for getSession that delegates to the memoized implementation
  */
 export async function getSession(): Promise<{
-  session: Session | null;
+  session: ServerSession | null;
   user: User | null;
 }> {
   return getSessionInternal();
@@ -82,7 +86,7 @@ export async function getSession(): Promise<{
  * Require authentication - redirect to login if not authenticated
  */
 export async function requireAuth(): Promise<{
-  session: Session;
+  session: ServerSession;
   user: User;
 }> {
   const { session, user } = await getSession();

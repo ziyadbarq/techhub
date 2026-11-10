@@ -1,4 +1,5 @@
 import { Card, LinkButton } from "@/components/design";
+import { notFound } from "next/navigation";
 import { loadRequestFormData } from "@/lib/workflows/load-request-form";
 import { getMicrosoftRequestAccess } from "@/lib/auth/microsoft-request-access";
 import { MicrosoftRequestGate } from "@/components/auth/microsoft-request-gate";
@@ -29,6 +30,10 @@ export default async function NewRequestPage({
 
   const { form, orgUsers, formNameToId, systemFieldValues } =
     await loadRequestFormData(formId);
+  // The loader rejects unpublished forms, but its return type cannot carry
+  // that relation's narrowing across a function boundary.
+  const publishedVersion = form.publishedVersion;
+  if (!publishedVersion) notFound();
 
   return (
     <div className="space-y-6">
@@ -44,14 +49,14 @@ export default async function NewRequestPage({
           </p>
         ) : null}
         <p className="text-caption text-stone">
-          Form version {form.publishedVersion.versionNumber}
+          Form version {publishedVersion.versionNumber}
         </p>
       </header>
 
       <Card size="feature">
         <SubmitRequestForm
           formId={form.id}
-          schema={form.publishedVersion.schemaJson as never}
+          schema={publishedVersion.schemaJson as never}
           users={orgUsers}
           formNameToId={formNameToId}
           systemFieldValues={systemFieldValues}

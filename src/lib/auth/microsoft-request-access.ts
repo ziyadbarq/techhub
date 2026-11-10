@@ -16,12 +16,14 @@ export async function getMicrosoftRequestAccess(): Promise<{
     return { authenticated: false, allowed: false };
   }
 
-  if (!session.token) {
+  // Look up the exact authenticated Better Auth session by its database ID.
+  // Do not use a linked Microsoft account or the user's last-login method.
+  if (!session.id) {
     return { authenticated: true, allowed: false };
   }
 
   const marked = await prisma.session.findUnique({
-    where: { sessionToken: session.token },
+    where: { id: session.id },
     select: { userId: true, expires: true, authProvider: true },
   });
 
