@@ -284,6 +284,19 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     description: "View specific Intune device details",
   },
 
+  "/knowledge-base": {
+    requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_VIEW],
+    description: "Internal policies, procedures and curated knowledge",
+  },
+  "/knowledge-base/new": {
+    requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_CREATE],
+  },
+  "/knowledge-base/[id]": {
+    requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_VIEW],
+  },
+  "/knowledge-base/[id]/edit": {
+    requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_UPDATE],
+  },
   // ============================================================================
   // MAIN ROUTES
   // ============================================================================

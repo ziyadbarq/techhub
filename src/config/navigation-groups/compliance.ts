@@ -16,6 +16,7 @@ import {
   FileCode,
   FileKey,
   FileText,
+  BookOpen,
   FolderTree,
   ShoppingCart,
   Users,
@@ -98,6 +99,14 @@ export const complianceNavGroup: NavGroup = {
       description: "Attachment management across all entities",
       permission: PERMISSIONS.ATTACHMENTS_VIEW,
       featureFlag: "ATTACHMENTS",
+    },
+    {
+      title: "Knowledge Base",
+      href: "/knowledge-base",
+      icon: BookOpen,
+      description: "Internal policies, procedures and curated knowledge",
+      permission: PERMISSIONS.KNOWLEDGE_BASE_VIEW,
+      featureFlag: "KNOWLEDGE_BASE",
     },
     {
       title: "Verification Campaigns",

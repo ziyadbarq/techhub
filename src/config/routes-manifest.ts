@@ -989,6 +989,48 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     navOrder: 10,
   },
 
+  {
+    path: "/knowledge-base",
+    label: "Knowledge Base",
+    icon: BookOpen,
+    description: "Internal policies, procedures and curated knowledge",
+    requiredPermissions: ["KNOWLEDGE_BASE_VIEW"],
+    featureFlag: "KNOWLEDGE_BASE",
+    visibleInNav: true,
+    navGroup: "compliance",
+    navOrder: 11,
+  },
+  {
+    path: "/knowledge-base/new",
+    label: "New Knowledge Article",
+    icon: BookOpen,
+    requiredPermissions: ["KNOWLEDGE_BASE_CREATE"],
+    featureFlag: "KNOWLEDGE_BASE",
+    visibleInNav: false,
+    isChildRoute: true,
+    parentRoute: "/knowledge-base",
+  },
+  {
+    path: "/knowledge-base/[id]",
+    label: "Knowledge Article",
+    icon: BookOpen,
+    requiredPermissions: ["KNOWLEDGE_BASE_VIEW"],
+    featureFlag: "KNOWLEDGE_BASE",
+    visibleInNav: false,
+    isChildRoute: true,
+    parentRoute: "/knowledge-base",
+  },
+  {
+    path: "/knowledge-base/[id]/edit",
+    label: "Edit Knowledge Article",
+    icon: BookOpen,
+    requiredPermissions: ["KNOWLEDGE_BASE_UPDATE"],
+    featureFlag: "KNOWLEDGE_BASE",
+    visibleInNav: false,
+    isChildRoute: true,
+    parentRoute: "/knowledge-base",
+  },
+
   // ============================================================================
   // SYSTEM & OPERATIONS GROUP
   // ============================================================================
