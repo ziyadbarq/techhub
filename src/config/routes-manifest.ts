@@ -395,6 +395,18 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     navGroup: "main",
   },
 
+  // TechHub header notifications (not a separate workflow sidebar item).
+  {
+    path: "/notifications",
+    label: "Notifications",
+    icon: Bell,
+    description: "Unified TechHub notifications center",
+    requiredPermissions: ["WORKFLOWS_NOTIFICATIONS_VIEW"],
+    featureFlag: "WORKFLOW_ENGINE",
+    visibleInNav: false,
+    navGroup: "main",
+  },
+
   // ============================================================================
   // FOUNDATION GROUP
   // ============================================================================

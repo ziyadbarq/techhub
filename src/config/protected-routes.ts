@@ -561,6 +561,10 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW],
     description: "Legacy workflow notifications link (redirects to TechHub notifications)",
   },
+  "/notifications": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW],
+    description: "Unified TechHub notifications center",
+  },
   "/workflows/analytics": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_ANALYTICS_VIEW],
     description: "Workflow throughput, SLA, and outcome dashboards",
