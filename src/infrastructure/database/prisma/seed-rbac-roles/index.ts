@@ -1,7 +1,7 @@
 /**
  * RBAC Roles - Consolidated Exports
  *
- * All system role definitions with their assigned permissions.
+ * Seeded role presets with their initial permissions; only System Administrator is protected.
  * Split from a single 799-line file into 4 functional categories for better maintainability:
  * - Admin & System Roles
  * - Financial & Procurement Roles
@@ -26,7 +26,7 @@ import { SPECIALIZED_ROLES } from "./seed-rbac-roles-specialized";
 import type { RoleDefinition } from "./types";
 
 /**
- * System roles with their permissions
+ * Role presets with their initial permissions
  * Organized by function: admin + financial + technical + specialized
  * Maintains backward compatibility with existing seed scripts
  */

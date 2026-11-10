@@ -5,6 +5,7 @@
 
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { PermissionKey } from "../value-objects/permission-key";
+import { isProtectedSystemRoleName } from "../value-objects/system-role-policy";
 
 export interface RoleProps {
   id: string;
@@ -99,7 +100,9 @@ export class Role {
   }
 
   get isSystem(): boolean {
-    return this.props.isSystem;
+    // Defense in depth: the administrator stays protected even if legacy
+    // database flags have not yet been reconciled by the data migration.
+    return this.props.isSystem || isProtectedSystemRoleName(this.props.name);
   }
 
   get isActive(): boolean {
@@ -194,7 +197,7 @@ export class Role {
   }
 
   deactivate(): Role {
-    if (this.props.isSystem) {
+    if (this.isSystem) {
       throw new Error("Cannot deactivate system role");
     }
 
@@ -214,7 +217,7 @@ export class Role {
   }
 
   canBeDeleted(): boolean {
-    return !this.props.isSystem;
+    return !this.isSystem;
   }
 
   // Export to plain object

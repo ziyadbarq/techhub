@@ -72,8 +72,8 @@ export default async function RolesPage() {
             <h2 className="mb-2 font-semibold">Role-Based Access Control</h2>
             <p className="text-muted-foreground text-sm">
               Roles are collections of permissions that can be assigned to
-              users. System roles (marked with a yellow badge) cannot be deleted
-              to maintain system integrity.
+              users. Only the System Administrator role is protected. All
+              other roles can be edited, including their permissions.
             </p>
           </div>
 

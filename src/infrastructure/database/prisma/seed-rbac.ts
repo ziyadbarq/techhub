@@ -15,6 +15,7 @@ import { prisma as prismaSingleton } from "./client";
 import { logSection, logStep, logSuccess, logWarning } from "./seed-utils";
 import { SYSTEM_PERMISSIONS } from "./seed-rbac-permissions";
 import { SYSTEM_ROLES } from "./seed-rbac-roles";
+import { SYSTEM_ADMIN_ROLE_NAME } from "@/core/domain/value-objects/system-role-policy";
 
 /**
  * Main seed function
@@ -58,31 +59,48 @@ async function seedRBAC(prismaClient?: PrismaClient) {
     // 2. Create roles and assign permissions
     logStep("👥", "Creating roles and assigning permissions...");
 
-    for (const [_roleName, roleData] of Object.entries(SYSTEM_ROLES)) {
-      // Create role
+    for (const roleData of Object.values(SYSTEM_ROLES)) {
+      const isSystemAdministrator = roleData.name === SYSTEM_ADMIN_ROLE_NAME;
+      const existingRole = await prisma.role.findUnique({
+        where: { name: roleData.name },
+        select: { id: true },
+      });
+
+      // Only the system administrator is protected. Other seeded roles
+      // become editable and keep their custom names, status and permissions.
       const role = await prisma.role.upsert({
         where: { name: roleData.name },
-        update: {
-          displayName: roleData.displayName,
-          description: roleData.description,
-          isSystem: true,
-          isActive: true,
-        },
+        update: isSystemAdministrator
+          ? {
+              displayName: roleData.displayName,
+              description: roleData.description,
+              isSystem: true,
+              isActive: true,
+            }
+          : { isSystem: false },
         create: {
           name: roleData.name,
           displayName: roleData.displayName,
           description: roleData.description,
-          isSystem: true,
+          isSystem: isSystemAdministrator,
           isActive: true,
         },
       });
 
-      // Delete existing permissions for role (clean slate)
-      await prisma.rolePermission.deleteMany({
-        where: { roleId: role.id },
-      });
+      // Never replace a user's permission customizations on a regular role.
+      // New roles receive their preset permissions exactly once. The protected
+      // administrator is always resynced to ALL available permissions.
+      if (existingRole && !isSystemAdministrator) {
+        logSuccess(`Editable role "${role.name}" preserved with its current permissions`);
+        continue;
+      }
 
-      // Assign permissions to role
+      if (isSystemAdministrator) {
+        await prisma.rolePermission.deleteMany({
+          where: { roleId: role.id },
+        });
+      }
+
       const permissionAssignments = roleData.permissions
         .map((permName) => {
           const permId = createdPermissions.get(permName);
@@ -90,10 +108,7 @@ async function seedRBAC(prismaClient?: PrismaClient) {
             logWarning(`Permission not found: ${permName}`);
             return null;
           }
-          return {
-            roleId: role.id,
-            permissionId: permId,
-          };
+          return { roleId: role.id, permissionId: permId };
         })
         .filter(
           (p): p is { roleId: string; permissionId: string } => p !== null,
@@ -107,7 +122,7 @@ async function seedRBAC(prismaClient?: PrismaClient) {
       }
 
       logSuccess(
-        `Role "${roleData.displayName}" created with ${permissionAssignments.length} permissions`,
+        `Role "${role.displayName}" initialized with ${permissionAssignments.length} permissions`,
       );
     }
 

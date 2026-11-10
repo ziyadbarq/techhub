@@ -10,12 +10,14 @@ import type { ILoggerService } from "@/core/services";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Role } from "../../domain/entities/role.entity";
 import { DuplicateRoleError } from "../../domain/errors/rbac-errors";
+import { SYSTEM_ADMIN_ROLE_NAME } from "../../domain/value-objects/system-role-policy";
 import { LogExecution } from "@/lib/decorators";
 
 export interface CreateRoleRequest {
   name: string;
   displayName: string;
   description?: string;
+  /** Deprecated input: ordinary role creation cannot set system status. */
   isSystem?: boolean;
   createdBy?: string;
   ipAddress?: string;
@@ -37,19 +39,26 @@ export class CreateRoleUseCase {
 
   @LogExecution("rbac.role.create")
   async execute(request: CreateRoleRequest): Promise<Role> {
-    // Check if role already exists
-    const exists = await this.roleRepository.existsByName(request.name);
+    const normalizedName = request.name.toLowerCase().trim();
+
+    // The sole protected role is created by bootstrap/seeding, never via a
+    // user-controlled role creation request.
+    if (normalizedName === SYSTEM_ADMIN_ROLE_NAME) {
+      throw new Error("The system administrator role is reserved and cannot be created manually");
+    }
+
+    const exists = await this.roleRepository.existsByName(normalizedName);
     if (exists) {
-      throw new DuplicateRoleError(request.name);
+      throw new DuplicateRoleError(normalizedName);
     }
 
     // Create role entity
     const role = Role.create(
       {
-        name: request.name,
+        name: normalizedName,
         displayName: request.displayName,
         description: request.description,
-        isSystem: request.isSystem,
+        isSystem: false,
         createdBy: request.createdBy,
       },
       this.idGenerator,
