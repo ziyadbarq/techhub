@@ -45,7 +45,9 @@ import { assetcatalogNavGroup } from "./navigation-groups/asset-catalog";
 import { assetsNavGroup } from "./navigation-groups/assets";
 import { servicescmdbNavGroup } from "./navigation-groups/services-cmdb";
 import { workflowsNavGroup } from "./navigation-groups/workflows";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, FileText } from "lucide-react";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { NavGroup, NavItem } from "./navigation.types";
 import { complianceNavGroup } from "./navigation-groups/compliance";
 import { systemNavGroup } from "./navigation-groups/system";
 import { rbacNavGroup } from "./navigation-groups/rbac";
@@ -68,30 +70,68 @@ import { rbacNavGroup } from "./navigation-groups/rbac";
  * 7. System & Operations
  * 8. RBAC & Access Control
  */
-// The generated manifest remains the source of route definitions; navigation
-// grouping happens here to support a permission-filtered Requests dropdown.
-const requestPaths = new Set(["/workflows/forms", "/workflows/requests"]);
-const workflowsWithRequestMenu = {
+// Only published, active form names appear as Requests children.
+// The list is hydrated from the authenticated API inside useSidebarNavigation;
+// generated navigation groups and route manifests remain untouched.
+const excludedWorkflowLinks = new Set(["/workflows/forms", "/workflows/requests"]);
+
+export type RequestMenuStatus = "loading" | "ready" | "error";
+export type RequestFormNav = {
+  id: string;
+  name: string;
+  description: string | null;
+};
+
+export function buildRequestMenuChildren(
+  forms: readonly RequestFormNav[],
+  status: RequestMenuStatus,
+): NavItem[] {
+  if (status === "ready" && forms.length > 0) {
+    return forms.map((form) => ({
+      title: form.name,
+      href: "/workflows/requests/new/" + encodeURIComponent(form.id),
+      description: form.description ?? undefined,
+      icon: FileText,
+      permission: PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT,
+      featureFlag: "WORKFLOW_ENGINE",
+    }));
+  }
+
+  return [
+    {
+      title: status === "loading"
+        ? "Loading forms…"
+        : status === "error"
+          ? "Forms unavailable"
+          : "No published forms",
+      href: "/workflows/forms",
+      description: status === "error"
+        ? "Open the forms page to retry"
+        : "Only active published forms can be submitted",
+      icon: FileText,
+      permission: PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT,
+      featureFlag: "WORKFLOW_ENGINE",
+    },
+  ];
+}
+
+const workflowsWithRequestMenu: NavGroup = {
   ...workflowsNavGroup,
+  // Different workflow pages have different permissions: let items decide.
   permission: undefined,
   items: [
     ...workflowsNavGroup.items.filter((item) => item.href === "/workflows/inbox"),
     {
       title: "Requests",
-      href: "/workflows",
+      href: "/workflows/forms",
       icon: ClipboardList,
-      description: "New requests and submitted requests",
+      description: "Open a published request form directly",
+      permission: PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT,
       featureFlag: "WORKFLOW_ENGINE",
-      children: workflowsNavGroup.items
-        .filter((item) => requestPaths.has(item.href))
-        .sort((a, b) => a.href === "/workflows/forms" ? -1 : b.href === "/workflows/forms" ? 1 : 0)
-        .map((item) => ({
-          ...item,
-          title: item.href === "/workflows/forms" ? "New Request" : "My Requests",
-        })),
+      children: buildRequestMenuChildren([], "loading"),
     },
     ...workflowsNavGroup.items.filter((item) =>
-      item.href !== "/workflows/inbox" && !requestPaths.has(item.href)
+      item.href !== "/workflows/inbox" && !excludedWorkflowLinks.has(item.href)
     ),
   ],
 };

@@ -16,7 +16,7 @@ export default async function WorkflowFormsPage() {
   await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT);
 
   const forms = await prisma.form.findMany({
-    where: { isActive: true },
+    where: { isActive: true, publishedVersionId: { not: null } },
     select: {
       id: true,
       name: true,
@@ -40,11 +40,8 @@ export default async function WorkflowFormsPage() {
       {forms.length === 0 ? (
         <Card>
           <p className="text-body-md text-slate">
-            No active forms yet. Run{" "}
-            <span className="text-ink font-mono">
-              SEED_DEMO=1 npm run prisma:seed
-            </span>{" "}
-            to load the demo workflow, or create one from the admin area.
+            No published forms are available yet. An administrator can publish
+            an active form from Workflow Admin to make it available here.
           </p>
         </Card>
       ) : (

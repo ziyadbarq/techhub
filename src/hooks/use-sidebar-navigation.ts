@@ -6,12 +6,15 @@ import {
   getGroupDefaultState,
   getItemDefaultState,
   getVisibleNavGroups,
+  buildRequestMenuChildren,
   hasChildren,
   isNavItemActive,
   type NavGroup,
   type NavItem,
 } from "@/config/navigation";
 import { useBadgeUpdates } from "./use-badge-updates";
+import { useRequestFormNav } from "./use-request-form-nav";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useLocalStorage } from "./use-local-storage";
 import { usePermissions } from "./use-permissions";
 import { useFeatureFlagsContext } from "@/contexts/feature-flags-context";
@@ -107,6 +110,15 @@ export function useSidebarNavigation() {
   const { enabledFeatures, isLoading: featuresLoading } =
     useFeatureFlagsContext();
 
+  const canLoadForms =
+    !permissionsLoading &&
+    !featuresLoading &&
+    !permissionsError &&
+    permissions.includes(PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT) &&
+    enabledFeatures.has("WORKFLOW_ENGINE");
+  const { forms: requestForms, status: requestFormsStatus } =
+    useRequestFormNav(canLoadForms, pathname);
+
   // Track if user is manually toggling (to disable auto-scroll)
   const [isManualToggling, setIsManualToggling] = React.useState(false);
 
@@ -122,11 +134,26 @@ export function useSidebarNavigation() {
       return [];
     }
 
-    // Filter navigation by both permissions AND feature flags
-    return getVisibleNavGroups(permissions, { enabledFeatures });
+    // Filter by permissions and feature flags before injecting any database forms.
+    const visible = getVisibleNavGroups(permissions, { enabledFeatures });
+    const children = buildRequestMenuChildren(requestForms, requestFormsStatus);
+    return visible.map((group) =>
+      group.id === "workflows"
+        ? {
+            ...group,
+            items: group.items.map((item) =>
+              item.title === "Requests" && item.href === "/workflows/forms"
+                ? { ...item, children }
+                : item,
+            ),
+          }
+        : group,
+    );
   }, [
     permissions,
     enabledFeatures,
+    requestForms,
+    requestFormsStatus,
     permissionsLoading,
     featuresLoading,
     permissionsError,
