@@ -37,6 +37,60 @@ const TYPES = [
   { type: "quote", label: "Quote", icon: Quote },
 ] as const;
 
+const STARTERS: Array<{
+  id: string;
+  name: string;
+  category: Metadata["category"];
+  sections: Array<{ type: KnowledgeBlock["type"]; text: string }>;
+}> = [
+  {
+    id: "policy", name: "Cybersecurity policy", category: "CYBERSECURITY",
+    sections: [
+      { type: "heading", text: "1. Purpose" },
+      { type: "paragraph", text: "[Describe what this policy protects and why.]" },
+      { type: "heading", text: "2. Scope" },
+      { type: "paragraph", text: "[Define affected employees, systems and information.]" },
+      { type: "heading", text: "3. Roles & Responsibilities" },
+      { type: "bullet", text: "[Policy owner and responsible team]" },
+      { type: "bullet", text: "[Employee obligations]" },
+      { type: "heading", text: "4. Security Requirements" },
+      { type: "paragraph", text: "[Document the approved technical and organizational requirements.]" },
+      { type: "heading", text: "5. Exceptions & Escalation" },
+      { type: "paragraph", text: "[Define exception approvals and escalation paths.]" },
+      { type: "heading", text: "6. Review Cycle" },
+      { type: "paragraph", text: "[Specify the policy owner, effective date and planned review cadence.]" },
+    ],
+  },
+  {
+    id: "procedure", name: "Standard procedure", category: "PROCEDURES",
+    sections: [
+      { type: "heading", text: "Objective" },
+      { type: "paragraph", text: "[Explain the operational outcome.]" },
+      { type: "heading", text: "When to use" },
+      { type: "paragraph", text: "[Define entry criteria and prerequisites.]" },
+      { type: "heading", text: "Procedure" },
+      { type: "numbered", text: "[Step 1]" },
+      { type: "numbered", text: "[Step 2]" },
+      { type: "heading", text: "Validation & Evidence" },
+      { type: "paragraph", text: "[Define success checks and retained records.]" },
+    ],
+  },
+  {
+    id: "guide", name: "Knowledge guide", category: "GUIDES",
+    sections: [
+      { type: "heading", text: "Overview" },
+      { type: "paragraph", text: "[What will the reader learn?]" },
+      { type: "heading", text: "Before you begin" },
+      { type: "bullet", text: "[Required access or tools]" },
+      { type: "heading", text: "Instructions" },
+      { type: "numbered", text: "[First action]" },
+      { type: "numbered", text: "[Next action]" },
+      { type: "heading", text: "Troubleshooting" },
+      { type: "paragraph", text: "[Common problems and where to get help.]" },
+    ],
+  },
+];
+
 const initialMetadata: Metadata = {
   title: "", summary: "", category: "POLICIES", classification: "INTERNAL",
   requiresAcknowledgement: false,
@@ -113,6 +167,16 @@ export function KnowledgeComposer({ articleId }: { articleId?: string }) {
   function updateMeta<K extends keyof Metadata>(key: K, value: Metadata[K]) {
     setMetadata((previous) => ({ ...previous, [key]: value }));
   }
+  function applyStarter(id: string) {
+    const starter = STARTERS.find((entry) => entry.id === id);
+    if (!starter) return;
+    if (blocks.some((block) => block.text.trim()) &&
+      !window.confirm("Replace your existing content with the selected starter template?")) return;
+    setBlocks(starter.sections.map((section) => ({ ...section, id: crypto.randomUUID() })));
+    updateMeta("category", starter.category);
+    setPreview(false);
+  }
+
   function patchBlock(id: string, patch: Partial<KnowledgeBlock>) {
     setBlocks((previous) => previous.map((block) => block.id === id ? { ...block, ...patch } : block));
   }
@@ -282,6 +346,18 @@ export function KnowledgeComposer({ articleId }: { articleId?: string }) {
               <div className="min-h-48 space-y-5 rounded-2xl border bg-background p-7">{blocksPreview(blocks)}</div>
             ) : (
               <div className="space-y-4">
+                <div className="rounded-2xl border bg-blue-500/5 p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-600 dark:text-blue-300">Start from a template</p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">Structured placeholders only — replace them with your approved content before publication.</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {STARTERS.map((starter) => (
+                      <button type="button" key={starter.id} onClick={() => applyStarter(starter.id)}
+                        className="rounded-lg border bg-background px-3 py-2 text-xs font-semibold transition hover:border-blue-400/60 hover:bg-blue-500/5">
+                        {starter.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 {blocks.map((block, index) => (
                   <div key={block.id} className="group rounded-2xl border bg-background p-4 transition focus-within:border-blue-400/60">
                     <div className="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
