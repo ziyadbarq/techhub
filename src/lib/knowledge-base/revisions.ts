@@ -93,6 +93,9 @@ export async function changeArticleStatus(
     if (!article || article.isArchived || article.version !== expectedVersion) {
       throw new KnowledgeError(409, "VERSION_CONFLICT_OR_ARCHIVED");
     }
+    if (action === "publish" && article.publishedVersion === article.version) {
+      throw new KnowledgeError(409, "REVISION_ALREADY_PUBLISHED");
+    }
     if (action === "publish" && article.sourceType === "EDITOR") {
       const blocks = article.blocks as unknown;
       if (!Array.isArray(blocks) || !blocks.some((b) => Boolean(b && typeof b === "object" && "text" in b && b.text))) {

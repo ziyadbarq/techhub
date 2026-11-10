@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IFileStorageService } from "@/core/services/file-storage.service.interface";
-import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { requireKnowledgeAccess, requireKnowledgeArticle, knowledgeErrorResponse, KnowledgeError } from "@/lib/knowledge-base/access";
+import { requireKnowledgeArticle, knowledgeErrorResponse, KnowledgeError } from "@/lib/knowledge-base/access";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +10,9 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
   try {
     const { id } = await context.params;
     const draft = request.nextUrl.searchParams.get("draft") === "1";
-    const { revision } = await requireKnowledgeArticle(id, { draft });
+    const versionParam = request.nextUrl.searchParams.get("version");
+    const version = versionParam ? Number(versionParam) : undefined;
+    const { revision } = await requireKnowledgeArticle(id, { draft, version });
     if (revision.sourceType !== "PDF" || !revision.filePath) {
       throw new KnowledgeError(404, "PDF_NOT_FOUND");
     }

@@ -13,7 +13,9 @@ export async function GET(request: NextRequest, context: Context) {
   try {
     const { id } = await context.params;
     const draft = request.nextUrl.searchParams.get("draft") === "1";
-    const { article, revision, userId, mayDraft } = await requireKnowledgeArticle(id, { draft });
+    const versionParam = request.nextUrl.searchParams.get("version");
+    const version = versionParam ? Number(versionParam) : undefined;
+    const { article, revision, userId, mayDraft } = await requireKnowledgeArticle(id, { draft, version });
     const [ack, history] = await Promise.all([
       article.publishedVersion ? prisma.knowledgeAcknowledgement.findUnique({
         where: {

@@ -45,7 +45,7 @@ function KnowledgeBody({ blocks }: { blocks: KnowledgeBlock[] }) {
   );
 }
 
-export function KnowledgeReader({ articleId, draft }: { articleId: string; draft: boolean }) {
+export function KnowledgeReader({ articleId, draft, historicalVersion }: { articleId: string; draft: boolean; historicalVersion?: number }) {
   const { hasPermission } = usePermissions();
   const mayPublish = hasPermission(PERMISSIONS.KNOWLEDGE_BASE_PUBLISH);
   const mayArchive = hasPermission(PERMISSIONS.KNOWLEDGE_BASE_ARCHIVE);
@@ -60,7 +60,8 @@ export function KnowledgeReader({ articleId, draft }: { articleId: string; draft
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(`/api/knowledge-base/${encodeURIComponent(articleId)}${draft ? "?draft=1" : ""}`, { cache: "no-store" });
+      const suffix = historicalVersion ? "?version=" + historicalVersion : draft ? "?draft=1" : "";
+      const response = await fetch(`/api/knowledge-base/${encodeURIComponent(articleId)}${suffix}`, { cache: "no-store" });
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || "Unable to open this document.");
@@ -71,7 +72,7 @@ export function KnowledgeReader({ articleId, draft }: { articleId: string; draft
     } finally {
       setLoading(false);
     }
-  }, [articleId, draft]);
+  }, [articleId, draft, historicalVersion]);
   useEffect(() => { void reload(); }, [reload]);
 
   async function action(name: "publish" | "archive") {
@@ -121,16 +122,16 @@ export function KnowledgeReader({ articleId, draft }: { articleId: string; draft
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link href="/knowledge-base" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" /> Back to Knowledge Base</Link>
         <div className="flex flex-wrap gap-2">
-          {!draft && document.canEdit && document.publishedVersion && isPending && (
+          {!draft && !historicalVersion && document.canEdit && document.publishedVersion && isPending && (
             <Link href={`/knowledge-base/${articleId}?draft=1`} className="rounded-xl border px-3 py-2 text-xs font-semibold hover:bg-muted">View pending draft</Link>
           )}
-          {draft && document.publishedVersion && (
+          {(draft || historicalVersion) && document.publishedVersion && (
             <Link href={"/knowledge-base/" + articleId} className="rounded-xl border px-3 py-2 text-xs font-semibold hover:bg-muted">Published version</Link>
           )}
           {mayEdit && document.canEdit && (
             <Link href={`/knowledge-base/${articleId}/edit`} className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold hover:bg-muted"><Edit3 className="h-4 w-4" /> Edit</Link>
           )}
-          {mayPublish && document.canEdit && (draft || !document.publishedVersion) && (
+          {mayPublish && document.canEdit && !historicalVersion && (draft || !document.publishedVersion) && (
             <button type="button" disabled={busy} onClick={() => { void action("publish"); }} className="inline-flex items-center gap-2 rounded-xl bg-[#163b62] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"><Send className="h-4 w-4" /> Publish v{document.latestVersion}</button>
           )}
           {mayArchive && document.canEdit && (
@@ -154,7 +155,7 @@ export function KnowledgeReader({ articleId, draft }: { articleId: string; draft
             {document.summary && <p className="mt-5 max-w-2xl text-sm leading-7 text-[#c4d7ea] sm:text-base">{document.summary}</p>}
             <div className="mt-8 flex flex-wrap gap-4 border-t border-white/15 pt-5 text-xs text-[#b8cfe3]">
               <span className="inline-flex items-center gap-1.5"><Clock3 className="h-4 w-4" /> Updated {new Date(document.updatedAt).toLocaleDateString()}</span>
-              <span className="inline-flex items-center gap-1.5">{draft ? "Working revision" : "Published knowledge"}</span>
+              <span className="inline-flex items-center gap-1.5">{historicalVersion ? "Historical revision" : draft || !document.publishedVersion ? "Working revision" : "Published knowledge"}</span>
             </div>
           </div>
           <div className="px-7 py-9 sm:px-11 sm:py-12">
@@ -164,7 +165,7 @@ export function KnowledgeReader({ articleId, draft }: { articleId: string; draft
                 <h2 className="mt-6 text-xl font-semibold">Official PDF document</h2>
                 <p className="mt-3 max-w-md break-words text-sm text-muted-foreground">{document.fileName}</p>
                 <p className="mt-2 text-xs text-muted-foreground">{document.fileSize ? (document.fileSize / 1024 / 1024).toFixed(2) + " MB" : ""}</p>
-                <a href={`/api/knowledge-base/${articleId}/download${draft ? "?draft=1" : ""}`} className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#163b62] px-6 py-3 text-sm font-semibold text-white hover:bg-[#24517c]">
+                <a href={`/api/knowledge-base/${articleId}/download${historicalVersion ? "?version=" + historicalVersion : draft ? "?draft=1" : ""}`} className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#163b62] px-6 py-3 text-sm font-semibold text-white hover:bg-[#24517c]">
                   <Download className="h-4 w-4" /> Download protected PDF
                 </a>
                 <p className="mt-4 text-xs text-muted-foreground">File access is checked for every download. Private GCS storage is required.</p>
@@ -172,7 +173,7 @@ export function KnowledgeReader({ articleId, draft }: { articleId: string; draft
             ) : <KnowledgeBody blocks={blocks} />}
           </div>
 
-          {document.requiresAcknowledgement && document.publishedVersion === document.version && !draft && (
+          {document.requiresAcknowledgement && document.publishedVersion === document.version && !draft && !historicalVersion && (
             <section className="border-t bg-blue-500/5 px-7 py-7 sm:px-11">
               <div className="flex items-start gap-3">
                 <ClipboardCheck className="mt-1 h-6 w-6 shrink-0 text-blue-600" />
@@ -206,7 +207,7 @@ export function KnowledgeReader({ articleId, draft }: { articleId: string; draft
               <ol className="mt-5 space-y-4">
                 {document.revisions.map((revision) => (
                   <li key={revision.version} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-semibold">Version {revision.version}</span>
+                    <Link href={`/knowledge-base/${articleId}?version=${revision.version}`} className="font-semibold text-blue-600 hover:underline dark:text-blue-300">Version {revision.version}</Link>
                     <span className="text-xs text-muted-foreground">{new Date(revision.createdAt).toLocaleDateString()}</span>
                   </li>
                 ))}

@@ -49,23 +49,26 @@ export async function canViewDraft(article: ArticleAccess, userId: string): Prom
 
 export async function requireKnowledgeArticle(
   id: string,
-  options: { draft?: boolean } = {},
+  options: { draft?: boolean; version?: number } = {},
 ) {
   const userId = await requireKnowledgeAccess(PERMISSIONS.KNOWLEDGE_BASE_VIEW);
   const article = await prisma.knowledgeArticle.findUnique({ where: { id } });
   if (!article || article.isArchived) throw new KnowledgeError(404, "ARTICLE_NOT_FOUND");
-  await requireClassification(article.classification);
-
   const mayDraft = await canViewDraft(article, userId);
-  if (options.draft && !mayDraft) throw new KnowledgeError(403, "DRAFT_ACCESS_DENIED");
-  if (!options.draft && !article.publishedVersion) {
+  if ((options.draft || options.version) && !mayDraft) {
+    throw new KnowledgeError(403, "REVISION_ACCESS_DENIED");
+  }
+  if (!options.draft && !options.version && !article.publishedVersion) {
     if (!mayDraft) throw new KnowledgeError(404, "ARTICLE_NOT_FOUND");
   }
 
-  const displayVersion =
-    !options.draft && article.publishedVersion
+  if (options.version && (!Number.isSafeInteger(options.version) || options.version < 1 || options.version > article.version)) {
+    throw new KnowledgeError(400, "INVALID_REVISION");
+  }
+  const displayVersion = options.version ??
+    (!options.draft && article.publishedVersion
       ? article.publishedVersion
-      : article.version;
+      : article.version);
 
   const revision = await prisma.knowledgeRevision.findUnique({
     where: { articleId_version: { articleId: article.id, version: displayVersion } },
@@ -81,7 +84,7 @@ export function knowledgeErrorResponse(error: unknown): Response {
   if (error instanceof KnowledgeError) {
     return Response.json({ error: error.message }, { status: error.status });
   }
-  if (error && typeof error === "object" && "issues" in error) {
+  if (error instanceof SyntaxError || (error && typeof error === "object" && "issues" in error)) {
     return Response.json({ error: "INVALID_INPUT" }, { status: 400 });
   }
   console.error("[KnowledgeBase]", error);

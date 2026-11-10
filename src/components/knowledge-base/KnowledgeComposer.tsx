@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { KNOWLEDGE_CATEGORIES, BLOCK_TYPES, type KnowledgeBlock } from "@/lib/knowledge-base/schema";
+import { KNOWLEDGE_CATEGORIES, type KnowledgeBlock } from "@/lib/knowledge-base/schema";
 
 type Metadata = {
   title: string; summary: string; category: typeof KNOWLEDGE_CATEGORIES[number];

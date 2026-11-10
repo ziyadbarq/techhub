@@ -12,10 +12,10 @@ export default async function KnowledgeArticlePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ draft?: string }>;
+  searchParams: Promise<{ draft?: string; version?: string }>;
 }) {
   const { id } = await params;
-  const { draft } = await searchParams;
+  const { draft, version } = await searchParams;
   await requireFeature(FEATURE_FLAGS.KNOWLEDGE_BASE);
   try {
     await requirePermission(PERMISSIONS.KNOWLEDGE_BASE_VIEW);
@@ -23,5 +23,5 @@ export default async function KnowledgeArticlePage({
     handlePermissionRedirect(error, "/knowledge-base/" + id);
     throw error;
   }
-  return <KnowledgeReader articleId={id} draft={draft === "1"} />;
+  return <KnowledgeReader articleId={id} draft={draft === "1"} historicalVersion={version ? Number(version) : undefined} />;
 }
