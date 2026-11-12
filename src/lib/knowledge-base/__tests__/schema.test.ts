@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   blocksToText,
+  createKnowledgeFolderSchema,
+  editKnowledgeFolderSchema,
+  moveKnowledgeArticleSchema,
   createKnowledgeSchema,
   editKnowledgeSchema,
   knowledgeBlocksSchema,
@@ -46,6 +49,24 @@ describe("Knowledge Base document validation", () => {
   it("rejects unknown classifications", () => {
     expect(() =>
       pdfMetadataSchema.parse({ ...good, classification: "PUBLIC" }),
+    ).toThrow();
+  });
+
+  it("validates folder names and document moves", () => {
+    expect(createKnowledgeFolderSchema.parse({ name: "  Security  " })).toEqual(
+      { name: "Security", parentId: null },
+    );
+    expect(() => createKnowledgeFolderSchema.parse({ name: " " })).toThrow();
+    expect(() => editKnowledgeFolderSchema.parse({})).toThrow();
+    expect(editKnowledgeFolderSchema.parse({ parentId: null }).parentId).toBe(
+      null,
+    );
+    expect(
+      moveKnowledgeArticleSchema.parse({ folderId: null, expectedVersion: 2 })
+        .folderId,
+    ).toBe(null);
+    expect(() =>
+      moveKnowledgeArticleSchema.parse({ folderId: "x", expectedVersion: 0 }),
     ).toThrow();
   });
 

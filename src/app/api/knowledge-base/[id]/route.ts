@@ -55,6 +55,7 @@ export async function GET(request: NextRequest, context: Context) {
     ]);
     return NextResponse.json({
       id: article.id,
+      folderId: article.folderId,
       title: revision.title,
       summary: revision.summary,
       category: revision.category,
@@ -107,6 +108,7 @@ export async function PATCH(request: NextRequest, context: Context) {
         category: data.category,
         classification: data.classification,
         requiresAcknowledgement: data.requiresAcknowledgement,
+        ...(data.folderId !== undefined ? { folderId: data.folderId } : {}),
         ...(blocks
           ? {
               blocks: blocks as Prisma.InputJsonValue,

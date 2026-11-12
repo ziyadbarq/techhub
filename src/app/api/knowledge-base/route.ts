@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
         category: true,
         classification: true,
         sourceType: true,
+        folderId: true,
         version: true,
         publishedVersion: true,
         updatedAt: true,
@@ -88,6 +89,7 @@ export async function GET(request: NextRequest) {
       return [
         {
           id: item.id,
+          folderId: item.folderId,
           title: active.title,
           summary: active.summary,
           category: active.category,

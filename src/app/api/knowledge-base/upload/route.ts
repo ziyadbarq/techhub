@@ -88,6 +88,9 @@ export async function POST(request: NextRequest) {
       category: metadata.category,
       classification: metadata.classification,
       requiresAcknowledgement: metadata.requiresAcknowledgement,
+      ...(metadata.folderId !== undefined
+        ? { folderId: metadata.folderId }
+        : {}),
       filePath: storedPath,
       fileName: file.name,
       fileSize: file.size,

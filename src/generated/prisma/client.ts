@@ -366,6 +366,11 @@ export type KnowledgeRevision = Prisma.KnowledgeRevisionModel
  */
 export type KnowledgeAcknowledgement = Prisma.KnowledgeAcknowledgementModel
 /**
+ * Model KnowledgeFolder
+ *
+ */
+export type KnowledgeFolder = Prisma.KnowledgeFolderModel
+/**
  * Model LicenseProduct
  *
  */

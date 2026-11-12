@@ -446,6 +446,7 @@ export const ModelName = {
   KnowledgeArticle: 'KnowledgeArticle',
   KnowledgeRevision: 'KnowledgeRevision',
   KnowledgeAcknowledgement: 'KnowledgeAcknowledgement',
+  KnowledgeFolder: 'KnowledgeFolder',
   LicenseProduct: 'LicenseProduct',
   LicenseProductField: 'LicenseProductField',
   LicenseEntitlement: 'LicenseEntitlement',
@@ -522,7 +523,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "accessService" | "accessServiceAssignee" | "accessServiceRequestSnapshot" | "accessServiceSnapshotAssignee" | "requesterIdentitySnapshot" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "knowledgeArticle" | "knowledgeRevision" | "knowledgeAcknowledgement" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "reportSchedule" | "request" | "requestFieldValue" | "stepInstance" | "requestLink" | "requestComment" | "requestAttachment" | "savedFilter" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "featureFlag" | "featureFlagAuditLog" | "systemSetting" | "auditEntry" | "fieldHistoryEntry" | "assigneeSnapshot" | "sLAEvent" | "sLAEscalationLog" | "notification" | "emailActionToken" | "calendar" | "maintenanceWindow" | "blackoutPeriod" | "holdReason" | "outcomeCode" | "delegation" | "watcher" | "watcherSubscription" | "watcherChannelPreference" | "form" | "formNotificationBinding" | "formVersion" | "formField" | "workflowDefinition" | "workflowVersion" | "workflowStep" | "rejectionPolicy" | "emailTemplate"
+    modelProps: "accessService" | "accessServiceAssignee" | "accessServiceRequestSnapshot" | "accessServiceSnapshotAssignee" | "requesterIdentitySnapshot" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "knowledgeArticle" | "knowledgeRevision" | "knowledgeAcknowledgement" | "knowledgeFolder" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "reportSchedule" | "request" | "requestFieldValue" | "stepInstance" | "requestLink" | "requestComment" | "requestAttachment" | "savedFilter" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "featureFlag" | "featureFlagAuditLog" | "systemSetting" | "auditEntry" | "fieldHistoryEntry" | "assigneeSnapshot" | "sLAEvent" | "sLAEscalationLog" | "notification" | "emailActionToken" | "calendar" | "maintenanceWindow" | "blackoutPeriod" | "holdReason" | "outcomeCode" | "delegation" | "watcher" | "watcherSubscription" | "watcherChannelPreference" | "form" | "formNotificationBinding" | "formVersion" | "formField" | "workflowDefinition" | "workflowVersion" | "workflowStep" | "rejectionPolicy" | "emailTemplate"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -5111,6 +5112,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.KnowledgeAcknowledgementCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.KnowledgeAcknowledgementCountAggregateOutputType> | number
+        }
+      }
+    }
+    KnowledgeFolder: {
+      payload: Prisma.$KnowledgeFolderPayload<ExtArgs>
+      fields: Prisma.KnowledgeFolderFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KnowledgeFolderFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KnowledgeFolderFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload>
+        }
+        findFirst: {
+          args: Prisma.KnowledgeFolderFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KnowledgeFolderFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload>
+        }
+        findMany: {
+          args: Prisma.KnowledgeFolderFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload>[]
+        }
+        create: {
+          args: Prisma.KnowledgeFolderCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload>
+        }
+        createMany: {
+          args: Prisma.KnowledgeFolderCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KnowledgeFolderCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload>[]
+        }
+        delete: {
+          args: Prisma.KnowledgeFolderDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload>
+        }
+        update: {
+          args: Prisma.KnowledgeFolderUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload>
+        }
+        deleteMany: {
+          args: Prisma.KnowledgeFolderDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KnowledgeFolderUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KnowledgeFolderUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload>[]
+        }
+        upsert: {
+          args: Prisma.KnowledgeFolderUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeFolderPayload>
+        }
+        aggregate: {
+          args: Prisma.KnowledgeFolderAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKnowledgeFolder>
+        }
+        groupBy: {
+          args: Prisma.KnowledgeFolderGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KnowledgeFolderGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KnowledgeFolderCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KnowledgeFolderCountAggregateOutputType> | number
         }
       }
     }
@@ -10811,6 +10886,7 @@ export const KnowledgeArticleScalarFieldEnum = {
   fileSize: 'fileSize',
   version: 'version',
   publishedVersion: 'publishedVersion',
+  folderId: 'folderId',
   requiresAcknowledgement: 'requiresAcknowledgement',
   isArchived: 'isArchived',
   createdById: 'createdById',
@@ -10854,6 +10930,19 @@ export const KnowledgeAcknowledgementScalarFieldEnum = {
 } as const
 
 export type KnowledgeAcknowledgementScalarFieldEnum = (typeof KnowledgeAcknowledgementScalarFieldEnum)[keyof typeof KnowledgeAcknowledgementScalarFieldEnum]
+
+
+export const KnowledgeFolderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  parentId: 'parentId',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type KnowledgeFolderScalarFieldEnum = (typeof KnowledgeFolderScalarFieldEnum)[keyof typeof KnowledgeFolderScalarFieldEnum]
 
 
 export const LicenseProductScalarFieldEnum = {
@@ -13112,6 +13201,7 @@ export type GlobalOmitConfig = {
   knowledgeArticle?: Prisma.KnowledgeArticleOmit
   knowledgeRevision?: Prisma.KnowledgeRevisionOmit
   knowledgeAcknowledgement?: Prisma.KnowledgeAcknowledgementOmit
+  knowledgeFolder?: Prisma.KnowledgeFolderOmit
   licenseProduct?: Prisma.LicenseProductOmit
   licenseProductField?: Prisma.LicenseProductFieldOmit
   licenseEntitlement?: Prisma.LicenseEntitlementOmit

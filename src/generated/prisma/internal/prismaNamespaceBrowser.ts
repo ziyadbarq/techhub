@@ -113,6 +113,7 @@ export const ModelName = {
   KnowledgeArticle: 'KnowledgeArticle',
   KnowledgeRevision: 'KnowledgeRevision',
   KnowledgeAcknowledgement: 'KnowledgeAcknowledgement',
+  KnowledgeFolder: 'KnowledgeFolder',
   LicenseProduct: 'LicenseProduct',
   LicenseProductField: 'LicenseProductField',
   LicenseEntitlement: 'LicenseEntitlement',
@@ -1336,6 +1337,7 @@ export const KnowledgeArticleScalarFieldEnum = {
   fileSize: 'fileSize',
   version: 'version',
   publishedVersion: 'publishedVersion',
+  folderId: 'folderId',
   requiresAcknowledgement: 'requiresAcknowledgement',
   isArchived: 'isArchived',
   createdById: 'createdById',
@@ -1379,6 +1381,19 @@ export const KnowledgeAcknowledgementScalarFieldEnum = {
 } as const
 
 export type KnowledgeAcknowledgementScalarFieldEnum = (typeof KnowledgeAcknowledgementScalarFieldEnum)[keyof typeof KnowledgeAcknowledgementScalarFieldEnum]
+
+
+export const KnowledgeFolderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  parentId: 'parentId',
+  createdById: 'createdById',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type KnowledgeFolderScalarFieldEnum = (typeof KnowledgeFolderScalarFieldEnum)[keyof typeof KnowledgeFolderScalarFieldEnum]
 
 
 export const LicenseProductScalarFieldEnum = {

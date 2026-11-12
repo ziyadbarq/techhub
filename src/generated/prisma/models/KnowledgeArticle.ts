@@ -51,6 +51,7 @@ export type KnowledgeArticleMinAggregateOutputType = {
   fileSize: number | null
   version: number | null
   publishedVersion: number | null
+  folderId: string | null
   requiresAcknowledgement: boolean | null
   isArchived: boolean | null
   createdById: string | null
@@ -73,6 +74,7 @@ export type KnowledgeArticleMaxAggregateOutputType = {
   fileSize: number | null
   version: number | null
   publishedVersion: number | null
+  folderId: string | null
   requiresAcknowledgement: boolean | null
   isArchived: boolean | null
   createdById: string | null
@@ -96,6 +98,7 @@ export type KnowledgeArticleCountAggregateOutputType = {
   fileSize: number
   version: number
   publishedVersion: number
+  folderId: number
   requiresAcknowledgement: number
   isArchived: number
   createdById: number
@@ -132,6 +135,7 @@ export type KnowledgeArticleMinAggregateInputType = {
   fileSize?: true
   version?: true
   publishedVersion?: true
+  folderId?: true
   requiresAcknowledgement?: true
   isArchived?: true
   createdById?: true
@@ -154,6 +158,7 @@ export type KnowledgeArticleMaxAggregateInputType = {
   fileSize?: true
   version?: true
   publishedVersion?: true
+  folderId?: true
   requiresAcknowledgement?: true
   isArchived?: true
   createdById?: true
@@ -177,6 +182,7 @@ export type KnowledgeArticleCountAggregateInputType = {
   fileSize?: true
   version?: true
   publishedVersion?: true
+  folderId?: true
   requiresAcknowledgement?: true
   isArchived?: true
   createdById?: true
@@ -287,6 +293,7 @@ export type KnowledgeArticleGroupByOutputType = {
   fileSize: number | null
   version: number
   publishedVersion: number | null
+  folderId: string | null
   requiresAcknowledgement: boolean
   isArchived: boolean
   createdById: string
@@ -333,6 +340,7 @@ export type KnowledgeArticleWhereInput = {
   fileSize?: Prisma.IntNullableFilter<"KnowledgeArticle"> | number | null
   version?: Prisma.IntFilter<"KnowledgeArticle"> | number
   publishedVersion?: Prisma.IntNullableFilter<"KnowledgeArticle"> | number | null
+  folderId?: Prisma.StringNullableFilter<"KnowledgeArticle"> | string | null
   requiresAcknowledgement?: Prisma.BoolFilter<"KnowledgeArticle"> | boolean
   isArchived?: Prisma.BoolFilter<"KnowledgeArticle"> | boolean
   createdById?: Prisma.StringFilter<"KnowledgeArticle"> | string
@@ -340,6 +348,7 @@ export type KnowledgeArticleWhereInput = {
   publishedAt?: Prisma.DateTimeNullableFilter<"KnowledgeArticle"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"KnowledgeArticle"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"KnowledgeArticle"> | Date | string
+  folder?: Prisma.XOR<Prisma.KnowledgeFolderNullableScalarRelationFilter, Prisma.KnowledgeFolderWhereInput> | null
   revisions?: Prisma.KnowledgeRevisionListRelationFilter
   acknowledgements?: Prisma.KnowledgeAcknowledgementListRelationFilter
 }
@@ -358,6 +367,7 @@ export type KnowledgeArticleOrderByWithRelationInput = {
   fileSize?: Prisma.SortOrderInput | Prisma.SortOrder
   version?: Prisma.SortOrder
   publishedVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  folderId?: Prisma.SortOrderInput | Prisma.SortOrder
   requiresAcknowledgement?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -365,6 +375,7 @@ export type KnowledgeArticleOrderByWithRelationInput = {
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  folder?: Prisma.KnowledgeFolderOrderByWithRelationInput
   revisions?: Prisma.KnowledgeRevisionOrderByRelationAggregateInput
   acknowledgements?: Prisma.KnowledgeAcknowledgementOrderByRelationAggregateInput
 }
@@ -386,6 +397,7 @@ export type KnowledgeArticleWhereUniqueInput = Prisma.AtLeast<{
   fileSize?: Prisma.IntNullableFilter<"KnowledgeArticle"> | number | null
   version?: Prisma.IntFilter<"KnowledgeArticle"> | number
   publishedVersion?: Prisma.IntNullableFilter<"KnowledgeArticle"> | number | null
+  folderId?: Prisma.StringNullableFilter<"KnowledgeArticle"> | string | null
   requiresAcknowledgement?: Prisma.BoolFilter<"KnowledgeArticle"> | boolean
   isArchived?: Prisma.BoolFilter<"KnowledgeArticle"> | boolean
   createdById?: Prisma.StringFilter<"KnowledgeArticle"> | string
@@ -393,6 +405,7 @@ export type KnowledgeArticleWhereUniqueInput = Prisma.AtLeast<{
   publishedAt?: Prisma.DateTimeNullableFilter<"KnowledgeArticle"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"KnowledgeArticle"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"KnowledgeArticle"> | Date | string
+  folder?: Prisma.XOR<Prisma.KnowledgeFolderNullableScalarRelationFilter, Prisma.KnowledgeFolderWhereInput> | null
   revisions?: Prisma.KnowledgeRevisionListRelationFilter
   acknowledgements?: Prisma.KnowledgeAcknowledgementListRelationFilter
 }, "id">
@@ -411,6 +424,7 @@ export type KnowledgeArticleOrderByWithAggregationInput = {
   fileSize?: Prisma.SortOrderInput | Prisma.SortOrder
   version?: Prisma.SortOrder
   publishedVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  folderId?: Prisma.SortOrderInput | Prisma.SortOrder
   requiresAcknowledgement?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -442,6 +456,7 @@ export type KnowledgeArticleScalarWhereWithAggregatesInput = {
   fileSize?: Prisma.IntNullableWithAggregatesFilter<"KnowledgeArticle"> | number | null
   version?: Prisma.IntWithAggregatesFilter<"KnowledgeArticle"> | number
   publishedVersion?: Prisma.IntNullableWithAggregatesFilter<"KnowledgeArticle"> | number | null
+  folderId?: Prisma.StringNullableWithAggregatesFilter<"KnowledgeArticle"> | string | null
   requiresAcknowledgement?: Prisma.BoolWithAggregatesFilter<"KnowledgeArticle"> | boolean
   isArchived?: Prisma.BoolWithAggregatesFilter<"KnowledgeArticle"> | boolean
   createdById?: Prisma.StringWithAggregatesFilter<"KnowledgeArticle"> | string
@@ -472,6 +487,7 @@ export type KnowledgeArticleCreateInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  folder?: Prisma.KnowledgeFolderCreateNestedOneWithoutArticlesInput
   revisions?: Prisma.KnowledgeRevisionCreateNestedManyWithoutArticleInput
   acknowledgements?: Prisma.KnowledgeAcknowledgementCreateNestedManyWithoutArticleInput
 }
@@ -490,6 +506,7 @@ export type KnowledgeArticleUncheckedCreateInput = {
   fileSize?: number | null
   version?: number
   publishedVersion?: number | null
+  folderId?: string | null
   requiresAcknowledgement?: boolean
   isArchived?: boolean
   createdById: string
@@ -522,6 +539,7 @@ export type KnowledgeArticleUpdateInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  folder?: Prisma.KnowledgeFolderUpdateOneWithoutArticlesNestedInput
   revisions?: Prisma.KnowledgeRevisionUpdateManyWithoutArticleNestedInput
   acknowledgements?: Prisma.KnowledgeAcknowledgementUpdateManyWithoutArticleNestedInput
 }
@@ -540,6 +558,7 @@ export type KnowledgeArticleUncheckedUpdateInput = {
   fileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   version?: Prisma.IntFieldUpdateOperationsInput | number
   publishedVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  folderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiresAcknowledgement?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -565,6 +584,7 @@ export type KnowledgeArticleCreateManyInput = {
   fileSize?: number | null
   version?: number
   publishedVersion?: number | null
+  folderId?: string | null
   requiresAcknowledgement?: boolean
   isArchived?: boolean
   createdById: string
@@ -611,6 +631,7 @@ export type KnowledgeArticleUncheckedUpdateManyInput = {
   fileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   version?: Prisma.IntFieldUpdateOperationsInput | number
   publishedVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  folderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiresAcknowledgement?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -634,6 +655,7 @@ export type KnowledgeArticleCountOrderByAggregateInput = {
   fileSize?: Prisma.SortOrder
   version?: Prisma.SortOrder
   publishedVersion?: Prisma.SortOrder
+  folderId?: Prisma.SortOrder
   requiresAcknowledgement?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -662,6 +684,7 @@ export type KnowledgeArticleMaxOrderByAggregateInput = {
   fileSize?: Prisma.SortOrder
   version?: Prisma.SortOrder
   publishedVersion?: Prisma.SortOrder
+  folderId?: Prisma.SortOrder
   requiresAcknowledgement?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -684,6 +707,7 @@ export type KnowledgeArticleMinOrderByAggregateInput = {
   fileSize?: Prisma.SortOrder
   version?: Prisma.SortOrder
   publishedVersion?: Prisma.SortOrder
+  folderId?: Prisma.SortOrder
   requiresAcknowledgement?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -702,6 +726,16 @@ export type KnowledgeArticleSumOrderByAggregateInput = {
 export type KnowledgeArticleScalarRelationFilter = {
   is?: Prisma.KnowledgeArticleWhereInput
   isNot?: Prisma.KnowledgeArticleWhereInput
+}
+
+export type KnowledgeArticleListRelationFilter = {
+  every?: Prisma.KnowledgeArticleWhereInput
+  some?: Prisma.KnowledgeArticleWhereInput
+  none?: Prisma.KnowledgeArticleWhereInput
+}
+
+export type KnowledgeArticleOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type KnowledgeArticleCreateNestedOneWithoutRevisionsInput = {
@@ -732,6 +766,48 @@ export type KnowledgeArticleUpdateOneRequiredWithoutAcknowledgementsNestedInput 
   update?: Prisma.XOR<Prisma.XOR<Prisma.KnowledgeArticleUpdateToOneWithWhereWithoutAcknowledgementsInput, Prisma.KnowledgeArticleUpdateWithoutAcknowledgementsInput>, Prisma.KnowledgeArticleUncheckedUpdateWithoutAcknowledgementsInput>
 }
 
+export type KnowledgeArticleCreateNestedManyWithoutFolderInput = {
+  create?: Prisma.XOR<Prisma.KnowledgeArticleCreateWithoutFolderInput, Prisma.KnowledgeArticleUncheckedCreateWithoutFolderInput> | Prisma.KnowledgeArticleCreateWithoutFolderInput[] | Prisma.KnowledgeArticleUncheckedCreateWithoutFolderInput[]
+  connectOrCreate?: Prisma.KnowledgeArticleCreateOrConnectWithoutFolderInput | Prisma.KnowledgeArticleCreateOrConnectWithoutFolderInput[]
+  createMany?: Prisma.KnowledgeArticleCreateManyFolderInputEnvelope
+  connect?: Prisma.KnowledgeArticleWhereUniqueInput | Prisma.KnowledgeArticleWhereUniqueInput[]
+}
+
+export type KnowledgeArticleUncheckedCreateNestedManyWithoutFolderInput = {
+  create?: Prisma.XOR<Prisma.KnowledgeArticleCreateWithoutFolderInput, Prisma.KnowledgeArticleUncheckedCreateWithoutFolderInput> | Prisma.KnowledgeArticleCreateWithoutFolderInput[] | Prisma.KnowledgeArticleUncheckedCreateWithoutFolderInput[]
+  connectOrCreate?: Prisma.KnowledgeArticleCreateOrConnectWithoutFolderInput | Prisma.KnowledgeArticleCreateOrConnectWithoutFolderInput[]
+  createMany?: Prisma.KnowledgeArticleCreateManyFolderInputEnvelope
+  connect?: Prisma.KnowledgeArticleWhereUniqueInput | Prisma.KnowledgeArticleWhereUniqueInput[]
+}
+
+export type KnowledgeArticleUpdateManyWithoutFolderNestedInput = {
+  create?: Prisma.XOR<Prisma.KnowledgeArticleCreateWithoutFolderInput, Prisma.KnowledgeArticleUncheckedCreateWithoutFolderInput> | Prisma.KnowledgeArticleCreateWithoutFolderInput[] | Prisma.KnowledgeArticleUncheckedCreateWithoutFolderInput[]
+  connectOrCreate?: Prisma.KnowledgeArticleCreateOrConnectWithoutFolderInput | Prisma.KnowledgeArticleCreateOrConnectWithoutFolderInput[]
+  upsert?: Prisma.KnowledgeArticleUpsertWithWhereUniqueWithoutFolderInput | Prisma.KnowledgeArticleUpsertWithWhereUniqueWithoutFolderInput[]
+  createMany?: Prisma.KnowledgeArticleCreateManyFolderInputEnvelope
+  set?: Prisma.KnowledgeArticleWhereUniqueInput | Prisma.KnowledgeArticleWhereUniqueInput[]
+  disconnect?: Prisma.KnowledgeArticleWhereUniqueInput | Prisma.KnowledgeArticleWhereUniqueInput[]
+  delete?: Prisma.KnowledgeArticleWhereUniqueInput | Prisma.KnowledgeArticleWhereUniqueInput[]
+  connect?: Prisma.KnowledgeArticleWhereUniqueInput | Prisma.KnowledgeArticleWhereUniqueInput[]
+  update?: Prisma.KnowledgeArticleUpdateWithWhereUniqueWithoutFolderInput | Prisma.KnowledgeArticleUpdateWithWhereUniqueWithoutFolderInput[]
+  updateMany?: Prisma.KnowledgeArticleUpdateManyWithWhereWithoutFolderInput | Prisma.KnowledgeArticleUpdateManyWithWhereWithoutFolderInput[]
+  deleteMany?: Prisma.KnowledgeArticleScalarWhereInput | Prisma.KnowledgeArticleScalarWhereInput[]
+}
+
+export type KnowledgeArticleUncheckedUpdateManyWithoutFolderNestedInput = {
+  create?: Prisma.XOR<Prisma.KnowledgeArticleCreateWithoutFolderInput, Prisma.KnowledgeArticleUncheckedCreateWithoutFolderInput> | Prisma.KnowledgeArticleCreateWithoutFolderInput[] | Prisma.KnowledgeArticleUncheckedCreateWithoutFolderInput[]
+  connectOrCreate?: Prisma.KnowledgeArticleCreateOrConnectWithoutFolderInput | Prisma.KnowledgeArticleCreateOrConnectWithoutFolderInput[]
+  upsert?: Prisma.KnowledgeArticleUpsertWithWhereUniqueWithoutFolderInput | Prisma.KnowledgeArticleUpsertWithWhereUniqueWithoutFolderInput[]
+  createMany?: Prisma.KnowledgeArticleCreateManyFolderInputEnvelope
+  set?: Prisma.KnowledgeArticleWhereUniqueInput | Prisma.KnowledgeArticleWhereUniqueInput[]
+  disconnect?: Prisma.KnowledgeArticleWhereUniqueInput | Prisma.KnowledgeArticleWhereUniqueInput[]
+  delete?: Prisma.KnowledgeArticleWhereUniqueInput | Prisma.KnowledgeArticleWhereUniqueInput[]
+  connect?: Prisma.KnowledgeArticleWhereUniqueInput | Prisma.KnowledgeArticleWhereUniqueInput[]
+  update?: Prisma.KnowledgeArticleUpdateWithWhereUniqueWithoutFolderInput | Prisma.KnowledgeArticleUpdateWithWhereUniqueWithoutFolderInput[]
+  updateMany?: Prisma.KnowledgeArticleUpdateManyWithWhereWithoutFolderInput | Prisma.KnowledgeArticleUpdateManyWithWhereWithoutFolderInput[]
+  deleteMany?: Prisma.KnowledgeArticleScalarWhereInput | Prisma.KnowledgeArticleScalarWhereInput[]
+}
+
 export type KnowledgeArticleCreateWithoutRevisionsInput = {
   id?: string
   title: string
@@ -753,6 +829,7 @@ export type KnowledgeArticleCreateWithoutRevisionsInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  folder?: Prisma.KnowledgeFolderCreateNestedOneWithoutArticlesInput
   acknowledgements?: Prisma.KnowledgeAcknowledgementCreateNestedManyWithoutArticleInput
 }
 
@@ -770,6 +847,7 @@ export type KnowledgeArticleUncheckedCreateWithoutRevisionsInput = {
   fileSize?: number | null
   version?: number
   publishedVersion?: number | null
+  folderId?: string | null
   requiresAcknowledgement?: boolean
   isArchived?: boolean
   createdById: string
@@ -817,6 +895,7 @@ export type KnowledgeArticleUpdateWithoutRevisionsInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  folder?: Prisma.KnowledgeFolderUpdateOneWithoutArticlesNestedInput
   acknowledgements?: Prisma.KnowledgeAcknowledgementUpdateManyWithoutArticleNestedInput
 }
 
@@ -834,6 +913,7 @@ export type KnowledgeArticleUncheckedUpdateWithoutRevisionsInput = {
   fileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   version?: Prisma.IntFieldUpdateOperationsInput | number
   publishedVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  folderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiresAcknowledgement?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -865,6 +945,7 @@ export type KnowledgeArticleCreateWithoutAcknowledgementsInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  folder?: Prisma.KnowledgeFolderCreateNestedOneWithoutArticlesInput
   revisions?: Prisma.KnowledgeRevisionCreateNestedManyWithoutArticleInput
 }
 
@@ -882,6 +963,7 @@ export type KnowledgeArticleUncheckedCreateWithoutAcknowledgementsInput = {
   fileSize?: number | null
   version?: number
   publishedVersion?: number | null
+  folderId?: string | null
   requiresAcknowledgement?: boolean
   isArchived?: boolean
   createdById: string
@@ -929,10 +1011,187 @@ export type KnowledgeArticleUpdateWithoutAcknowledgementsInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  folder?: Prisma.KnowledgeFolderUpdateOneWithoutArticlesNestedInput
   revisions?: Prisma.KnowledgeRevisionUpdateManyWithoutArticleNestedInput
 }
 
 export type KnowledgeArticleUncheckedUpdateWithoutAcknowledgementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  classification?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceType?: Prisma.StringFieldUpdateOperationsInput | string
+  blocks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  plainText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  folderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiresAcknowledgement?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  updatedById?: Prisma.StringFieldUpdateOperationsInput | string
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revisions?: Prisma.KnowledgeRevisionUncheckedUpdateManyWithoutArticleNestedInput
+}
+
+export type KnowledgeArticleCreateWithoutFolderInput = {
+  id?: string
+  title: string
+  summary?: string | null
+  category?: string
+  classification?: string
+  sourceType?: string
+  blocks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  plainText?: string | null
+  filePath?: string | null
+  fileName?: string | null
+  fileSize?: number | null
+  version?: number
+  publishedVersion?: number | null
+  requiresAcknowledgement?: boolean
+  isArchived?: boolean
+  createdById: string
+  updatedById: string
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revisions?: Prisma.KnowledgeRevisionCreateNestedManyWithoutArticleInput
+  acknowledgements?: Prisma.KnowledgeAcknowledgementCreateNestedManyWithoutArticleInput
+}
+
+export type KnowledgeArticleUncheckedCreateWithoutFolderInput = {
+  id?: string
+  title: string
+  summary?: string | null
+  category?: string
+  classification?: string
+  sourceType?: string
+  blocks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  plainText?: string | null
+  filePath?: string | null
+  fileName?: string | null
+  fileSize?: number | null
+  version?: number
+  publishedVersion?: number | null
+  requiresAcknowledgement?: boolean
+  isArchived?: boolean
+  createdById: string
+  updatedById: string
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revisions?: Prisma.KnowledgeRevisionUncheckedCreateNestedManyWithoutArticleInput
+  acknowledgements?: Prisma.KnowledgeAcknowledgementUncheckedCreateNestedManyWithoutArticleInput
+}
+
+export type KnowledgeArticleCreateOrConnectWithoutFolderInput = {
+  where: Prisma.KnowledgeArticleWhereUniqueInput
+  create: Prisma.XOR<Prisma.KnowledgeArticleCreateWithoutFolderInput, Prisma.KnowledgeArticleUncheckedCreateWithoutFolderInput>
+}
+
+export type KnowledgeArticleCreateManyFolderInputEnvelope = {
+  data: Prisma.KnowledgeArticleCreateManyFolderInput | Prisma.KnowledgeArticleCreateManyFolderInput[]
+  skipDuplicates?: boolean
+}
+
+export type KnowledgeArticleUpsertWithWhereUniqueWithoutFolderInput = {
+  where: Prisma.KnowledgeArticleWhereUniqueInput
+  update: Prisma.XOR<Prisma.KnowledgeArticleUpdateWithoutFolderInput, Prisma.KnowledgeArticleUncheckedUpdateWithoutFolderInput>
+  create: Prisma.XOR<Prisma.KnowledgeArticleCreateWithoutFolderInput, Prisma.KnowledgeArticleUncheckedCreateWithoutFolderInput>
+}
+
+export type KnowledgeArticleUpdateWithWhereUniqueWithoutFolderInput = {
+  where: Prisma.KnowledgeArticleWhereUniqueInput
+  data: Prisma.XOR<Prisma.KnowledgeArticleUpdateWithoutFolderInput, Prisma.KnowledgeArticleUncheckedUpdateWithoutFolderInput>
+}
+
+export type KnowledgeArticleUpdateManyWithWhereWithoutFolderInput = {
+  where: Prisma.KnowledgeArticleScalarWhereInput
+  data: Prisma.XOR<Prisma.KnowledgeArticleUpdateManyMutationInput, Prisma.KnowledgeArticleUncheckedUpdateManyWithoutFolderInput>
+}
+
+export type KnowledgeArticleScalarWhereInput = {
+  AND?: Prisma.KnowledgeArticleScalarWhereInput | Prisma.KnowledgeArticleScalarWhereInput[]
+  OR?: Prisma.KnowledgeArticleScalarWhereInput[]
+  NOT?: Prisma.KnowledgeArticleScalarWhereInput | Prisma.KnowledgeArticleScalarWhereInput[]
+  id?: Prisma.StringFilter<"KnowledgeArticle"> | string
+  title?: Prisma.StringFilter<"KnowledgeArticle"> | string
+  summary?: Prisma.StringNullableFilter<"KnowledgeArticle"> | string | null
+  category?: Prisma.StringFilter<"KnowledgeArticle"> | string
+  classification?: Prisma.StringFilter<"KnowledgeArticle"> | string
+  sourceType?: Prisma.StringFilter<"KnowledgeArticle"> | string
+  blocks?: Prisma.JsonNullableFilter<"KnowledgeArticle">
+  plainText?: Prisma.StringNullableFilter<"KnowledgeArticle"> | string | null
+  filePath?: Prisma.StringNullableFilter<"KnowledgeArticle"> | string | null
+  fileName?: Prisma.StringNullableFilter<"KnowledgeArticle"> | string | null
+  fileSize?: Prisma.IntNullableFilter<"KnowledgeArticle"> | number | null
+  version?: Prisma.IntFilter<"KnowledgeArticle"> | number
+  publishedVersion?: Prisma.IntNullableFilter<"KnowledgeArticle"> | number | null
+  folderId?: Prisma.StringNullableFilter<"KnowledgeArticle"> | string | null
+  requiresAcknowledgement?: Prisma.BoolFilter<"KnowledgeArticle"> | boolean
+  isArchived?: Prisma.BoolFilter<"KnowledgeArticle"> | boolean
+  createdById?: Prisma.StringFilter<"KnowledgeArticle"> | string
+  updatedById?: Prisma.StringFilter<"KnowledgeArticle"> | string
+  publishedAt?: Prisma.DateTimeNullableFilter<"KnowledgeArticle"> | Date | string | null
+  createdAt?: Prisma.DateTimeFilter<"KnowledgeArticle"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"KnowledgeArticle"> | Date | string
+}
+
+export type KnowledgeArticleCreateManyFolderInput = {
+  id?: string
+  title: string
+  summary?: string | null
+  category?: string
+  classification?: string
+  sourceType?: string
+  blocks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  plainText?: string | null
+  filePath?: string | null
+  fileName?: string | null
+  fileSize?: number | null
+  version?: number
+  publishedVersion?: number | null
+  requiresAcknowledgement?: boolean
+  isArchived?: boolean
+  createdById: string
+  updatedById: string
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type KnowledgeArticleUpdateWithoutFolderInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  classification?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceType?: Prisma.StringFieldUpdateOperationsInput | string
+  blocks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  plainText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requiresAcknowledgement?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  updatedById?: Prisma.StringFieldUpdateOperationsInput | string
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revisions?: Prisma.KnowledgeRevisionUpdateManyWithoutArticleNestedInput
+  acknowledgements?: Prisma.KnowledgeAcknowledgementUpdateManyWithoutArticleNestedInput
+}
+
+export type KnowledgeArticleUncheckedUpdateWithoutFolderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -954,6 +1213,30 @@ export type KnowledgeArticleUncheckedUpdateWithoutAcknowledgementsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revisions?: Prisma.KnowledgeRevisionUncheckedUpdateManyWithoutArticleNestedInput
+  acknowledgements?: Prisma.KnowledgeAcknowledgementUncheckedUpdateManyWithoutArticleNestedInput
+}
+
+export type KnowledgeArticleUncheckedUpdateManyWithoutFolderInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  classification?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceType?: Prisma.StringFieldUpdateOperationsInput | string
+  blocks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  plainText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  publishedVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  requiresAcknowledgement?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  updatedById?: Prisma.StringFieldUpdateOperationsInput | string
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -1010,6 +1293,7 @@ export type KnowledgeArticleSelect<ExtArgs extends runtime.Types.Extensions.Inte
   fileSize?: boolean
   version?: boolean
   publishedVersion?: boolean
+  folderId?: boolean
   requiresAcknowledgement?: boolean
   isArchived?: boolean
   createdById?: boolean
@@ -1017,6 +1301,7 @@ export type KnowledgeArticleSelect<ExtArgs extends runtime.Types.Extensions.Inte
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  folder?: boolean | Prisma.KnowledgeArticle$folderArgs<ExtArgs>
   revisions?: boolean | Prisma.KnowledgeArticle$revisionsArgs<ExtArgs>
   acknowledgements?: boolean | Prisma.KnowledgeArticle$acknowledgementsArgs<ExtArgs>
   _count?: boolean | Prisma.KnowledgeArticleCountOutputTypeDefaultArgs<ExtArgs>
@@ -1036,6 +1321,7 @@ export type KnowledgeArticleSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   fileSize?: boolean
   version?: boolean
   publishedVersion?: boolean
+  folderId?: boolean
   requiresAcknowledgement?: boolean
   isArchived?: boolean
   createdById?: boolean
@@ -1043,6 +1329,7 @@ export type KnowledgeArticleSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  folder?: boolean | Prisma.KnowledgeArticle$folderArgs<ExtArgs>
 }, ExtArgs["result"]["knowledgeArticle"]>
 
 export type KnowledgeArticleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1059,6 +1346,7 @@ export type KnowledgeArticleSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   fileSize?: boolean
   version?: boolean
   publishedVersion?: boolean
+  folderId?: boolean
   requiresAcknowledgement?: boolean
   isArchived?: boolean
   createdById?: boolean
@@ -1066,6 +1354,7 @@ export type KnowledgeArticleSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  folder?: boolean | Prisma.KnowledgeArticle$folderArgs<ExtArgs>
 }, ExtArgs["result"]["knowledgeArticle"]>
 
 export type KnowledgeArticleSelectScalar = {
@@ -1082,6 +1371,7 @@ export type KnowledgeArticleSelectScalar = {
   fileSize?: boolean
   version?: boolean
   publishedVersion?: boolean
+  folderId?: boolean
   requiresAcknowledgement?: boolean
   isArchived?: boolean
   createdById?: boolean
@@ -1091,18 +1381,24 @@ export type KnowledgeArticleSelectScalar = {
   updatedAt?: boolean
 }
 
-export type KnowledgeArticleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "summary" | "category" | "classification" | "sourceType" | "blocks" | "plainText" | "filePath" | "fileName" | "fileSize" | "version" | "publishedVersion" | "requiresAcknowledgement" | "isArchived" | "createdById" | "updatedById" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["knowledgeArticle"]>
+export type KnowledgeArticleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "summary" | "category" | "classification" | "sourceType" | "blocks" | "plainText" | "filePath" | "fileName" | "fileSize" | "version" | "publishedVersion" | "folderId" | "requiresAcknowledgement" | "isArchived" | "createdById" | "updatedById" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["knowledgeArticle"]>
 export type KnowledgeArticleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  folder?: boolean | Prisma.KnowledgeArticle$folderArgs<ExtArgs>
   revisions?: boolean | Prisma.KnowledgeArticle$revisionsArgs<ExtArgs>
   acknowledgements?: boolean | Prisma.KnowledgeArticle$acknowledgementsArgs<ExtArgs>
   _count?: boolean | Prisma.KnowledgeArticleCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type KnowledgeArticleIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type KnowledgeArticleIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type KnowledgeArticleIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  folder?: boolean | Prisma.KnowledgeArticle$folderArgs<ExtArgs>
+}
+export type KnowledgeArticleIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  folder?: boolean | Prisma.KnowledgeArticle$folderArgs<ExtArgs>
+}
 
 export type $KnowledgeArticlePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "KnowledgeArticle"
   objects: {
+    folder: Prisma.$KnowledgeFolderPayload<ExtArgs> | null
     revisions: Prisma.$KnowledgeRevisionPayload<ExtArgs>[]
     acknowledgements: Prisma.$KnowledgeAcknowledgementPayload<ExtArgs>[]
   }
@@ -1120,6 +1416,7 @@ export type $KnowledgeArticlePayload<ExtArgs extends runtime.Types.Extensions.In
     fileSize: number | null
     version: number
     publishedVersion: number | null
+    folderId: string | null
     requiresAcknowledgement: boolean
     isArchived: boolean
     createdById: string
@@ -1521,6 +1818,7 @@ readonly fields: KnowledgeArticleFieldRefs;
  */
 export interface Prisma__KnowledgeArticleClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  folder<T extends Prisma.KnowledgeArticle$folderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KnowledgeArticle$folderArgs<ExtArgs>>): Prisma.Prisma__KnowledgeFolderClient<runtime.Types.Result.GetResult<Prisma.$KnowledgeFolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   revisions<T extends Prisma.KnowledgeArticle$revisionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KnowledgeArticle$revisionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KnowledgeRevisionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   acknowledgements<T extends Prisma.KnowledgeArticle$acknowledgementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KnowledgeArticle$acknowledgementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KnowledgeAcknowledgementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1565,6 +1863,7 @@ export interface KnowledgeArticleFieldRefs {
   readonly fileSize: Prisma.FieldRef<"KnowledgeArticle", 'Int'>
   readonly version: Prisma.FieldRef<"KnowledgeArticle", 'Int'>
   readonly publishedVersion: Prisma.FieldRef<"KnowledgeArticle", 'Int'>
+  readonly folderId: Prisma.FieldRef<"KnowledgeArticle", 'String'>
   readonly requiresAcknowledgement: Prisma.FieldRef<"KnowledgeArticle", 'Boolean'>
   readonly isArchived: Prisma.FieldRef<"KnowledgeArticle", 'Boolean'>
   readonly createdById: Prisma.FieldRef<"KnowledgeArticle", 'String'>
@@ -1826,6 +2125,10 @@ export type KnowledgeArticleCreateManyAndReturnArgs<ExtArgs extends runtime.Type
    */
   data: Prisma.KnowledgeArticleCreateManyInput | Prisma.KnowledgeArticleCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.KnowledgeArticleIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1896,6 +2199,10 @@ export type KnowledgeArticleUpdateManyAndReturnArgs<ExtArgs extends runtime.Type
    * Limit how many KnowledgeArticles to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.KnowledgeArticleIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1962,6 +2269,25 @@ export type KnowledgeArticleDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many KnowledgeArticles to delete.
    */
   limit?: number
+}
+
+/**
+ * KnowledgeArticle.folder
+ */
+export type KnowledgeArticle$folderArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the KnowledgeFolder
+   */
+  select?: Prisma.KnowledgeFolderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the KnowledgeFolder
+   */
+  omit?: Prisma.KnowledgeFolderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.KnowledgeFolderInclude<ExtArgs> | null
+  where?: Prisma.KnowledgeFolderWhereInput
 }
 
 /**
