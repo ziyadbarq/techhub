@@ -1,10 +1,10 @@
-import { redirect } from "next/navigation";
+import { DataImportWizard } from "@/components/data-import/DataImportWizard";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
-/**
- * Asset CSV/Excel import is now accessed only through Assets > Bulk Import.
- * Keep the previous URL working for bookmarks without maintaining a second
- * upload workflow or modifying the existing asset import engine.
- */
-export default function LegacyDataImportPage() {
-  redirect("/assets");
+export const dynamic = "force-dynamic";
+
+export default async function AssetsDataImportPage() {
+  await requireFeatureAndPermission("ASSETS", PERMISSIONS.ASSETS_CREATE, "/data-import");
+  return <DataImportWizard initialEntityKey="UNIVERSAL_ASSETS" />;
 }

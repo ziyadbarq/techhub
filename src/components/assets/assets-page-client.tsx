@@ -60,7 +60,6 @@ import { AssetForm } from "./asset-form";
 import { AssetsSummaryCards } from "./assets-summary-cards";
 import { AssetsToolbar } from "./assets-toolbar";
 import { BulkActionBar } from "./bulk-action-bar";
-import { ImportAssetsWizard } from "./import-assets-wizard";
 
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -105,7 +104,6 @@ export function AssetsPageClient({
   // UI state
   const [isLoading, setIsLoading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isImportOpen, setIsImportOpen] = useState(false);
   const [editingAsset, setEditingAsset] = useState<AssetDTO | null>(null);
   const [selectedAssets, setSelectedAssets] = useState<AssetDTO[]>([]);
 
@@ -386,13 +384,11 @@ export function AssetsPageClient({
           </PermissionGuard>
 
           <PermissionGuard permission={PERMISSIONS.ASSETS_CREATE}>
-            <Button
-              variant="outline"
-              onClick={() => setIsImportOpen(true)}
-              className="gap-2"
-            >
-              <Upload className="h-4 w-4" />
-              Bulk Import
+            <Button asChild variant="outline" className="gap-2">
+              <Link href="/data-import">
+                <Upload className="h-4 w-4" />
+                Bulk Import
+              </Link>
             </Button>
           </PermissionGuard>
 
@@ -471,12 +467,6 @@ export function AssetsPageClient({
         asset={editingAsset}
       />
 
-      {/* Bulk Import Dialog */}
-      <ImportAssetsWizard
-        open={isImportOpen}
-        onOpenChange={setIsImportOpen}
-        onSuccess={handleSuccess}
-      />
     </div>
   );
 }
