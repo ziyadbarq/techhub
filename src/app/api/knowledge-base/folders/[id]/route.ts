@@ -17,7 +17,7 @@ export async function PATCH(request: NextRequest, context: Context) {
     const { id } = await context.params;
     const data = editKnowledgeFolderSchema.parse(await request.json());
     const folder = await prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(88776111)`;
+      await tx.$queryRaw`SELECT 1 AS locked FROM pg_advisory_xact_lock(88776111)`;
       const current = await tx.knowledgeFolder.findUnique({ where: { id } });
       if (!current) throw new KnowledgeError(404, "FOLDER_NOT_FOUND");
       if (data.parentId !== undefined) {
@@ -54,7 +54,7 @@ export async function DELETE(_request: NextRequest, context: Context) {
     const userId = await requireKnowledgeAccess(PERMISSIONS.KNOWLEDGE_BASE_UPDATE);
     const { id } = await context.params;
     await prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(88776111)`;
+      await tx.$queryRaw`SELECT 1 AS locked FROM pg_advisory_xact_lock(88776111)`;
       const current = await tx.knowledgeFolder.findUnique({ where: { id } });
       if (!current) throw new KnowledgeError(404, "FOLDER_NOT_FOUND");
       const [children, articles] = await Promise.all([

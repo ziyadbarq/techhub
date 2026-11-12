@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
     const data = createKnowledgeFolderSchema.parse(await request.json());
     const created = await prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(88776111)`;
+      await tx.$queryRaw`SELECT 1 AS locked FROM pg_advisory_xact_lock(88776111)`;
       if (data.parentId && !(await tx.knowledgeFolder.findUnique({ where: { id: data.parentId } }))) {
         throw new KnowledgeError(404, "PARENT_FOLDER_NOT_FOUND");
       }
