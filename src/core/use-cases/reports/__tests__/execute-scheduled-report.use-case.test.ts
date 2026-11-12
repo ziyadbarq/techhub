@@ -74,6 +74,7 @@ describe("ExecuteScheduledReportUseCase", () => {
       getEnabledFeatureNames: vi.fn(),
       count: vi.fn(),
       update: vi.fn(),
+      setEnabled: vi.fn(),
       toggle: vi.fn(),
       delete: vi.fn(),
       existsByName: vi.fn(),
