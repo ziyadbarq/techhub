@@ -370,8 +370,8 @@ describe("AssignPermissionsToRoleUseCase", () => {
       // Arrange
       const role = Role.create(
         {
-          name: "admin",
-          displayName: "Admin",
+          name: "system-administrator",
+          displayName: "System Administrator",
           isSystem: true,
         },
         mockIdGenerator,

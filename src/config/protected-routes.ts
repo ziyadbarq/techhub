@@ -236,6 +236,10 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW],
     description: "Data verification and validation campaigns",
   },
+  "/knowledge-base": {
+    requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_VIEW],
+    description: "Internal policies, procedures and curated knowledge",
+  },
 
   // ============================================================================
   // DOCS ROUTES
@@ -285,6 +289,20 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   },
 
   // ============================================================================
+  // KNOWLEDGE-BASE ROUTES
+  // ============================================================================
+
+  "/knowledge-base/new": {
+    requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_CREATE],
+  },
+  "/knowledge-base/[id]": {
+    requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_VIEW],
+  },
+  "/knowledge-base/[id]/edit": {
+    requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_UPDATE],
+  },
+
+  // ============================================================================
   // MAIN ROUTES
   // ============================================================================
 
@@ -319,6 +337,10 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   "/profile": {
     requiredPermissions: [PERMISSIONS.DASHBOARD_VIEW],
     description: "User profile and account information",
+  },
+  "/notifications": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW],
+    description: "Unified TechHub notifications center",
   },
   "/settings": {
     requiredPermissions: [PERMISSIONS.SETTINGS_VIEW],
@@ -549,9 +571,18 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT],
     description: "Available request forms",
   },
+  "/request": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT],
+    description: "Legacy portal link redirects to dashboard forms",
+  },
+  "/request/[formId]": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT],
+    description: "Legacy form link redirects to dashboard submission",
+  },
   "/workflows/notifications": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW],
-    description: "In-app workflow notifications",
+    description:
+      "Legacy workflow notifications link (redirects to TechHub notifications)",
   },
   "/workflows/analytics": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_ANALYTICS_VIEW],
@@ -575,6 +606,15 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_VIEW],
   },
   "/workflows/admin/workflows/[workflowId]": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_UPDATE],
+  },
+  "/workflows/designer": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_VIEW],
+  },
+  "/workflows/designer/new": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_CREATE],
+  },
+  "/workflows/designer/[workflowId]": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_DEFINITIONS_UPDATE],
   },
   "/workflows/admin/calendars": {

@@ -44,7 +44,7 @@ const GROUPS: ReadonlyArray<{ title: string; sections: Section[] }> = [
         icon: FileText,
       },
       {
-        href: "/workflows/admin/workflows",
+        href: "/workflows/designer",
         title: "Workflows",
         body: "Define the steps, routing, and assignment for each form.",
         icon: Workflow,

@@ -1,0 +1,72 @@
+// Knowledge Base: policies, PDFs and structured internal documentation.
+// PDF bytes are stored privately in GCS; the database records only opaque keys.
+// Never serve GCS object URLs or render untrusted HTML.
+model KnowledgeArticle {
+  id                      String   @id @default(cuid())
+  title                   String
+  summary                 String?  @db.Text
+  category                String   @default("GENERAL")
+  classification          String   @default("INTERNAL")
+  sourceType              String   @default("EDITOR")
+  blocks                  Json?
+  plainText               String?  @db.Text
+  filePath                String?
+  fileName                String?
+  fileSize                Int?
+  version                 Int      @default(1)
+  publishedVersion        Int?
+  requiresAcknowledgement Boolean  @default(false)
+  isArchived              Boolean  @default(false)
+  createdById             String
+  updatedById             String
+  publishedAt             DateTime?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  revisions KnowledgeRevision[]
+  acknowledgements KnowledgeAcknowledgement[]
+
+  @@index([category, classification])
+  @@index([publishedVersion, isArchived])
+  @@index([updatedAt])
+  @@map("knowledge_articles")
+}
+
+model KnowledgeRevision {
+  id                      String   @id @default(cuid())
+  articleId               String
+  version                 Int
+  title                   String
+  summary                 String?  @db.Text
+  category                String
+  classification          String
+  sourceType              String
+  blocks                  Json?
+  plainText               String?  @db.Text
+  filePath                String?
+  fileName                String?
+  fileSize                Int?
+  requiresAcknowledgement Boolean
+  editedById              String
+  createdAt               DateTime @default(now())
+
+  article KnowledgeArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, version])
+  @@index([articleId, createdAt])
+  @@map("knowledge_revisions")
+}
+
+model KnowledgeAcknowledgement {
+  id             String   @id @default(cuid())
+  articleId      String
+  version        Int
+  userId         String
+  acknowledgedAt DateTime @default(now())
+
+  article KnowledgeArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, version, userId])
+  @@index([userId, acknowledgedAt])
+  @@map("knowledge_acknowledgements")
+}

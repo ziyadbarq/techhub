@@ -97,6 +97,7 @@ model Session {
   expires      DateTime
   ipAddress    String?
   userAgent    String?
+  authProvider String? // Set only after a verified Microsoft OAuth callback, for this session
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

@@ -9,6 +9,7 @@ import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { requirePermission } from "@/lib/permissions/server";
 import { getCurrentUserId } from "@/lib/auth/session";
+import { getMicrosoftRequestAccess } from "@/lib/auth/microsoft-request-access";
 import type { IWorkflowEngine } from "@/core/repositories/workflow";
 import { WorkflowEngineError, type ActorContext } from "@/core/domain/workflow";
 
@@ -64,6 +65,18 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
   await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT);
+
+  // Verify this session used Microsoft SSO, not only a linked Microsoft account.
+  const access = await getMicrosoftRequestAccess();
+  if (!access.allowed) {
+    return NextResponse.json(
+      {
+        error: "MICROSOFT_SIGN_IN_REQUIRED",
+        message: "Sign in with Microsoft to submit this request.",
+      },
+      { status: 403 },
+    );
+  }
 
   const userId = await getCurrentUserId();
   if (!userId) {

@@ -28,12 +28,14 @@ export default async function WorkflowFormsPage() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-h1">Browse Forms</h1>
-        <p className="text-subtitle text-slate max-w-2xl">
-          Pick a request type to fill it out and send it for approval.
-        </p>
-      </header>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <header className="space-y-1">
+          <h1 className="text-h1">Browse Forms</h1>
+          <p className="text-subtitle text-slate max-w-2xl">
+            Pick a request type to fill it out and send it for approval.
+          </p>
+        </header>
+      </div>
 
       {forms.length === 0 ? (
         <Card>

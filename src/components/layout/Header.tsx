@@ -26,6 +26,7 @@ import { authClient } from "@/lib/auth/client";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useCommandPalette } from "@/components/search/command-palette-context";
+import { NotificationBell } from "./NotificationBell";
 
 export function Header() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -206,6 +207,9 @@ export function Header() {
           <Search className="h-5 w-5" />
           <span className="sr-only">Search</span>
         </Button>
+
+        {/* Central notification bell for TechHub's workflow messages. */}
+        <NotificationBell />
 
         {/* Theme Toggle */}
         <Button

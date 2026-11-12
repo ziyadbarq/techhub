@@ -49,6 +49,14 @@ export const PERMISSIONS = {
   // Data Import
   DATA_IMPORT_MANAGE: "data-import:manage",
 
+  // Knowledge Base — distinct read, authoring, publishing and restricted access
+  KNOWLEDGE_BASE_VIEW: "knowledge-base:view",
+  KNOWLEDGE_BASE_CREATE: "knowledge-base:create",
+  KNOWLEDGE_BASE_UPDATE: "knowledge-base:update",
+  KNOWLEDGE_BASE_PUBLISH: "knowledge-base:publish",
+  KNOWLEDGE_BASE_ARCHIVE: "knowledge-base:archive",
+  KNOWLEDGE_BASE_RESTRICTED_VIEW: "knowledge-base:view:restricted",
+
   // Feature Flags
   FEATURE_FLAGS_MANAGE: "feature-flags:manage",
 

@@ -51,6 +51,7 @@ export const FEATURE_FLAGS = {
 
   // Workflow Engine (gates the entire /workflows module + cron jobs)
   WORKFLOW_ENGINE: "WORKFLOW_ENGINE",
+  KNOWLEDGE_BASE: "KNOWLEDGE_BASE",
 } as const;
 
 /**

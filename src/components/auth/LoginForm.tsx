@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth/client";
 import { loginSchema, type LoginInput } from "@/lib/auth/validation";
+import { safeReturnPath } from "@/lib/auth/safe-return-path";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -36,7 +37,7 @@ export function LoginForm() {
   const isEmailRegistrationEnabled = emailRegSetting !== "false";
 
   // Get the redirect path from query params, default to dashboard
-  const redirectTo = searchParams.get("from") || "/dashboard";
+  const redirectTo = safeReturnPath(searchParams.get("from"));
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),

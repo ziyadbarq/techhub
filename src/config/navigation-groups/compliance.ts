@@ -11,6 +11,7 @@
  */
 
 import {
+  BookOpen,
   CheckSquare,
   ClipboardList,
   FileCode,
@@ -106,6 +107,14 @@ export const complianceNavGroup: NavGroup = {
       description: "Data verification and validation campaigns",
       permission: PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW,
       featureFlag: "GOVERNANCE",
+    },
+    {
+      title: "Knowledge Base",
+      href: "/knowledge-base",
+      icon: BookOpen,
+      description: "Internal policies, procedures and curated knowledge",
+      permission: PERMISSIONS.KNOWLEDGE_BASE_VIEW,
+      featureFlag: "KNOWLEDGE_BASE",
     },
   ],
   visible: true,

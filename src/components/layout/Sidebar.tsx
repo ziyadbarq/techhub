@@ -322,9 +322,16 @@ const NestedNavItem = React.memo(function NestedNavItem({
   getBadgeValue,
   onItemClick,
 }: NestedNavItemProps) {
-  const isActive = isNavItemActive(item.href, pathname);
-  const isSection = isNavItemSection(item.href, pathname);
   const itemHasChildren = hasChildren(item);
+  const childIsActive =
+    itemHasChildren &&
+    item.children?.some((child) => isNavItemActive(child.href, pathname));
+  const isActive = itemHasChildren
+    ? pathname === item.href || !!childIsActive
+    : isNavItemActive(item.href, pathname);
+  const isSection = itemHasChildren
+    ? !!childIsActive && pathname !== item.href
+    : isNavItemSection(item.href, pathname);
   const badgeValue = getBadgeValue(item);
   const Icon = item.icon;
   const linkRef = React.useRef<HTMLAnchorElement>(null);

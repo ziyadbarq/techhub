@@ -92,17 +92,25 @@ describe("CreateRoleUseCase", () => {
       expect(result.createdBy).toBe("admin-1");
     });
 
-    it("should create system role when isSystem is true", async () => {
-      // Act
+    it("never creates another protected system role from user input", async () => {
       const result = await useCase.execute({
-        name: "admin",
-        displayName: "Administrator",
+        name: "custom-admin",
+        displayName: "Custom Administrator",
         isSystem: true,
         createdBy: "system",
       });
+      expect(result.isSystem).toBe(false);
+    });
 
-      // Assert
-      expect(result.isSystem).toBe(true);
+    it("reserves the system-administrator name for bootstrap/seeding", async () => {
+      await expect(
+        useCase.execute({
+          name: "system-administrator",
+          displayName: "System Administrator",
+          isSystem: true,
+        }),
+      ).rejects.toThrow("reserved");
+      expect(mockAuditLogRepository.create).not.toHaveBeenCalled();
     });
 
     it("should create non-system role by default", async () => {

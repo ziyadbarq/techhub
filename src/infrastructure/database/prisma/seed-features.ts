@@ -250,6 +250,16 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     dependsOn: ["FOUNDATION"],
   },
   {
+    name: "KNOWLEDGE_BASE",
+    displayName: "Knowledge Base",
+    description:
+      "Managed internal knowledge articles and policies: PDF or structured editor, controlled publishing, version history, restricted policies, and acknowledgements.",
+    category: "LAYER_3",
+    isSystem: false,
+    dependsOn: ["RBAC"],
+    // Disabled by default; an administrator must enable it explicitly.
+  },
+  {
     name: "WORKFLOW_ENGINE",
     displayName: "Workflow Engine",
     description:

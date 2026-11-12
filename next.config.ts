@@ -55,6 +55,20 @@ const configuredDevWebSocketOrigins = Array.from(
 const nextConfig: NextConfig = {
   allowedDevOrigins: configuredDevHostnames,
   output: "standalone",
+  // Short public-facing URLs for the existing workflow designer pages.
+  // Keep their original App Router paths valid for saved links and integrations.
+  async rewrites() {
+    return [
+      {
+        source: "/workflows/designer",
+        destination: "/workflows/admin/workflows",
+      },
+      {
+        source: "/workflows/designer/:path*",
+        destination: "/workflows/admin/workflows/:path*",
+      },
+    ];
+  },
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   typescript: {
     ignoreBuildErrors: process.env.SKIP_TYPE_CHECK === "true",
