@@ -65,6 +65,12 @@ export interface IFeatureFlagRepository {
   update(featureFlag: FeatureFlag): Promise<FeatureFlag>;
 
   /**
+   * Change only the enabled state (never rewrite immutable name or metadata).
+   * Reject stale state to avoid conflicting simultaneous toggles.
+   */
+  setEnabled(id: string, enabled: boolean): Promise<FeatureFlag>;
+
+  /**
    * Toggle feature flag enabled state
    */
   toggle(name: string): Promise<FeatureFlag>;

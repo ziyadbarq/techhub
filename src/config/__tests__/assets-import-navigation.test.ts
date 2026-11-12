@@ -14,8 +14,8 @@ describe("Assets import entry point", () => {
     expect(entries.some((item) => item.href === "/assets")).toBe(true);
   });
 
-  it("keeps the bookmarked route under Assets view protection", () => {
+  it("requires Assets create permission for the import workspace", () => {
     expect(getRouteProtection("/data-import")?.requiredPermissions)
-      .toEqual([PERMISSIONS.ASSETS_VIEW]);
+      .toEqual([PERMISSIONS.ASSETS_CREATE]);
   });
 });

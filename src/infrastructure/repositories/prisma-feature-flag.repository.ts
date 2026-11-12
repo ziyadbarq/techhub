@@ -11,6 +11,7 @@ import type {
 
 import { DI_TOKENS } from "@/di/types";
 import { FeatureFlag } from "@/core/domain/entities/feature-flag.entity";
+import { ValidationError, NotFoundError } from "@/core/domain/errors";
 import type { IFeatureFlagRepository } from "@/core/repositories/feature-flag.repository.interface";
 import { createRepositoryLogger } from "./repository-logger";
 
@@ -157,6 +158,30 @@ export class PrismaFeatureFlagRepository implements IFeatureFlagRepository {
     }
   }
 
+  async setEnabled(id: string, enabled: boolean): Promise<FeatureFlag> {
+    const timer = this.logger.startTimer();
+    try {
+      // A toggle changes only isEnabled. Never rewrite unique name or metadata.
+      // The state predicate prevents two concurrent requests from racing.
+      const changed = await this.prisma.featureFlag.updateMany({
+        where: { id, isEnabled: !enabled },
+        data: { isEnabled: enabled },
+      });
+      if (changed.count !== 1) {
+        const current = await this.prisma.featureFlag.findUnique({ where: { id } });
+        if (!current) throw new NotFoundError("Feature flag not found");
+        throw new ValidationError("Feature flag changed in another request. Refresh and retry.");
+      }
+      const record = await this.prisma.featureFlag.findUnique({ where: { id } });
+      if (!record) throw new NotFoundError("Feature flag not found");
+      this.logger.timed("setEnabled", "Feature state changed", timer(), { id, isEnabled: record.isEnabled });
+      return this.toDomain(record);
+    } catch (error) {
+      this.logger.error("setEnabled", "Failed to update only the feature flag enabled state", error);
+      throw error;
+    }
+  }
+
   async toggle(name: string): Promise<FeatureFlag> {
     const timer = this.logger.startTimer();
 
@@ -171,7 +196,7 @@ export class PrismaFeatureFlagRepository implements IFeatureFlagRepository {
       const toggled = current.toggle();
 
       // Save and return
-      const result = await this.update(toggled);
+      const result = await this.setEnabled(current.id, toggled.isEnabled);
 
       this.logger.timed("toggle", "Feature flag toggled", timer(), {
         name: result.name,

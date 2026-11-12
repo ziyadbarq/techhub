@@ -313,10 +313,10 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
   },
   {
     path: "/data-import",
-    label: "Assets Import (Legacy Redirect)",
+    label: "Asset Bulk Import",
     icon: Database,
-    description: "Legacy import entry redirects to Assets > Bulk Import",
-    requiredPermissions: ["ASSETS_VIEW"],
+    description: "Dedicated Assets import workspace",
+    requiredPermissions: ["ASSETS_CREATE"],
     featureFlag: "ASSETS",
     visibleInNav: false,
     navGroup: "main",

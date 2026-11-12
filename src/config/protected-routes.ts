@@ -314,8 +314,8 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     description: "OCI Cloud Infrastructure resource sync",
   },
   "/data-import": {
-    requiredPermissions: [PERMISSIONS.ASSETS_VIEW],
-    description: "Legacy import entry redirects to Assets > Bulk Import",
+    requiredPermissions: [PERMISSIONS.ASSETS_CREATE],
+    description: "Dedicated Assets import workspace",
   },
   "/analytics": {
     requiredPermissions: [PERMISSIONS.ASSETS_VIEW],
