@@ -14,6 +14,7 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import type {
   EntityConfig,
   ImportSettings,
@@ -76,6 +77,7 @@ interface WizardState {
  * Main wizard component
  */
 export function DataImportWizard({ initialEntityKey }: { initialEntityKey?: string } = {}) {
+  const router = useRouter();
   const wizardRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<WizardState>({
     currentStep: initialEntityKey && getEntityConfig(initialEntityKey) ? "settings" : "entity-select",
@@ -188,11 +190,15 @@ export function DataImportWizard({ initialEntityKey }: { initialEntityKey?: stri
    * Go back to previous step
    */
   const handleBack = useCallback(() => {
+    if (initialEntityKey && state.currentStep === "settings") {
+      router.push("/assets");
+      return;
+    }
     const currentIndex = STEP_ORDER.indexOf(state.currentStep);
     if (currentIndex > 0) {
       goToStep(STEP_ORDER[currentIndex - 1]);
     }
-  }, [state.currentStep, goToStep]);
+  }, [state.currentStep, goToStep, initialEntityKey, router]);
 
   /**
    * Calculate progress percentage
