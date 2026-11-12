@@ -10,7 +10,7 @@
  * Manual edits will be lost on next generation.
  */
 
-import { Cloud, FileText, Home, Laptop } from "lucide-react";
+import { Cloud, Database, FileText, Home, Laptop } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
 
@@ -40,6 +40,14 @@ export const mainNavGroup: NavGroup = {
       description: "OCI Cloud Infrastructure resource sync",
       permission: PERMISSIONS.OCI_SYNC_VIEW,
       featureFlag: "OCI_SYNC",
+    },
+    {
+      title: "Data Import",
+      href: "/data-import",
+      icon: Database,
+      description: "Import assets from Excel or CSV",
+      permission: PERMISSIONS.ASSETS_CREATE,
+      featureFlag: "ASSETS",
     },
     {
       title: "Reports",
