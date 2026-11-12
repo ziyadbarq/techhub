@@ -205,7 +205,6 @@ export function KnowledgeComposer({ articleId }: { articleId?: string }) {
         throw new Error("Choose a PDF file before saving.");
       }
       let nextId = articleId;
-      let nextVersion: number;
       let response: Response;
 
       if (sourceType === "PDF" && file) {
@@ -228,7 +227,7 @@ export function KnowledgeComposer({ articleId }: { articleId?: string }) {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Unable to save the document.");
       nextId = result.id as string;
-      nextVersion = result.version as number;
+      const nextVersion = result.version as number;
       setVersion(nextVersion);
       if (publish) {
         if (!canPublish) throw new Error("Draft saved. Publishing requires the Knowledge Base Publish permission.");

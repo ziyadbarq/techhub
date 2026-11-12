@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils/date-format";
 import {
   ArrowLeft, BookOpen, Download, FileText, ShieldCheck, LockKeyhole,
   History, Edit3, CheckCircle2, AlertCircle, Send, Archive,
@@ -154,7 +155,7 @@ export function KnowledgeReader({ articleId, draft, historicalVersion }: { artic
             <h1 className="mt-5 break-words text-3xl font-semibold leading-tight tracking-[-.035em] sm:text-4xl">{document.title}</h1>
             {document.summary && <p className="mt-5 max-w-2xl text-sm leading-7 text-[#c4d7ea] sm:text-base">{document.summary}</p>}
             <div className="mt-8 flex flex-wrap gap-4 border-t border-white/15 pt-5 text-xs text-[#b8cfe3]">
-              <span className="inline-flex items-center gap-1.5"><Clock3 className="h-4 w-4" /> Updated {new Date(document.updatedAt).toLocaleDateString()}</span>
+              <span className="inline-flex items-center gap-1.5"><Clock3 className="h-4 w-4" /> Updated {formatDate(document.updatedAt)}</span>
               <span className="inline-flex items-center gap-1.5">{historicalVersion ? "Historical revision" : draft || !document.publishedVersion ? "Working revision" : "Published knowledge"}</span>
             </div>
           </div>
@@ -208,7 +209,7 @@ export function KnowledgeReader({ articleId, draft, historicalVersion }: { artic
                 {document.revisions.map((revision) => (
                   <li key={revision.version} className="flex items-center justify-between gap-3 text-sm">
                     <Link href={`/knowledge-base/${articleId}?version=${revision.version}`} className="font-semibold text-blue-600 hover:underline dark:text-blue-300">Version {revision.version}</Link>
-                    <span className="text-xs text-muted-foreground">{new Date(revision.createdAt).toLocaleDateString()}</span>
+                    <span className="text-xs text-muted-foreground">{formatDate(revision.createdAt)}</span>
                   </li>
                 ))}
               </ol>

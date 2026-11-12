@@ -1,4 +1,5 @@
 import "server-only";
+import { logger } from "@/lib/logger";
 import { getCurrentUserId } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/permissions/server";
 import { isFeatureEnabled } from "@/lib/features/server";
@@ -87,6 +88,6 @@ export function knowledgeErrorResponse(error: unknown): Response {
   if (error instanceof SyntaxError || (error && typeof error === "object" && "issues" in error)) {
     return Response.json({ error: "INVALID_INPUT" }, { status: 400 });
   }
-  console.error("[KnowledgeBase]", error);
+  logger.error({ module: "KnowledgeBase", function: "knowledgeErrorResponse" }, "Knowledge Base request failed", error);
   return Response.json({ error: "KNOWLEDGE_REQUEST_FAILED" }, { status: 500 });
 }

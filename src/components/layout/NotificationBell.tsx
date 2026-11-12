@@ -54,7 +54,10 @@ export function NotificationBell() {
 
   useEffect(() => {
     if (!enabled) return;
-    void reload();
+    // Schedule the initial refresh outside the synchronous effect body.
+    const initialTimer = window.setTimeout(() => {
+      void reload();
+    }, 0);
     const timer = window.setInterval(() => {
       if (document.visibilityState === "visible") void reload();
     }, 30000);
@@ -63,6 +66,7 @@ export function NotificationBell() {
     };
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
+      window.clearTimeout(initialTimer);
       window.clearInterval(timer);
       document.removeEventListener("visibilitychange", onVisibility);
     };

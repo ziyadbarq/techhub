@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IFileStorageService } from "@/core/services/file-storage.service.interface";
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (orphanPath && storage) {
       try { await storage.deleteFile(orphanPath); }
-      catch (cleanupError) { console.error("[KnowledgeBase] Orphan PDF cleanup failed", cleanupError); }
+      catch (cleanupError) { logger.error({ module: "KnowledgeBase", function: "upload" }, "Orphan PDF cleanup failed", cleanupError); }
     }
     return knowledgeErrorResponse(error);
   }

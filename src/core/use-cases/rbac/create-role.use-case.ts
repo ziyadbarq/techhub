@@ -10,6 +10,7 @@ import type { ILoggerService } from "@/core/services";
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import { Role } from "../../domain/entities/role.entity";
 import { DuplicateRoleError } from "../../domain/errors/rbac-errors";
+import { ValidationError } from "@/core/domain/errors";
 import { SYSTEM_ADMIN_ROLE_NAME } from "../../domain/value-objects/system-role-policy";
 import { LogExecution } from "@/lib/decorators";
 
@@ -44,7 +45,7 @@ export class CreateRoleUseCase {
     // The sole protected role is created by bootstrap/seeding, never via a
     // user-controlled role creation request.
     if (normalizedName === SYSTEM_ADMIN_ROLE_NAME) {
-      throw new Error("The system administrator role is reserved and cannot be created manually");
+      throw new ValidationError("The system administrator role is reserved and cannot be created manually");
     }
 
     const exists = await this.roleRepository.existsByName(normalizedName);
