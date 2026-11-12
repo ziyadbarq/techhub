@@ -14,6 +14,7 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import type {
   EntityConfig,
   ImportSettings,
@@ -31,6 +32,7 @@ import { Step5ValidationResults } from "./Step5ValidationResults";
 import { Step6ImportProgress } from "./Step6ImportProgress";
 import { Step7Results } from "./Step7Results";
 import { Progress } from "@/components/ui/progress";
+import { getEntityConfig } from "@/interface-adapters/data-import/entity-configs";
 
 /**
  * Wizard step type
@@ -74,11 +76,19 @@ interface WizardState {
 /**
  * Main wizard component
  */
-export function DataImportWizard() {
+export function DataImportWizard({
+  initialEntityKey,
+}: { initialEntityKey?: string } = {}) {
+  const router = useRouter();
   const wizardRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<WizardState>({
-    currentStep: "entity-select",
-    selectedEntity: null,
+    currentStep:
+      initialEntityKey && getEntityConfig(initialEntityKey)
+        ? "settings"
+        : "entity-select",
+    selectedEntity: initialEntityKey
+      ? (getEntityConfig(initialEntityKey) ?? null)
+      : null,
     settings: null,
     parsedFile: null,
     columnMappings: [],
@@ -172,8 +182,13 @@ export function DataImportWizard() {
    */
   const handleReset = useCallback(() => {
     setState({
-      currentStep: "entity-select",
-      selectedEntity: null,
+      currentStep:
+        initialEntityKey && getEntityConfig(initialEntityKey)
+          ? "settings"
+          : "entity-select",
+      selectedEntity: initialEntityKey
+        ? (getEntityConfig(initialEntityKey) ?? null)
+        : null,
       settings: null,
       parsedFile: null,
       columnMappings: [],
@@ -181,17 +196,21 @@ export function DataImportWizard() {
       importResult: null,
       lookupMaps: new Map(),
     });
-  }, []);
+  }, [initialEntityKey]);
 
   /**
    * Go back to previous step
    */
   const handleBack = useCallback(() => {
+    if (initialEntityKey && state.currentStep === "settings") {
+      router.push("/assets");
+      return;
+    }
     const currentIndex = STEP_ORDER.indexOf(state.currentStep);
     if (currentIndex > 0) {
       goToStep(STEP_ORDER[currentIndex - 1]);
     }
-  }, [state.currentStep, goToStep]);
+  }, [state.currentStep, goToStep, initialEntityKey, router]);
 
   /**
    * Calculate progress percentage

@@ -229,7 +229,7 @@ export async function bulkToggleFeatureFlagsAction(
     for (const flag of flagsToToggle) {
       // Only toggle if the current state differs from the target state
       if (flag.isEnabled !== enable) {
-        await repo.update(flag.toggle());
+        await repo.setEnabled(flag.id, enable);
         await auditService.log({
           featureName: flag.name,
           action,
