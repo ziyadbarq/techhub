@@ -7,7 +7,10 @@ import { KnowledgeComposer } from "@/components/knowledge-base/KnowledgeComposer
 
 export const dynamic = "force-dynamic";
 
-export default async function CreateKnowledgePage() {
+export default async function CreateKnowledgePage({ searchParams }: {
+  searchParams: Promise<{ folder?: string }>;
+}) {
+  const { folder } = await searchParams;
   await requireFeature(FEATURE_FLAGS.KNOWLEDGE_BASE);
   try {
     await requirePermission(PERMISSIONS.KNOWLEDGE_BASE_CREATE);
@@ -15,5 +18,5 @@ export default async function CreateKnowledgePage() {
     handlePermissionRedirect(error, "/knowledge-base/new");
     throw error;
   }
-  return <KnowledgeComposer />;
+  return <KnowledgeComposer initialFolderId={folder ?? null} />;
 }

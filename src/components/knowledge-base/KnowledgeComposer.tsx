@@ -17,6 +17,7 @@ type Metadata = {
   title: string; summary: string; category: typeof KNOWLEDGE_CATEGORIES[number];
   classification: "INTERNAL" | "RESTRICTED";
   requiresAcknowledgement: boolean;
+  folderId: string | null;
 };
 
 type ExistingArticle = Metadata & {
@@ -93,7 +94,7 @@ const STARTERS: Array<{
 
 const initialMetadata: Metadata = {
   title: "", summary: "", category: "POLICIES", classification: "INTERNAL",
-  requiresAcknowledgement: false,
+  requiresAcknowledgement: false, folderId: null,
 };
 
 function newBlock(type: KnowledgeBlock["type"] = "paragraph"): KnowledgeBlock {
@@ -121,12 +122,29 @@ function blocksPreview(blocks: KnowledgeBlock[]) {
   });
 }
 
-export function KnowledgeComposer({ articleId }: { articleId?: string }) {
+type FolderOption = { id: string; parentId: string | null; name: string };
+
+function folderLabel(folder: FolderOption, all: FolderOption[]): string {
+  const names = [folder.name];
+  const visited = new Set([folder.id]);
+  let next = folder.parentId;
+  while (next && !visited.has(next)) {
+    visited.add(next);
+    const parent = all.find((entry) => entry.id === next);
+    if (!parent) break;
+    names.unshift(parent.name);
+    next = parent.parentId;
+  }
+  return names.join(" / ");
+}
+
+export function KnowledgeComposer({ articleId, initialFolderId = null }: { articleId?: string; initialFolderId?: string | null }) {
   const router = useRouter();
   const { hasPermission } = usePermissions();
   const canPublish = hasPermission(PERMISSIONS.KNOWLEDGE_BASE_PUBLISH);
   const canRestrict = hasPermission(PERMISSIONS.KNOWLEDGE_BASE_RESTRICTED_VIEW);
-  const [metadata, setMetadata] = useState<Metadata>(initialMetadata);
+  const [metadata, setMetadata] = useState<Metadata>(() => ({ ...initialMetadata, folderId: initialFolderId }));
+  const [folders, setFolders] = useState<FolderOption[]>([]);
   const [sourceType, setSourceType] = useState<"EDITOR" | "PDF">("EDITOR");
   const [blocks, setBlocks] = useState<KnowledgeBlock[]>([{ id: "new-first-block", type: "paragraph", text: "" }]);
   const [file, setFile] = useState<File | null>(null);
@@ -137,6 +155,18 @@ export function KnowledgeComposer({ articleId }: { articleId?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [preview, setPreview] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/knowledge-base/folders", { signal: controller.signal, cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Unable to load folders");
+        return response.json() as Promise<{ folders: FolderOption[] }>;
+      })
+      .then((result) => setFolders(result.folders))
+      .catch(() => {});
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     if (!articleId) return;
@@ -152,6 +182,7 @@ export function KnowledgeComposer({ articleId }: { articleId?: string }) {
         setMetadata({
           title: data.title, summary: data.summary || "", category: data.category,
           classification: data.classification, requiresAcknowledgement: data.requiresAcknowledgement,
+          folderId: data.folderId ?? null,
         });
         setSourceType(data.sourceType);
         setBlocks(data.blocks ?? [{ id: "first-block", type: "paragraph", text: "" }]);
@@ -304,6 +335,17 @@ export function KnowledgeComposer({ articleId }: { articleId?: string }) {
               <label htmlFor="knowledge-summary" className="text-sm font-semibold">Summary</label>
               <textarea id="knowledge-summary" rows={3} maxLength={1500} value={metadata.summary} onChange={(e) => updateMeta("summary", e.target.value)}
                 placeholder="What will employees learn from this document?" className="w-full resize-y rounded-xl border bg-background px-4 py-3 text-sm leading-6 focus-visible:outline-2 focus-visible:outline-blue-400" />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="knowledge-folder" className="text-sm font-semibold">Folder</label>
+              <select id="knowledge-folder" value={metadata.folderId ?? ""}
+                onChange={(event) => updateMeta("folderId", event.target.value || null)}
+                className="h-12 w-full rounded-xl border bg-background px-4 text-sm">
+                <option value="">Library root / Unfiled</option>
+                {folders.map((folder) => (
+                  <option value={folder.id} key={folder.id}>{folderLabel(folder, folders)}</option>
+                ))}
+              </select>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
