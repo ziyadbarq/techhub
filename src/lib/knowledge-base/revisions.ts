@@ -2,6 +2,7 @@ import "server-only";
 import { Prisma, type KnowledgeArticle } from "@/generated/prisma/client";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { KnowledgeError } from "./access";
+import { requireKnowledgeFolder } from "./folders";
 
 function revisionSnapshot(article: KnowledgeArticle, editedById: string) {
   return {
@@ -28,9 +29,11 @@ export async function createArticle(
     requiresAcknowledgement: boolean; sourceType: "EDITOR" | "PDF";
     blocks?: Prisma.InputJsonValue; plainText?: string;
     filePath?: string; fileName?: string; fileSize?: number;
+    folderId?: string | null;
   },
   userId: string,
 ) {
+  await requireKnowledgeFolder(data.folderId);
   return prisma.$transaction(async (tx) => {
     const article = await tx.knowledgeArticle.create({
       data: {
@@ -59,9 +62,11 @@ export async function editArticle(
     title: string; summary: string; category: string; classification: string;
     requiresAcknowledgement: boolean; blocks?: Prisma.InputJsonValue; plainText?: string;
     filePath?: string; fileName?: string; fileSize?: number;
+    folderId?: string | null;
   },
   userId: string,
 ) {
+  await requireKnowledgeFolder(data.folderId);
   return prisma.$transaction(async (tx) => {
     // Optimistic locking: two people cannot silently overwrite one another.
     const changed = await tx.knowledgeArticle.updateMany({

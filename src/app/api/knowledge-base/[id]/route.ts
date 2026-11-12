@@ -33,7 +33,7 @@ export async function GET(request: NextRequest, context: Context) {
       }) : Promise.resolve([]),
     ]);
     return NextResponse.json({
-      id: article.id, title: revision.title, summary: revision.summary,
+      id: article.id, folderId: article.folderId, title: revision.title, summary: revision.summary,
       category: revision.category, classification: revision.classification,
       sourceType: revision.sourceType, blocks: revision.sourceType === "EDITOR" ? revision.blocks : null,
       fileName: revision.sourceType === "PDF" ? revision.fileName : null,
@@ -69,6 +69,7 @@ export async function PATCH(request: NextRequest, context: Context) {
       title: data.title, summary: data.summary, category: data.category,
       classification: data.classification,
       requiresAcknowledgement: data.requiresAcknowledgement,
+      ...(data.folderId !== undefined ? { folderId: data.folderId } : {}),
       ...(blocks ? {
         blocks: blocks as Prisma.InputJsonValue,
         plainText: blocksToText(blocks),

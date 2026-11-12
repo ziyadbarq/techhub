@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       take: 250,
       select: {
         id: true, title: true, summary: true, category: true,
-        classification: true, sourceType: true, version: true, publishedVersion: true,
+        classification: true, sourceType: true, folderId: true, version: true, publishedVersion: true,
         updatedAt: true, requiresAcknowledgement: true,
       },
     });
@@ -55,6 +55,7 @@ export async function GET(request: NextRequest) {
       if (q && !searchText.toLowerCase().includes(q)) return [];
       return [{
         id: item.id,
+        folderId: item.folderId,
         title: active.title,
         summary: active.summary,
         category: active.category,
