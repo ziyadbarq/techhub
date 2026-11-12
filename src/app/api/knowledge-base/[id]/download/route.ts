@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IFileStorageService } from "@/core/services/file-storage.service.interface";

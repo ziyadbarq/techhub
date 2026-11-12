@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@/generated/prisma/client";
+import { NextResponse, type NextRequest } from "next/server";
+import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { requireKnowledgeAccess, requireClassification, requireKnowledgeArticle, knowledgeErrorResponse, KnowledgeError } from "@/lib/knowledge-base/access";

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { logger } from "@/lib/logger";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";

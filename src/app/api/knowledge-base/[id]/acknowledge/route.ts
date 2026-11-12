@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { requireKnowledgeArticle, KnowledgeError, knowledgeErrorResponse } from "@/lib/knowledge-base/access";
 
