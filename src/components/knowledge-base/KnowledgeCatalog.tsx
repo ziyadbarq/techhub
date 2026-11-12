@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   BookOpen, ChevronRight, FileText, Folder, FolderOpen,
@@ -10,6 +10,7 @@ import {
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
 import { formatDate } from "@/lib/utils/date-format";
+import { wouldCreateFolderCycle } from "@/lib/knowledge-base/folders-tree";
 
 type FolderItem = { id: string; name: string; parentId: string | null };
 type KnowledgeItem = {
@@ -140,6 +141,11 @@ export function KnowledgeCatalog() {
     await mutateFolder("PATCH", folder.id, { name: name.trim() });
   }
 
+  async function moveFolder(folder: FolderItem, parentId: string | null) {
+    if (folder.parentId === parentId) return;
+    await mutateFolder("PATCH", folder.id, { parentId });
+  }
+
   async function deleteFolder(folder: FolderItem) {
     if (!window.confirm('Delete empty folder "' + folder.name + '"?')) return;
     const deleted = await mutateFolder("DELETE", folder.id);
@@ -169,7 +175,7 @@ export function KnowledgeCatalog() {
     }
   }
 
-  function renderTree(parentId: string | null, depth = 0) {
+  function renderTree(parentId: string | null, depth = 0): ReactNode {
     if (depth > 30) return null;
     return folders.filter((folder) => folder.parentId === parentId).map((folder) => (
       <div key={folder.id}>
@@ -282,6 +288,19 @@ export function KnowledgeCatalog() {
                       <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
                     </button>
                     {mayManage && <div className="flex shrink-0 items-center gap-1">
+                      {manage && <select aria-label={"Move folder " + folder.name}
+                        value={folder.parentId ?? ""} disabled={busy}
+                        onChange={(event) => { void moveFolder(folder, event.target.value || null); }}
+                        className="h-9 max-w-36 rounded-lg border bg-background px-2 text-xs">
+                        <option value="">Move to root</option>
+                        {folders.filter((candidate) =>
+                          candidate.id !== folder.id && !wouldCreateFolderCycle(folders, folder.id, candidate.id)
+                        ).map((candidate) => (
+                          <option key={candidate.id} value={candidate.id}>
+                            {folderPath(candidate.id, folders).map((entry) => entry.name).join(" / ")}
+                          </option>
+                        ))}
+                      </select>}
                       <button type="button" disabled={busy} onClick={() => { void renameFolder(folder); }}
                         aria-label={"Rename " + folder.name} className="rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground">
                         <Pencil className="h-4 w-4" />
