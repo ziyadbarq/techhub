@@ -1,20 +1,71 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
-  ArrowLeft, ArrowRight, BookOpen, FileUp, FileText,
-  Heading1, Heading2, List, ListOrdered, Quote, AlignLeft,
-  Plus, Trash2, ChevronUp, ChevronDown, Save, Send, ShieldCheck,
-  LockKeyhole, Eye, CheckCircle2, AlertCircle, Sparkles, Loader2,
+  AlertCircle,
+  ArrowLeft,
+  BookOpen,
+  Eye,
+  FileText,
+  FileUp,
+  LayoutTemplate,
+  Loader2,
+  LockKeyhole,
+  PenLine,
+  RefreshCw,
+  Save,
+  Send,
+  ShieldCheck,
+  X,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { KNOWLEDGE_CATEGORIES, type KnowledgeBlock } from "@/lib/knowledge-base/schema";
+import {
+  KNOWLEDGE_CATEGORIES,
+  type KnowledgeBlock,
+} from "@/lib/knowledge-base/schema";
+import { hasContent } from "@/lib/knowledge-base/editor";
+import { cn } from "@/lib/utils";
+import { KnowledgeBlockEditor, newBlockId } from "./KnowledgeBlockEditor";
+import { KnowledgeBlocksView } from "./KnowledgeBlocksView";
 
+type SourceType = "EDITOR" | "PDF";
 type Metadata = {
-  title: string; summary: string; category: typeof KNOWLEDGE_CATEGORIES[number];
+  title: string;
+  summary: string;
+  category: (typeof KNOWLEDGE_CATEGORIES)[number];
   classification: "INTERNAL" | "RESTRICTED";
   requiresAcknowledgement: boolean;
   folderId: string | null;
@@ -22,48 +73,64 @@ type Metadata = {
 
 type ExistingArticle = Metadata & {
   id: string;
-  sourceType: "EDITOR" | "PDF";
+  sourceType: SourceType;
   blocks: KnowledgeBlock[] | null;
   fileName: string | null;
   latestVersion: number;
   publishedVersion: number | null;
 };
 
-const TYPES = [
-  { type: "paragraph", label: "Paragraph", icon: AlignLeft },
-  { type: "heading", label: "Heading", icon: Heading1 },
-  { type: "subheading", label: "Subheading", icon: Heading2 },
-  { type: "bullet", label: "Bullet", icon: List },
-  { type: "numbered", label: "Numbered", icon: ListOrdered },
-  { type: "quote", label: "Quote", icon: Quote },
-] as const;
+const MAX_PDF_BYTES = 10 * 1024 * 1024;
+const ROOT = "__root__";
 
 const STARTERS: Array<{
   id: string;
   name: string;
+  description: string;
   category: Metadata["category"];
   sections: Array<{ type: KnowledgeBlock["type"]; text: string }>;
 }> = [
   {
-    id: "policy", name: "Cybersecurity policy", category: "CYBERSECURITY",
+    id: "policy",
+    name: "Policy",
+    description: "Purpose, scope, roles, requirements",
+    category: "POLICIES",
     sections: [
       { type: "heading", text: "1. Purpose" },
-      { type: "paragraph", text: "[Describe what this policy protects and why.]" },
+      {
+        type: "paragraph",
+        text: "[Describe what this policy protects and why.]",
+      },
       { type: "heading", text: "2. Scope" },
-      { type: "paragraph", text: "[Define affected employees, systems and information.]" },
+      {
+        type: "paragraph",
+        text: "[Define affected employees, systems and information.]",
+      },
       { type: "heading", text: "3. Roles & Responsibilities" },
       { type: "bullet", text: "[Policy owner and responsible team]" },
       { type: "bullet", text: "[Employee obligations]" },
-      { type: "heading", text: "4. Security Requirements" },
-      { type: "paragraph", text: "[Document the approved technical and organizational requirements.]" },
+      { type: "heading", text: "4. Policy Requirements" },
+      {
+        type: "paragraph",
+        text: "[Document the approved technical and organizational requirements.]",
+      },
       { type: "heading", text: "5. Exceptions & Escalation" },
-      { type: "paragraph", text: "[Define exception approvals and escalation paths.]" },
+      {
+        type: "paragraph",
+        text: "[Define exception approvals and escalation paths.]",
+      },
       { type: "heading", text: "6. Review Cycle" },
-      { type: "paragraph", text: "[Specify the policy owner, effective date and planned review cadence.]" },
+      {
+        type: "paragraph",
+        text: "[Specify the policy owner, effective date and planned review cadence.]",
+      },
     ],
   },
   {
-    id: "procedure", name: "Standard procedure", category: "PROCEDURES",
+    id: "procedure",
+    name: "Procedure",
+    description: "Objective, prerequisites, numbered steps",
+    category: "PROCEDURES",
     sections: [
       { type: "heading", text: "Objective" },
       { type: "paragraph", text: "[Explain the operational outcome.]" },
@@ -73,11 +140,17 @@ const STARTERS: Array<{
       { type: "numbered", text: "[Step 1]" },
       { type: "numbered", text: "[Step 2]" },
       { type: "heading", text: "Validation & Evidence" },
-      { type: "paragraph", text: "[Define success checks and retained records.]" },
+      {
+        type: "paragraph",
+        text: "[Define success checks and retained records.]",
+      },
     ],
   },
   {
-    id: "guide", name: "Knowledge guide", category: "GUIDES",
+    id: "guide",
+    name: "How-to guide",
+    description: "Overview, steps and troubleshooting",
+    category: "GUIDES",
     sections: [
       { type: "heading", text: "Overview" },
       { type: "paragraph", text: "[What will the reader learn?]" },
@@ -93,34 +166,13 @@ const STARTERS: Array<{
 ];
 
 const initialMetadata: Metadata = {
-  title: "", summary: "", category: "POLICIES", classification: "INTERNAL",
-  requiresAcknowledgement: false, folderId: null,
+  title: "",
+  summary: "",
+  category: "POLICIES",
+  classification: "INTERNAL",
+  requiresAcknowledgement: false,
+  folderId: null,
 };
-
-function newBlock(type: KnowledgeBlock["type"] = "paragraph"): KnowledgeBlock {
-  return { id: crypto.randomUUID(), type, text: "" };
-}
-
-function blocksPreview(blocks: KnowledgeBlock[]) {
-  return blocks.map((block) => {
-    const text = block.text || "Write something meaningful…";
-    const key = block.id;
-    switch (block.type) {
-      case "heading":
-        return <h2 key={key} className="pt-5 text-2xl font-semibold tracking-tight">{text}</h2>;
-      case "subheading":
-        return <h3 key={key} className="pt-3 text-lg font-semibold">{text}</h3>;
-      case "quote":
-        return <blockquote key={key} className="border-l-4 border-blue-500 bg-blue-500/5 px-4 py-3 italic leading-7">{text}</blockquote>;
-      case "bullet":
-        return <p key={key} className="flex gap-3 leading-7"><span aria-hidden="true" className="pt-0.5 text-blue-500">•</span>{text}</p>;
-      case "numbered":
-        return <p key={key} className="border-l-2 border-slate-300 pl-4 leading-7">{text}</p>;
-      default:
-        return <p key={key} className="whitespace-pre-wrap leading-7">{text}</p>;
-    }
-  });
-}
 
 type FolderOption = { id: string; parentId: string | null; name: string };
 
@@ -138,15 +190,48 @@ function folderLabel(folder: FolderOption, all: FolderOption[]): string {
   return names.join(" / ");
 }
 
-export function KnowledgeComposer({ articleId, initialFolderId = null }: { articleId?: string; initialFolderId?: string | null }) {
+function humanize(value: string): string {
+  return value.charAt(0) + value.slice(1).toLowerCase().replace(/_/g, " ");
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024 * 1024) return Math.max(1, Math.round(bytes / 1024)) + " KB";
+  return (bytes / 1024 / 1024).toFixed(1) + " MB";
+}
+
+function validatePdf(file: File): string | null {
+  const isPdf =
+    file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+  if (!isPdf) return "Only PDF files can be uploaded.";
+  if (file.size > MAX_PDF_BYTES) return "The PDF is larger than 10 MB.";
+  if (file.size < 8) return "The selected file is empty.";
+  return null;
+}
+
+export function KnowledgeComposer({
+  articleId,
+  initialFolderId = null,
+  initialSourceType = "EDITOR",
+}: {
+  articleId?: string;
+  initialFolderId?: string | null;
+  initialSourceType?: SourceType;
+}) {
   const router = useRouter();
   const { hasPermission } = usePermissions();
   const canPublish = hasPermission(PERMISSIONS.KNOWLEDGE_BASE_PUBLISH);
   const canRestrict = hasPermission(PERMISSIONS.KNOWLEDGE_BASE_RESTRICTED_VIEW);
-  const [metadata, setMetadata] = useState<Metadata>(() => ({ ...initialMetadata, folderId: initialFolderId }));
+  const [metadata, setMetadata] = useState<Metadata>(() => ({
+    ...initialMetadata,
+    folderId: initialFolderId,
+  }));
   const [folders, setFolders] = useState<FolderOption[]>([]);
-  const [sourceType, setSourceType] = useState<"EDITOR" | "PDF">("EDITOR");
-  const [blocks, setBlocks] = useState<KnowledgeBlock[]>([{ id: "new-first-block", type: "paragraph", text: "" }]);
+  const [sourceType, setSourceType] = useState<SourceType>(
+    articleId ? "EDITOR" : initialSourceType,
+  );
+  const [blocks, setBlocks] = useState<KnowledgeBlock[]>(() => [
+    { id: newBlockId(), type: "paragraph", text: "" },
+  ]);
   const [file, setFile] = useState<File | null>(null);
   const [existingPdf, setExistingPdf] = useState<string | null>(null);
   const [version, setVersion] = useState<number | undefined>();
@@ -155,10 +240,18 @@ export function KnowledgeComposer({ articleId, initialFolderId = null }: { artic
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [preview, setPreview] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [pendingStarter, setPendingStarter] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const submitRef = useRef<(publish: boolean) => Promise<void>>(async () => {});
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/knowledge-base/folders", { signal: controller.signal, cache: "no-store" })
+    fetch("/api/knowledge-base/folders", {
+      signal: controller.signal,
+      cache: "no-store",
+    })
       .then(async (response) => {
         if (!response.ok) throw new Error("Unable to load folders");
         return response.json() as Promise<{ folders: FolderOption[] }>;
@@ -171,53 +264,123 @@ export function KnowledgeComposer({ articleId, initialFolderId = null }: { artic
   useEffect(() => {
     if (!articleId) return;
     let active = true;
-    fetch("/api/knowledge-base/" + encodeURIComponent(articleId) + "?draft=1", { cache: "no-store" })
+    fetch("/api/knowledge-base/" + encodeURIComponent(articleId) + "?draft=1", {
+      cache: "no-store",
+    })
       .then(async (response) => {
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Cannot load the working revision.");
+        if (!response.ok)
+          throw new Error(data.error || "Cannot load the working revision.");
         return data as ExistingArticle;
       })
       .then((data) => {
         if (!active) return;
         setMetadata({
-          title: data.title, summary: data.summary || "", category: data.category,
-          classification: data.classification, requiresAcknowledgement: data.requiresAcknowledgement,
+          title: data.title,
+          summary: data.summary || "",
+          category: data.category,
+          classification: data.classification,
+          requiresAcknowledgement: data.requiresAcknowledgement,
           folderId: data.folderId ?? null,
         });
         setSourceType(data.sourceType);
-        setBlocks(data.blocks ?? [{ id: "first-block", type: "paragraph", text: "" }]);
+        setBlocks(
+          data.blocks?.length
+            ? data.blocks
+            : [{ id: newBlockId(), type: "paragraph", text: "" }],
+        );
         setExistingPdf(data.fileName);
         setVersion(data.latestVersion);
         setPublishedVersion(data.publishedVersion);
       })
-      .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : "Failed to load document"); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
+      .catch((reason) => {
+        if (active)
+          setError(
+            reason instanceof Error
+              ? reason.message
+              : "Failed to load document",
+          );
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, [articleId]);
+
+  // Warn before leaving with unsaved changes; Ctrl/Cmd+S saves a draft.
+  useEffect(() => {
+    function beforeUnload(event: BeforeUnloadEvent) {
+      if (!dirty) return;
+      event.preventDefault();
+      event.returnValue = "";
+    }
+    function onKey(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        void submitRef.current(false);
+      }
+    }
+    window.addEventListener("beforeunload", beforeUnload);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnload);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [dirty]);
 
   function updateMeta<K extends keyof Metadata>(key: K, value: Metadata[K]) {
     setMetadata((previous) => ({ ...previous, [key]: value }));
+    setDirty(true);
   }
+
+  function updateBlocks(next: KnowledgeBlock[]) {
+    setBlocks(next);
+    setDirty(true);
+  }
+
   function applyStarter(id: string) {
     const starter = STARTERS.find((entry) => entry.id === id);
     if (!starter) return;
-    if (blocks.some((block) => block.text.trim()) &&
-      !window.confirm("Replace your existing content with the selected starter template?")) return;
-    setBlocks(starter.sections.map((section) => ({ ...section, id: crypto.randomUUID() })));
-    updateMeta("category", starter.category);
+    setBlocks(
+      starter.sections.map((section) => ({ ...section, id: newBlockId() })),
+    );
+    setMetadata((previous) => ({ ...previous, category: starter.category }));
+    setDirty(true);
     setPreview(false);
+    setPendingStarter(null);
   }
 
-  function patchBlock(id: string, patch: Partial<KnowledgeBlock>) {
-    setBlocks((previous) => previous.map((block) => block.id === id ? { ...block, ...patch } : block));
+  function requestStarter(id: string) {
+    if (hasContent(blocks)) setPendingStarter(id);
+    else applyStarter(id);
   }
-  function moveBlock(index: number, offset: number) {
-    setBlocks((previous) => {
-      const next = [...previous]; const target = index + offset;
-      if (target < 0 || target >= next.length) return previous;
-      [next[index], next[target]] = [next[target], next[index]];
-      return next;
-    });
+
+  function pickFile(candidate: File | null | undefined) {
+    if (!candidate) return;
+    const problem = validatePdf(candidate);
+    if (problem) {
+      toast.error(problem);
+      return;
+    }
+    setFile(candidate);
+    setDirty(true);
+    if (!metadata.title.trim()) {
+      const suggested = candidate.name
+        .replace(/\.pdf$/i, "")
+        .replace(/[_-]+/g, " ")
+        .trim()
+        .slice(0, 200);
+      if (suggested.length >= 4)
+        setMetadata((previous) => ({ ...previous, title: suggested }));
+    }
+  }
+
+  function onDrop(event: DragEvent<HTMLElement>) {
+    event.preventDefault();
+    setDragging(false);
+    pickFile(event.dataTransfer.files?.[0]);
   }
 
   async function submit(publish: boolean) {
@@ -225,11 +388,14 @@ export function KnowledgeComposer({ articleId, initialFolderId = null }: { artic
     setBusy(true);
     setError("");
     try {
-      if (metadata.title.trim().length < 4) throw new Error("Enter a descriptive title (at least 4 characters).");
+      if (metadata.title.trim().length < 4)
+        throw new Error("Enter a descriptive title (at least 4 characters).");
       if (metadata.classification === "RESTRICTED" && !canRestrict) {
-        throw new Error("You need restricted-document access to classify this article as restricted.");
+        throw new Error(
+          "You need restricted-document access to classify this article as restricted.",
+        );
       }
-      if (sourceType === "EDITOR" && !blocks.some((block) => block.text.trim())) {
+      if (sourceType === "EDITOR" && !hasContent(blocks)) {
         throw new Error("Add some content before saving.");
       }
       if (sourceType === "PDF" && !file && !existingPdf) {
@@ -241,225 +407,571 @@ export function KnowledgeComposer({ articleId, initialFolderId = null }: { artic
       if (sourceType === "PDF" && file) {
         const form = new FormData();
         form.set("file", file);
-        form.set("metadata", JSON.stringify({ ...metadata, expectedVersion: version }));
+        form.set(
+          "metadata",
+          JSON.stringify({ ...metadata, expectedVersion: version }),
+        );
         if (articleId) form.set("articleId", articleId);
-        response = await fetch("/api/knowledge-base/upload", { method: "POST", body: form });
-      } else {
-        const body = {
-          ...metadata, ...(articleId ? { expectedVersion: version } : { sourceType: "EDITOR" }),
-          ...(sourceType === "EDITOR" ? { blocks } : {}),
-        };
-        response = await fetch(articleId ? `/api/knowledge-base/${encodeURIComponent(articleId)}` : "/api/knowledge-base", {
-          method: articleId ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+        response = await fetch("/api/knowledge-base/upload", {
+          method: "POST",
+          body: form,
         });
+      } else {
+        // Empty blocks are noise; keep at least one so the schema stays valid.
+        const cleaned = blocks.filter((block) => block.text.trim());
+        const body = {
+          ...metadata,
+          ...(articleId
+            ? { expectedVersion: version }
+            : { sourceType: "EDITOR" }),
+          ...(sourceType === "EDITOR"
+            ? { blocks: cleaned.length ? cleaned : blocks.slice(0, 1) }
+            : {}),
+        };
+        response = await fetch(
+          articleId
+            ? `/api/knowledge-base/${encodeURIComponent(articleId)}`
+            : "/api/knowledge-base",
+          {
+            method: articleId ? "PATCH" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          },
+        );
       }
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Unable to save the document.");
+      if (!response.ok)
+        throw new Error(result.error || "Unable to save the document.");
       nextId = result.id as string;
       const nextVersion = result.version as number;
       setVersion(nextVersion);
+      setDirty(false);
       if (publish) {
-        if (!canPublish) throw new Error("Draft saved. Publishing requires the Knowledge Base Publish permission.");
-        const published = await fetch("/api/knowledge-base/" + encodeURIComponent(nextId!), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "publish", expectedVersion: nextVersion }),
-        });
+        if (!canPublish)
+          throw new Error(
+            "Draft saved. Publishing requires the Knowledge Base Publish permission.",
+          );
+        const published = await fetch(
+          "/api/knowledge-base/" + encodeURIComponent(nextId!),
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "publish",
+              expectedVersion: nextVersion,
+            }),
+          },
+        );
         const publishResult = await published.json();
-        if (!published.ok) throw new Error(publishResult.error || "Draft saved, but publication failed.");
+        if (!published.ok)
+          throw new Error(
+            publishResult.error || "Draft saved, but publication failed.",
+          );
       }
-      router.push("/knowledge-base/" + encodeURIComponent(nextId!) + (publish ? "" : "?draft=1"));
+      toast.success(publish ? "Published" : "Draft saved");
+      router.push(
+        "/knowledge-base/" +
+          encodeURIComponent(nextId!) +
+          (publish ? "" : "?draft=1"),
+      );
       router.refresh();
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Unable to save article.");
+      const message =
+        reason instanceof Error ? reason.message : "Unable to save article.";
+      setError(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }
   }
+  submitRef.current = submit;
 
-  if (loading) return <div aria-busy="true" className="mx-auto max-w-6xl space-y-6"><div className="h-12 w-72 animate-pulse rounded-xl bg-muted" /><div className="h-[500px] animate-pulse rounded-3xl bg-muted" /></div>;
+  if (loading) {
+    return (
+      <div aria-busy="true" className="space-y-6">
+        <Skeleton className="h-8 w-64" />
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+          <Skeleton className="h-[520px] rounded-xl" />
+          <Skeleton className="h-80 rounded-xl" />
+        </div>
+      </div>
+    );
+  }
+
+  const backHref = articleId
+    ? "/knowledge-base/" + articleId + "?draft=1"
+    : "/knowledge-base";
+  const status = !articleId
+    ? "New document"
+    : publishedVersion == null
+      ? "Draft v" + version
+      : publishedVersion === version
+        ? "Published v" + publishedVersion
+        : "Draft v" + version + " · Published v" + publishedVersion;
 
   return (
-    <div className="mx-auto max-w-7xl space-y-7 pb-16">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href={articleId ? "/knowledge-base/" + articleId : "/knowledge-base"} className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" /> Back to Knowledge Base
+    <div className="space-y-6 pb-16">
+      {/* Header */}
+      <div className="space-y-3">
+        <Link
+          href={backHref}
+          className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm"
+        >
+          <ArrowLeft className="size-4" />{" "}
+          {articleId ? "Back to document" : "Knowledge Base"}
         </Link>
-        <span className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-          <ShieldCheck className="h-3.5 w-3.5" /> Private draft workspace
-        </span>
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <h2 className="text-2xl font-bold">
+              {articleId ? "Edit document" : "New document"}
+            </h2>
+            <p className="text-muted-foreground">
+              Saving creates a private draft. Readers keep seeing the last
+              published version until you publish.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="font-normal">
+              {status}
+            </Badge>
+            {dirty && (
+              <Badge className="border-transparent bg-amber-100 font-normal text-amber-800 shadow-none hover:bg-amber-100 dark:bg-amber-900/40 dark:text-amber-200">
+                Unsaved changes
+              </Badge>
+            )}
+          </div>
+        </div>
       </div>
 
-      <header className="rounded-[28px] bg-[#132842] px-7 py-9 text-white sm:px-10">
-        <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#a8cff2]"><Sparkles className="h-4 w-4" /> Knowledge Studio</p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{articleId ? "Refine your knowledge." : "Create something useful."}</h1>
-        <p className="mt-3 max-w-xl text-sm leading-7 text-[#b7cce1]">
-          Publish controlled policies, guidelines and reusable answers, with reliable history and clear ownership.
-        </p>
-        {version && <p className="mt-5 text-xs font-semibold text-[#b6d8f5]">Working revision v{version} {publishedVersion ? " · Published v" + publishedVersion : " · Unpublished"}</p>}
-      </header>
+      {!articleId && (
+        <div
+          role="radiogroup"
+          aria-label="Document type"
+          className="bg-muted inline-flex rounded-lg border p-1"
+        >
+          {(
+            [
+              { value: "EDITOR", label: "Write an article", icon: PenLine },
+              { value: "PDF", label: "Upload a PDF", icon: FileUp },
+            ] as const
+          ).map((option) => {
+            const Icon = option.icon;
+            const selected = sourceType === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => setSourceType(option.value)}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-md px-3.5 py-1.5 text-sm font-medium transition-colors",
+                  selected
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <Icon className="size-4" /> {option.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-        <div className="min-w-0 space-y-6">
-          {!articleId && (
-            <section className="rounded-[24px] border bg-card p-6 sm:p-8">
-              <h2 className="text-lg font-semibold">1. Choose how to create</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Use the Knowledge Studio or upload an official PDF.</p>
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <button type="button" aria-pressed={sourceType === "EDITOR"} onClick={() => setSourceType("EDITOR")}
-                  className={"rounded-2xl border p-5 text-left transition " + (sourceType === "EDITOR" ? "border-blue-500 bg-blue-500/5 ring-2 ring-blue-500/10" : "hover:bg-muted/50")}>
-                  <BookOpen className="h-7 w-7 text-blue-500" />
-                  <span className="mt-4 block font-semibold">Write an article</span>
-                  <span className="mt-1 block text-xs leading-5 text-muted-foreground">Structured blocks, headings, lists and live preview.</span>
-                </button>
-                <button type="button" aria-pressed={sourceType === "PDF"} onClick={() => setSourceType("PDF")}
-                  className={"rounded-2xl border p-5 text-left transition " + (sourceType === "PDF" ? "border-blue-500 bg-blue-500/5 ring-2 ring-blue-500/10" : "hover:bg-muted/50")}>
-                  <FileUp className="h-7 w-7 text-blue-500" />
-                  <span className="mt-4 block font-semibold">Upload a PDF</span>
-                  <span className="mt-1 block text-xs leading-5 text-muted-foreground">Keep the signed or approved policy in its original format.</span>
-                </button>
-              </div>
-            </section>
-          )}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+        <div className="min-w-0 space-y-4">
+          {/* Title & summary */}
+          <div className="bg-card rounded-xl border p-5 shadow-sm sm:px-8">
+            <label htmlFor="knowledge-title" className="sr-only">
+              Title
+            </label>
+            <input
+              id="knowledge-title"
+              value={metadata.title}
+              maxLength={200}
+              autoFocus={!articleId}
+              onChange={(event) => updateMeta("title", event.target.value)}
+              placeholder="Document title"
+              className="placeholder:text-muted-foreground/50 w-full bg-transparent text-2xl font-semibold tracking-tight outline-none"
+            />
+            <label htmlFor="knowledge-summary" className="sr-only">
+              Summary
+            </label>
+            <textarea
+              id="knowledge-summary"
+              rows={2}
+              maxLength={1500}
+              value={metadata.summary}
+              onChange={(event) => updateMeta("summary", event.target.value)}
+              placeholder="Short summary — what will readers learn, and who is it for? (optional)"
+              className="text-muted-foreground placeholder:text-muted-foreground/50 mt-2 w-full resize-none bg-transparent text-sm leading-6 outline-none"
+            />
+          </div>
 
-          <section className="space-y-5 rounded-[24px] border bg-card p-6 sm:p-8">
-            <div><h2 className="text-lg font-semibold">{articleId ? "1." : "2."} Document information</h2><p className="mt-1 text-sm text-muted-foreground">Make knowledge easy to find, interpret, and govern.</p></div>
-            <div className="space-y-2">
-              <label htmlFor="knowledge-title" className="text-sm font-semibold">Document title *</label>
-              <input id="knowledge-title" value={metadata.title} maxLength={200} onChange={(e) => updateMeta("title", e.target.value)}
-                placeholder="e.g. Information Security Policy" className="h-12 w-full rounded-xl border bg-background px-4 text-sm focus-visible:outline-2 focus-visible:outline-blue-400" />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="knowledge-summary" className="text-sm font-semibold">Summary</label>
-              <textarea id="knowledge-summary" rows={3} maxLength={1500} value={metadata.summary} onChange={(e) => updateMeta("summary", e.target.value)}
-                placeholder="What will employees learn from this document?" className="w-full resize-y rounded-xl border bg-background px-4 py-3 text-sm leading-6 focus-visible:outline-2 focus-visible:outline-blue-400" />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="knowledge-folder" className="text-sm font-semibold">Folder</label>
-              <select id="knowledge-folder" value={metadata.folderId ?? ""}
-                onChange={(event) => updateMeta("folderId", event.target.value || null)}
-                className="h-12 w-full rounded-xl border bg-background px-4 text-sm">
-                <option value="">Library root / Unfiled</option>
-                {folders.map((folder) => (
-                  <option value={folder.id} key={folder.id}>{folderLabel(folder, folders)}</option>
-                ))}
-              </select>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <label htmlFor="knowledge-category" className="text-sm font-semibold">Category</label>
-                <select id="knowledge-category" value={metadata.category} onChange={(e) => updateMeta("category", e.target.value as Metadata["category"])}
-                  className="h-12 w-full rounded-xl border bg-background px-4 text-sm">
-                  {KNOWLEDGE_CATEGORIES.map((name) => <option key={name} value={name}>{name.replace(/_/g, " ")}</option>)}
-                </select>
+          {sourceType === "PDF" ? (
+            <div className="bg-card space-y-3 rounded-xl border p-5 shadow-sm">
+              <div>
+                <h3 className="font-semibold">PDF document</h3>
+                <p className="text-muted-foreground text-sm">
+                  Upload the approved original. Files are stored privately and
+                  every download is permission-checked.
+                </p>
               </div>
-              <div className="space-y-2">
-                <label htmlFor="knowledge-classification" className="text-sm font-semibold">Access classification</label>
-                <select id="knowledge-classification" value={metadata.classification}
-                  onChange={(e) => updateMeta("classification", e.target.value as Metadata["classification"])}
-                  className="h-12 w-full rounded-xl border bg-background px-4 text-sm">
-                  <option value="INTERNAL">Internal · Knowledge viewers</option>
-                  {canRestrict && <option value="RESTRICTED">Restricted · Elevated permission</option>}
-                </select>
-              </div>
-            </div>
-          </section>
-
-          <section className="space-y-5 rounded-[24px] border bg-card p-6 sm:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div><h2 className="text-lg font-semibold">{articleId ? "2." : "3."} {sourceType === "PDF" ? "Original PDF" : "Article editor"}</h2><p className="mt-1 text-sm text-muted-foreground">{sourceType === "PDF" ? "Only private GCS storage is permitted." : "Write in reusable blocks. No unsafe HTML or pasted scripts."}</p></div>
-              {sourceType === "EDITOR" && <button type="button" onClick={() => setPreview(!preview)} className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold hover:bg-muted"><Eye className="h-4 w-4" /> {preview ? "Edit blocks" : "Preview"}</button>}
-            </div>
-            {sourceType === "PDF" ? (
-              <div className="space-y-4">
-                <label htmlFor="knowledge-pdf" className="group flex min-h-56 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-blue-300/60 bg-blue-500/5 p-7 text-center hover:bg-blue-500/10">
-                  <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-300"><FileUp className="h-7 w-7" /></span>
-                  <span className="mt-4 font-semibold">Select an official PDF</span>
-                  <span className="mt-2 text-xs text-muted-foreground">Maximum 10 MB · Private storage required</span>
-                  <input id="knowledge-pdf" className="sr-only" type="file" accept=".pdf,application/pdf"
-                    onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-                </label>
-                {(file || existingPdf) && <div className="flex items-center gap-3 rounded-xl border p-4"><FileText className="h-6 w-6 shrink-0 text-blue-500" /><span className="min-w-0 break-all text-sm font-semibold">{file?.name ?? existingPdf}</span><CheckCircle2 className="ml-auto h-4 w-4 shrink-0 text-emerald-600" /></div>}
-              </div>
-            ) : preview ? (
-              <div className="min-h-48 space-y-5 rounded-2xl border bg-background p-7">{blocksPreview(blocks)}</div>
-            ) : (
-              <div className="space-y-4">
-                <div className="rounded-2xl border bg-blue-500/5 p-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-blue-600 dark:text-blue-300">Start from a template</p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">Structured placeholders only — replace them with your approved content before publication.</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {STARTERS.map((starter) => (
-                      <button type="button" key={starter.id} onClick={() => applyStarter(starter.id)}
-                        className="rounded-lg border bg-background px-3 py-2 text-xs font-semibold transition hover:border-blue-400/60 hover:bg-blue-500/5">
-                        {starter.name}
-                      </button>
-                    ))}
-                  </div>
+              {file || existingPdf ? (
+                <div className="bg-muted/30 flex items-center gap-3 rounded-lg border p-3">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-300">
+                    <FileText className="size-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">
+                      {file?.name ?? existingPdf}
+                    </span>
+                    <span className="text-muted-foreground block text-xs">
+                      {file
+                        ? formatBytes(file.size) + " · ready to upload"
+                        : "Current file"}
+                    </span>
+                  </span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInput.current?.click()}
+                  >
+                    <RefreshCw /> Replace
+                  </Button>
+                  {file && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label="Remove selected file"
+                      onClick={() => setFile(null)}
+                    >
+                      <X />
+                    </Button>
+                  )}
                 </div>
-                {blocks.map((block, index) => (
-                  <div key={block.id} className="group rounded-2xl border bg-background p-4 transition focus-within:border-blue-400/60">
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
-                      <label className="text-xs font-semibold text-muted-foreground" htmlFor={"block-" + block.id}>Block {index + 1}</label>
-                      <div className="flex flex-wrap items-center gap-1">
-                        <select aria-label={"Block " + (index + 1) + " style"} value={block.type}
-                          onChange={(e) => patchBlock(block.id, { type: e.target.value as KnowledgeBlock["type"] })}
-                          className="h-8 max-w-32 rounded-lg border bg-background px-2 text-xs">
-                          {TYPES.map((entry) => <option key={entry.type} value={entry.type}>{entry.label}</option>)}
-                        </select>
-                        <button type="button" disabled={index === 0} onClick={() => moveBlock(index, -1)} aria-label={"Move block " + (index + 1) + " up"} className="rounded-md p-1.5 hover:bg-muted disabled:opacity-30"><ChevronUp className="h-4 w-4" /></button>
-                        <button type="button" disabled={index === blocks.length - 1} onClick={() => moveBlock(index, 1)} aria-label={"Move block " + (index + 1) + " down"} className="rounded-md p-1.5 hover:bg-muted disabled:opacity-30"><ChevronDown className="h-4 w-4" /></button>
-                        <button type="button" disabled={blocks.length === 1} onClick={() => setBlocks((previous) => previous.filter((entry) => entry.id !== block.id))} aria-label={"Delete block " + (index + 1)} className="rounded-md p-1.5 text-red-500 hover:bg-red-500/10 disabled:opacity-30"><Trash2 className="h-4 w-4" /></button>
-                      </div>
-                    </div>
-                    <textarea id={"block-" + block.id} value={block.text} rows={block.type === "heading" ? 2 : 4} maxLength={12000}
-                      onChange={(e) => patchBlock(block.id, { text: e.target.value })}
-                      placeholder={block.type === "heading" ? "Section heading" : block.type === "bullet" ? "One bullet point" : "Write your knowledge here…"}
-                      className="mt-3 w-full resize-y bg-transparent px-1 py-2 text-sm leading-7 outline-none placeholder:text-muted-foreground/60" />
-                  </div>
-                ))}
-                <button type="button" disabled={blocks.length >= 150} onClick={() => setBlocks((previous) => [...previous, newBlock()])}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed p-4 text-sm font-semibold text-blue-600 transition hover:bg-blue-500/5 disabled:opacity-30 dark:text-blue-300"><Plus className="h-4 w-4" /> Add content block</button>
-                <p className="text-xs text-muted-foreground">Supports headings, paragraphs, quotes and lists, with a safe read-only preview.</p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInput.current?.click()}
+                  onDragOver={(event) => {
+                    event.preventDefault();
+                    setDragging(true);
+                  }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={onDrop}
+                  className={cn(
+                    "flex min-h-52 w-full flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center transition-colors",
+                    dragging
+                      ? "border-barq-yellow bg-barq-yellow/10"
+                      : "hover:border-foreground/30 hover:bg-muted/40",
+                  )}
+                >
+                  <span className="bg-muted flex size-12 items-center justify-center rounded-full">
+                    <FileUp className="text-muted-foreground size-6" />
+                  </span>
+                  <span className="mt-3 text-sm font-medium">
+                    Drop a PDF here, or click to browse
+                  </span>
+                  <span className="text-muted-foreground mt-1 text-xs">
+                    PDF only · up to 10 MB
+                  </span>
+                </button>
+              )}
+              <input
+                ref={fileInput}
+                id="knowledge-pdf"
+                className="sr-only"
+                type="file"
+                accept=".pdf,application/pdf"
+                onChange={(event) => {
+                  pickFile(event.target.files?.[0]);
+                  event.target.value = "";
+                }}
+              />
+            </div>
+          ) : preview ? (
+            <div className="bg-card rounded-xl border shadow-sm">
+              <div className="flex items-center justify-between border-b px-4 py-2">
+                <span className="text-sm font-medium">Preview</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPreview(false)}
+                >
+                  <PenLine /> Back to editing
+                </Button>
               </div>
-            )}
-          </section>
+              <div className="px-5 py-6 sm:px-12">
+                <h1 className="text-3xl font-semibold tracking-tight">
+                  {metadata.title || "Untitled document"}
+                </h1>
+                {metadata.summary && (
+                  <p className="text-muted-foreground mt-2">
+                    {metadata.summary}
+                  </p>
+                )}
+                <KnowledgeBlocksView blocks={blocks} className="mt-6" />
+              </div>
+            </div>
+          ) : (
+            <>
+              {!hasContent(blocks) && (
+                <div className="bg-card flex flex-wrap items-center gap-2 rounded-xl border border-dashed px-4 py-3">
+                  <LayoutTemplate className="text-muted-foreground size-4" />
+                  <span className="text-muted-foreground text-sm">
+                    Start from a template:
+                  </span>
+                  {STARTERS.map((starter) => (
+                    <Button
+                      key={starter.id}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => applyStarter(starter.id)}
+                    >
+                      {starter.name}
+                    </Button>
+                  ))}
+                </div>
+              )}
+              <KnowledgeBlockEditor
+                blocks={blocks}
+                onChange={updateBlocks}
+                disabled={busy}
+                toolbarEnd={
+                  <>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button type="button" variant="ghost" size="sm">
+                          <LayoutTemplate />{" "}
+                          <span className="hidden sm:inline">Templates</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-64">
+                        <DropdownMenuLabel className="text-muted-foreground text-xs">
+                          Replace content with a template
+                        </DropdownMenuLabel>
+                        {STARTERS.map((starter) => (
+                          <DropdownMenuItem
+                            key={starter.id}
+                            onSelect={() => requestStarter(starter.id)}
+                            className="flex-col items-start gap-0"
+                          >
+                            <span className="font-medium">{starter.name}</span>
+                            <span className="text-muted-foreground text-xs">
+                              {starter.description}
+                            </span>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPreview(true)}
+                    >
+                      <Eye /> <span className="hidden sm:inline">Preview</span>
+                    </Button>
+                  </>
+                }
+              />
+            </>
+          )}
         </div>
 
-        <aside className="space-y-5 lg:sticky lg:top-24">
-          <div className="space-y-5 rounded-[24px] border bg-card p-6">
-            <h2 className="text-lg font-semibold">Publication controls</h2>
-            <div className="flex items-start gap-3 rounded-xl bg-blue-500/5 p-4">
-              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-blue-600 dark:text-blue-300" />
-              <p className="text-xs leading-6 text-muted-foreground">Saving creates a private working revision. Readers only see the last published revision until you publish again.</p>
+        {/* Sidebar */}
+        <aside className="space-y-4 lg:sticky lg:top-20">
+          <div className="bg-card space-y-4 rounded-xl border p-5 shadow-sm">
+            <h3 className="font-semibold">Details</h3>
+            <div className="space-y-1.5">
+              <Label htmlFor="knowledge-folder">Folder</Label>
+              <Select
+                value={metadata.folderId ?? ROOT}
+                onValueChange={(value) =>
+                  updateMeta("folderId", value === ROOT ? null : value)
+                }
+              >
+                <SelectTrigger id="knowledge-folder" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ROOT}>Library (top level)</SelectItem>
+                  {folders
+                    .map((folder) => ({
+                      id: folder.id,
+                      label: folderLabel(folder, folders),
+                    }))
+                    .sort((a, b) => a.label.localeCompare(b.label))
+                    .map((folder) => (
+                      <SelectItem key={folder.id} value={folder.id}>
+                        {folder.label}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </div>
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl border p-4">
-              <input type="checkbox" checked={metadata.requiresAcknowledgement} onChange={(e) => updateMeta("requiresAcknowledgement", e.target.checked)} className="mt-1 h-4 w-4 accent-blue-600" />
-              <span><span className="block text-sm font-semibold">Require reading acknowledgement</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">Employees confirm they have read each new published version.</span></span>
-            </label>
-            {metadata.classification === "RESTRICTED" && <p className="flex gap-2 rounded-xl bg-amber-500/10 p-3 text-xs text-amber-800 dark:text-amber-200"><LockKeyhole className="h-4 w-4 shrink-0" /> Only accounts with the restricted-view permission can access this article.</p>}
-            <div className="space-y-2 border-t pt-5">
-              <button type="button" disabled={busy} onClick={() => { void submit(false); }}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-semibold transition hover:bg-muted disabled:opacity-50">
-                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save draft
-              </button>
-              {canPublish && <button type="button" disabled={busy} onClick={() => { void submit(true); }} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#163b62] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#24527f] disabled:opacity-50"><Send className="h-4 w-4" /> Save & publish</button>}
+            <div className="space-y-1.5">
+              <Label htmlFor="knowledge-category">Category</Label>
+              <Select
+                value={metadata.category}
+                onValueChange={(value) =>
+                  updateMeta("category", value as Metadata["category"])
+                }
+              >
+                <SelectTrigger id="knowledge-category" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {KNOWLEDGE_CATEGORIES.map((name) => (
+                    <SelectItem key={name} value={name}>
+                      {humanize(name)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            {error && <p role="alert" className="flex items-start gap-2 rounded-xl bg-red-500/10 p-3 text-xs leading-5 text-red-700 dark:text-red-300"><AlertCircle className="h-4 w-4 shrink-0" /> {error}</p>}
+            <div className="space-y-1.5">
+              <Label htmlFor="knowledge-classification">Access</Label>
+              <Select
+                value={metadata.classification}
+                onValueChange={(value) =>
+                  updateMeta(
+                    "classification",
+                    value as Metadata["classification"],
+                  )
+                }
+              >
+                <SelectTrigger id="knowledge-classification" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="INTERNAL">
+                    Internal — all viewers
+                  </SelectItem>
+                  {(canRestrict ||
+                    metadata.classification === "RESTRICTED") && (
+                    <SelectItem value="RESTRICTED" disabled={!canRestrict}>
+                      Restricted — elevated access
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+              {metadata.classification === "RESTRICTED" && (
+                <p className="flex gap-1.5 text-xs text-amber-700 dark:text-amber-300">
+                  <LockKeyhole className="mt-px size-3.5 shrink-0" /> Only
+                  accounts with restricted access can open it.
+                </p>
+              )}
+            </div>
+            <div className="flex items-start justify-between gap-3 rounded-lg border p-3">
+              <div className="space-y-0.5">
+                <Label htmlFor="knowledge-ack">Require acknowledgement</Label>
+                <p className="text-muted-foreground text-xs">
+                  Readers confirm each published version.
+                </p>
+              </div>
+              <Switch
+                id="knowledge-ack"
+                checked={metadata.requiresAcknowledgement}
+                onCheckedChange={(checked) =>
+                  updateMeta("requiresAcknowledgement", checked)
+                }
+              />
+            </div>
           </div>
-          <div className="rounded-[24px] border p-6">
-            <p className="text-xs font-bold uppercase tracking-[.13em] text-muted-foreground">Knowledge lifecycle</p>
-            <ol className="mt-4 space-y-4 text-sm">
-              <li className="flex items-center gap-3"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500/10 text-xs font-bold text-blue-600">1</span>Draft & review</li>
-              <li className="flex items-center gap-3"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500/10 text-xs font-bold text-blue-600">2</span>Publish approved revision</li>
-              <li className="flex items-center gap-3"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500/10 text-xs font-bold text-blue-600">3</span>Read & acknowledge</li>
-            </ol>
-            <Link href="/knowledge-base" className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-300">Explore Knowledge Base <ArrowRight className="h-3.5 w-3.5" /></Link>
+
+          <div className="bg-card space-y-3 rounded-xl border p-5 shadow-sm">
+            {error && (
+              <p
+                role="alert"
+                className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-xs leading-5"
+              >
+                <AlertCircle className="size-4 shrink-0" /> {error}
+              </p>
+            )}
+            {canPublish && (
+              <Button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  void submit(true);
+                }}
+                className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 w-full"
+              >
+                {busy ? <Loader2 className="animate-spin" /> : <Send />} Save &
+                publish
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              disabled={busy}
+              onClick={() => {
+                void submit(false);
+              }}
+              className="w-full"
+            >
+              {busy && !canPublish ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Save />
+              )}{" "}
+              Save draft
+              <kbd className="bg-muted text-muted-foreground ml-auto hidden rounded border px-1.5 font-mono text-[10px] sm:inline">
+                Ctrl S
+              </kbd>
+            </Button>
+            <p className="text-muted-foreground flex items-start gap-2 text-xs">
+              <ShieldCheck className="mt-px size-3.5 shrink-0" />
+              Every save keeps a revision, so earlier versions stay available
+              for audit.
+            </p>
           </div>
+
+          {sourceType === "EDITOR" && (
+            <p className="text-muted-foreground flex items-start gap-2 px-1 text-xs">
+              <BookOpen className="mt-px size-3.5 shrink-0" />
+              <span>
+                Tip: type <kbd className="rounded border px-1 font-mono">#</kbd>{" "}
+                for a heading,{" "}
+                <kbd className="rounded border px-1 font-mono">-</kbd> for a
+                list or <kbd className="rounded border px-1 font-mono">1.</kbd>{" "}
+                for steps.
+              </span>
+            </p>
+          )}
         </aside>
       </div>
+
+      <AlertDialog
+        open={pendingStarter !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingStarter(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Replace your content?</AlertDialogTitle>
+            <AlertDialogDescription>
+              The template will replace everything currently in the editor. Your
+              last saved draft is not affected.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep my content</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => pendingStarter && applyStarter(pendingStarter)}
+            >
+              Use template
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
