@@ -16,6 +16,10 @@
  */
 
 import { inject, injectable } from "inversify";
+import {
+  decideConditionalSkip,
+  serviceFieldGatingStep,
+} from "./conditional-skip";
 
 import { DI_TOKENS } from "@/di/types";
 import type { PrismaClient } from "@/generated/prisma/server";
@@ -981,6 +985,45 @@ export class WorkflowEngine implements IWorkflowEngine {
       currentStepInstanceId: stepInstance.id,
       status: "IN_REVIEW",
     });
+
+    // A step gated on the chosen access service (e.g. line-manager approval
+    // only for services that require it) is skipped, not activated, when
+    // the service doesn't need it. Decided from the submission snapshot, so
+    // later catalog edits never change an in-flight request.
+    const gateField = serviceFieldGatingStep(def);
+    if (gateField) {
+      const snapshot = await this.accessServiceSnapshots.findByRequestAndField(
+        requestId,
+        gateField,
+        tx,
+      );
+      const skip = decideConditionalSkip(def, snapshot);
+      if (skip) {
+        await this.audit.append(tx, {
+          ctx,
+          requestId,
+          stepInstanceId: stepInstance.id,
+          action: "step.skip",
+          payload: {
+            stepKey: def.key,
+            stepType: def.config.type,
+            reason: skip.reason,
+            serviceName: skip.serviceName,
+          },
+        });
+        await this.completeStep(tx, stepInstance.id, "SKIPPED");
+        await this.advanceFromStep(
+          tx,
+          ctx,
+          requestId,
+          graph,
+          def,
+          def.config.type === "APPROVAL" ? "APPROVE" : null,
+          undefined,
+        );
+        return;
+      }
+    }
 
     // Resolve assignees from step config (if it has any) and snapshot.
     const assignees =

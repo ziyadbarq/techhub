@@ -15,8 +15,7 @@ export interface StepDefinition {
 
 /** Either a single next step key or a per-action map. */
 export type StepRouting =
-  | { default: string }
-  | { onAction: Record<string, string> };
+  { default: string } | { onAction: Record<string, string> };
 
 export type StepConfig =
   | ApprovalStepConfig
@@ -37,6 +36,13 @@ export interface ApprovalStepConfig {
   multiAssigneePolicy?: "ANY" | "ALL" | "MAJORITY" | "QUORUM" | "UNANIMOUS";
   quorum?: number;
   allowReject?: boolean;
+  /**
+   * Key of a LOOKUP[ACCESS_SERVICES] field. When set, the step runs only if
+   * the service chosen in that field requires manager approval (read from
+   * the immutable snapshot taken at submission); otherwise it is recorded
+   * as SKIPPED and the request continues as if approved.
+   */
+  onlyWhenServiceRequiresManagerApproval?: string;
   sla?: SLAConfig;
 }
 

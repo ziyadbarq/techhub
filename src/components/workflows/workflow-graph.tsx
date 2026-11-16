@@ -139,7 +139,9 @@ export function WorkflowGraph({
 
               {/* Row 3 — where it goes */}
               <div className="text-caption mt-1 space-y-0.5 pl-11 text-[var(--color-stone)]">
-                {step.type === "APPROVAL" ? (
+                {status === "SKIPPED" ? (
+                  <p>Not needed for this request, so it was skipped.</p>
+                ) : step.type === "APPROVAL" ? (
                   <>
                     <p className="flex items-center gap-1.5">
                       <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />

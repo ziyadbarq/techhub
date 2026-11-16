@@ -461,6 +461,27 @@ export function StepSettings({
         </Section>
       ) : null}
 
+      {step.type === "APPROVAL" ? (
+        <ServiceGate
+          value={
+            typeof config.onlyWhenServiceRequiresManagerApproval === "string"
+              ? config.onlyWhenServiceRequiresManagerApproval
+              : null
+          }
+          serviceFields={directory.fields.filter(
+            (f) =>
+              f.type === "LOOKUP" && f.config?.dataSource === "ACCESS_SERVICES",
+          )}
+          onChange={(value) => {
+            const next = { ...config };
+            if (value === null)
+              delete next.onlyWhenServiceRequiresManagerApproval;
+            else next.onlyWhenServiceRequiresManagerApproval = value;
+            onChange({ ...step, config: next });
+          }}
+        />
+      ) : null}
+
       {step.type === "APPROVAL" && assignees.length > 0 ? (
         <Section title="How many must approve?">
           <div className="grid grid-cols-2 gap-2">
@@ -877,6 +898,69 @@ export function StepSettings({
           </p>
         </CollapsibleContent>
       </Collapsible>
+    </div>
+  );
+}
+
+/**
+ * "Only when the chosen service needs it": the step is skipped for services
+ * whose catalog entry doesn't require manager approval.
+ */
+function ServiceGate({
+  value,
+  serviceFields,
+  onChange,
+}: {
+  value: string | null;
+  serviceFields: ReadonlyArray<{ key: string; label: string }>;
+  onChange: (value: string | null) => void;
+}) {
+  const enabled = value !== null;
+  return (
+    <div className="border-hairline-soft space-y-2 rounded-lg border p-3">
+      <label className="flex items-start justify-between gap-3">
+        <span>
+          <span className="text-ink block text-xs font-semibold">
+            Only when the chosen service requires it
+          </span>
+          <span className="text-stone mt-0.5 block text-xs leading-5">
+            Skipped for services whose catalog entry doesn&apos;t ask for
+            manager approval. The request then continues as if approved.
+          </span>
+        </span>
+        <Switch
+          checked={enabled}
+          disabled={!enabled && serviceFields.length === 0}
+          onCheckedChange={(on) =>
+            onChange(on ? (serviceFields[0]?.key ?? "") : null)
+          }
+        />
+      </label>
+      {enabled ? (
+        serviceFields.length > 0 ? (
+          <Select value={value || undefined} onValueChange={onChange}>
+            <SelectTrigger className="h-8 text-xs">
+              <SelectValue placeholder="Service field" />
+            </SelectTrigger>
+            <SelectContent>
+              {serviceFields.map((field) => (
+                <SelectItem key={field.key} value={field.key}>
+                  {field.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <p className="text-xs text-amber-700 dark:text-amber-300">
+            The linked form has no service field. Add a Lookup field using the
+            Access Services catalog.
+          </p>
+        )
+      ) : serviceFields.length === 0 ? (
+        <p className="text-stone text-xs">
+          Needs a service field (Lookup → Access Services) in the linked form.
+        </p>
+      ) : null}
     </div>
   );
 }

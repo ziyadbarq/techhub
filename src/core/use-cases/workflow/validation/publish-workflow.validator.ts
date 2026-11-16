@@ -112,6 +112,22 @@ export function validateWorkflowForPublish(
       }
     }
 
+    // A step gated on a service must point at a service lookup field.
+    const gate = (
+      step.config as { onlyWhenServiceRequiresManagerApproval?: string }
+    ).onlyWhenServiceRequiresManagerApproval;
+    if (gate !== undefined && gate !== null) {
+      if (step.type !== "APPROVAL") {
+        errors.push(
+          `Step "${step.key}" can only depend on the chosen service when it is an APPROVAL step.`,
+        );
+      } else if (!accessServiceFields.has(gate)) {
+        errors.push(
+          `Step "${step.key}" depends on field "${gate}", which is not an ACCESS_SERVICES lookup field in the linked form.`,
+        );
+      }
+    }
+
     // Validate CONDITIONAL_BRANCH branch targets
     if (step.type === "CONDITIONAL_BRANCH" && config?.branches) {
       for (const branch of config.branches) {

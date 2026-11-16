@@ -20,3 +20,4 @@ export * from "./reject.use-case";
 export * from "./reassign.use-case";
 export * from "./force-advance.use-case";
 export * from "./override-outcome.use-case";
+export * from "./conditional-skip";

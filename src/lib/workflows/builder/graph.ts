@@ -405,6 +405,16 @@ export function checkGraph(graph: Graph): GraphIssue[] {
         }
       }
     }
+    if (
+      step.type === "APPROVAL" &&
+      cfg.onlyWhenServiceRequiresManagerApproval !== undefined &&
+      !String(cfg.onlyWhenServiceRequiresManagerApproval ?? "").trim()
+    ) {
+      issues.push({
+        stepKey: step.key,
+        message: `${label} depends on the chosen service; pick the service field.`,
+      });
+    }
     if (step.type === "APPROVAL" && cfg.multiAssigneePolicy === "QUORUM") {
       const quorum = Number(cfg.quorum);
       if (!Number.isInteger(quorum) || quorum < 1) {

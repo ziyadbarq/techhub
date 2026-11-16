@@ -139,7 +139,14 @@ function StepCard({
               {stepName(step)}
             </h3>
           </div>
-          <p className="text-stone mt-0.5 text-xs">{meta.title}</p>
+          <p className="text-stone mt-0.5 text-xs">
+            {meta.title}
+            {step.type === "APPROVAL" &&
+            typeof step.config.onlyWhenServiceRequiresManagerApproval ===
+              "string"
+              ? " · only if the chosen service requires it"
+              : ""}
+          </p>
         </div>
         {issues.length > 0 ? (
           <span
