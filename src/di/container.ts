@@ -53,6 +53,16 @@ let moduleLoader: ModuleLoader | null = null;
  * the module registry with all available modules.
  */
 function registerModules(): void {
+  // Only called while `container` is null, i.e. nothing is loaded in this
+  // instance. The registry can still be full: `module-registry.ts` survives
+  // a dev hot reload that re-evaluates this file, and a failed earlier
+  // attempt leaves its registrations behind. Registering again then threw
+  // "Module logger is already registered" on EVERY request until restart.
+  // Start from a clean registry instead.
+  if (moduleRegistry.getAll().length > 0) {
+    moduleRegistry.reset();
+  }
+
   // Register all modules from module-definitions
   for (const diModule of ALL_MODULES) {
     moduleRegistry.register(diModule);
