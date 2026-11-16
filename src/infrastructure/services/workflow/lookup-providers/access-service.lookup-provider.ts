@@ -8,6 +8,17 @@ import type {
 } from "@/core/domain/workflow/lookup-provider.interface";
 import type { Tx } from "@/core/repositories/workflow/types";
 
+const APPROVER_NAMES = {
+  assignees: {
+    // Same "active" rule the engine uses when it snapshots assignees at
+    // submission (linked Person is active), so the form never shows someone
+    // the request won't actually be assigned to.
+    where: { user: { person: { isActive: true } } },
+    select: { role: true, user: { select: { name: true } } },
+    orderBy: { createdAt: "asc" as const },
+  },
+};
+
 @injectable()
 export class AccessServiceLookupProvider implements ILookupProvider {
   readonly key = "ACCESS_SERVICES";
@@ -37,6 +48,7 @@ export class AccessServiceLookupProvider implements ILookupProvider {
       },
       take: Math.min(limit, 50),
       orderBy: { name: "asc" },
+      include: APPROVER_NAMES,
     });
 
     return rows.map((r) => this.toOption(r));
@@ -49,6 +61,7 @@ export class AccessServiceLookupProvider implements ILookupProvider {
   ): Promise<LookupOption | null> {
     const row = await this.db(tx).accessService.findUnique({
       where: { id, isActive: true },
+      include: APPROVER_NAMES,
     });
     return row ? this.toOption(row) : null;
   }
@@ -78,13 +91,27 @@ export class AccessServiceLookupProvider implements ILookupProvider {
     name: string;
     requireManagerApproval: boolean;
     instructions: string | null;
+    assignees?: Array<{ role: string; user: { name: string | null } | null }>;
   }): LookupOption {
+    // Who will act on the request, by display name only (no ids or emails),
+    // so the requester sees the approval chain before submitting — the same
+    // names the intranet form shows. The engine still resolves the real
+    // assignees from the submission snapshot.
+    const namesFor = (role: string) =>
+      (row.assignees ?? [])
+        .filter((a) => a.role === role)
+        .map((a) => a.user?.name?.trim())
+        .filter((name): name is string => !!name)
+        .join(", ") || null;
     return {
       id: row.id,
       label: row.name,
       publicMetadata: {
         requireManagerApproval: row.requireManagerApproval,
         instructions: row.instructions ?? null,
+        ownerNames: namesFor("OWNER"),
+        cybersecurityNames: namesFor("CYBERSECURITY"),
+        implementerNames: namesFor("IMPLEMENTER"),
       },
     };
   }

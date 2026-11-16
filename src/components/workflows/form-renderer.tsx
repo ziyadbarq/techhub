@@ -351,6 +351,42 @@ function FieldInput({
         </select>
       );
     }
+    case "RADIO": {
+      // Pick one, with every option visible — for short lists like
+      // "New access / New permission / Revoke access".
+      const options = (field.config?.options as string[] | undefined) ?? [];
+      const current = (value as string | undefined) ?? "";
+      return (
+        <div
+          role="radiogroup"
+          aria-label={field.label}
+          className="flex flex-col gap-2"
+        >
+          {options.map((o) => {
+            const checked = current === o;
+            return (
+              <label
+                key={o}
+                className={`text-body-sm inline-flex w-fit items-center gap-2.5 ${
+                  readOnly ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name={field.key}
+                  value={o}
+                  checked={checked}
+                  disabled={readOnly}
+                  onChange={() => onChange(o)}
+                  className="h-4 w-4 accent-[var(--color-ink)]"
+                />
+                <span className="text-[var(--color-ink)]">{o}</span>
+              </label>
+            );
+          })}
+        </div>
+      );
+    }
     case "MULTI_SELECT": {
       const options = (field.config?.options as string[] | undefined) ?? [];
       const arr = Array.isArray(value) ? (value as string[]) : [];
@@ -692,7 +728,59 @@ interface AccessServiceOption {
   publicMetadata: {
     requireManagerApproval?: boolean;
     instructions?: string | null;
+    ownerNames?: string | null;
+    cybersecurityNames?: string | null;
+    implementerNames?: string | null;
   };
+}
+
+/**
+ * Who handles the chosen service, shown before submitting — the same chain
+ * the request will follow (line manager when the service needs it, then
+ * owner, cybersecurity and the implementer).
+ */
+function ServiceApprovers({
+  meta,
+}: {
+  meta: AccessServiceOption["publicMetadata"];
+}) {
+  const cells: Array<{
+    title: string;
+    names: string | null | undefined;
+    hint?: string;
+  }> = [
+    {
+      title: "Line manager",
+      names: meta.requireManagerApproval ? "Your line manager" : null,
+      hint: meta.requireManagerApproval
+        ? undefined
+        : "Not needed for this service",
+    },
+    { title: "Owner approval", names: meta.ownerNames },
+    { title: "Cybersecurity approval", names: meta.cybersecurityNames },
+    { title: "Implementer", names: meta.implementerNames },
+  ];
+  return (
+    <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+      {cells.map((cell) => (
+        <div
+          key={cell.title}
+          className="rounded-md border border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)] px-3 py-2"
+        >
+          <p className="text-caption font-semibold text-[var(--color-ink)]">
+            {cell.title}
+          </p>
+          <p className="text-caption mt-0.5 text-[var(--color-charcoal)]">
+            {cell.names || (
+              <span className="text-[var(--color-stone)]">
+                {cell.hint ?? "Not assigned"}
+              </span>
+            )}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function AccessServiceCombobox({
@@ -920,6 +1008,7 @@ function AccessServiceCombobox({
           )}
         </PopoverContent>
       </Popover>
+      {selected ? <ServiceApprovers meta={selected.publicMetadata} /> : null}
       {instructions ? (
         <div className="mt-2 rounded-md border border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)] px-3 py-2">
           <p className="text-caption text-[var(--color-stone)]">

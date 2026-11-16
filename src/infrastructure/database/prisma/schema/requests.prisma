@@ -79,6 +79,7 @@ enum FieldType {
   DATE
   DATETIME
   DROPDOWN
+  RADIO
   MULTI_SELECT
   CHECKBOX
   FILE

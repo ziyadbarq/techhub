@@ -5,6 +5,7 @@ import {
   CalendarClock,
   CheckSquare,
   ChevronDownSquare,
+  CircleDot,
   Grid3x3,
   Hash,
   Heading,
@@ -63,6 +64,13 @@ export const FIELD_TYPE_META: readonly FieldTypeMeta[] = [
     label: "Dropdown",
     hint: "Pick one option",
     icon: ChevronDownSquare,
+    group: "Choices",
+  },
+  {
+    value: "RADIO",
+    label: "Single choice",
+    hint: "Pick one, all options shown",
+    icon: CircleDot,
     group: "Choices",
   },
   {

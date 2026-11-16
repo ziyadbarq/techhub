@@ -76,6 +76,7 @@ export function findFormProblems(draft: GeneratedFormDTO): string[] {
     // A chooser with no choices renders an empty control.
     const needsOptions =
       field.type === "DROPDOWN" ||
+      field.type === "RADIO" ||
       field.type === "MULTI_SELECT" ||
       (field.type === "LOOKUP" && (config.dataSource ?? "static") === "static");
 
@@ -172,7 +173,7 @@ FIELD TYPES and their config:
   SHORT_TEXT / LONG_TEXT / NUMBER / DATE / DATETIME / CHECKBOX / FILE
     config: {}  — nothing to set.
 
-  DROPDOWN / MULTI_SELECT
+  DROPDOWN / RADIO / MULTI_SELECT  (RADIO: pick one with every option shown; best for 2-5 options)
     config: { "options": ["Option A", "Option B"] }
     At least one option is required.
 

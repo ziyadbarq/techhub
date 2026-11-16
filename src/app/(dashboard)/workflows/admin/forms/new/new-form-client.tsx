@@ -21,6 +21,23 @@ import {
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { WORKFLOW_TEMPLATES } from "@/lib/workflows/builder/graph";
+import { REQUEST_TYPE_TEMPLATES } from "@/lib/workflows/builder/request-type-templates";
+
+/** Path-only templates, then those that also fill in the form. */
+const TEMPLATES = [
+  ...WORKFLOW_TEMPLATES.map((t) => ({
+    id: t.id,
+    name: t.name,
+    description: t.description,
+    withFields: false,
+  })),
+  ...REQUEST_TYPE_TEMPLATES.map((t) => ({
+    id: t.id,
+    name: t.name,
+    description: t.description,
+    withFields: true,
+  })),
+];
 
 interface WorkflowOption {
   id: string;
@@ -89,13 +106,18 @@ export function NewFormClient({
         const body = (await created.json()) as { definition: { id: string } };
         definitionId = body.definition.id;
 
-        const template = WORKFLOW_TEMPLATES.find((t) => t.id === templateId)!;
+        const fullTemplate = REQUEST_TYPE_TEMPLATES.find(
+          (t) => t.id === templateId,
+        );
+        const graph =
+          fullTemplate?.graph() ??
+          WORKFLOW_TEMPLATES.find((t) => t.id === templateId)!.build();
         const draft = await fetch(
           `/api/workflow/admin/workflows/${definitionId}/draft`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(template.build()),
+            body: JSON.stringify(graph),
           },
         );
         if (!draft.ok) {
@@ -122,6 +144,32 @@ export function NewFormClient({
         );
       }
       const body = (await response.json()) as { form: { id: string } };
+
+      // Templates that include the form: add its fields and who may edit
+      // what at each step, so it is ready to review and publish.
+      const fullTemplate =
+        choice === "new"
+          ? REQUEST_TYPE_TEMPLATES.find((t) => t.id === templateId)
+          : undefined;
+      if (fullTemplate) {
+        setBusy("Adding the fields…");
+        const fields = await fetch(
+          `/api/workflow/admin/forms/${body.form.id}/draft`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fields: fullTemplate.fields(),
+              perStepFieldState: fullTemplate.perStepFieldState(),
+            }),
+          },
+        );
+        if (!fields.ok) {
+          throw new Error(
+            await readError(fields, "The fields couldn't be added."),
+          );
+        }
+      }
       router.push(`/workflows/admin/forms/${body.form.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -234,15 +282,23 @@ export function NewFormClient({
         </div>
 
         {choice === "new" ? (
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
-            {WORKFLOW_TEMPLATES.map((template) => {
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {TEMPLATES.map((template) => {
               const active = templateId === template.id;
               return (
                 <button
                   key={template.id}
                   type="button"
                   aria-pressed={active}
-                  onClick={() => setTemplateId(template.id)}
+                  onClick={() => {
+                    setTemplateId(template.id);
+                    const full = REQUEST_TYPE_TEMPLATES.find(
+                      (t) => t.id === template.id,
+                    );
+                    if (full && !name.trim()) setName(full.suggestedName);
+                    if (full && !description.trim())
+                      setDescription(full.suggestedDescription);
+                  }}
                   className={cn(
                     "rounded-xl border p-4 text-left transition-colors",
                     active
@@ -250,6 +306,11 @@ export function NewFormClient({
                       : "border-hairline hover:border-hairline-strong",
                   )}
                 >
+                  {template.withFields ? (
+                    <span className="mb-1.5 inline-block rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-sky-800 dark:bg-sky-400/15 dark:text-sky-300">
+                      Includes the form
+                    </span>
+                  ) : null}
                   <span className="text-ink block text-sm font-semibold">
                     {template.name}
                   </span>

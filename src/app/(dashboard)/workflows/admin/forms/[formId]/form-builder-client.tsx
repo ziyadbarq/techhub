@@ -296,7 +296,9 @@ export function FormBuilderClient({
   ).length;
   const optionless = fields.filter(
     (f) =>
-      (f.type === "DROPDOWN" || f.type === "MULTI_SELECT") &&
+      (f.type === "DROPDOWN" ||
+        f.type === "RADIO" ||
+        f.type === "MULTI_SELECT") &&
       !(
         Array.isArray(f.config?.options) &&
         (f.config?.options as unknown[]).length > 0
@@ -1507,6 +1509,7 @@ function FieldEditor({
 
       {/* Options (DROPDOWN, MULTI_SELECT, or LOOKUP with static data source) */}
       {(field.type === "DROPDOWN" ||
+        field.type === "RADIO" ||
         field.type === "MULTI_SELECT" ||
         (field.type === "LOOKUP" &&
           (field.config?.dataSource ?? "static") === "static")) && (

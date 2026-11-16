@@ -83,6 +83,7 @@ export const AI_ALLOWED_FIELD_TYPES = [
   "DATE",
   "DATETIME",
   "DROPDOWN",
+  "RADIO",
   "MULTI_SELECT",
   "CHECKBOX",
   "FILE",

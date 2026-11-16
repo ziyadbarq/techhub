@@ -212,7 +212,8 @@ function validateFieldType(field: FieldSchema, value: unknown): string | null {
       return null;
     }
 
-    case "DROPDOWN": {
+    case "DROPDOWN":
+    case "RADIO": {
       const options = getOptions(field);
       if (options.length > 0 && !options.includes(String(value)))
         return `${field.label} has an invalid option`;
@@ -268,8 +269,7 @@ function isEmpty(value: unknown): boolean {
 
 function getOptions(field: FieldSchema): string[] {
   const config = field.config as
-    | { options?: Array<{ value: string } | string> }
-    | undefined;
+    { options?: Array<{ value: string } | string> } | undefined;
   if (!config?.options) return [];
   return config.options.map((o) => (typeof o === "string" ? o : o.value));
 }

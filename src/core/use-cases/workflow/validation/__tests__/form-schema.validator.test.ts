@@ -520,3 +520,31 @@ describe("perStepFieldState matrix", () => {
     expect("title" in result.sanitizedValues).toBe(false);
   });
 });
+
+describe("RADIO type validation", () => {
+  const radioField: FormSchema["fields"][0] = {
+    key: "access_type",
+    label: "Access type",
+    type: "RADIO",
+    position: 0,
+    config: { options: ["New access", "New permission", "Revoke access"] },
+  };
+
+  it("accepts one of the options", () => {
+    const result = validateFormSchema(
+      schema([radioField]),
+      { access_type: "Revoke access" },
+      alwaysVisible,
+    );
+    expect(result.isValid).toBe(true);
+  });
+
+  it("rejects a value that isn't an option", () => {
+    const result = validateFormSchema(
+      schema([radioField]),
+      { access_type: "Delete everything" },
+      alwaysVisible,
+    );
+    expect(result.isValid).toBe(false);
+  });
+});
