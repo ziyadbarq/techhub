@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    await requireKnowledgeAccess(PERMISSIONS.KNOWLEDGE_BASE_VIEW);
+    const userId = await requireKnowledgeAccess(PERMISSIONS.KNOWLEDGE_BASE_VIEW);
     const mayEdit = await hasPermission(PERMISSIONS.KNOWLEDGE_BASE_UPDATE);
     const restricted = await canReadRestricted();
     const manage = request.nextUrl.searchParams.get("mode") === "manage" && mayEdit;
@@ -42,6 +42,18 @@ export async function GET(request: NextRequest) {
       },
     });
     const publishedById = new Map(revisions.map((r) => [r.articleId, r]));
+    // This reader's agreements to the CURRENT published versions only.
+    const needingAgreement = revisions.filter((r) => r.requiresAcknowledgement);
+    const agreements = needingAgreement.length
+      ? await prisma.knowledgeAcknowledgement.findMany({
+          where: {
+            userId,
+            OR: needingAgreement.map((r) => ({ articleId: r.articleId, version: r.version })),
+          },
+          select: { articleId: true },
+        })
+      : [];
+    const agreedIds = new Set(agreements.map((a) => a.articleId));
 
     const filtered = items.flatMap((item) => {
       const publishedRevision = publishedById.get(item.id);
@@ -66,6 +78,8 @@ export async function GET(request: NextRequest) {
         requiresAcknowledgement: active.requiresAcknowledgement,
         updatedAt: item.updatedAt,
         hasDraft: item.publishedVersion !== item.version,
+        // null: the published version does not ask for agreement.
+        agreed: publishedRevision?.requiresAcknowledgement ? agreedIds.has(item.id) : null,
       }];
     });
     return NextResponse.json({ items: filtered, canEdit: mayEdit });

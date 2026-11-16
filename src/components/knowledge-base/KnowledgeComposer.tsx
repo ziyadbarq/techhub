@@ -870,9 +870,11 @@ export function KnowledgeComposer({
             </div>
             <div className="flex items-start justify-between gap-3 rounded-lg border p-3">
               <div className="space-y-0.5">
-                <Label htmlFor="knowledge-ack">Require acknowledgement</Label>
+                <Label htmlFor="knowledge-ack">
+                  Require employee agreement
+                </Label>
                 <p className="text-muted-foreground text-xs">
-                  Readers confirm each published version.
+                  Readers agree to each published version; you see who has.
                 </p>
               </div>
               <Switch

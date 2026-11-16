@@ -8,7 +8,8 @@ The first version supports:
 - Taxonomy/category and classification: INTERNAL or RESTRICTED.
 - Draft revisions, controlled publication, and a published snapshot that remains unchanged while edits are in progress.
 - Audit records for create, edit, publish and archive; revision metadata.
-- Per-version reading acknowledgement, when the author marks a policy as requiring it.
+- Per-version policy agreement, when the author marks a policy as requiring it: the reader ticks "I have read and agree" and confirms; a newly published version asks again and tells the reader which version they last agreed to.
+- Agreement report for document owners (Knowledge Base update or publish): agreed / pending people for the current published version, with CSV export. The audience is every user holding Knowledge Base view (plus restricted view for RESTRICTED documents) through an active, unexpired role, excluding inactive or excluded people.
 - Catalog search across published article content and metadata. PDF search covers metadata, not embedded PDF text.
 - Historical revision access for authorized editors/publishers.
 - Private PDF download endpoint; every request is authenticated, feature-gated and permission-checked.
@@ -22,7 +23,8 @@ The first version supports:
 - `/api/knowledge-base/upload` — private PDF upload or new PDF version
 - `/api/knowledge-base/[id]` — read, edit, publish, archive
 - `/api/knowledge-base/[id]/download` — protected download
-- `/api/knowledge-base/[id]/acknowledge` — acknowledgement of published version
+- `/api/knowledge-base/[id]/acknowledge` — agreement to the published version (body `{ "agree": true }` required)
+- `/api/knowledge-base/[id]/agreements` — agreement report for owners (`?format=csv` to export)
 
 ## Feature Flag
 `KNOWLEDGE_BASE` is **OFF by default**, category LAYER_3, depends on RBAC.
@@ -50,7 +52,7 @@ No non-admin role receives the new permissions automatically. Grant appropriate 
 7. Run `npm run generate:routes`, `npm run validate`, then test Editor/PDF create and update, publication visibility, restricted authorization, anonymous rejections, stale-version conflicts, archive, and acknowledgement revocation for a new published version.
 
 ### Known limitations of v1
-- PDF text indexing/OCR, Word documents, automatic review-and-approval workflow, targeted role-by-role document visibility, and enterprise-wide acknowledgement compliance reports are **not implemented**.
+- PDF text indexing/OCR, Word documents, automatic review-and-approval workflow, targeted role-by-role document visibility, and an enterprise-wide (cross-document) agreement dashboard are **not implemented**. Per-document agreement reports are available.
 - The PDF is offered as a protected download rather than embedded in a browser preview.
 - Catalog API returns at most 250 recent records; add cursor pagination before large-scale rollout.
 - Archived articles are hidden; recovery requires a managed administrative procedure.

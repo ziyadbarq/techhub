@@ -7,6 +7,7 @@ import {
   ArrowUp,
   BookOpen,
   ChevronDown,
+  CheckCircle2,
   ChevronRight,
   ClipboardCheck,
   FilePlus2,
@@ -81,6 +82,8 @@ type KnowledgeItem = {
   version: number;
   publishedVersion: number | null;
   requiresAcknowledgement?: boolean;
+  /** This reader's agreement to the published version; null when not asked. */
+  agreed?: boolean | null;
   hasDraft: boolean;
   updatedAt: string;
 };
@@ -538,11 +541,21 @@ export function KnowledgeCatalog() {
           )}
         </Link>
         <span className="hidden shrink-0 items-center gap-1.5 sm:flex">
-          {item.requiresAcknowledgement && (
-            <Badge variant="outline" className="gap-1 font-normal">
-              <ClipboardCheck className="size-3" /> Acknowledge
+          {item.agreed === true ? (
+            <Badge
+              variant="outline"
+              className="gap-1 border-emerald-300/60 font-normal text-emerald-700 dark:border-emerald-700/60 dark:text-emerald-400"
+            >
+              <CheckCircle2 className="size-3" /> Agreed
             </Badge>
-          )}
+          ) : item.agreed === false ? (
+            <Badge
+              variant="outline"
+              className="gap-1 border-amber-300/70 font-normal text-amber-700 dark:border-amber-700/60 dark:text-amber-300"
+            >
+              <ClipboardCheck className="size-3" /> Agreement needed
+            </Badge>
+          ) : null}
           {managing && item.publishedVersion == null && (
             <Badge variant="secondary" className="font-normal">
               Unpublished

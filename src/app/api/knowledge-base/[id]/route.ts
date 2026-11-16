@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { hasAny } from "@/lib/permissions/server";
 import { requireKnowledgeAccess, requireClassification, requireKnowledgeArticle, knowledgeErrorResponse, KnowledgeError } from "@/lib/knowledge-base/access";
 import { knowledgeActionSchema, editKnowledgeSchema, blocksToText, parseBlocks } from "@/lib/knowledge-base/schema";
 import { editArticle, changeArticleStatus } from "@/lib/knowledge-base/revisions";
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest, context: Context) {
     const versionParam = request.nextUrl.searchParams.get("version");
     const version = versionParam ? Number(versionParam) : undefined;
     const { article, revision, userId, mayDraft } = await requireKnowledgeArticle(id, { draft, version });
-    const [ack, history] = await Promise.all([
+    const [ack, previousAck, mayReport, history] = await Promise.all([
       article.publishedVersion ? prisma.knowledgeAcknowledgement.findUnique({
         where: {
           articleId_version_userId: {
@@ -25,6 +26,14 @@ export async function GET(request: NextRequest, context: Context) {
         },
         select: { acknowledgedAt: true },
       }) : Promise.resolve(null),
+      // The latest EARLIER version this reader agreed to, so the page can say
+      // "updated since you agreed" instead of treating them as a first reader.
+      article.publishedVersion ? prisma.knowledgeAcknowledgement.findFirst({
+        where: { articleId: article.id, userId, version: { lt: article.publishedVersion } },
+        orderBy: { version: "desc" },
+        select: { version: true },
+      }) : Promise.resolve(null),
+      hasAny([PERMISSIONS.KNOWLEDGE_BASE_UPDATE, PERMISSIONS.KNOWLEDGE_BASE_PUBLISH]),
       mayDraft ? prisma.knowledgeRevision.findMany({
         where: { articleId: id },
         orderBy: { version: "desc" },
@@ -42,6 +51,8 @@ export async function GET(request: NextRequest, context: Context) {
       publishedVersion: article.publishedVersion, updatedAt: article.updatedAt,
       requiresAcknowledgement: revision.requiresAcknowledgement,
       acknowledgedAt: ack?.acknowledgedAt ?? null, canEdit: mayDraft,
+      previousAgreedVersion: previousAck?.version ?? null,
+      canViewAgreements: mayReport,
       revisions: history,
     });
   } catch (error) {

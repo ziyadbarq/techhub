@@ -12,12 +12,10 @@ import {
   LockKeyhole,
   History,
   Edit3,
-  CheckCircle2,
   AlertCircle,
   Send,
   Archive,
   ExternalLink,
-  ClipboardCheck,
   Clock3,
   RotateCcw,
 } from "lucide-react";
@@ -25,6 +23,10 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { parseBlocks } from "@/lib/knowledge-base/schema";
 import { KnowledgeBlocksView } from "./KnowledgeBlocksView";
+import {
+  AgreementReportPanel,
+  PolicyAgreementCard,
+} from "./KnowledgeAgreement";
 
 type RevisionInfo = { version: number; createdAt: string; editedById: string };
 type KnowledgeDocument = {
@@ -43,6 +45,8 @@ type KnowledgeDocument = {
   updatedAt: string;
   requiresAcknowledgement: boolean;
   acknowledgedAt: string | null;
+  previousAgreedVersion: number | null;
+  canViewAgreements: boolean;
   canEdit: boolean;
   revisions: RevisionInfo[];
 };
@@ -140,30 +144,37 @@ export function KnowledgeReader({
     }
   }
 
-  async function acknowledge() {
-    if (!document || busy) return;
+  /** Records the reader's agreement; resolves false when it was not saved. */
+  async function acknowledge(): Promise<boolean> {
+    if (!document || busy) return false;
     setBusy(true);
     setError("");
     try {
       const response = await fetch(
         "/api/knowledge-base/" + encodeURIComponent(articleId) + "/acknowledge",
-        { method: "POST" },
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ agree: true }),
+        },
       );
       const data = await response.json();
       if (!response.ok)
-        throw new Error(data.error || "Unable to record acknowledgement.");
+        throw new Error(data.error || "Unable to record your agreement.");
       setDocument((previous) =>
         previous
           ? { ...previous, acknowledgedAt: data.acknowledgedAt }
           : previous,
       );
-      setSuccess(
-        "Your acknowledgement has been recorded for this published version.",
-      );
+      setSuccess("Thank you. Your agreement to this policy has been recorded.");
+      return true;
     } catch (reason) {
       setError(
-        reason instanceof Error ? reason.message : "Unable to acknowledge.",
+        reason instanceof Error
+          ? reason.message
+          : "Unable to record your agreement.",
       );
+      return false;
     } finally {
       setBusy(false);
     }
@@ -358,37 +369,13 @@ export function KnowledgeReader({
             document.publishedVersion === document.version &&
             !draft &&
             !historicalVersion && (
-              <section className="bg-muted/30 border-t px-7 py-7 sm:px-11">
-                <div className="flex items-start gap-3">
-                  <ClipboardCheck className="mt-1 h-6 w-6 shrink-0 text-amber-500" />
-                  <div className="flex-1">
-                    <h2 className="font-semibold">Reading acknowledgement</h2>
-                    <p className="text-muted-foreground mt-2 text-sm">
-                      Confirm that you have read and understood this published
-                      revision. A new published version requires a new
-                      acknowledgement.
-                    </p>
-                    {document.acknowledgedAt ? (
-                      <p className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-emerald-700 dark:text-emerald-400">
-                        <CheckCircle2 className="h-4 w-4" /> Acknowledged on{" "}
-                        {new Date(document.acknowledgedAt).toLocaleString()}
-                      </p>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled={busy}
-                        onClick={() => {
-                          void acknowledge();
-                        }}
-                        className="bg-barq-yellow text-barq-black mt-5 inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold disabled:opacity-50"
-                      >
-                        <CheckCircle2 className="h-4 w-4" /> I have read this
-                        document
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </section>
+              <PolicyAgreementCard
+                version={document.version}
+                agreedAt={document.acknowledgedAt}
+                previousAgreedVersion={document.previousAgreedVersion}
+                busy={busy}
+                onAgree={acknowledge}
+              />
             )}
         </article>
 
@@ -425,7 +412,7 @@ export function KnowledgeReader({
               </div>
               <div>
                 <dt className="text-muted-foreground text-xs">
-                  Acknowledgement
+                  Employee agreement
                 </dt>
                 <dd className="mt-1 font-medium">
                   {document.requiresAcknowledgement
@@ -435,6 +422,16 @@ export function KnowledgeReader({
               </div>
             </dl>
           </div>
+          {document.canViewAgreements &&
+            document.requiresAcknowledgement &&
+            document.publishedVersion === document.version &&
+            !draft &&
+            !historicalVersion && (
+              <AgreementReportPanel
+                articleId={articleId}
+                version={document.version}
+              />
+            )}
           {document.revisions.length > 0 && (
             <div className="bg-card rounded-xl border p-6 shadow-sm">
               <div className="flex items-center gap-2">
