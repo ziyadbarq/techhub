@@ -1,11 +1,44 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  ArrowDown,
+  ArrowUp,
+  Bell,
+  Eye,
+  EyeOff,
+  GitBranch,
+  GripVertical,
+  Loader2,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Trash2,
+} from "lucide-react";
 
 import { confirm } from "@/components/design";
 import { FormRenderer } from "@/components/workflows/form-renderer";
 import { FormAiAssistant } from "@/components/workflows/form-ai-assistant";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+
+import {
+  FIELD_TYPE_GROUPS,
+  FIELD_TYPE_META,
+  fieldKeyFromLabel,
+  fieldTypeMeta,
+  renameFieldRefs,
+} from "./field-types";
+import { LaunchPath, type LaunchStep } from "./launch-path";
 
 interface Form {
   id: string;
@@ -62,25 +95,8 @@ interface RepeaterSubField {
   type: string;
 }
 
-const FIELD_TYPES: ReadonlyArray<{ value: string; label: string }> = [
-  { value: "SHORT_TEXT", label: "Short text" },
-  { value: "LONG_TEXT", label: "Long text" },
-  { value: "NUMBER", label: "Number" },
-  { value: "DATE", label: "Date" },
-  { value: "DATETIME", label: "Date & time" },
-  { value: "DROPDOWN", label: "Dropdown" },
-  { value: "MULTI_SELECT", label: "Multi-select" },
-  { value: "CHECKBOX", label: "Checkbox" },
-  { value: "FILE", label: "File" },
-  { value: "USER_PICKER", label: "User picker" },
-  { value: "REQUEST_LINK", label: "Request link" },
-  { value: "LOOKUP", label: "Lookup" },
-  { value: "SCORED_MATRIX", label: "Scored matrix" },
-  { value: "REPEATER", label: "Repeater" },
-  { value: "COMPUTED", label: "Computed" },
-  { value: "SECTION_HEADER", label: "Section header" },
-  { value: "SYSTEM_FIELD", label: "System field (read-only)" },
-];
+const FIELD_TYPES: ReadonlyArray<{ value: string; label: string }> =
+  FIELD_TYPE_META.map(({ value, label }) => ({ value, label }));
 
 function uniqueKey(fields: FieldDef[], base: string): string {
   let n = 1;
@@ -98,6 +114,20 @@ interface WorkflowOption {
   name: string;
   publishedVersionNumber: number | null;
 }
+
+type Snapshot = {
+  fields: FieldDef[];
+  perStepFieldState: Record<string, Record<string, FieldStateValue>>;
+};
+
+const snapshotOf = (s: Snapshot) =>
+  JSON.stringify({
+    fields: s.fields ?? [],
+    perStepFieldState: s.perStepFieldState ?? {},
+  });
+
+/** Fields an employee actually fills in (headings and lookups-only excluded). */
+const INPUT_EXCLUDED = new Set(["SECTION_HEADER", "SYSTEM_FIELD", "COMPUTED"]);
 
 export function FormBuilderClient({
   form,
@@ -117,12 +147,32 @@ export function FormBuilderClient({
   const [perStepFieldState, setPerStepFieldState] = useState<
     Record<string, Record<string, FieldStateValue>>
   >({});
+  const [saved, setSaved] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(
     form.workflowDefinition.id,
   );
+  const [tab, setTab] = useState<"editor" | "preview" | "settings">("editor");
+  const [dragKey, setDragKey] = useState<string | null>(null);
+  const [dragOverKey, setDragOverKey] = useState<string | null>(null);
+  const [selectedFieldKey, setSelectedFieldKey] = useState<string | null>(null);
+  /** Bumped when the author picks a field, so its editor starts fresh. */
+  const [selection, setSelection] = useState(0);
+  const selectField = (key: string | null) => {
+    setSelectedFieldKey(key);
+    setSelection((n) => n + 1);
+  };
+  const [paletteQuery, setPaletteQuery] = useState("");
+  /** Fields added in this session: their key follows the label until published. */
+  const [freshKeys, setFreshKeys] = useState<ReadonlySet<string>>(new Set());
+
+  // Form metadata edits
+  const [name, setName] = useState(form.name);
+  const [description, setDescription] = useState(form.description ?? "");
+  const [isActive, setIsActive] = useState(form.isActive);
+  const [refFormat, setRefFormat] = useState(form.referenceNumberFormat);
 
   async function changeWorkflow(nextId: string) {
     if (nextId === workflowDefinitionId) return;
@@ -137,7 +187,7 @@ export function FormBuilderClient({
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(
-          body.message || body.error || "Could not change workflow",
+          body.message || body.error || "Could not change the approval path",
         );
       }
       setWorkflowDefinitionId(nextId);
@@ -148,9 +198,6 @@ export function FormBuilderClient({
       setBusy(null);
     }
   }
-  const [tab, setTab] = useState<"editor" | "preview" | "settings">("editor");
-  const [dragKey, setDragKey] = useState<string | null>(null);
-  const [dragOverKey, setDragOverKey] = useState<string | null>(null);
 
   function reorderFields(srcKey: string, dstKey: string) {
     if (srcKey === dstKey) return;
@@ -162,13 +209,6 @@ export function FormBuilderClient({
     next.splice(dstIdx, 0, moved!);
     setFields(next.map((f, i) => ({ ...f, position: i + 1 })));
   }
-  const [selectedFieldKey, setSelectedFieldKey] = useState<string | null>(null);
-
-  // Form metadata edits
-  const [name, setName] = useState(form.name);
-  const [description, setDescription] = useState(form.description ?? "");
-  const [isActive, setIsActive] = useState(form.isActive);
-  const [refFormat, setRefFormat] = useState(form.referenceNumberFormat);
 
   useEffect(() => {
     let cancelled = false;
@@ -177,7 +217,7 @@ export function FormBuilderClient({
         const response = await fetch(
           `/api/workflow/admin/forms/${form.id}/draft`,
         );
-        if (!response.ok) throw new Error("Failed to load draft");
+        if (!response.ok) throw new Error("The form couldn't be loaded.");
         const body = (await response.json()) as {
           draft: {
             schemaJson: {
@@ -190,8 +230,16 @@ export function FormBuilderClient({
           };
         };
         if (!cancelled) {
-          setFields(body.draft.schemaJson.fields ?? []);
-          setPerStepFieldState(body.draft.schemaJson.perStepFieldState ?? {});
+          const loadedFields = body.draft.schemaJson.fields ?? [];
+          const loadedState = body.draft.schemaJson.perStepFieldState ?? {};
+          setFields(loadedFields);
+          setPerStepFieldState(loadedState);
+          setSaved(
+            snapshotOf({
+              fields: loadedFields,
+              perStepFieldState: loadedState,
+            }),
+          );
           setLoaded(true);
         }
       } catch (err) {
@@ -206,41 +254,224 @@ export function FormBuilderClient({
     };
   }, [form.id]);
 
+  const current = snapshotOf({ fields, perStepFieldState });
+  const dirty = loaded && current !== saved;
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+
+  const publishedSnapshot = useMemo(() => {
+    const schema = form.publishedVersion?.schemaJson as
+      Partial<Snapshot> | undefined;
+    return schema
+      ? snapshotOf({
+          fields: schema.fields ?? [],
+          perStepFieldState: schema.perStepFieldState ?? {},
+        })
+      : null;
+  }, [form.publishedVersion]);
+  const publishedKeys = useMemo(() => {
+    const schema = form.publishedVersion?.schemaJson as
+      Partial<Snapshot> | undefined;
+    return new Set((schema?.fields ?? []).map((f) => f.key));
+  }, [form.publishedVersion]);
+  const unpublishedChanges =
+    publishedSnapshot === null || current !== publishedSnapshot;
+
+  const workflow = workflows.find((w) => w.id === workflowDefinitionId) ?? {
+    id: workflowDefinitionId,
+    name: form.workflowDefinition.name,
+    publishedVersionNumber: null,
+  };
+  const inputFieldCount = fields.filter(
+    (f) => !INPUT_EXCLUDED.has(f.type),
+  ).length;
+  const duplicateKeys =
+    fields.length !== new Set(fields.map((f) => f.key)).size;
+  const unlabelled = fields.filter(
+    (f) => f.type !== "SECTION_HEADER" && !f.label.trim(),
+  ).length;
+  const optionless = fields.filter(
+    (f) =>
+      (f.type === "DROPDOWN" || f.type === "MULTI_SELECT") &&
+      !(
+        Array.isArray(f.config?.options) &&
+        (f.config?.options as unknown[]).length > 0
+      ),
+  );
+
+  const formProblems = [
+    inputFieldCount === 0 ? "Add at least one field employees fill in." : null,
+    duplicateKeys
+      ? "Two fields share the same key (Advanced → Field key)."
+      : null,
+    unlabelled ? `${unlabelled} field(s) have no label.` : null,
+    optionless.length
+      ? `“${optionless[0]!.label}” has no options to choose from.`
+      : null,
+  ].filter((p): p is string => p !== null);
+
+  const isLive =
+    !!form.publishedVersion &&
+    !!workflow.publishedVersionNumber &&
+    isActive &&
+    !unpublishedChanges &&
+    !dirty;
+
+  const steps: LaunchStep[] = [
+    {
+      id: "details",
+      title: "Details",
+      state: name.trim() ? (description.trim() ? "done" : "todo") : "warning",
+      detail: description.trim()
+        ? "Name and description shown in Browse forms."
+        : "Add a short description so employees pick the right form.",
+      action: description.trim()
+        ? undefined
+        : { label: "Add description", onClick: () => setTab("settings") },
+    },
+    {
+      id: "fields",
+      title: "Fields",
+      state:
+        formProblems.length === 0
+          ? "done"
+          : inputFieldCount === 0
+            ? "todo"
+            : "warning",
+      detail:
+        formProblems[0] ??
+        `${inputFieldCount} field${inputFieldCount === 1 ? "" : "s"} to fill in.`,
+      action:
+        tab !== "editor"
+          ? { label: "Edit fields", onClick: () => setTab("editor") }
+          : undefined,
+    },
+    {
+      id: "path",
+      title: "Approval path",
+      state: workflow.publishedVersionNumber ? "done" : "warning",
+      detail: workflow.publishedVersionNumber
+        ? `${workflow.name} (published).`
+        : `${workflow.name} isn't published, so requests can't be submitted yet.`,
+      action: {
+        label: workflow.publishedVersionNumber
+          ? "Open path"
+          : "Open and publish the path",
+        href: `/workflows/designer/${workflow.id}`,
+      },
+    },
+    {
+      id: "publish",
+      title: "Publish",
+      state: !form.publishedVersion
+        ? "todo"
+        : unpublishedChanges || dirty
+          ? "warning"
+          : isActive
+            ? "done"
+            : "warning",
+      detail: !form.publishedVersion
+        ? "Not published yet."
+        : !isActive
+          ? "Published, but the form is switched off in Settings."
+          : unpublishedChanges || dirty
+            ? `Changes not published yet. Live: v${form.publishedVersion.versionNumber}.`
+            : `Version ${form.publishedVersion.versionNumber} is live.`,
+    },
+  ];
+
   const selectedField = fields.find((f) => f.key === selectedFieldKey) ?? null;
 
   function addField(type: string) {
-    const baseKey = type.toLowerCase();
+    const meta = fieldTypeMeta(type);
+    const label = meta.label;
     const newField: FieldDef = {
-      key: uniqueKey(fields, baseKey),
-      label: FIELD_TYPES.find((t) => t.value === type)?.label ?? type,
+      key: uniqueKey(fields, fieldKeyFromLabel(label)),
+      label,
       type,
       required: false,
       position: fields.length + 1,
     };
     setFields([...fields, newField]);
-    setSelectedFieldKey(newField.key);
+    setFreshKeys(new Set([...freshKeys, newField.key]));
+    selectField(newField.key);
+  }
+
+  /** Rename a key and every place that refers to it. */
+  function renameKey(list: FieldDef[], from: string, to: string): FieldDef[] {
+    return list.map((f) => {
+      const renamed = f.key === from ? { ...f, key: to } : f;
+      return {
+        ...renamed,
+        visibilityRules: renameFieldRefs(renamed.visibilityRules, from, to),
+        computedFormula: renameFieldRefs(renamed.computedFormula, from, to),
+      };
+    });
   }
 
   function updateField(originalKey: string, patch: Partial<FieldDef>) {
-    setFields(
-      fields.map((f) => {
-        if (f.key !== originalKey) return f;
-        const next = { ...f, ...patch };
-        return next;
-      }),
-    );
-    if (patch.key && patch.key !== originalKey) {
-      setSelectedFieldKey(patch.key);
+    let nextKey = patch.key ?? originalKey;
+    // A brand-new field's key follows its label, so nobody has to invent one.
+    if (
+      patch.label !== undefined &&
+      patch.key === undefined &&
+      freshKeys.has(originalKey) &&
+      !publishedKeys.has(originalKey)
+    ) {
+      const others = fields.filter((f) => f.key !== originalKey);
+      nextKey = uniqueKey(others, fieldKeyFromLabel(patch.label));
     }
+    let next = fields.map((f) =>
+      f.key === originalKey ? { ...f, ...patch, key: originalKey } : f,
+    );
+    if (nextKey !== originalKey) {
+      if (fields.some((f) => f.key === nextKey && f.key !== originalKey)) {
+        setError(`Another field already uses the key “${nextKey}”.`);
+        return;
+      }
+      next = renameKey(next, originalKey, nextKey);
+      const nextState: Record<string, Record<string, FieldStateValue>> = {};
+      for (const [step, byField] of Object.entries(perStepFieldState)) {
+        const copy = { ...byField };
+        if (originalKey in copy) {
+          copy[nextKey] = copy[originalKey]!;
+          delete copy[originalKey];
+        }
+        nextState[step] = copy;
+      }
+      setPerStepFieldState(nextState);
+      if (freshKeys.has(originalKey)) {
+        const fresh = new Set(freshKeys);
+        fresh.delete(originalKey);
+        fresh.add(nextKey);
+        setFreshKeys(fresh);
+      }
+      setSelectedFieldKey(nextKey);
+    }
+    setFields(next);
   }
 
-  function deleteField(key: string) {
+  async function deleteField(field: FieldDef) {
+    if (
+      publishedKeys.has(field.key) &&
+      !(await confirm({
+        title: `Remove “${field.label || field.key}”?`,
+        message:
+          "It disappears from new requests once you publish. Requests already submitted keep their answers.",
+        confirmLabel: "Remove",
+      }))
+    )
+      return;
     setFields(
       fields
-        .filter((f) => f.key !== key)
+        .filter((f) => f.key !== field.key)
         .map((f, i) => ({ ...f, position: i + 1 })),
     );
-    if (selectedFieldKey === key) setSelectedFieldKey(null);
+    if (selectedFieldKey === field.key) setSelectedFieldKey(null);
   }
 
   function moveField(key: string, dir: -1 | 1) {
@@ -249,11 +480,11 @@ export function FormBuilderClient({
     const target = idx + dir;
     if (target < 0 || target >= fields.length) return;
     const next = [...fields];
-    [next[idx], next[target]] = [next[target], next[idx]];
+    [next[idx], next[target]] = [next[target]!, next[idx]!];
     setFields(next.map((f, i) => ({ ...f, position: i + 1 })));
   }
 
-  async function saveDraft() {
+  async function saveDraft(): Promise<boolean> {
     setBusy("save");
     setError(null);
     try {
@@ -267,45 +498,51 @@ export function FormBuilderClient({
       );
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
-        throw new Error(body.message || body.error || "Save failed");
+        throw new Error(
+          body.message || body.error || "The draft couldn't be saved.",
+        );
       }
+      setSaved(current);
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+      return false;
     } finally {
       setBusy(null);
     }
   }
 
   async function publish() {
+    const pathWarning = workflow.publishedVersionNumber
+      ? ""
+      : ` Note: the approval path “${workflow.name}” isn't published yet, so employees can't submit until it is.`;
     if (
       !(await confirm({
-        title: "Publish form draft?",
+        title: form.publishedVersion
+          ? "Publish these changes?"
+          : "Publish this form?",
         message:
-          "Once published, this version is immutable and used for new submissions. In-flight requests stay on their original version.",
+          "New requests use this version straight away. Requests already submitted keep the version they started with." +
+          pathWarning,
         confirmLabel: "Publish",
       }))
     )
       return;
+    if (!(await saveDraft())) return;
     setBusy("publish");
     setError(null);
     try {
-      // Save first to ensure the latest draft is committed
-      await fetch(`/api/workflow/admin/forms/${form.id}/draft`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fields, perStepFieldState }),
-      });
-
       const response = await fetch(
         `/api/workflow/admin/forms/${form.id}/publish`,
-        {
-          method: "POST",
-        },
+        { method: "POST" },
       );
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
-        throw new Error(body.message || body.error || "Publish failed");
+        throw new Error(
+          body.message || body.error || "The form couldn't be published.",
+        );
       }
+      setFreshKeys(new Set());
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -343,97 +580,101 @@ export function FormBuilderClient({
     }
   }
 
-  if (!loaded) return <p className="text-stone text-sm">Loading draft…</p>;
+  if (!loaded)
+    return (
+      <p className="text-stone flex items-center gap-2 text-sm">
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading the form…
+      </p>
+    );
+
+  const query = paletteQuery.trim().toLowerCase();
+  const paletteMatches = FIELD_TYPE_META.filter(
+    (meta) =>
+      !query ||
+      meta.label.toLowerCase().includes(query) ||
+      meta.hint.toLowerCase().includes(query),
+  );
+  const publishBlocked = formProblems.length > 0 || (form.isBuiltIn ?? false);
+  const nothingToPublish =
+    !!form.publishedVersion && !unpublishedChanges && !dirty;
 
   return (
     <div className="space-y-5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold">{form.name}</h1>
-          <div className="text-stone mt-1 flex flex-wrap items-center gap-2 text-sm">
-            <span>Workflow:</span>
-            <select
-              value={workflowDefinitionId}
-              onChange={(e) => changeWorkflow(e.target.value)}
-              disabled={busy === "workflow"}
-              className="border-hairline-strong bg-canvas text-body-sm text-ink rounded-md border px-2 py-1 disabled:opacity-50"
-            >
-              {workflows.map((w) => (
-                <option key={w.id} value={w.id}>
-                  {w.name}
-                  {w.publishedVersionNumber
-                    ? ` (v${w.publishedVersionNumber})`
-                    : " (draft only)"}
-                </option>
-              ))}
-            </select>
-            <span className="text-stone">
-              ·{" "}
-              {form.publishedVersion
-                ? `Form published v${form.publishedVersion.versionNumber}`
-                : "Form not yet published"}
-            </span>
-            {busy === "workflow" ? (
-              <span className="text-caption text-stone">· saving…</span>
-            ) : null}
-          </div>
-          <details className="text-caption text-stone mt-2 max-w-xl">
-            <summary className="text-charcoal hover:text-ink cursor-pointer select-none">
-              What happens when I change the workflow?
-            </summary>
-            <ul className="border-hairline-soft bg-surface-soft mt-2 space-y-1 rounded-md border p-3 leading-relaxed">
-              <li>
-                <span className="text-ink font-medium">
-                  Live requests are not affected.
-                </span>{" "}
-                Each request is pinned to the workflow version it was submitted
-                on (PRD §5.2 immutability).
-              </li>
-              <li>
-                <span className="text-ink font-medium">New submissions</span>{" "}
-                after the change use the newly-selected workflow.
-              </li>
-              <li>
-                <span className="text-ink font-medium">Reversible</span> — you
-                can pick the original workflow again at any time from this
-                dropdown.
-              </li>
-            </ul>
-          </details>
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-stone text-xs font-semibold tracking-[0.06em] uppercase">
+            Request type
+          </p>
+          <h1 className="text-ink mt-1 text-2xl font-semibold">
+            {name || form.name}
+          </h1>
+          {description ? (
+            <p className="text-stone mt-1 max-w-2xl text-sm">{description}</p>
+          ) : null}
+          <p className="text-stone mt-2 text-xs">
+            {dirty ? (
+              <span className="text-yellow-dark inline-flex items-center gap-1.5 font-medium">
+                <span className="bg-yellow-dark h-1.5 w-1.5 rounded-full" />{" "}
+                Unsaved changes
+              </span>
+            ) : (
+              "All changes saved as a draft"
+            )}
+            {busy === "workflow" ? " · Changing the approval path…" : ""}
+          </p>
         </div>
-        <div className="flex gap-2">
-          <a
+        <div className="flex flex-wrap gap-2">
+          <Link
             href={`/workflows/admin/forms/${form.id}/notifications`}
-            className="border-hairline-strong hover:bg-surface rounded-md border px-3 py-1.5 text-sm font-medium"
+            className="border-hairline-strong hover:bg-surface inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium"
           >
-            Notifications
-          </a>
+            <Bell className="h-4 w-4" /> Notifications
+          </Link>
           <button
             type="button"
             onClick={() => setAiOpen((v) => !v)}
-            className="border-hairline-strong hover:bg-surface rounded-md border px-3 py-1.5 text-sm font-medium"
+            className="border-hairline-strong hover:bg-surface inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium"
           >
-            Draft with AI
+            <Sparkles className="h-4 w-4" /> Draft with AI
           </button>
           <button
-            onClick={saveDraft}
-            disabled={!!busy}
-            className="border-hairline-strong hover:bg-surface rounded-md border px-3 py-1.5 text-sm font-medium disabled:opacity-50"
+            type="button"
+            onClick={() => void saveDraft()}
+            disabled={!!busy || !dirty}
+            className="border-hairline-strong hover:bg-surface rounded-lg border px-3 py-2 text-sm font-medium disabled:opacity-50"
           >
             {busy === "save" ? "Saving…" : "Save draft"}
           </button>
           <button
-            onClick={publish}
-            disabled={!!busy || fields.length === 0}
-            className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+            type="button"
+            onClick={() => void publish()}
+            disabled={!!busy || publishBlocked || nothingToPublish}
+            title={
+              publishBlocked
+                ? (formProblems[0] ?? "Built-in forms can't be changed.")
+                : nothingToPublish
+                  ? "Everything is already published."
+                  : undefined
+            }
+            className="bg-ink text-canvas rounded-lg px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {busy === "publish" ? "Publishing…" : "Publish"}
           </button>
         </div>
-      </div>
+      </header>
+
+      <LaunchPath
+        steps={steps}
+        live={isLive}
+        formId={form.id}
+        formName={name || form.name}
+      />
 
       {error ? (
-        <div className="bg-brand-red/40 text-coral-dark rounded-md border border-(--color-brand-red-dark) px-3 py-2 text-sm">
+        <div
+          role="alert"
+          className="bg-blush-light text-coral-dark rounded-lg px-4 py-3 text-sm"
+        >
           {error}
         </div>
       ) : null}
@@ -463,180 +704,302 @@ export function FormBuilderClient({
         />
       ) : null}
 
-      <div className="border-hairline flex gap-1 border-b">
-        <TabButton active={tab === "editor"} onClick={() => setTab("editor")}>
-          Editor
-        </TabButton>
-        <TabButton active={tab === "preview"} onClick={() => setTab("preview")}>
-          Preview
-        </TabButton>
-        <TabButton
-          active={tab === "settings"}
-          onClick={() => setTab("settings")}
-        >
-          Settings
-        </TabButton>
+      <div
+        role="tablist"
+        aria-label="Form sections"
+        className="border-hairline-soft flex gap-1 border-b"
+      >
+        {(
+          [
+            ["editor", "Fields"],
+            ["preview", "Preview as employee"],
+            ["settings", "Settings"],
+          ] as const
+        ).map(([key, label]) => (
+          <TabButton key={key} active={tab === key} onClick={() => setTab(key)}>
+            {label}
+          </TabButton>
+        ))}
       </div>
 
       {tab === "editor" ? (
-        <div className="grid gap-4 lg:grid-cols-12">
-          {/* Left: palette + form metadata */}
-          <aside className="lg:col-span-3">
-            <div className="border-hairline bg-canvas rounded-xl border p-4">
-              <h3 className="text-body-sm-medium text-ink">Add field</h3>
-              <p className="text-caption text-stone mt-0.5">
-                Click a type to append it.
-              </p>
-              <div className="mt-3 space-y-1">
-                {FIELD_TYPES.map((t) => (
-                  <button
-                    key={t.value}
-                    onClick={() => addField(t.value)}
-                    className="border-hairline-soft bg-canvas text-body-sm text-charcoal hover:border-hairline-strong hover:bg-surface block w-full rounded-md border px-2 py-1.5 text-left transition"
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
+        <div className="grid items-start gap-4 lg:grid-cols-[260px_minmax(0,1fr)_360px]">
+          {/* Left: grouped field palette */}
+          <aside className="border-hairline bg-canvas rounded-xl border p-3 lg:sticky lg:top-4">
+            <h3 className="text-ink px-1 text-sm font-semibold">Add a field</h3>
+            <div className="relative mt-2">
+              <Search className="text-stone absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2" />
+              <Input
+                value={paletteQuery}
+                onChange={(event) => setPaletteQuery(event.target.value)}
+                placeholder="Search field types"
+                aria-label="Search field types"
+                className="h-8 pl-8 text-xs"
+              />
+            </div>
+            <div className="mt-2 max-h-[calc(100vh-12rem)] space-y-3 overflow-y-auto pr-1">
+              {FIELD_TYPE_GROUPS.map((group) => {
+                const items = paletteMatches.filter(
+                  (meta) => meta.group === group,
+                );
+                if (items.length === 0) return null;
+                return (
+                  <div key={group}>
+                    <p className="text-stone px-1 pb-1 text-[11px] font-semibold tracking-[0.05em] uppercase">
+                      {group}
+                    </p>
+                    <div className="space-y-0.5">
+                      {items.map((meta) => {
+                        const Icon = meta.icon;
+                        return (
+                          <button
+                            key={meta.value}
+                            type="button"
+                            onClick={() => addField(meta.value)}
+                            className="hover:bg-surface flex w-full items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-left transition-colors"
+                          >
+                            <span className="border-hairline-soft bg-canvas text-ink flex h-7 w-7 shrink-0 items-center justify-center rounded-md border">
+                              <Icon className="h-3.5 w-3.5" strokeWidth={1.9} />
+                            </span>
+                            <span className="min-w-0">
+                              <span className="text-ink block text-xs font-medium">
+                                {meta.label}
+                              </span>
+                              <span className="text-stone block truncate text-[11px]">
+                                {meta.hint}
+                              </span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+              {paletteMatches.length === 0 ? (
+                <p className="text-stone px-1 py-4 text-center text-xs">
+                  No field type matches.
+                </p>
+              ) : null}
             </div>
           </aside>
 
-          {/* Middle: fields list */}
-          <section className="border-hairline bg-canvas rounded-xl border p-4 lg:col-span-5">
+          {/* Middle: the form as employees will fill it */}
+          <section className="border-hairline bg-canvas rounded-xl border p-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-body-sm-medium text-ink">
-                Fields
-                <span className="text-caption text-stone ml-2">
+              <h3 className="text-ink text-sm font-semibold">
+                Fields{" "}
+                <span className="text-stone ml-1 font-normal">
                   ({fields.length})
                 </span>
               </h3>
-              <span className="text-caption text-stone">
-                Drag <span aria-hidden>⋮⋮</span> to reorder
-              </span>
+              {fields.length > 1 ? (
+                <span className="text-stone text-xs">Drag to reorder</span>
+              ) : null}
             </div>
             {fields.length === 0 ? (
-              <p className="text-body-sm text-stone mt-6 text-center">
-                Add a field from the palette on the left to start building.
-              </p>
+              <div className="border-hairline-strong mt-4 rounded-xl border border-dashed px-6 py-12 text-center">
+                <p className="text-ink text-sm font-semibold">No fields yet</p>
+                <p className="text-stone mx-auto mt-1 max-w-sm text-xs leading-5">
+                  Pick a field type on the left, or use “Draft with AI” to
+                  describe the form in a sentence.
+                </p>
+              </div>
             ) : (
               <ol className="mt-3 space-y-1.5">
-                {fields.map((f, i) => (
-                  <li
-                    key={f.key}
-                    draggable
-                    onDragStart={(e) => {
-                      setDragKey(f.key);
-                      e.dataTransfer.effectAllowed = "move";
-                    }}
-                    onDragEnter={() => {
-                      if (dragKey && dragKey !== f.key) setDragOverKey(f.key);
-                    }}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      e.dataTransfer.dropEffect = "move";
-                    }}
-                    onDragLeave={() => {
-                      if (dragOverKey === f.key) setDragOverKey(null);
-                    }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      if (dragKey) reorderFields(dragKey, f.key);
-                      setDragKey(null);
-                      setDragOverKey(null);
-                    }}
-                    onDragEnd={() => {
-                      setDragKey(null);
-                      setDragOverKey(null);
-                    }}
-                    className={`group text-body-sm flex items-center gap-2 rounded-lg border px-2.5 py-2 transition ${
-                      selectedFieldKey === f.key
-                        ? "border-brand-yellow-deep bg-yellow-light"
-                        : "border-hairline-soft hover:border-hairline-strong"
-                    } ${dragKey === f.key ? "opacity-40" : ""} ${
-                      dragOverKey === f.key
-                        ? "border-brand-blue ring-brand-blue/30 ring-2"
-                        : ""
-                    }`}
-                  >
-                    <span
-                      className="text-stone hover:text-ink cursor-grab px-1 select-none active:cursor-grabbing"
-                      title="Drag to reorder"
-                      aria-hidden
+                {fields.map((f, i) => {
+                  const meta = fieldTypeMeta(f.type);
+                  const Icon = meta.icon;
+                  const selected = selectedFieldKey === f.key;
+                  const hasLogic = !!f.visibilityRules;
+                  if (f.type === "SECTION_HEADER") {
+                    return (
+                      <li
+                        key={f.key}
+                        draggable
+                        onDragStart={(e) => {
+                          setDragKey(f.key);
+                          e.dataTransfer.effectAllowed = "move";
+                        }}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          if (dragKey && dragKey !== f.key)
+                            setDragOverKey(f.key);
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          if (dragKey) reorderFields(dragKey, f.key);
+                          setDragKey(null);
+                          setDragOverKey(null);
+                        }}
+                        onDragEnd={() => {
+                          setDragKey(null);
+                          setDragOverKey(null);
+                        }}
+                        className={cn(
+                          "group flex items-center gap-2 rounded-lg px-1 pt-3 pb-1",
+                          dragOverKey === f.key && "ring-ink/20 ring-2",
+                        )}
+                      >
+                        <GripVertical
+                          className="text-stone h-4 w-4 cursor-grab"
+                          aria-hidden
+                        />
+                        <button
+                          type="button"
+                          onClick={() => selectField(f.key)}
+                          className={cn(
+                            "text-ink flex-1 truncate border-b pb-1 text-left text-xs font-semibold tracking-[0.05em] uppercase",
+                            selected ? "border-ink" : "border-hairline",
+                          )}
+                        >
+                          {f.label || "Untitled section"}
+                        </button>
+                        <FieldRowActions
+                          index={i}
+                          count={fields.length}
+                          onMove={(dir) => moveField(f.key, dir)}
+                          onDelete={() => void deleteField(f)}
+                        />
+                      </li>
+                    );
+                  }
+                  return (
+                    <li
+                      key={f.key}
+                      draggable
+                      onDragStart={(e) => {
+                        setDragKey(f.key);
+                        e.dataTransfer.effectAllowed = "move";
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                        if (dragKey && dragKey !== f.key) setDragOverKey(f.key);
+                      }}
+                      onDragLeave={() => {
+                        if (dragOverKey === f.key) setDragOverKey(null);
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        if (dragKey) reorderFields(dragKey, f.key);
+                        setDragKey(null);
+                        setDragOverKey(null);
+                      }}
+                      onDragEnd={() => {
+                        setDragKey(null);
+                        setDragOverKey(null);
+                      }}
+                      className={cn(
+                        "group flex items-center gap-2 rounded-lg border px-2 py-2 transition",
+                        selected
+                          ? "border-ink bg-surface/60"
+                          : "border-hairline-soft hover:border-hairline-strong",
+                        dragKey === f.key && "opacity-40",
+                        dragOverKey === f.key && "ring-ink/20 ring-2",
+                      )}
                     >
-                      ⋮⋮
-                    </span>
-                    <span className="text-caption text-stone font-mono">
-                      {i + 1}.
-                    </span>
-                    <button
-                      onClick={() => setSelectedFieldKey(f.key)}
-                      className="min-w-0 flex-1 truncate text-left"
-                    >
-                      <span className="text-ink font-medium">{f.label}</span>{" "}
-                      <span className="text-stone">· {f.type}</span>{" "}
-                      <span className="text-caption text-muted font-mono">
-                        {f.key}
-                      </span>
-                      {f.required ? (
-                        <span className="bg-coral-light text-coral-dark ml-1.5 inline-flex h-4 items-center rounded-full px-1.5 text-[10px] font-semibold">
-                          required
+                      <GripVertical
+                        className="text-stone h-4 w-4 shrink-0 cursor-grab"
+                        aria-hidden
+                      />
+                      <button
+                        type="button"
+                        onClick={() => selectField(f.key)}
+                        className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
+                      >
+                        <span className="bg-surface text-ink flex h-8 w-8 shrink-0 items-center justify-center rounded-md">
+                          <Icon className="h-4 w-4" strokeWidth={1.9} />
                         </span>
-                      ) : null}
-                    </button>
-                    <div className="flex shrink-0 items-center gap-0.5">
-                      <button
-                        onClick={() => moveField(f.key, -1)}
-                        disabled={i === 0}
-                        aria-label="Move up"
-                        className="text-stone hover:bg-canvas hover:text-ink rounded p-1 transition disabled:opacity-30"
-                      >
-                        ↑
+                        <span className="min-w-0 flex-1">
+                          <span className="text-ink block truncate text-sm font-medium">
+                            {f.label || (
+                              <span className="text-yellow-dark">No label</span>
+                            )}
+                            {f.required ? (
+                              <span className="text-coral-dark ml-0.5">*</span>
+                            ) : null}
+                          </span>
+                          <span className="text-stone flex flex-wrap items-center gap-x-2 text-xs">
+                            {meta.label}
+                            {f.visibility === "HIDDEN" ? (
+                              <span className="inline-flex items-center gap-1">
+                                <EyeOff className="h-3 w-3" /> Hidden
+                              </span>
+                            ) : f.visibility === "ADMINISTRATIVE" ? (
+                              <span className="inline-flex items-center gap-1">
+                                <ShieldCheck className="h-3 w-3" /> Reviewers
+                                only
+                              </span>
+                            ) : null}
+                            {hasLogic ? (
+                              <span className="inline-flex items-center gap-1">
+                                <GitBranch className="h-3 w-3" /> Shown when…
+                              </span>
+                            ) : null}
+                          </span>
+                        </span>
                       </button>
-                      <button
-                        onClick={() => moveField(f.key, 1)}
-                        disabled={i === fields.length - 1}
-                        aria-label="Move down"
-                        className="text-stone hover:bg-canvas hover:text-ink rounded p-1 transition disabled:opacity-30"
-                      >
-                        ↓
-                      </button>
-                      <button
-                        onClick={() => deleteField(f.key)}
-                        aria-label="Delete field"
-                        className="text-stone hover:bg-canvas hover:text-coral-dark rounded p-1 transition"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  </li>
-                ))}
+                      <FieldRowActions
+                        index={i}
+                        count={fields.length}
+                        onMove={(dir) => moveField(f.key, dir)}
+                        onDelete={() => void deleteField(f)}
+                      />
+                    </li>
+                  );
+                })}
               </ol>
             )}
           </section>
 
-          {/* Right: field config */}
-          <aside className="border-hairline bg-canvas rounded-xl border p-4 lg:col-span-4">
-            <h3 className="text-sm font-semibold">Field properties</h3>
+          {/* Right: field settings */}
+          <aside className="border-hairline bg-canvas rounded-xl border p-4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto">
             {selectedField ? (
-              <FieldEditor
-                field={selectedField}
-                onChange={(patch) => updateField(selectedField.key, patch)}
-                fieldList={fields}
-                siblingForms={siblingForms}
-              />
+              <>
+                <div className="flex items-center gap-2">
+                  {(() => {
+                    const Icon = fieldTypeMeta(selectedField.type).icon;
+                    return <Icon className="text-stone h-4 w-4" />;
+                  })()}
+                  <h3 className="text-ink text-sm font-semibold">
+                    {fieldTypeMeta(selectedField.type).label}
+                  </h3>
+                </div>
+                <FieldEditor
+                  key={selection}
+                  field={selectedField}
+                  onChange={(patch) => updateField(selectedField.key, patch)}
+                  fieldList={fields}
+                  siblingForms={siblingForms}
+                />
+              </>
             ) : (
-              <p className="text-stone mt-2 text-xs">
-                Select a field to edit its properties.
-              </p>
+              <div className="py-6 text-center">
+                <Eye className="text-stone mx-auto h-5 w-5" />
+                <p className="text-ink mt-2 text-sm font-semibold">
+                  Select a field
+                </p>
+                <p className="text-stone mt-1 text-xs leading-5">
+                  Change its label, make it required, or show it only when
+                  another answer matches.
+                </p>
+              </div>
             )}
           </aside>
         </div>
       ) : tab === "preview" ? (
-        <div className="border-hairline bg-canvas rounded-xl border p-5">
-          <p className="text-caption text-stone">
-            Submitter view — read-only preview.
+        <div className="border-hairline bg-canvas mx-auto max-w-3xl rounded-xl border p-6">
+          <p className="text-stone text-xs">
+            What an employee sees when filling it in (read-only).
           </p>
-          <div className="mt-3">
+          <h2 className="text-ink mt-3 text-xl font-semibold">
+            {name || form.name}
+          </h2>
+          {description ? (
+            <p className="text-stone mt-1 text-sm">{description}</p>
+          ) : null}
+          <div className="mt-5">
             <FormRenderer
               schema={{ fields: fields as never }}
               values={{}}
@@ -662,8 +1025,55 @@ export function FormBuilderClient({
           versionCount={form._count?.versions ?? 0}
           onSave={saveMetadata}
           busy={busy === "metadata"}
+          workflows={workflows}
+          workflowId={workflowDefinitionId}
+          onChangeWorkflow={(id) => void changeWorkflow(id)}
+          workflowBusy={busy === "workflow"}
         />
       )}
+    </div>
+  );
+}
+
+function FieldRowActions({
+  index,
+  count,
+  onMove,
+  onDelete,
+}: {
+  index: number;
+  count: number;
+  onMove: (dir: -1 | 1) => void;
+  onDelete: () => void;
+}) {
+  return (
+    <div className="flex shrink-0 items-center gap-0.5 opacity-60 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+      <button
+        type="button"
+        onClick={() => onMove(-1)}
+        disabled={index === 0}
+        aria-label="Move up"
+        className="text-stone hover:text-ink rounded p-1 disabled:opacity-30"
+      >
+        <ArrowUp className="h-3.5 w-3.5" />
+      </button>
+      <button
+        type="button"
+        onClick={() => onMove(1)}
+        disabled={index === count - 1}
+        aria-label="Move down"
+        className="text-stone hover:text-ink rounded p-1 disabled:opacity-30"
+      >
+        <ArrowDown className="h-3.5 w-3.5" />
+      </button>
+      <button
+        type="button"
+        onClick={onDelete}
+        aria-label="Remove field"
+        className="text-stone hover:text-coral-dark rounded p-1"
+      >
+        <Trash2 className="h-3.5 w-3.5" />
+      </button>
     </div>
   );
 }
@@ -684,6 +1094,10 @@ function SettingsTab({
   versionCount,
   onSave,
   busy,
+  workflows,
+  workflowId,
+  onChangeWorkflow,
+  workflowBusy,
 }: {
   name: string;
   setName: (v: string) => void;
@@ -700,11 +1114,57 @@ function SettingsTab({
   versionCount: number;
   onSave: (overrides?: { isActive?: boolean }) => Promise<void> | void;
   busy: boolean;
+  workflows: WorkflowOption[];
+  workflowId: string;
+  onChangeWorkflow: (id: string) => void;
+  workflowBusy: boolean;
 }) {
+  const chosen = workflows.find((w) => w.id === workflowId);
   return (
     <div className="grid gap-4 lg:grid-cols-3">
       {/* Left: editable settings (2 cols) */}
       <div className="space-y-4 lg:col-span-2">
+        <div className="border-hairline bg-canvas rounded-xl border p-5">
+          <h2 className="text-h5 text-ink">Approval path</h2>
+          <p className="text-caption text-stone mt-0.5">
+            The workflow every new request of this type follows. Requests
+            already submitted keep the path they started on.
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="min-w-64 flex-1">
+              <Select
+                value={workflowId}
+                onValueChange={onChangeWorkflow}
+                disabled={workflowBusy || isBuiltIn}
+              >
+                <SelectTrigger className="h-10">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {workflows.map((w) => (
+                    <SelectItem key={w.id} value={w.id}>
+                      {w.name}
+                      {w.publishedVersionNumber ? "" : " · not published"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Link
+              href={`/workflows/designer/${workflowId}`}
+              className="border-hairline-strong hover:bg-surface rounded-lg border px-3 py-2 text-sm font-medium"
+            >
+              Open path
+            </Link>
+          </div>
+          {chosen && !chosen.publishedVersionNumber ? (
+            <p className="text-yellow-dark mt-2 text-xs">
+              This path isn&apos;t published, so employees can&apos;t submit
+              yet.
+            </p>
+          ) : null}
+        </div>
+
         <div className="border-hairline bg-canvas rounded-xl border p-5">
           <h2 className="text-h5 text-ink">General</h2>
           <p className="text-caption text-stone mt-0.5">
@@ -742,9 +1202,13 @@ function SettingsTab({
                 className="border-hairline-strong bg-canvas text-body-md text-ink disabled:bg-surface disabled:text-stone mt-1 w-full rounded-md border px-3 py-2 font-mono"
               />
               <span className="text-caption text-stone mt-1 block">
-                Available tokens: <code>{"{YYYY}"}</code>, <code>{"{MM}"}</code>
-                , <code>{"{seq:04}"}</code>. Reference numbers are immutable for
-                the request lifetime.
+                Example:{" "}
+                <span className="text-ink font-mono">
+                  {exampleReference(refFormat)}
+                </span>
+                {" · "}Tokens: <code>{"{YYYY}"}</code>, <code>{"{YY}"}</code>,{" "}
+                <code>{"{MM}"}</code>, <code>{"{DD}"}</code>,{" "}
+                <code>{"{seq:04}"}</code>. A request keeps its number for life.
               </span>
             </label>
           </div>
@@ -895,10 +1359,13 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`-mb-px border-b-2 px-3 py-1.5 text-sm font-medium ${
+      type="button"
+      role="tab"
+      aria-selected={active}
+      className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium transition-colors ${
         active
-          ? "border-blue-500 text-blue-600"
-          : "text-stone hover:text-charcoal border-transparent"
+          ? "border-ink text-ink"
+          : "text-stone hover:text-ink border-transparent"
       }`}
     >
       {children}
@@ -928,17 +1395,13 @@ function FieldEditor({
   }
 
   return (
-    <div className="text-caption mt-2 space-y-3">
+    <div className="text-caption mt-3 space-y-3">
       <label className="block">
-        <span className="text-stone">Key</span>
-        <input
-          value={field.key}
-          onChange={(e) => onChange({ key: e.target.value })}
-          className="border-hairline-strong bg-canvas text-body-sm text-ink mt-1 w-full rounded-md border px-2 py-1.5 font-mono"
-        />
-      </label>
-      <label className="block">
-        <span className="text-stone">Label</span>
+        <span className="text-stone">
+          {field.type === "SECTION_HEADER"
+            ? "Section title"
+            : "Question / label"}
+        </span>
         <input
           value={field.label}
           onChange={(e) => onChange({ label: e.target.value })}
@@ -1128,8 +1591,70 @@ function FieldEditor({
         onChange={onChange}
         fieldList={fieldList}
       />
+
+      <FieldKeyEditor
+        key={field.key}
+        fieldKey={field.key}
+        onRename={(key) => onChange({ key })}
+      />
     </div>
   );
+}
+
+/** The technical key, tucked away: renaming it updates every reference. */
+function FieldKeyEditor({
+  fieldKey,
+  onRename,
+}: {
+  fieldKey: string;
+  onRename: (key: string) => void;
+}) {
+  const [draft, setDraft] = useState(fieldKey);
+  return (
+    <details className="group border-hairline-soft border-t pt-3">
+      <summary className="text-stone hover:text-ink cursor-pointer text-xs font-medium select-none">
+        Advanced
+      </summary>
+      <label className="mt-2 block">
+        <span className="text-stone">Field key</span>
+        <div className="mt-1 flex gap-2">
+          <input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            className="border-hairline-strong bg-canvas text-body-sm text-ink w-full rounded-md border px-2 py-1.5 font-mono"
+          />
+          <button
+            type="button"
+            disabled={!draft.trim() || fieldKeyFromLabel(draft) === fieldKey}
+            onClick={() => {
+              const clean = fieldKeyFromLabel(draft);
+              setDraft(clean);
+              onRename(clean);
+            }}
+            className="border-hairline-strong hover:bg-surface rounded-md border px-2.5 text-xs font-medium disabled:opacity-40"
+          >
+            Rename
+          </button>
+        </div>
+        <span className="text-stone mt-1 block">
+          Used by reports, conditions and the approval path. Conditions and
+          field visibility update automatically.
+        </span>
+      </label>
+    </details>
+  );
+}
+
+function exampleReference(format: string): string {
+  const now = new Date();
+  const pad = (n: number, w = 2) => String(n).padStart(w, "0");
+  return format
+    .replace(/\{YYYY\}/g, String(now.getFullYear()))
+    .replace(/\{YY\}/g, pad(now.getFullYear() % 100))
+    .replace(/\{MM\}/g, pad(now.getMonth() + 1))
+    .replace(/\{DD\}/g, pad(now.getDate()))
+    .replace(/\{seq:0?(\d+)\}/g, (_m, width: string) => pad(1, Number(width)))
+    .replace(/\{seq\}/g, "1");
 }
 
 // ===========================================================================

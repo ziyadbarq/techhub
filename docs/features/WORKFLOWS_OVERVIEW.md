@@ -27,6 +27,13 @@ See [roadmap/workflow-engine/](../../roadmap/workflow-engine/) for the original 
 
 DI wiring lives at [src/di/modules/workflow.module.ts](../../src/di/modules/workflow.module.ts) (CORE tier, gated by feature flag).
 
+## Building a request type (admin journey)
+
+1. **New request type** (`/workflows/admin/forms/new`): name, description, and the approval path: a new path from a template (line manager; manager then a team; two approvals) or an existing workflow. A new path is created with the form, so nobody has to build the workflow first.
+2. **Form builder** (`/workflows/admin/forms/[id]`): a launch bar shows Details → Fields → Approval path → Publish, what is missing, and when the request type is live. Field types are grouped with icons; a new field's key follows its label until published, and renaming a key updates conditions, formulas and per-step field state.
+3. **Workflow builder** (`/workflows/designer/[id]`): the path reads top to bottom (approved → next step, rejected → back to the requester, no next step → completed). "Before you publish" lists problems and blocks publishing until fixed. Pure graph helpers live in `src/lib/workflows/builder/`.
+4. A form is offered to employees (Browse forms, submit page) only when the form **and** its approval path are published; the engine refuses submissions against an unpublished path.
+
 ## Three-field state model
 
 Every `Request` is uniquely described at any instant by three orthogonal columns:

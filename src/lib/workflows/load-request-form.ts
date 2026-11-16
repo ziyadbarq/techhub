@@ -19,6 +19,8 @@ export async function loadRequestFormData(formId: string) {
     where: {
       id: formId,
       isActive: true,
+      // Same rule as Browse forms: no published approval path, no submission.
+      workflowDefinition: { publishedVersionId: { not: null } },
     },
     include: {
       publishedVersion: { select: { schemaJson: true, versionNumber: true } },

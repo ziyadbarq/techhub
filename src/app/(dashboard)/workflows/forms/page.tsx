@@ -16,7 +16,13 @@ export default async function WorkflowFormsPage() {
   await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT);
 
   const forms = await prisma.form.findMany({
-    where: { isActive: true, publishedVersionId: { not: null } },
+    // A form whose approval path isn't published can't be submitted (the
+    // engine refuses it), so employees shouldn't be offered it.
+    where: {
+      isActive: true,
+      publishedVersionId: { not: null },
+      workflowDefinition: { publishedVersionId: { not: null } },
+    },
     select: {
       id: true,
       name: true,

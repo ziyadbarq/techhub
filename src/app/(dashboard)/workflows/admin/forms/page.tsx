@@ -15,7 +15,9 @@ export default async function AdminFormsListPage() {
 
   const forms = await prisma.form.findMany({
     include: {
-      workflowDefinition: { select: { id: true, name: true } },
+      workflowDefinition: {
+        select: { id: true, name: true, publishedVersionId: true },
+      },
       publishedVersion: { select: { id: true, versionNumber: true } },
       _count: { select: { versions: true, requests: true } },
     },
@@ -32,12 +34,11 @@ export default async function AdminFormsListPage() {
         <div>
           <h1 className="text-h2 mt-1">Forms</h1>
           <p className="text-subtitle text-slate mt-1">
-            {forms.length} form{forms.length === 1 ? "" : "s"} in this
-            organization.
+            Request types employees can submit. {forms.length} in total.
           </p>
         </div>
         <LinkButton href="/workflows/admin/forms/new" variant="primary">
-          New form
+          New request type
         </LinkButton>
       </header>
 
@@ -47,10 +48,9 @@ export default async function AdminFormsListPage() {
             <thead className="border-b border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)]">
               <tr className="text-micro-uppercase text-stone">
                 <th className="px-5 py-3">Name</th>
-                <th className="px-5 py-3">Workflow</th>
-                <th className="px-5 py-3">Active</th>
-                <th className="px-5 py-3">Published</th>
-                <th className="px-5 py-3">Versions</th>
+                <th className="px-5 py-3">Status</th>
+                <th className="px-5 py-3">Approval path</th>
+                <th className="px-5 py-3">Live version</th>
                 <th className="px-5 py-3">Requests</th>
                 <th className="px-5 py-3"></th>
               </tr>
@@ -69,23 +69,30 @@ export default async function AdminFormsListPage() {
                       ) : null}
                     </span>
                   </td>
-                  <td className="text-body-sm text-slate px-5 py-3">
-                    {f.workflowDefinition.name}
-                  </td>
                   <td className="px-5 py-3">
-                    {f.isActive ? (
-                      <Badge tone="success">Active</Badge>
+                    {/* One status that answers "can employees submit it?" */}
+                    {!f.isActive ? (
+                      <Badge tone="neutral">Switched off</Badge>
+                    ) : !f.publishedVersion ? (
+                      <Badge tone="neutral">Draft</Badge>
+                    ) : !f.workflowDefinition.publishedVersionId ? (
+                      <Badge tone="yellow">Path not published</Badge>
                     ) : (
-                      <Badge tone="neutral">Inactive</Badge>
+                      <Badge tone="success">Live</Badge>
                     )}
+                  </td>
+                  <td className="text-body-sm text-slate px-5 py-3">
+                    <Link
+                      href={`/workflows/designer/${f.workflowDefinition.id}`}
+                      className="hover:text-ink hover:underline"
+                    >
+                      {f.workflowDefinition.name}
+                    </Link>
                   </td>
                   <td className="text-caption text-charcoal px-5 py-3 font-mono">
                     {f.publishedVersion
                       ? `v${f.publishedVersion.versionNumber}`
                       : "—"}
-                  </td>
-                  <td className="text-body-sm text-slate px-5 py-3">
-                    {f._count.versions}
                   </td>
                   <td className="text-body-sm text-slate px-5 py-3">
                     {f._count.requests}
@@ -103,10 +110,10 @@ export default async function AdminFormsListPage() {
               {forms.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={6}
                     className="text-body-md text-stone px-5 py-12 text-center"
                   >
-                    No forms yet. Create one to get started.
+                    No request types yet. Create one to get started.
                   </td>
                 </tr>
               ) : null}
