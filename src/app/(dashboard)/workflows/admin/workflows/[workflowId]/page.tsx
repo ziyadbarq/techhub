@@ -33,28 +33,40 @@ export default async function EditWorkflowPage({
         },
       },
       forms: { select: { id: true, name: true } },
-      publishedVersion: { select: { versionNumber: true } },
+      publishedVersion: { select: { versionNumber: true, graphJson: true } },
     },
   });
   if (!def) notFound();
 
-  const [users, roles, accessServices] = await Promise.all([
-    prisma.user.findMany({
-      select: { id: true, name: true, email: true },
-      orderBy: { createdAt: "asc" },
-    }),
-    prisma.role.findMany({
-      select: { id: true, name: true },
-      orderBy: { name: "asc" },
-    }),
-    // Offered to the AI assistant so it can route steps at the people who
-    // own a service rather than at a fixed role.
-    prisma.accessService.findMany({
-      where: { isActive: true },
-      select: { name: true },
-      orderBy: { name: "asc" },
-    }),
-  ]);
+  const [users, roles, accessServices, emailTemplates, forms] =
+    await Promise.all([
+      prisma.user.findMany({
+        select: { id: true, name: true, email: true },
+        orderBy: { createdAt: "asc" },
+      }),
+      prisma.role.findMany({
+        where: { isActive: true },
+        select: { id: true, name: true, displayName: true },
+        orderBy: { name: "asc" },
+      }),
+      // Offered to the AI assistant so it can route steps at the people who
+      // own a service rather than at a fixed role.
+      prisma.accessService.findMany({
+        where: { isActive: true },
+        select: { name: true },
+        orderBy: { name: "asc" },
+      }),
+      // Pickers for Send email and Sub-request steps, instead of typed keys/ids.
+      prisma.emailTemplate.findMany({
+        select: { key: true, subject: true },
+        orderBy: { key: "asc" },
+      }),
+      prisma.form.findMany({
+        where: { isActive: true },
+        select: { id: true, name: true },
+        orderBy: { name: "asc" },
+      }),
+    ]);
 
   const linkedForms = def.forms.map((f) => ({ id: f.id, name: f.name }));
 
@@ -66,11 +78,16 @@ export default async function EditWorkflowPage({
         description: def.description,
         publishedVersionNumber: def.publishedVersion?.versionNumber ?? null,
         formCount: def.forms.length,
+        // Opening the builder creates a draft copy, so "a draft exists" is
+        // not "there are changes": the client compares contents instead.
+        publishedGraph: def.publishedVersion?.graphJson ?? null,
       }}
       users={users}
       roles={roles}
       accessServiceNames={accessServices.map((s) => s.name)}
       linkedForms={linkedForms}
+      emailTemplates={emailTemplates}
+      forms={forms}
     />
   );
 }

@@ -29,6 +29,9 @@ const stepSchema = z.object({
     "SUB_WORKFLOW",
   ]),
   position: z.number().int(),
+  // Readable step name (StepDefinition.name). Without it here, Zod stripped
+  // every name on save and the builder fell back to showing keys.
+  name: z.string().trim().max(120).optional(),
   next: z
     .union([
       z.object({ default: z.string() }),
