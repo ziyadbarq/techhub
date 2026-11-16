@@ -613,8 +613,8 @@ export function FormBuilderClient({
           ) : null}
           <p className="text-stone mt-2 text-xs">
             {dirty ? (
-              <span className="text-yellow-dark inline-flex items-center gap-1.5 font-medium">
-                <span className="bg-yellow-dark h-1.5 w-1.5 rounded-full" />{" "}
+              <span className="inline-flex items-center gap-1.5 font-medium text-amber-700 dark:text-amber-300">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />{" "}
                 Unsaved changes
               </span>
             ) : (
@@ -673,7 +673,7 @@ export function FormBuilderClient({
       {error ? (
         <div
           role="alert"
-          className="bg-blush-light text-coral-dark rounded-lg px-4 py-3 text-sm"
+          className="rounded-lg bg-rose-100 px-4 py-3 text-sm text-rose-800 dark:bg-rose-400/15 dark:text-rose-300"
         >
           {error}
         </div>
@@ -914,7 +914,9 @@ export function FormBuilderClient({
                         <span className="min-w-0 flex-1">
                           <span className="text-ink block truncate text-sm font-medium">
                             {f.label || (
-                              <span className="text-yellow-dark">No label</span>
+                              <span className="text-amber-700 dark:text-amber-300">
+                                No label
+                              </span>
                             )}
                             {f.required ? (
                               <span className="text-coral-dark ml-0.5">*</span>
@@ -1158,7 +1160,7 @@ function SettingsTab({
             </Link>
           </div>
           {chosen && !chosen.publishedVersionNumber ? (
-            <p className="text-yellow-dark mt-2 text-xs">
+            <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">
               This path isn&apos;t published, so employees can&apos;t submit
               yet.
             </p>
@@ -1249,7 +1251,7 @@ function SettingsTab({
               className={
                 "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wide uppercase " +
                 (isActive
-                  ? "bg-mint-light text-moss-dark"
+                  ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-300"
                   : "bg-brand-red text-coral-dark")
               }
             >
@@ -1291,8 +1293,8 @@ function SettingsTab({
               <span
                 className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
                   isActive
-                    ? "bg-mint-light text-moss-dark"
-                    : "bg-blush-light text-coral-dark"
+                    ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-300"
+                    : "bg-rose-100 text-rose-800 dark:bg-rose-400/15 dark:text-rose-300"
                 }`}
               >
                 {isActive ? "Active" : "Inactive"}
@@ -1318,7 +1320,7 @@ function SettingsTab({
             </Stat>
             <Stat label="Built-in">
               {isBuiltIn ? (
-                <span className="bg-yellow-light text-yellow-dark rounded-full px-2 py-0.5 text-[11px] font-semibold">
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800 dark:bg-amber-400/15 dark:text-amber-300">
                   Yes
                 </span>
               ) : (
@@ -1844,7 +1846,7 @@ function ConditionalLogicEditor({
       <div className="border-hairline-soft bg-surface-soft space-y-2 rounded-xl border p-3">
         <div className="flex items-center justify-between gap-2">
           <span className="text-ink font-semibold">Conditional logic</span>
-          <span className="bg-yellow-light text-yellow-dark rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase">
+          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-800 uppercase dark:bg-amber-400/15 dark:text-amber-300">
             Advanced
           </span>
         </div>

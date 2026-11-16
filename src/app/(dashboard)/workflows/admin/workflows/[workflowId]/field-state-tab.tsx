@@ -50,19 +50,20 @@ const MODES: ReadonlyArray<{
     value: "EDITABLE",
     label: "Can edit",
     icon: Pencil,
-    tone: "bg-mint-light text-moss-dark",
+    // The default: quiet, so Read only / Hidden exceptions stand out.
+    tone: "border border-hairline-strong text-ink bg-transparent",
   },
   {
     value: "READ_ONLY",
     label: "Read only",
     icon: Eye,
-    tone: "bg-sky-light text-blue-pressed",
+    tone: "bg-sky-100 text-sky-800 dark:bg-sky-400/15 dark:text-sky-300",
   },
   {
     value: "HIDDEN",
     label: "Hidden",
     icon: EyeOff,
-    tone: "bg-blush-light text-coral-dark",
+    tone: "bg-rose-100 text-rose-800 dark:bg-rose-400/15 dark:text-rose-300",
   },
 ];
 
@@ -291,7 +292,7 @@ export function FieldStateTab({
       {saveError ? (
         <div
           role="alert"
-          className="bg-blush-light text-coral-dark rounded-lg px-4 py-3 text-sm"
+          className="rounded-lg bg-rose-100 px-4 py-3 text-sm text-rose-800 dark:bg-rose-400/15 dark:text-rose-300"
         >
           {saveError}
         </div>

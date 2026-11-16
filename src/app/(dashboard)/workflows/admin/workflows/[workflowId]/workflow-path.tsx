@@ -144,7 +144,7 @@ function StepCard({
         {issues.length > 0 ? (
           <span
             title={issues.map((i) => i.message).join("\n")}
-            className="bg-yellow-light text-yellow-dark inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold"
+            className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800 dark:bg-amber-400/15 dark:text-amber-300"
           >
             <AlertTriangle className="h-3 w-3" />{" "}
             {issues.length === 1
@@ -164,7 +164,7 @@ function StepCard({
           {who ? (
             <span className="text-ink truncate">{who}</span>
           ) : (
-            <span className="text-yellow-dark font-medium">
+            <span className="font-medium text-amber-700 dark:text-amber-300">
               Nobody assigned yet
             </span>
           )}
@@ -185,7 +185,7 @@ function StepCard({
           <>
             <RouteLine
               icon={CheckCircle2}
-              tone="text-moss-dark"
+              tone="text-emerald-700 dark:text-emerald-400"
               label="If approved"
               target={nameOf(next)}
             />
@@ -201,7 +201,9 @@ function StepCard({
         ) : step.type === "CONDITIONAL_BRANCH" ? (
           <>
             {branches.length === 0 ? (
-              <p className="text-yellow-dark text-xs">No conditions yet.</p>
+              <p className="text-xs text-amber-700 dark:text-amber-300">
+                No conditions yet.
+              </p>
             ) : (
               branches.map((branch, i) => (
                 <RouteLine
@@ -294,7 +296,7 @@ export function WorkflowPath({
       ))}
 
       <div className="flex justify-center">
-        <span className="border-moss-dark/30 bg-mint-light text-moss-dark inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
+        <span className="inline-flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-300">
           <Flag className="h-3.5 w-3.5" /> Request completed
         </span>
       </div>

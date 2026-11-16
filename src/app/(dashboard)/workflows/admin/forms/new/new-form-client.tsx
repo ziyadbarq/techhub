@@ -285,7 +285,7 @@ export function NewFormClient({
               </SelectContent>
             </Select>
             {workflows.find((w) => w.id === workflowId && !w.published) ? (
-              <p className="text-yellow-dark text-xs">
+              <p className="text-xs text-amber-700 dark:text-amber-300">
                 This path isn&apos;t published yet. Publish it before employees
                 can submit.
               </p>
@@ -318,7 +318,7 @@ export function NewFormClient({
       {error ? (
         <div
           role="alert"
-          className="bg-blush-light text-coral-dark rounded-lg px-4 py-3 text-sm"
+          className="rounded-lg bg-rose-100 px-4 py-3 text-sm text-rose-800 dark:bg-rose-400/15 dark:text-rose-300"
         >
           {error}
         </div>

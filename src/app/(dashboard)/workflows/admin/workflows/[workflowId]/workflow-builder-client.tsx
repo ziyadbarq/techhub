@@ -289,15 +289,18 @@ export function WorkflowBuilderClient({
   }
 
   const status = !definition.publishedVersionNumber
-    ? { label: "Not published yet", tone: "bg-sand-light text-charcoal" }
+    ? {
+        label: "Not published yet",
+        tone: "bg-zinc-100 text-zinc-700 dark:bg-white/10 dark:text-zinc-200",
+      }
     : unpublished
       ? {
           label: `Changes not published · live: v${definition.publishedVersionNumber}`,
-          tone: "bg-yellow-light text-yellow-dark",
+          tone: "bg-amber-100 text-amber-800 dark:bg-amber-400/15 dark:text-amber-300",
         }
       : {
           label: `Published · v${definition.publishedVersionNumber}`,
-          tone: "bg-mint-light text-moss-dark",
+          tone: "bg-emerald-100 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-300",
         };
 
   const publishBlocked = issues.length > 0 || graph.steps.length === 0;
@@ -328,8 +331,8 @@ export function WorkflowBuilderClient({
             </span>
             <span className="text-stone">
               {dirty ? (
-                <span className="text-yellow-dark inline-flex items-center gap-1.5 font-medium">
-                  <span className="bg-yellow-dark h-1.5 w-1.5 rounded-full" />{" "}
+                <span className="inline-flex items-center gap-1.5 font-medium text-amber-700 dark:text-amber-300">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />{" "}
                   Unsaved changes
                 </span>
               ) : savedAt ? (
@@ -377,7 +380,7 @@ export function WorkflowBuilderClient({
       {error ? (
         <div
           role="alert"
-          className="bg-blush-light text-coral-dark rounded-lg px-4 py-3 text-sm"
+          className="rounded-lg bg-rose-100 px-4 py-3 text-sm text-rose-800 dark:bg-rose-400/15 dark:text-rose-300"
         >
           <p className="font-medium">{error}</p>
           {serverErrors.length > 0 ? (
@@ -534,7 +537,7 @@ function Overview({
       <section>
         <h3 className="text-ink text-sm font-semibold">Before you publish</h3>
         {issues.length === 0 ? (
-          <p className="text-moss-dark mt-2 flex items-center gap-2 text-sm">
+          <p className="mt-2 flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-400">
             <CheckCircle2 className="h-4 w-4" /> Everything is in place.
           </p>
         ) : (
@@ -547,7 +550,7 @@ function Overview({
                   onClick={() => issue.stepKey && onSelect(issue.stepKey)}
                   className="hover:bg-surface flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left text-xs leading-5 disabled:hover:bg-transparent"
                 >
-                  <AlertTriangle className="text-yellow-dark mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-700 dark:text-amber-300" />
                   <span className="text-ink">{issue.message}</span>
                 </button>
               </li>
@@ -560,7 +563,7 @@ function Overview({
         <h3 className="text-ink text-sm font-semibold">How a request moves</h3>
         <ul className="text-stone mt-2 space-y-2 text-xs leading-5">
           <li className="flex gap-2">
-            <CheckCircle2 className="text-moss-dark mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-700 dark:text-emerald-400" />
             When a step is approved or done, it goes to the next step you chose.
           </li>
           <li className="flex gap-2">
@@ -569,7 +572,7 @@ function Overview({
             resubmit.
           </li>
           <li className="flex gap-2">
-            <Flag className="text-moss-dark mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <Flag className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-700 dark:text-emerald-400" />
             When there is no next step, the request is completed.
           </li>
         </ul>

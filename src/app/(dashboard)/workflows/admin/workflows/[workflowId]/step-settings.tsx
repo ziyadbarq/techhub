@@ -155,7 +155,7 @@ function AssigneeRow({
         </SelectContent>
       </Select>
     ) : (
-      <p className="text-yellow-dark text-xs">
+      <p className="text-xs text-amber-700 dark:text-amber-300">
         The linked form has no suitable field. Add one in the form builder
         first.
       </p>
@@ -377,7 +377,7 @@ export function StepSettings({
       </div>
 
       {issues.length > 0 ? (
-        <ul className="bg-yellow-light text-yellow-dark space-y-1 rounded-lg px-3 py-2 text-xs leading-5">
+        <ul className="space-y-1 rounded-lg bg-amber-100 px-3 py-2 text-xs leading-5 text-amber-800 dark:bg-amber-400/15 dark:text-amber-300">
           {issues.map((issue) => (
             <li key={issue.message}>{issue.message}</li>
           ))}
@@ -427,7 +427,7 @@ export function StepSettings({
               ))}
             </ul>
           ) : (
-            <p className="text-yellow-dark text-xs">
+            <p className="text-xs text-amber-700 dark:text-amber-300">
               Nobody yet. Add at least one.
             </p>
           )}
@@ -561,7 +561,7 @@ export function StepSettings({
               </SelectContent>
             </Select>
           ) : (
-            <p className="text-yellow-dark text-xs">
+            <p className="text-xs text-amber-700 dark:text-amber-300">
               No email templates yet. Create one first.
             </p>
           )}
@@ -828,7 +828,7 @@ export function StepSettings({
         <button
           type="button"
           onClick={onDelete}
-          className="text-coral-dark hover:bg-blush-light ml-auto inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium"
+          className="ml-auto inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-100 dark:text-rose-300 dark:hover:bg-rose-400/15"
         >
           <Trash2 className="h-3.5 w-3.5" /> Remove step
         </button>

@@ -34,7 +34,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Approval",
     description: "Someone approves or rejects the request.",
     group: "People",
-    tone: "bg-yellow-light text-yellow-dark",
+    tone: "bg-amber-100 text-amber-800 dark:bg-amber-400/15 dark:text-amber-300",
   },
   EXECUTION: {
     type: "EXECUTION",
@@ -42,7 +42,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Task",
     description: "Someone does the work and marks it done.",
     group: "People",
-    tone: "bg-mint-light text-moss-dark",
+    tone: "bg-emerald-100 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-300",
   },
   INFO_ACK: {
     type: "INFO_ACK",
@@ -50,7 +50,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Acknowledgement",
     description: "Someone reads a message and confirms.",
     group: "People",
-    tone: "bg-sky-light text-blue-pressed",
+    tone: "bg-sky-100 text-sky-800 dark:bg-sky-400/15 dark:text-sky-300",
   },
   NOTIFICATION: {
     type: "NOTIFICATION",
@@ -58,7 +58,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Send email",
     description: "Email people from a template, then continue.",
     group: "Automatic",
-    tone: "bg-rose-light text-coral-dark",
+    tone: "bg-pink-100 text-pink-800 dark:bg-pink-400/15 dark:text-pink-300",
   },
   AUTOMATION: {
     type: "AUTOMATION",
@@ -66,7 +66,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Automation",
     description: "Run a built-in action, e.g. auto-approve.",
     group: "Automatic",
-    tone: "bg-surface-featured text-ink",
+    tone: "bg-zinc-100 text-zinc-700 dark:bg-white/10 dark:text-zinc-200",
   },
   WEBHOOK: {
     type: "WEBHOOK",
@@ -74,7 +74,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Call another system",
     description: "Send the request to an external URL.",
     group: "Automatic",
-    tone: "bg-lilac-light text-ink",
+    tone: "bg-violet-100 text-violet-800 dark:bg-violet-400/15 dark:text-violet-300",
   },
   CONDITIONAL_BRANCH: {
     type: "CONDITIONAL_BRANCH",
@@ -82,7 +82,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Condition",
     description: "Choose the route from the form's answers.",
     group: "Flow control",
-    tone: "bg-blush-light text-coral-dark",
+    tone: "bg-orange-100 text-orange-800 dark:bg-orange-400/15 dark:text-orange-300",
   },
   DELAY: {
     type: "DELAY",
@@ -90,7 +90,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Wait",
     description: "Pause for a number of hours or days.",
     group: "Flow control",
-    tone: "bg-sand-light text-charcoal",
+    tone: "bg-zinc-100 text-zinc-700 dark:bg-white/10 dark:text-zinc-200",
   },
   SCHEDULE: {
     type: "SCHEDULE",
@@ -98,7 +98,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Wait for a window",
     description: "Continue in the next allowed time window.",
     group: "Flow control",
-    tone: "bg-sand-light text-charcoal",
+    tone: "bg-zinc-100 text-zinc-700 dark:bg-white/10 dark:text-zinc-200",
   },
   SUB_WORKFLOW: {
     type: "SUB_WORKFLOW",
@@ -106,7 +106,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Sub-request",
     description: "Open another request and wait for it.",
     group: "Flow control",
-    tone: "bg-teal-light text-moss-dark",
+    tone: "bg-teal-100 text-teal-800 dark:bg-teal-400/15 dark:text-teal-300",
   },
   WAIT_FOR_EVENT: {
     type: "WAIT_FOR_EVENT",
@@ -114,7 +114,7 @@ export const STEP_META: Record<StepType, StepTypeMeta> = {
     title: "Wait for event",
     description: "Pause until an external event arrives.",
     group: "Flow control",
-    tone: "bg-sand-light text-charcoal",
+    tone: "bg-zinc-100 text-zinc-700 dark:bg-white/10 dark:text-zinc-200",
     hidden: true,
   },
 };

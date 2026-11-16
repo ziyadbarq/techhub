@@ -34,7 +34,7 @@ export function LaunchPath({
   return (
     <section aria-label="Launch progress" className="space-y-3">
       {live ? (
-        <div className="border-moss-dark/20 bg-mint-light text-moss-dark flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3">
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-emerald-600/20 bg-emerald-100 px-4 py-3 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-300">
           <Rocket className="h-5 w-5 shrink-0" />
           <p className="min-w-0 flex-1 text-sm">
             <span className="font-semibold">Live.</span> Employees can find “
@@ -56,7 +56,7 @@ export function LaunchPath({
             className={cn(
               "bg-canvas flex items-start gap-3 rounded-xl border p-3",
               step.state === "warning"
-                ? "border-yellow-dark/40"
+                ? "border-amber-500/40"
                 : "border-hairline",
             )}
           >
@@ -65,9 +65,9 @@ export function LaunchPath({
               className={cn(
                 "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
                 step.state === "done"
-                  ? "bg-mint-light text-moss-dark"
+                  ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-300"
                   : step.state === "warning"
-                    ? "bg-yellow-light text-yellow-dark"
+                    ? "bg-amber-100 text-amber-800 dark:bg-amber-400/15 dark:text-amber-300"
                     : "bg-surface text-stone",
               )}
             >
