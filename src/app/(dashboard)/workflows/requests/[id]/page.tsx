@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { Badge, Card, LinkButton } from "@/components/design";
 import { CommentThread } from "@/components/workflows/comment-thread";
 import { WorkflowGraph } from "@/components/workflows/workflow-graph";
+import { workflowLabel } from "@/components/workflows/status-label";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { getCurrentUserId } from "@/lib/auth/session";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
@@ -20,14 +21,20 @@ function statusBadge(status: string, outcome: string | null) {
   if (status === "CLOSED") {
     return (
       <Badge tone={outcome === "SUCCESSFUL" ? "success" : "neutral"}>
-        {outcome ?? status}
+        {workflowLabel(outcome ?? status)}
       </Badge>
     );
   }
-  if (status === "CANCELLED") return <Badge tone="danger">CANCELLED</Badge>;
-  if (status === "ON_HOLD") return <Badge tone="yellow">ON HOLD</Badge>;
-  if (status === "DRAFT") return <Badge tone="neutral">DRAFT</Badge>;
-  return <Badge tone="purple">{status}</Badge>;
+  // Same readable labels as the Requests list ("In review", not IN_REVIEW).
+  const tone =
+    status === "CANCELLED"
+      ? "danger"
+      : status === "ON_HOLD"
+        ? "yellow"
+        : status === "DRAFT"
+          ? "neutral"
+          : "purple";
+  return <Badge tone={tone}>{workflowLabel(status)}</Badge>;
 }
 
 export default async function RequestDetailPage({

@@ -2,7 +2,22 @@
  * Read-only linear visualization of a workflow graph. Highlights the active
  * step on a request and shows routing arrows between steps. Renders as a
  * vertical pill chain — no SVG dependency, fully accessible.
+ *
+ * Reads routing the way the engine does (see `@/lib/workflows/builder/graph`):
+ * approved → the approve route; rejected → back to the requester.
  */
+import { CheckCircle2, CornerUpLeft, Flag } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import {
+  happyNext,
+  STEP_TYPE_LABEL,
+  stepName,
+  type StepDef,
+} from "@/lib/workflows/builder/graph";
+
+import { STEP_STATUS, STEP_TYPE_TONE, TONE } from "./tones";
+
 interface StepNode {
   key: string;
   name?: string;
@@ -16,62 +31,20 @@ interface Graph {
   steps: StepNode[];
 }
 
-const TYPE_TONE: Record<string, { bg: string; text: string; label: string }> = {
-  APPROVAL: {
-    bg: "bg-[var(--color-yellow-light)]",
-    text: "text-[var(--color-yellow-dark)]",
-    label: "Approval",
-  },
-  EXECUTION: {
-    bg: "bg-[var(--color-teal-light)]",
-    text: "text-[var(--color-moss-dark)]",
-    label: "Execution",
-  },
-  INFO_ACK: {
-    bg: "bg-[var(--color-rose-light)]",
-    text: "text-[var(--color-coral-dark)]",
-    label: "Info / Ack",
-  },
-  AUTOMATION: {
-    bg: "bg-[var(--color-surface-featured)]",
-    text: "text-[var(--color-brand-blue)]",
-    label: "Automation",
-  },
-  NOTIFICATION: {
-    bg: "bg-[var(--color-coral-light)]",
-    text: "text-[var(--color-coral-dark)]",
-    label: "Notification",
-  },
-  CONDITIONAL_BRANCH: {
-    bg: "bg-[var(--color-brand-orange-light)]",
-    text: "text-[var(--color-yellow-dark)]",
-    label: "Conditional",
-  },
-  DELAY: {
-    bg: "bg-[var(--color-surface-soft)]",
-    text: "text-[var(--color-slate)]",
-    label: "Delay",
-  },
-  SCHEDULE: {
-    bg: "bg-[var(--color-surface-soft)]",
-    text: "text-[var(--color-slate)]",
-    label: "Schedule",
-  },
-  WEBHOOK: {
-    bg: "bg-[var(--color-surface-featured)]",
-    text: "text-[var(--color-brand-blue)]",
-    label: "Webhook",
-  },
-  SUB_WORKFLOW: {
-    bg: "bg-[var(--color-surface-featured)]",
-    text: "text-[var(--color-brand-blue)]",
-    label: "Sub-workflow",
-  },
-};
-
 interface StepInstanceLite {
   stepKey: string;
   status: string;
+}
+
+function asStepDef(step: StepNode): StepDef {
+  return {
+    key: step.key,
+    type: step.type as StepDef["type"],
+    position: step.position,
+    name: step.name,
+    next: step.next as StepDef["next"],
+    config: {},
+  };
 }
 
 export function WorkflowGraph({
@@ -93,79 +66,110 @@ export function WorkflowGraph({
 
   const sorted = [...graph.steps].sort((a, b) => a.position - b.position);
   const statusByKey = new Map(stepInstances.map((s) => [s.stepKey, s.status]));
-  const stepNameByKey = new Map(
-    graph.steps.map((step) => [step.key, displayStepName(step)]),
-  );
+  const nameOf = (key: string | null) => {
+    if (!key) return "Request completed";
+    const target = graph.steps.find((s) => s.key === key);
+    return target ? stepName(target) : stepName({ key });
+  };
 
   return (
     <ol className="space-y-2">
       {sorted.map((step, i) => {
-        const tone = TYPE_TONE[step.type] ?? TYPE_TONE.EXECUTION;
+        const def = asStepDef(step);
         const status = statusByKey.get(step.key);
+        const statusMeta = status
+          ? (STEP_STATUS[status] ?? { label: status, tone: TONE.neutral })
+          : null;
         const isActive = step.key === activeStepKey;
         const isCompleted = status === "COMPLETED" || status === "SKIPPED";
-        const isFailed = status === "FAILED" || status === "CANCELLED";
+        const isFailed = status === "FAILED";
         const isStart = step.key === graph.start;
+        const next = happyNext(def);
 
         return (
           <li key={step.key} className="relative">
             <div
-              className={
-                "rounded-2xl border-2 px-4 py-3 transition-colors " +
-                (isActive
-                  ? "border-[var(--color-brand-blue)] bg-[var(--color-surface-featured)]"
+              className={cn(
+                "rounded-2xl border-2 px-4 py-3 transition-colors",
+                isActive
+                  ? "border-blue-600 bg-blue-50 dark:border-blue-400 dark:bg-blue-400/10"
                   : isCompleted
                     ? "border-[var(--color-hairline-soft)] bg-[var(--color-surface-soft)]"
                     : isFailed
-                      ? "border-[var(--color-brand-red-dark)] bg-[var(--color-brand-red)]/30"
-                      : "border-[var(--color-hairline)] bg-[var(--color-canvas)]")
-              }
+                      ? "border-rose-300 bg-rose-50 dark:border-rose-400/40 dark:bg-rose-400/10"
+                      : "border-[var(--color-hairline)] bg-[var(--color-canvas)]",
+              )}
             >
-              {/* Row 1 — number + user-facing step name + start/status pill */}
+              {/* Row 1 — number + step name + first-step / status pills */}
               <div className="flex min-w-0 items-center gap-3">
                 <span
-                  className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${tone.bg} ${tone.text} text-caption-bold`}
+                  className={cn(
+                    "text-caption-bold inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
+                    STEP_TYPE_TONE[step.type] ?? TONE.neutral,
+                  )}
                 >
                   {i + 1}
                 </span>
                 <span className="text-body-sm-medium min-w-0 flex-1 truncate text-[var(--color-ink)]">
-                  {displayStepName(step)}
+                  {stepName(def)}
                 </span>
                 <div className="flex shrink-0 items-center gap-1.5">
                   {isStart ? (
-                    <span className="rounded-full bg-[var(--color-brand-yellow)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-ink)]">
-                      START
+                    <span className="rounded-full bg-amber-300 px-2 py-0.5 text-[11px] font-semibold text-amber-950">
+                      First step
                     </span>
                   ) : null}
-                  {status ? (
+                  {statusMeta ? (
                     <span
-                      className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${statusPill(
-                        status,
-                      )}`}
+                      className={cn(
+                        "rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                        statusMeta.tone,
+                      )}
                     >
-                      {status}
+                      {statusMeta.label}
                     </span>
                   ) : null}
                 </div>
               </div>
 
-              {/* Row 2 — type label */}
+              {/* Row 2 — type */}
               <p className="text-caption mt-1.5 pl-11 text-[var(--color-stone)]">
-                {tone.label}
+                {STEP_TYPE_LABEL[def.type] ?? step.type}
               </p>
 
-              {/* Row 3 — routing arrow on its own line */}
-              <p className="text-caption mt-1 pl-11 text-[var(--color-stone)]">
-                {step.next && "default" in step.next && step.next.default ? (
+              {/* Row 3 — where it goes */}
+              <div className="text-caption mt-1 space-y-0.5 pl-11 text-[var(--color-stone)]">
+                {step.type === "APPROVAL" ? (
                   <>
-                    →{" "}
-                    {stepNameByKey.get(step.next.default) ??
-                      humanizeKey(step.next.default)}
+                    <p className="flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                      If approved →{" "}
+                      <span className="text-[var(--color-ink)]">
+                        {nameOf(next)}
+                      </span>
+                    </p>
+                    <p className="flex items-center gap-1.5">
+                      <CornerUpLeft className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />
+                      If rejected →{" "}
+                      <span className="text-[var(--color-ink)]">
+                        Back to the requester
+                      </span>
+                    </p>
                   </>
-                ) : !step.next ? (
-                  <>→ close</>
-                ) : null}
-              </p>
+                ) : next ? (
+                  <p>
+                    Then →{" "}
+                    <span className="text-[var(--color-ink)]">
+                      {nameOf(next)}
+                    </span>
+                  </p>
+                ) : (
+                  <p className="flex items-center gap-1.5">
+                    <Flag className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                    Then the request is completed
+                  </p>
+                )}
+              </div>
             </div>
             {i < sorted.length - 1 ? (
               <div className="my-0.5 ml-4 h-3 w-px bg-[var(--color-hairline)]" />
@@ -175,26 +179,4 @@ export function WorkflowGraph({
       })}
     </ol>
   );
-}
-
-function displayStepName(step: StepNode): string {
-  const name = step.name?.trim();
-  return name || humanizeKey(step.key);
-}
-
-function humanizeKey(value: string): string {
-  return value
-    .replace(/[_-]+/g, " ")
-    .replace(/\b\w/g, (character) => character.toUpperCase());
-}
-
-function statusPill(status: string): string {
-  if (status === "ACTIVE") return "bg-[var(--color-brand-blue)] text-white";
-  if (status === "COMPLETED")
-    return "bg-[var(--color-mint-light)] text-[var(--color-moss-dark)]";
-  if (status === "FAILED" || status === "CANCELLED")
-    return "bg-[var(--color-blush-light)] text-[var(--color-coral-dark)]";
-  if (status === "SKIPPED")
-    return "bg-[var(--color-surface-soft)] text-[var(--color-slate)]";
-  return "bg-[var(--color-surface-soft)] text-[var(--color-stone)]";
 }

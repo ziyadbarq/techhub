@@ -1,4 +1,5 @@
 import { Inbox as InboxIcon } from "lucide-react";
+import { stepName } from "@/lib/workflows/builder/graph";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -46,12 +47,16 @@ export default async function InboxPage() {
   // Resolve each step's type from the workflow graph so the quick-action
   // panel knows which buttons to surface.
   const stepTypeByInstance = new Map<string, string>();
+  // …and its readable name, so the card says "Line manager approval" rather
+  // than the internal key.
+  const stepNameByInstance = new Map<string, string>();
   for (const s of steps) {
     const graph = s.workflowVersion.graphJson as {
-      steps?: Array<{ key: string; type: string }>;
+      steps?: Array<{ key: string; type: string; name?: string }>;
     } | null;
     const def = graph?.steps?.find((g) => g.key === s.stepKey);
     stepTypeByInstance.set(s.id, def?.type ?? "");
+    stepNameByInstance.set(s.id, stepName({ key: s.stepKey, name: def?.name }));
   }
 
   return (
@@ -107,9 +112,8 @@ export default async function InboxPage() {
                       {s.request.form.name}
                     </h3>
                     <p className="text-body-sm text-slate mt-1">
-                      Step{" "}
-                      <span className="text-charcoal font-mono">
-                        {s.stepKey}
+                      <span className="text-charcoal font-medium">
+                        {stepNameByInstance.get(s.id)}
                       </span>
                       {s.activatedAt
                         ? ` · activated ${new Date(s.activatedAt).toLocaleString()}`
