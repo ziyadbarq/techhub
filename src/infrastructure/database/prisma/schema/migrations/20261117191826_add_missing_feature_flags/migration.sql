@@ -1,0 +1,39 @@
+-- Add every feature flag the application defines (seed-features.ts) that
+-- is missing from the database.
+--
+-- Why a migration: feature flags are created by the seed, which runs only on
+-- an empty database or through the separate config job. Databases created
+-- before a module existed (e.g. Knowledge Base) never got its flag, so it
+-- doesn't appear on the Feature Flags page and can't be turned on.
+--
+-- Additive and idempotent: existing flags are left exactly as they are,
+-- including whether an administrator enabled them. New flags start with
+-- their default state (Knowledge Base: off, an administrator enables it).
+
+INSERT INTO "feature_flags" ("id", "name", "displayName", "description", "category", "isEnabled", "isSystem", "dependsOn", "createdAt", "updatedAt")
+VALUES
+  ('ff_maintenance_mode', 'MAINTENANCE_MODE', 'Maintenance Mode', 'Global maintenance mode - disables all features for all users. Use this during system upgrades or critical maintenance windows.', 'SYSTEM'::"FeatureFlagCategory", false, true, ARRAY[]::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_foundation', 'FOUNDATION', 'Foundation Layer', 'Core entities: Organization Units, Persons, Locations, Vendors, Lifecycles, Field Definitions. Required by most other features.', 'LAYER_1'::"FeatureFlagCategory", true, false, ARRAY[]::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_rbac', 'RBAC', 'Role-Based Access Control', 'Role and permission management system. Controls user access to features and data.', 'LAYER_1'::"FeatureFlagCategory", true, false, ARRAY[]::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_fx_rates', 'FX_RATES', 'Exchange Rates', 'Multi-currency support with SAR base currency. Enables exchange rate management and currency conversion.', 'LAYER_1'::"FeatureFlagCategory", false, false, ARRAY[]::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_data_import', 'DATA_IMPORT', 'Universal Data Importer', 'CSV/Excel import wizard for bulk data uploads. Supports all entity types with validation and error reporting.', 'LAYER_1'::"FeatureFlagCategory", true, false, ARRAY['FOUNDATION']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_assets', 'ASSETS', 'Asset Management', 'Core asset tracking: Assets, Categories, Models, Assignments. Foundation for inventory and lifecycle management.', 'LAYER_2'::"FeatureFlagCategory", true, false, ARRAY['FOUNDATION']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_maintenance', 'MAINTENANCE', 'Maintenance Management', 'Preventive maintenance schedules and maintenance records. Track maintenance history and upcoming service.', 'LAYER_2'::"FeatureFlagCategory", false, false, ARRAY['ASSETS']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_inventory', 'INVENTORY', 'Inventory Management', 'Stock locations and stock movements. Track asset storage and transfers between locations.', 'LAYER_2'::"FeatureFlagCategory", true, false, ARRAY['ASSETS']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_warranties', 'WARRANTIES', 'Warranty Tracking', 'Warranty management for assets. Track coverage periods, terms, and expiration dates.', 'LAYER_2'::"FeatureFlagCategory", false, false, ARRAY['ASSETS']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_cmdb', 'CMDB', 'Configuration Management Database', 'Configuration Items with dependency tracking. Manage CI relationships, classes, and change tracking.', 'LAYER_3'::"FeatureFlagCategory", true, false, ARRAY['FOUNDATION']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_contracts', 'CONTRACTS', 'Contract Management', 'Contract lifecycle management. Track vendor contracts, renewals, and linked assets/services.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['FOUNDATION']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_licenses', 'LICENSES', 'License Management', 'Software license tracking. Manage entitlements, allocations, and compliance for licensed products.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['FOUNDATION']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_services', 'SERVICES', 'Service Management', 'IT service catalog with ownership and business alignment. Track services, business processes, and infrastructure.', 'LAYER_3'::"FeatureFlagCategory", true, false, ARRAY['CMDB', 'FOUNDATION']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_service_health_sla', 'SERVICE_HEALTH_SLA', 'Service Health & SLA Monitoring', 'Real-time health monitoring and SLA compliance tracking for services. Includes performance metrics, uptime tracking, SLA targets, and automated health checks.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['SERVICES']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_governance', 'GOVERNANCE', 'Data Governance', 'Data domains, ownership tracking, and verification campaigns. SAMA compliance and audit support.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['FOUNDATION']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_attachments', 'ATTACHMENTS', 'File Attachments', 'Polymorphic file attachments for compliance documentation, invoices, and audit trails.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY[]::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_asset_disposals', 'ASSET_DISPOSALS', 'Asset Disposals', 'Multi-step disposal workflow with approval chain and certificate generation. Track retired asset disposition.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['ASSETS']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_asset_kits', 'ASSET_KITS', 'Asset Kits', 'Predefined asset bundles (e.g., new hire kits). Checkout tracking with partial return support.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['ASSETS']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_asset_reservations', 'ASSET_RESERVATIONS', 'Asset Reservations', 'Future date reservations with conflict detection. Calendar view and availability checking.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['ASSETS']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_intune', 'INTUNE', 'Intune/MDM Integration', 'Microsoft Intune device sync and compliance tracking. Links MDM devices to ITAM assets and persons for reconciliation and SAMA compliance reporting.', 'LAYER_3'::"FeatureFlagCategory", true, false, ARRAY['FOUNDATION', 'ASSETS']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_oci_sync', 'OCI_SYNC', 'OCI Cloud Sync', 'Oracle Cloud Infrastructure resource sync via n8n webhook. Automatically imports compute, load balancers, OKE clusters, databases, and object storage as CMDB Configuration Items.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['FOUNDATION', 'CMDB']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_reports', 'REPORTS', 'Reports & Analytics', 'Advanced reporting with PDF export, scheduled email delivery, and cross-module analytics for Assets and CMDB.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['FOUNDATION']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_knowledge_base', 'KNOWLEDGE_BASE', 'Knowledge Base', 'Managed internal knowledge articles and policies: PDF or structured editor, controlled publishing, version history, restricted policies, and acknowledgements.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['RBAC']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('ff_workflow_engine', 'WORKFLOW_ENGINE', 'Workflow Engine', 'Generic configurable workflow engine for request-based processes (Change Management, Access Requests, Vendor Onboarding, etc.). Powers /workflows routes, the engine DI bindings, and the SLA/automation cron jobs. Forms and workflow definitions are loaded as seed data on top of the engine.', 'LAYER_3'::"FeatureFlagCategory", false, false, ARRAY['RBAC', 'FOUNDATION']::text[], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+ON CONFLICT ("name") DO NOTHING;
