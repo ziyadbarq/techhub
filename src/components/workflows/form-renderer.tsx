@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Check, ChevronsUpDown, LoaderCircle, Search, X } from "lucide-react";
 import { evaluate, evaluateBoolean } from "@/lib/workflow/expression-client";
 import type { Expression } from "@/core/domain/workflow";
+import { serviceSlugKey } from "@/core/domain/workflow/service-condition";
 import {
   Popover,
   PopoverContent,
@@ -66,6 +67,12 @@ interface FormRendererProps {
   mode?: "submit" | "admin";
   /** Values for SYSTEM_FIELD display (resolved server-side from requester identity). */
   systemFieldValues?: Record<string, string>;
+  /**
+   * Keys of the fields currently shown (after step state, visibility and
+   * conditions). The submit page uses it so a field hidden by its
+   * condition is not required.
+   */
+  onVisibleFieldsChange?: (keys: string[]) => void;
 }
 
 function resolveFieldState(
@@ -93,6 +100,7 @@ export function FormRenderer({
   formNameToId = {},
   mode = "submit",
   systemFieldValues = {},
+  onVisibleFieldsChange,
 }: FormRendererProps) {
   const invalidSet = new Set(invalidFieldKeys);
   const update = (key: string, value: unknown) => {
@@ -103,8 +111,24 @@ export function FormRenderer({
     (a, b) => a.position - b.position,
   );
 
+  // Slug of the service chosen in each access-service field, so conditions
+  // can say "Service is GCP" without depending on per-environment ids.
+  const [serviceSlugs, setServiceSlugs] = useState<Record<string, string>>({});
+  const setServiceSlug = (fieldKey: string, slug: string | null) =>
+    setServiceSlugs((prev) => {
+      if ((prev[fieldKey] ?? null) === slug) return prev;
+      const next = { ...prev };
+      if (slug) next[fieldKey] = slug;
+      else delete next[fieldKey];
+      return next;
+    });
+  const derived: Record<string, unknown> = {};
+  for (const [fieldKey, slug] of Object.entries(serviceSlugs)) {
+    if (values[fieldKey]) derived[serviceSlugKey(fieldKey)] = slug;
+  }
+
   // Recompute COMPUTED fields whenever inputs change.
-  const exprCtx = { fields: values };
+  const exprCtx = { fields: { ...values, ...derived } };
   const computedValues: Record<string, unknown> = {};
   for (const field of sortedFields) {
     if (field.type === "COMPUTED" && field.computedFormula) {
@@ -115,6 +139,33 @@ export function FormRenderer({
       }
     }
   }
+
+  const shown = (field: (typeof sortedFields)[number]): boolean => {
+    if (
+      resolveFieldState(schema, stepKey, fieldStateOverride, field.key) ===
+      "HIDDEN"
+    )
+      return false;
+    const visibility = field.visibility ?? "VISIBLE";
+    if (visibility === "HIDDEN") return false;
+    if (visibility === "ADMINISTRATIVE" && mode !== "admin") return false;
+    if (field.visibilityRules) {
+      try {
+        return evaluateBoolean(field.visibilityRules, exprCtx);
+      } catch {
+        return true; // a rule that fails to evaluate leaves the field visible
+      }
+    }
+    return true;
+  };
+  const visibleKeys = sortedFields
+    .filter(shown)
+    .map((f) => f.key)
+    .join("|");
+  useEffect(() => {
+    onVisibleFieldsChange?.(visibleKeys ? visibleKeys.split("|") : []);
+    // Report only when the set changes, not on every render.
+  }, [visibleKeys, onVisibleFieldsChange]);
 
   return (
     <div className="space-y-5">
@@ -214,6 +265,7 @@ export function FormRenderer({
                 onChange={(v) => update(field.key, v)}
                 formNameToId={formNameToId}
                 systemFieldValues={systemFieldValues}
+                onServiceSlug={(slug) => setServiceSlug(field.key, slug)}
               />
             </div>
             {isInvalid ? (
@@ -236,6 +288,7 @@ function FieldInput({
   onChange,
   formNameToId,
   systemFieldValues = {},
+  onServiceSlug,
 }: {
   field: FormFieldDef;
   value: unknown;
@@ -244,6 +297,7 @@ function FieldInput({
   onChange: (value: unknown) => void;
   formNameToId: Record<string, string>;
   systemFieldValues?: Record<string, string>;
+  onServiceSlug?: (slug: string | null) => void;
 }) {
   const inputBase =
     "h-11 w-full rounded-md border border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] px-4 text-body-md text-[var(--color-ink)] outline-none transition-colors placeholder:text-[var(--color-stone)] focus:border-[var(--color-brand-blue)] focus:ring-1 focus:ring-[var(--color-brand-blue)]";
@@ -491,6 +545,7 @@ function FieldInput({
           <AccessServiceCombobox
             value={(value as string | undefined) ?? ""}
             onChange={onChange}
+            onSlugChange={onServiceSlug}
             readOnly={readOnly}
             inputBase={inputBase}
             ro={ro}
@@ -726,6 +781,7 @@ interface AccessServiceOption {
   id: string;
   label: string;
   publicMetadata: {
+    slug?: string;
     requireManagerApproval?: boolean;
     instructions?: string | null;
     ownerNames?: string | null;
@@ -786,12 +842,14 @@ function ServiceApprovers({
 function AccessServiceCombobox({
   value,
   onChange,
+  onSlugChange,
   readOnly,
   inputBase,
   ro,
 }: {
   value: string;
   onChange: (v: unknown) => void;
+  onSlugChange?: (slug: string | null) => void;
   readOnly: boolean;
   inputBase: string;
   ro: string;
@@ -810,6 +868,13 @@ function AccessServiceCombobox({
 
   // Derived: the currently selected option (null when value is empty or not yet resolved)
   const selected = value ? (resolved[value] ?? null) : null;
+
+  // Tell the form which service is chosen (by slug) so conditions such as
+  // "show Project when Service is GCP" update as soon as it resolves.
+  const selectedSlug = selected?.publicMetadata.slug ?? null;
+  useEffect(() => {
+    onSlugChange?.(selectedSlug);
+  }, [selectedSlug, onSlugChange]);
 
   // Resolve label for current value on mount / value change
   useEffect(() => {

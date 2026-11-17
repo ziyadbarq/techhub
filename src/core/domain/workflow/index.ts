@@ -3,3 +3,4 @@ export * from "./errors";
 export * from "./expression";
 export * from "./lookup-provider.interface";
 export * from "./types";
+export * from "./service-condition";

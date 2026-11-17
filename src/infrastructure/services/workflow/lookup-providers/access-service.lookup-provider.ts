@@ -89,6 +89,7 @@ export class AccessServiceLookupProvider implements ILookupProvider {
   private toOption(row: {
     id: string;
     name: string;
+    slug: string;
     requireManagerApproval: boolean;
     instructions: string | null;
     assignees?: Array<{ role: string; user: { name: string | null } | null }>;
@@ -107,6 +108,8 @@ export class AccessServiceLookupProvider implements ILookupProvider {
       id: row.id,
       label: row.name,
       publicMetadata: {
+        // Stable across environments; conditions compare this, not the id.
+        slug: row.slug,
         requireManagerApproval: row.requireManagerApproval,
         instructions: row.instructions ?? null,
         ownerNames: namesFor("OWNER"),

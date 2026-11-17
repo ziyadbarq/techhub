@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/design";
 import { FormRenderer } from "@/components/workflows/form-renderer";
+import type { Expression } from "@/core/domain/workflow";
 
 interface FormSchema {
   fields: Array<{
@@ -14,6 +15,7 @@ interface FormSchema {
     required?: boolean;
     position: number;
     config?: Record<string, unknown>;
+    visibilityRules?: Expression;
   }>;
 }
 
@@ -49,14 +51,35 @@ export function SubmitRequestForm({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [missing, setMissing] = useState<string[]>([]);
+  /** Fields the form currently shows; null until the form reports them. */
+  const [visibleKeys, setVisibleKeys] = useState<string[] | null>(null);
+  const isShown = (key: string) => !visibleKeys || visibleKeys.includes(key);
 
   function validate(): string[] {
+    // A field hidden by its condition (e.g. "GCP project" when the service
+    // isn't GCP) is not required.
     const requiredFields = schema.fields.filter(
-      (f) => f.required && f.type !== "SECTION_HEADER" && f.type !== "COMPUTED",
+      (f) =>
+        f.required &&
+        f.type !== "SECTION_HEADER" &&
+        f.type !== "COMPUTED" &&
+        isShown(f.key),
     );
     return requiredFields
       .filter((f) => isEmpty(values[f.key]))
       .map((f) => f.key);
+  }
+
+  /** Drop answers to fields that are hidden by their condition right now. */
+  function submittedValues(): Record<string, unknown> {
+    const hidden = new Set(
+      schema.fields
+        .filter((f) => f.visibilityRules && !isShown(f.key))
+        .map((f) => f.key),
+    );
+    return Object.fromEntries(
+      Object.entries(values).filter(([key]) => !hidden.has(key)),
+    );
   }
 
   async function handleSubmit() {
@@ -78,7 +101,7 @@ export function SubmitRequestForm({
       const response = await fetch("/api/workflow/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ formId, fieldValues: values }),
+        body: JSON.stringify({ formId, fieldValues: submittedValues() }),
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
@@ -113,6 +136,7 @@ export function SubmitRequestForm({
         invalidFieldKeys={missing}
         formNameToId={formNameToId}
         systemFieldValues={systemFieldValues}
+        onVisibleFieldsChange={setVisibleKeys}
       />
       {error ? (
         <p className="text-body-sm mt-4 rounded-md border border-[var(--color-brand-red-dark)] bg-[var(--color-brand-red)]/40 px-3 py-2 text-[var(--color-coral-dark)]">

@@ -20,6 +20,10 @@ import {
   decideConditionalSkip,
   serviceFieldGatingStep,
 } from "./conditional-skip";
+import {
+  isAccessServiceField,
+  serviceSlugKey,
+} from "@/core/domain/workflow/service-condition";
 
 import { DI_TOKENS } from "@/di/types";
 import type { PrismaClient } from "@/generated/prisma/server";
@@ -139,6 +143,8 @@ export class WorkflowEngine implements IWorkflowEngine {
           label?: string;
           type: string;
           required?: boolean;
+          config?: Record<string, unknown>;
+          visibilityRules?: Expression;
         }>;
       };
       const STRIP_TYPES = new Set([
@@ -171,11 +177,36 @@ export class WorkflowEngine implements IWorkflowEngine {
         sanitizedFieldValues[key] = val;
       }
 
+      // Conditions see the submitted values plus, for each access-service
+      // field, the chosen service's slug ("service#slug"), exactly as the
+      // form did. A field hidden by its condition is neither required nor
+      // kept (the form doesn't send it either).
+      const conditionFields = await this.withServiceSlugs(
+        tx,
+        schema.fields ?? [],
+        sanitizedFieldValues,
+      );
+      const hiddenByCondition = new Set<string>();
+      for (const f of schema.fields ?? []) {
+        if (!f.visibilityRules) continue;
+        try {
+          const shown = this.expressionEvaluator.evaluateBoolean(
+            f.visibilityRules,
+            { fields: conditionFields },
+          );
+          if (!shown) hiddenByCondition.add(f.key);
+        } catch {
+          // Same as the form: a rule that can't be evaluated leaves it shown.
+        }
+      }
+      for (const key of hiddenByCondition) delete sanitizedFieldValues[key];
+
       // Required-field guard (defense-in-depth — UI also validates).
       const missing: string[] = [];
       for (const f of schema.fields ?? []) {
         if (!f.required) continue;
         if (STRIP_TYPES.has(f.type)) continue;
+        if (hiddenByCondition.has(f.key)) continue;
         const v = sanitizedFieldValues[f.key];
         if (
           v === null ||
@@ -961,6 +992,36 @@ export class WorkflowEngine implements IWorkflowEngine {
       for (const id of userIds) ids.add(id);
     }
     return [...ids];
+  }
+
+  /** Field values plus `<key>#slug` for every chosen access service. */
+  private async withServiceSlugs(
+    tx: Tx,
+    fields: ReadonlyArray<{
+      key: string;
+      type: string;
+      config?: Record<string, unknown>;
+    }>,
+    values: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const serviceFields = fields.filter(
+      (f) =>
+        isAccessServiceField(f) &&
+        typeof values[f.key] === "string" &&
+        values[f.key],
+    );
+    if (serviceFields.length === 0) return values;
+    const services = await tx.accessService.findMany({
+      where: { id: { in: serviceFields.map((f) => values[f.key] as string) } },
+      select: { id: true, slug: true },
+    });
+    const slugById = new Map(services.map((s) => [s.id, s.slug]));
+    const out: Record<string, unknown> = { ...values };
+    for (const f of serviceFields) {
+      const slug = slugById.get(values[f.key] as string);
+      if (slug) out[serviceSlugKey(f.key)] = slug;
+    }
+    return out;
   }
 
   private async activateStep(

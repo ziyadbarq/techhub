@@ -39,6 +39,11 @@ import {
   renameFieldRefs,
 } from "./field-types";
 import { LaunchPath, type LaunchStep } from "./launch-path";
+import {
+  fieldKeyFromServiceSlugKey,
+  isAccessServiceField,
+  serviceSlugKey,
+} from "@/core/domain/workflow/service-condition";
 
 interface Form {
   id: string;
@@ -1736,7 +1741,8 @@ function exprToLogic(expr: unknown): LogicState | null {
     const right = rec.right as { const?: unknown } | undefined;
     if (!left?.field) continue;
     rules.push({
-      fieldKey: left.field,
+      // "service#slug" is edited as the service field itself.
+      fieldKey: fieldKeyFromServiceSlugKey(left.field) ?? left.field,
       op: rec.op as LogicRule["op"],
       value:
         right?.const === undefined || right.const === null
@@ -1747,10 +1753,19 @@ function exprToLogic(expr: unknown): LogicState | null {
   return { combinator, rules };
 }
 
-function logicToExpr(state: LogicState): unknown {
+function logicToExpr(
+  state: LogicState,
+  serviceFieldKeys: ReadonlySet<string> = new Set(),
+): unknown {
   const arr = state.rules.map((r) => ({
     op: r.op,
-    left: { field: r.fieldKey },
+    // A service field is compared by the service's slug, which is the same
+    // in every environment (its id is not).
+    left: {
+      field: serviceFieldKeys.has(r.fieldKey)
+        ? serviceSlugKey(r.fieldKey)
+        : r.fieldKey,
+    },
     right: { const: r.value },
   }));
   return { [state.combinator]: arr };
@@ -1790,12 +1805,48 @@ function ConditionalLogicEditor({
       f.type !== "SECTION_HEADER" &&
       f.type !== "COMPUTED",
   );
+  const serviceFieldKeys = new Set(
+    peers.filter((f) => isAccessServiceField(f)).map((f) => f.key),
+  );
+
+  // Services to pick from when a rule looks at a service field.
+  const [services, setServices] = useState<
+    Array<{ slug: string; label: string }>
+  >([]);
+  const needsServices = serviceFieldKeys.size > 0;
+  useEffect(() => {
+    if (!needsServices) return;
+    let cancelled = false;
+    fetch("/api/workflow/lookups/ACCESS_SERVICES?q=&limit=50")
+      .then((r) => (r.ok ? r.json() : { results: [] }))
+      .then(
+        (data: {
+          results?: Array<{
+            label: string;
+            publicMetadata?: { slug?: string };
+          }>;
+        }) => {
+          if (cancelled) return;
+          setServices(
+            (data.results ?? [])
+              .filter((o) => o.publicMetadata?.slug)
+              .map((o) => ({ slug: o.publicMetadata!.slug!, label: o.label })),
+          );
+        },
+      )
+      .catch(() => null);
+    return () => {
+      cancelled = true;
+    };
+  }, [needsServices]);
 
   const persist = (next: LogicState | null) => {
     if (!next || next.rules.length === 0) {
       onChange({ visibilityRules: undefined });
     } else {
-      onChange({ visibilityRules: logicToExpr(next) as never });
+      onChange({
+        visibilityRules: logicToExpr(next, serviceFieldKeys) as never,
+      });
     }
   };
 
@@ -1931,18 +1982,47 @@ function ConditionalLogicEditor({
                     className="border-hairline bg-canvas text-caption text-ink rounded-md border px-2 py-1"
                     aria-label="Operator"
                   >
-                    {(Object.keys(OP_LABELS) as LogicRule["op"][]).map((op) => (
+                    {(serviceFieldKeys.has(r.fieldKey)
+                      ? (["==", "!="] as LogicRule["op"][])
+                      : (Object.keys(OP_LABELS) as LogicRule["op"][])
+                    ).map((op) => (
                       <option key={op} value={op}>
-                        {OP_LABELS[op]}
+                        {serviceFieldKeys.has(r.fieldKey)
+                          ? op === "=="
+                            ? "is"
+                            : "is not"
+                          : OP_LABELS[op]}
                       </option>
                     ))}
                   </select>
-                  <input
-                    value={r.value}
-                    onChange={(e) => updateRule(i, { value: e.target.value })}
-                    placeholder="value"
-                    className="border-hairline bg-canvas text-caption text-ink min-w-0 flex-1 rounded-md border px-2 py-1"
-                  />
+                  {serviceFieldKeys.has(r.fieldKey) ? (
+                    <select
+                      value={r.value}
+                      onChange={(e) => updateRule(i, { value: e.target.value })}
+                      aria-label="Service"
+                      className="border-hairline bg-canvas text-caption text-ink min-w-0 flex-1 rounded-md border px-2 py-1"
+                    >
+                      <option value="">Choose a service…</option>
+                      {services.map((svc) => (
+                        <option key={svc.slug} value={svc.slug}>
+                          {svc.label}
+                        </option>
+                      ))}
+                      {r.value &&
+                      !services.some((svc) => svc.slug === r.value) ? (
+                        <option value={r.value}>
+                          {r.value} (not in this environment)
+                        </option>
+                      ) : null}
+                    </select>
+                  ) : (
+                    <input
+                      value={r.value}
+                      onChange={(e) => updateRule(i, { value: e.target.value })}
+                      placeholder="value"
+                      className="border-hairline bg-canvas text-caption text-ink min-w-0 flex-1 rounded-md border px-2 py-1"
+                    />
+                  )}
                   <button
                     type="button"
                     onClick={() => removeRule(i)}
@@ -1959,7 +2039,11 @@ function ConditionalLogicEditor({
                   <select
                     value={r.fieldKey}
                     onChange={(e) =>
-                      updateRule(i, { fieldKey: e.target.value })
+                      updateRule(i, {
+                        fieldKey: e.target.value,
+                        op: "==",
+                        value: "",
+                      })
                     }
                     className="border-hairline bg-canvas text-caption text-ink mt-1.5 w-full rounded-md border px-2 py-1"
                   >
