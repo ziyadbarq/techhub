@@ -229,10 +229,13 @@ export class PrismaAccessServiceRepository implements IAccessServiceRepository {
 
   async listActivePeopleNames(
     tx?: Tx,
-  ): Promise<Array<{ userId: string; names: string[] }>> {
+  ): Promise<
+    Array<{ personId: string; userId: string | null; names: string[] }>
+  > {
     const people = await this.db(tx).person.findMany({
-      where: { isActive: true, userId: { not: null } },
+      where: { isActive: true, isExcluded: false },
       select: {
+        id: true,
         userId: true,
         firstName: true,
         middleName: true,
@@ -241,7 +244,8 @@ export class PrismaAccessServiceRepository implements IAccessServiceRepository {
       },
     });
     return people.map((person) => ({
-      userId: person.userId!,
+      personId: person.id,
+      userId: person.userId,
       names: [
         person.user?.name ?? "",
         [person.firstName, person.middleName, person.lastName]

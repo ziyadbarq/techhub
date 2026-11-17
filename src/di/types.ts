@@ -285,6 +285,9 @@ export const DI_TOKENS = {
   CreateUserForPersonUseCase: Symbol.for("CreateUserForPersonUseCase"),
   ResetUserPasswordUseCase: Symbol.for("ResetUserPasswordUseCase"),
   LinkUserToPersonUseCase: Symbol.for("LinkUserToPersonUseCase"),
+  EnsureUserAccountsForPeopleUseCase: Symbol.for(
+    "EnsureUserAccountsForPeopleUseCase",
+  ),
   IPasswordService: Symbol.for("IPasswordService"),
 
   // User Preferences Use Cases

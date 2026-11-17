@@ -13,15 +13,37 @@ import type {
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 
 const PEOPLE = [
-  { userId: "u-wahab", names: ["Abdullah Mohammed Bin Abdulwahab"] },
-  { userId: "u-tahani", names: ["Tahani Abdulaziz Almuwayziri"] },
-  { userId: "u-manal", names: ["Manal Zaid Alkhaldi"] },
-  { userId: "u-hoor", names: ["Hoor Fareed Aldouaiji"] },
-  { userId: "u-njoud", names: ["Njoud Fahad Algifari"] },
-  { userId: "u-fagir", names: ["Ahmed Salah Aldin Fagir"] },
+  {
+    personId: "p-wahab",
+    userId: "u-wahab",
+    names: ["Abdullah Mohammed Bin Abdulwahab"],
+  },
+  {
+    personId: "p-tahani",
+    userId: "u-tahani",
+    names: ["Tahani Abdulaziz Almuwayziri"],
+  },
+  { personId: "p-manal", userId: "u-manal", names: ["Manal Zaid Alkhaldi"] },
+  { personId: "p-hoor", userId: "u-hoor", names: ["Hoor Fareed Aldouaiji"] },
+  { personId: "p-njoud", userId: "u-njoud", names: ["Njoud Fahad Algifari"] },
+  {
+    personId: "p-fagir",
+    userId: "u-fagir",
+    names: ["Ahmed Salah Aldin Fagir"],
+  },
+  // In Active Directory, never signed in to TechHub.
+  { personId: "p-sara", userId: null, names: ["Sara Abdullah Alarifi"] },
   // Two active people share this name.
-  { userId: "u-ahmed-1", names: ["Ahmed Abdullah Mohammed"] },
-  { userId: "u-ahmed-2", names: ["Ahmed Abdullah Mohammed"] },
+  {
+    personId: "p-ahmed-1",
+    userId: "u-ahmed-1",
+    names: ["Ahmed Abdullah Mohammed"],
+  },
+  {
+    personId: "p-ahmed-2",
+    userId: "u-ahmed-2",
+    names: ["Ahmed Abdullah Mohammed"],
+  },
 ];
 
 const csv = (...lines: string[]) => Buffer.from(lines.join("\r\n"), "utf-8");
@@ -43,20 +65,31 @@ function setup(existing: Partial<AccessServiceData>[] = []) {
     update: vi.fn(async (_id, data) => data),
   } as unknown as IAccessServiceRepository;
   const logger = { info: vi.fn() } as unknown as ILoggerService;
+  const ensureAccounts = {
+    execute: vi.fn(async ({ personIds }: { personIds: string[] }) => ({
+      userIdByPerson: new Map(personIds.map((id) => [id, `new-${id}`])),
+      created: [...personIds],
+      linked: [],
+      skipped: [],
+    })),
+  };
   let seq = 0;
   const useCase = new ImportAccessServicesUseCase(
     repo,
     { generateId: () => `svc-${++seq}` },
     logger,
+    ensureAccounts as unknown as ConstructorParameters<
+      typeof ImportAccessServicesUseCase
+    >[3],
   );
-  return { repo, useCase };
+  return { repo, useCase, ensureAccounts };
 }
 
 describe("roster helpers", () => {
   it("recognises the business sheet header in any case, with a BOM", () => {
     expect(
       isRosterHeader([
-        "﻿Title",
+        "\uFEFFTitle",
         "service owner",
         "CYBERSECURITY OWNER",
         "Service  Implementer",
@@ -84,6 +117,7 @@ describe("roster helpers", () => {
     const index = new PersonNameIndex(PEOPLE);
     expect(index.resolve("Ahmed SalahAldin Fagir")).toEqual({
       status: "found",
+      personId: "p-fagir",
       userId: "u-fagir",
     });
     expect(index.resolve("Ahmed Abdullah Mohammed")).toEqual({
@@ -211,5 +245,39 @@ describe("ImportAccessServicesUseCase — email template", () => {
       slug: "it-vpn-access",
       requireManagerApproval: false,
     });
+  });
+});
+
+describe("ImportAccessServicesUseCase — people who haven't signed in", () => {
+  const file = csv(
+    ROSTER_HEADER,
+    "OCI SRE,Sara Abdullah Alarifi,Tahani Abdulaziz Almuwayziri,Sara Abdullah Alarifi",
+  );
+
+  it("counts the accounts it would create without creating them", async () => {
+    const { useCase, ensureAccounts } = setup();
+    const result = await useCase.execute({ csvBytes: file, dryRun: true });
+    expect(result.errors).toEqual([]);
+    expect(result.warnings).toEqual([]);
+    expect(result.newAccounts).toBe(1);
+    expect(ensureAccounts.execute).not.toHaveBeenCalled();
+  });
+
+  it("creates their account on import and assigns it", async () => {
+    const { useCase, ensureAccounts, repo } = setup();
+    const result = await useCase.execute({
+      csvBytes: file,
+      importedById: "admin",
+    });
+    expect(ensureAccounts.execute).toHaveBeenCalledWith({
+      personIds: ["p-sara"],
+      requestedBy: "admin",
+    });
+    expect(result.newAccounts).toBe(1);
+    expect(vi.mocked(repo.create).mock.calls[0]![1]).toEqual([
+      { userId: "new-p-sara", role: "OWNER" },
+      { userId: "u-tahani", role: "CYBERSECURITY" },
+      { userId: "new-p-sara", role: "IMPLEMENTER" },
+    ]);
   });
 });

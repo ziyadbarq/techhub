@@ -8,6 +8,7 @@ import type {
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { AccessServiceRole } from "@/generated/prisma";
+import type { EnsureUserAccountsForPeopleUseCase } from "@/core/use-cases/user-provisioning/ensure-user-accounts-for-people.use-case";
 import {
   isRosterHeader,
   normalizeHeader,
@@ -57,6 +58,12 @@ export interface ImportAccessServicesResult {
   /** Of importedCount: services that will be / were created vs updated. */
   created?: number;
   updated?: number;
+  /**
+   * People from Active Directory who have never signed in and will get (or
+   * got) a TechHub account so they can be assigned. Microsoft sign-in links
+   * to it on their first login.
+   */
+  newAccounts?: number;
   /** Opaque token from dry-run; pass back to confirm a real import of identical content */
   contentHash?: string;
 }
@@ -73,6 +80,13 @@ export interface ImportAccessServicesRequest {
 // ─── Internal types ───────────────────────────────────────────────────────────
 
 type People = Record<AccessServiceRole, string[]>;
+
+/** Before accounts are created: a known user, or a person who has none yet. */
+interface PendingAssignee {
+  role: AccessServiceRole;
+  userId?: string;
+  personId?: string;
+}
 
 interface ParsedRow {
   lineNumber: number;
@@ -110,6 +124,8 @@ export class ImportAccessServicesUseCase {
     private readonly idGenerator: IIdGenerator,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.EnsureUserAccountsForPeopleUseCase)
+    private readonly ensureAccounts: EnsureUserAccountsForPeopleUseCase,
   ) {}
 
   async execute(
@@ -177,7 +193,7 @@ export class ImportAccessServicesUseCase {
     const index = parsed.roster
       ? new PersonNameIndex(await this.repo.listActivePeopleNames())
       : null;
-    const resolved = new Map<number, AccessServiceAssigneeInput[]>();
+    const resolved = new Map<number, PendingAssignee[]>();
     for (const row of rows) {
       resolved.set(
         row.lineNumber,
@@ -192,6 +208,12 @@ export class ImportAccessServicesUseCase {
     }
     const updated = existing.size;
     const created = rows.length - updated;
+    const withoutAccount = new Set(
+      [...resolved.values()]
+        .flat()
+        .filter((a) => !a.userId)
+        .map((a) => a.personId!),
+    );
     warnings.sort((x, y) => x.row - y.row);
 
     if (request.dryRun) {
@@ -201,15 +223,35 @@ export class ImportAccessServicesUseCase {
         warnings,
         created,
         updated,
+        newAccounts: withoutAccount.size,
         contentHash,
       };
     }
+
+    const accounts = withoutAccount.size
+      ? await this.ensureAccounts.execute({
+          personIds: [...withoutAccount],
+          requestedBy: request.importedById ?? null,
+        })
+      : null;
+    const toAssignees = (pending: PendingAssignee[]) => {
+      const seen = new Set<string>();
+      const out: AccessServiceAssigneeInput[] = [];
+      for (const a of pending) {
+        const userId =
+          a.userId ?? accounts?.userIdByPerson.get(a.personId!) ?? null;
+        if (!userId || seen.has(`${a.role}:${userId}`)) continue;
+        seen.add(`${a.role}:${userId}`);
+        out.push({ userId, role: a.role });
+      }
+      return out;
+    };
 
     for (const row of rows) {
       await this.upsertRow(
         row,
         existing.get(row.lineNumber) ?? null,
-        resolved.get(row.lineNumber) ?? [],
+        toAssignees(resolved.get(row.lineNumber) ?? []),
         request.importedById ?? null,
       );
     }
@@ -219,6 +261,7 @@ export class ImportAccessServicesUseCase {
       created,
       updated,
       warnings: warnings.length,
+      newAccounts: accounts?.created.length ?? 0,
       format: parsed.roster ? "roster" : "template",
       importedById: request.importedById,
     });
@@ -228,6 +271,7 @@ export class ImportAccessServicesUseCase {
       warnings,
       created,
       updated,
+      newAccounts: accounts?.created.length ?? 0,
     };
   }
 
@@ -320,18 +364,22 @@ export class ImportAccessServicesUseCase {
     row: ParsedRow,
     index: PersonNameIndex | null,
     warnings: ImportRowError[],
-  ): Promise<AccessServiceAssigneeInput[]> {
-    const result: AccessServiceAssigneeInput[] = [];
+  ): Promise<PendingAssignee[]> {
+    const result: PendingAssignee[] = [];
     for (const { role, label } of ROLES) {
-      const userIds = new Set<string>();
+      const before = result.length;
       for (const email of row.emails[role]) {
         const userId = await this.repo.findActiveUserIdByEmail(email);
-        if (userId) userIds.add(userId);
+        if (userId) result.push({ role, userId });
       }
       for (const name of row.names[role]) {
         const match = index?.resolve(name) ?? { status: "unknown" as const };
         if (match.status === "found") {
-          userIds.add(match.userId);
+          result.push({
+            role,
+            userId: match.userId ?? undefined,
+            personId: match.personId,
+          });
         } else if (match.status === "ambiguous") {
           warnings.push({
             row: row.lineNumber,
@@ -342,18 +390,17 @@ export class ImportAccessServicesUseCase {
           warnings.push({
             row: row.lineNumber,
             column: label,
-            message: `"${name}" isn't an active TechHub user; not assigned.`,
+            message: `"${name}" isn't an active person in Persons (Active Directory); not assigned.`,
           });
         }
       }
-      if (index && userIds.size === 0) {
+      if (index && result.length === before) {
         warnings.push({
           row: row.lineNumber,
           column: label,
           message: `"${row.name}" has no ${label.toLowerCase()}. Requests for it will stop at that step until someone is assigned.`,
         });
       }
-      for (const userId of userIds) result.push({ userId, role });
     }
     return result;
   }

@@ -18,7 +18,11 @@ export const ROSTER_COLUMNS = {
 
 /** Header cell → comparable key: lower case, single spaces, no BOM. */
 export function normalizeHeader(header: string): string {
-  return header.replace(/^\uFEFF/, "").trim().toLowerCase().replace(/\s+/g, " ");
+  return header
+    .replace(/^\uFEFF/, "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
 }
 
 export function isRosterHeader(headers: readonly string[]): boolean {
@@ -75,26 +79,30 @@ export function parseYesNo(value: string): boolean | undefined {
 }
 
 export interface ActivePersonNames {
-  userId: string;
+  personId: string;
+  /** null while the person has never signed in to TechHub. */
+  userId: string | null;
   /** Every way this person's name may be written (display name, first + last …). */
   names: string[];
 }
 
 export type NameResolution =
-  | { status: "found"; userId: string }
+  | { status: "found"; personId: string; userId: string | null }
   | { status: "unknown" }
   | { status: "ambiguous"; count: number };
 
 export class PersonNameIndex {
   private readonly byKey = new Map<string, Set<string>>();
+  private readonly people = new Map<string, ActivePersonNames>();
 
   constructor(people: readonly ActivePersonNames[]) {
     for (const person of people) {
+      this.people.set(person.personId, person);
       for (const name of person.names) {
         const key = personNameKey(name);
         if (!key) continue;
         const ids = this.byKey.get(key) ?? new Set<string>();
-        ids.add(person.userId);
+        ids.add(person.personId);
         this.byKey.set(key, ids);
       }
     }
@@ -104,6 +112,11 @@ export class PersonNameIndex {
     const ids = this.byKey.get(personNameKey(name));
     if (!ids || ids.size === 0) return { status: "unknown" };
     if (ids.size > 1) return { status: "ambiguous", count: ids.size };
-    return { status: "found", userId: [...ids][0]! };
+    const person = this.people.get([...ids][0]!)!;
+    return {
+      status: "found",
+      personId: person.personId,
+      userId: person.userId,
+    };
   }
 }

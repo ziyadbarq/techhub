@@ -59,12 +59,15 @@ export interface IAccessServiceRepository {
   /** Returns the userId for an active User with the given email, or null. */
   findActiveUserIdByEmail(email: string, tx?: Tx): Promise<string | null>;
   /**
-   * Every active person who can be an assignee (active Person linked to a
-   * User), with the ways their name may be written. For name-based imports.
+   * Every active, non-excluded person (synced from Active Directory), with
+   * the ways their name may be written and their user id once they have a
+   * TechHub account. For name-based imports.
    */
   listActivePeopleNames(
     tx?: Tx,
-  ): Promise<Array<{ userId: string; names: string[] }>>;
+  ): Promise<
+    Array<{ personId: string; userId: string | null; names: string[] }>
+  >;
 }
 
 // ─── Snapshot Repository ─────────────────────────────────────────────────────

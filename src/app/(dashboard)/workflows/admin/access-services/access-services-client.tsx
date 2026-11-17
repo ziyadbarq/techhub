@@ -113,6 +113,11 @@ function RoleSelector({
                   <span className="text-muted-foreground text-xs">
                     {u.email}
                   </span>
+                  {!u.userId && (
+                    <span className="text-muted-foreground ml-auto text-[11px]">
+                      Not signed in yet
+                    </span>
+                  )}
                 </button>
               </li>
             ))}
@@ -134,7 +139,17 @@ function RoleSelector({
             <tbody className="divide-y">
               {selected.map((u) => (
                 <tr key={u.id} className="hover:bg-muted/20">
-                  <td className="px-3 py-1.5">{u.name}</td>
+                  <td className="px-3 py-1.5">
+                    {u.name}
+                    {!u.userId && (
+                      <span
+                        className="text-muted-foreground ml-1.5 text-[11px]"
+                        title="A TechHub account is created when you save; Microsoft sign-in links to it"
+                      >
+                        · account created on save
+                      </span>
+                    )}
+                  </td>
                   <td className="text-muted-foreground px-3 py-1.5">
                     {u.email}
                   </td>
@@ -156,6 +171,13 @@ function RoleSelector({
       )}
     </div>
   );
+}
+
+/** People who already have an account go by user id; the rest by person id. */
+function toAssignee(user: ActiveUserOption, role: AccessServiceRole) {
+  return user.userId
+    ? { userId: user.userId, role }
+    : { personId: user.personId ?? undefined, role };
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -208,6 +230,7 @@ export function AccessServicesClient({ initialServices }: Props) {
     importedCount: number;
     created?: number;
     updated?: number;
+    newAccounts?: number;
     contentHash?: string;
   } | null>(null);
   const [importReading, setImportReading] = useState(false);
@@ -231,7 +254,13 @@ export function AccessServicesClient({ initialServices }: Props) {
   ): ActiveUserOption[] {
     return (svc.assignees ?? [])
       .filter((a) => a.role === role)
-      .map((a) => ({ id: a.userId, name: a.userName, email: a.userEmail }));
+      .map((a) => ({
+        id: a.userId,
+        personId: null,
+        userId: a.userId,
+        name: a.userName,
+        email: a.userEmail,
+      }));
   }
 
   function openCreate() {
@@ -268,18 +297,9 @@ export function AccessServicesClient({ initialServices }: Props) {
   function handleSave() {
     startTransition(async () => {
       const assignees = [
-        ...ownerUsers.map((u) => ({
-          userId: u.id,
-          role: "OWNER" as AccessServiceRole,
-        })),
-        ...cyberUsers.map((u) => ({
-          userId: u.id,
-          role: "CYBERSECURITY" as AccessServiceRole,
-        })),
-        ...implUsers.map((u) => ({
-          userId: u.id,
-          role: "IMPLEMENTER" as AccessServiceRole,
-        })),
+        ...ownerUsers.map((u) => toAssignee(u, "OWNER")),
+        ...cyberUsers.map((u) => toAssignee(u, "CYBERSECURITY")),
+        ...implUsers.map((u) => toAssignee(u, "IMPLEMENTER")),
       ];
 
       const result = editingService
@@ -375,6 +395,9 @@ export function AccessServicesClient({ initialServices }: Props) {
         if (result.data.errors.length === 0) {
           toast.success(
             `Ready: ${result.data.created ?? 0} new, ${result.data.updated ?? 0} updated` +
+              (result.data.newAccounts
+                ? ` · ${result.data.newAccounts} new TechHub accounts`
+                : "") +
               (result.data.warnings?.length
                 ? ` · ${result.data.warnings.length} to check`
                 : ""),
@@ -481,6 +504,13 @@ export function AccessServicesClient({ initialServices }: Props) {
             </button>
           )}
         </div>
+        {dryRunResult &&
+        dryRunResult.errors.length === 0 &&
+        (dryRunResult.newAccounts ?? 0) > 0 ? (
+          <p className="text-muted-foreground text-sm">
+            {`${dryRunResult.newAccounts} people in the sheet haven't signed in to TechHub yet. Confirming creates their accounts (Viewer role) so they can be assigned; their Microsoft sign-in links to it.`}
+          </p>
+        ) : null}
         {dryRunResult && dryRunResult.errors.length > 0 && (
           <ul className="text-destructive space-y-1 text-sm">
             {dryRunResult.errors.map((e, i) => (

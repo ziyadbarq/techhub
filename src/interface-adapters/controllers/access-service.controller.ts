@@ -25,12 +25,17 @@ import type {
 } from "@/core/repositories/workflow/access-service.repository.interface";
 export type { AccessServiceData } from "@/core/repositories/workflow/access-service.repository.interface";
 import type { AccessServiceRole } from "@/generated/prisma";
+import type { EnsureUserAccountsForPeopleUseCase } from "@/core/use-cases/user-provisioning";
 import { getSession } from "@/lib/auth/session";
 import { prisma } from "@/infrastructure/database/prisma/client";
 
-/** Assignee can be specified by userId or by email (email is resolved server-side) */
+/**
+ * Assignee by userId, by personId (a Person synced from Active Directory;
+ * an account is created on save if they don't have one yet) or by email.
+ */
 export interface AccessServiceAssigneePayload {
   userId?: string;
+  personId?: string;
   email?: string;
   role: AccessServiceRole;
 }
@@ -62,14 +67,28 @@ async function requireFeatureAndPermission(permission: string) {
 
 async function resolveAssignees(
   raw: AccessServiceAssigneePayload[],
+  requestedBy: string | null,
 ): Promise<Array<{ userId: string; role: AccessServiceRole }>> {
   const repo = getContainer().get<IAccessServiceRepository>(
     DI_TOKENS.IAccessServiceRepository,
   );
+  const personIds = raw
+    .filter((a) => !a.userId && a.personId)
+    .map((a) => a.personId!);
+  const accounts = personIds.length
+    ? await getContainer()
+        .get<EnsureUserAccountsForPeopleUseCase>(
+          DI_TOKENS.EnsureUserAccountsForPeopleUseCase,
+        )
+        .execute({ personIds, requestedBy })
+    : null;
   const resolved: Array<{ userId: string; role: AccessServiceRole }> = [];
   for (const a of raw) {
     if (a.userId) {
       resolved.push({ userId: a.userId, role: a.role });
+    } else if (a.personId) {
+      const userId = accounts?.userIdByPerson.get(a.personId);
+      if (userId) resolved.push({ userId, role: a.role });
     } else if (a.email) {
       const userId = await repo.findActiveUserIdByEmail(a.email);
       if (userId) resolved.push({ userId, role: a.role });
@@ -132,7 +151,7 @@ export async function createAccessServiceAction(
       DI_TOKENS.CreateAccessServiceUseCase,
     );
     const assignees = payload.assignees
-      ? await resolveAssignees(payload.assignees)
+      ? await resolveAssignees(payload.assignees, session?.user?.id ?? null)
       : [];
     const data = await uc.execute({
       name: payload.name,
@@ -167,7 +186,7 @@ export async function updateAccessServiceAction(
       DI_TOKENS.UpdateAccessServiceUseCase,
     );
     const assignees = payload.assignees
-      ? await resolveAssignees(payload.assignees)
+      ? await resolveAssignees(payload.assignees, session?.user?.id ?? null)
       : undefined;
     const data = await uc.execute({
       id,
@@ -275,8 +294,16 @@ export async function exportAccessServicesAction(): Promise<
   }
 }
 
+/**
+ * A person who can be assigned to an access service role. Everyone active in
+ * Persons (synced from Active Directory) is listed, whether or not they have
+ * signed in to TechHub yet; `userId` is null until they have an account.
+ */
 export interface ActiveUserOption {
+  /** Stable key: the user id when there is one, otherwise "person:<id>". */
   id: string;
+  personId: string | null;
+  userId: string | null;
   name: string;
   email: string;
 }
@@ -289,8 +316,9 @@ export async function listActiveUsersForAssigneeAction(): Promise<
       PERMISSIONS.WORKFLOWS_ACCESS_SERVICES_VIEW,
     );
     const rows = await prisma.person.findMany({
-      where: { isActive: true, userId: { not: null } },
+      where: { isActive: true, isExcluded: false },
       select: {
+        id: true,
         userId: true,
         firstName: true,
         lastName: true,
@@ -298,13 +326,13 @@ export async function listActiveUsersForAssigneeAction(): Promise<
       },
       orderBy: [{ firstName: "asc" }, { lastName: "asc" }],
     });
-    const data: ActiveUserOption[] = rows
-      .filter((r) => r.userId)
-      .map((r) => ({
-        id: r.userId!,
-        name: `${r.firstName} ${r.lastName}`.trim(),
-        email: r.email,
-      }));
+    const data: ActiveUserOption[] = rows.map((r) => ({
+      id: r.userId ?? `person:${r.id}`,
+      personId: r.id,
+      userId: r.userId,
+      name: `${r.firstName} ${r.lastName}`.trim(),
+      email: r.email,
+    }));
     return { success: true, data };
   } catch (error) {
     return handleControllerError(
