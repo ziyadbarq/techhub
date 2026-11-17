@@ -14,6 +14,7 @@ import { ResetUserPasswordUseCase } from "@/core/use-cases/user-provisioning/res
 import { LinkUserToPersonUseCase } from "@/core/use-cases/user-provisioning/link-user-to-person.use-case";
 import { EnsureUserAccountsForPeopleUseCase } from "@/core/use-cases/user-provisioning/ensure-user-accounts-for-people.use-case";
 import { ResolvePeopleByNameUseCase } from "@/core/use-cases/user-provisioning/resolve-people-by-name.use-case";
+import { PrepareLineManagerUseCase } from "@/core/use-cases/user-provisioning/prepare-line-manager.use-case";
 import type { IPasswordService } from "@/core/services/password.service.interface";
 import { PasswordService } from "@/infrastructure/services/security/password.service";
 
@@ -43,6 +44,10 @@ export function bindUserProvisioningDependencies(container: Container): void {
   container
     .bind(DI_TOKENS.ResolvePeopleByNameUseCase)
     .to(ResolvePeopleByNameUseCase);
+
+  container
+    .bind(DI_TOKENS.PrepareLineManagerUseCase)
+    .to(PrepareLineManagerUseCase);
 
   // Services
   container

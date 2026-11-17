@@ -32,6 +32,7 @@ import {
   ConfigurationError,
   fieldStateAt,
   InvalidStateError,
+  lineManagerPersonId,
   NotFoundError,
   SUBMIT_STEP_KEY,
 } from "@/core/domain/workflow";
@@ -1734,7 +1735,13 @@ export class WorkflowEngine implements IWorkflowEngine {
     let managerName: string | null = null;
     let managerEmail: string | null = null;
 
-    const managerPersonId = person?.orgUnit.managerId ?? person?.managerId;
+    const managerPersonId = person
+      ? lineManagerPersonId({
+          id: person.id,
+          managerId: person.managerId,
+          orgUnitManagerId: person.orgUnit.managerId,
+        })
+      : null;
     if (managerPersonId) {
       const mgr = await tx.person.findUnique({
         where: { id: managerPersonId },

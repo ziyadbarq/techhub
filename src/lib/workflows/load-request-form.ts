@@ -5,6 +5,8 @@ import { getCurrentUserId } from "@/lib/auth/session";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { lineManagerPersonId } from "@/core/domain/workflow/line-manager";
+import { prepareRequesterLineManager } from "./prepare-line-manager";
 import { requirePermission } from "@/lib/permissions/server";
 
 /** Shared, permission-checked data source for dashboard and standalone submissions. */
@@ -62,10 +64,14 @@ export async function loadRequestFormData(formId: string) {
   const formNameToId: Record<string, string> = {};
   for (const f of linkedForms) formNameToId[f.name] = f.id;
 
+  // Link the line manager from Active Directory if it isn't yet.
+  await prepareRequesterLineManager(userId, { ensureAccount: false });
+
   // Resolve SYSTEM_FIELD values from requester's Person record
   const person = await prisma.person.findFirst({
     where: { userId, isActive: true },
     select: {
+      id: true,
       firstName: true,
       lastName: true,
       email: true,
@@ -78,7 +84,11 @@ export async function loadRequestFormData(formId: string) {
     systemFieldValues["REQUESTER_NAME"] =
       `${person.firstName} ${person.lastName}`.trim();
     systemFieldValues["REQUESTER_EMAIL"] = person.email;
-    const managerPersonId = person.orgUnit.managerId ?? person.managerId;
+    const managerPersonId = lineManagerPersonId({
+      id: person.id,
+      managerId: person.managerId,
+      orgUnitManagerId: person.orgUnit.managerId,
+    });
     if (managerPersonId) {
       const manager = await prisma.person.findUnique({
         where: { id: managerPersonId },

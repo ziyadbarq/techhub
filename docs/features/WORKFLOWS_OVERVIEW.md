@@ -76,7 +76,7 @@ Each is an `@injectable()` class in `src/core/use-cases/workflow/executors/`. Wi
 ## Assignee resolvers
 
 - `USER`, `ROLE`, `REQUESTER`, `FIELD_USER` (a person field of the form).
-- `REQUESTER_MANAGER`: from the organisation chart (org unit manager, then `Person.managerId`).
+- `REQUESTER_MANAGER`: the requester's manager from Microsoft Entra ID / Active Directory (`Person.managerId`, linked by the user sync), else their org unit's manager; never the requester themselves (`lineManagerPersonId`). When a form opens, a manager missing from the Person record is read from Microsoft Graph and linked; on submit the manager gets an account if they have none, so the approval reaches them (`PrepareLineManagerUseCase`).
 - `ACCESS_SERVICE_ROLE`: owner, cybersecurity or implementer of the service chosen in an Access Services field.
 - `FALLBACK`: the line manager, or a person field when there is none (or when `forceFallbackWhen` holds).
 - `OPTION_USERS` ("Depends on the answer" in the builder): people per option of a choice field (`DROPDOWN`, `RADIO`, `MULTI_SELECT`), e.g. the data owner of each selected product. Every chosen option adds its people; an option with nobody adds no one, so pair it with another assignee if a step must never be empty.

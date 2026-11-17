@@ -1,8 +1,9 @@
 /**
  * REQUESTER_MANAGER assignee resolver.
  *
- * Resolves from OrganizationUnit.managerId (the organization chart source of
- * truth), with Person.managerId retained as a legacy fallback.
+ * The manager from Microsoft Entra ID / Active Directory (Person.managerId)
+ * first, then the organisation unit's manager; never the requester
+ * themselves (see lineManagerPersonId).
  *
  * Returns an empty array (no assignees) if:
  *  - the requester has no linked Person,
@@ -17,6 +18,7 @@
 
 import { injectable } from "inversify";
 
+import { lineManagerPersonId } from "@/core/domain/workflow";
 import type { AssigneeSpec } from "@/core/domain/workflow";
 import type { ExecCtx, IAssigneeResolver } from "@/core/repositories/workflow";
 
@@ -31,12 +33,18 @@ export class RequesterManagerAssigneeResolver implements IAssigneeResolver {
     const requesterPerson = await exec.tx.person.findFirst({
       where: { userId: exec.requesterId, isActive: true },
       select: {
+        id: true,
         managerId: true,
         orgUnit: { select: { managerId: true } },
       },
     });
-    const managerId =
-      requesterPerson?.orgUnit.managerId ?? requesterPerson?.managerId;
+    const managerId = requesterPerson
+      ? lineManagerPersonId({
+          id: requesterPerson.id,
+          managerId: requesterPerson.managerId,
+          orgUnitManagerId: requesterPerson.orgUnit.managerId,
+        })
+      : null;
     if (!managerId) return [];
 
     const manager = await exec.tx.person.findUnique({

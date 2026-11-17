@@ -289,6 +289,7 @@ export const DI_TOKENS = {
     "EnsureUserAccountsForPeopleUseCase",
   ),
   ResolvePeopleByNameUseCase: Symbol.for("ResolvePeopleByNameUseCase"),
+  PrepareLineManagerUseCase: Symbol.for("PrepareLineManagerUseCase"),
   IPasswordService: Symbol.for("IPasswordService"),
 
   // User Preferences Use Cases

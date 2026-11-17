@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { getContainer } from "@/di/container";
+import { prepareRequesterLineManager } from "@/lib/workflows/prepare-line-manager";
 import { DI_TOKENS } from "@/di/types";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requireFeature } from "@/lib/features/server";
@@ -77,6 +78,10 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
+
+  // The line manager from Active Directory, with an account, so a
+  // "line manager" approval reaches them.
+  await prepareRequesterLineManager(userId, { ensureAccount: true });
 
   const actor: ActorContext = { userId };
   const engine = getContainer().get<IWorkflowEngine>(DI_TOKENS.IWorkflowEngine);
