@@ -67,7 +67,11 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
 import { formatDate } from "@/lib/utils/date-format";
 import { cn } from "@/lib/utils";
-import { wouldCreateFolderCycle } from "@/lib/knowledge-base/folders-tree";
+import {
+  exceedsFolderDepth,
+  MAX_FOLDER_DEPTH,
+  wouldCreateFolderCycle,
+} from "@/lib/knowledge-base/folders-tree";
 import { KnowledgeFolderCard } from "./KnowledgeFolderCard";
 
 type FolderItem = { id: string; name: string; parentId: string | null };
@@ -118,6 +122,8 @@ function pathLabel(id: string | null, folders: readonly FolderItem[]): string {
   return path.length ? path.map((entry) => entry.name).join(" / ") : "Library";
 }
 
+const DEPTH_LIMIT_MESSAGE = `Folders can go ${MAX_FOLDER_DEPTH} levels deep at most.`;
+
 function humanize(value: string): string {
   return value.charAt(0) + value.slice(1).toLowerCase().replace(/_/g, " ");
 }
@@ -127,6 +133,7 @@ async function readError(
   fallback: string,
 ): Promise<string> {
   const data = (await response.json().catch(() => ({}))) as { error?: string };
+  if (data.error === "FOLDER_DEPTH_LIMIT") return DEPTH_LIMIT_MESSAGE;
   return data.error ? humanize(data.error) : fallback;
 }
 
@@ -414,6 +421,9 @@ export function KnowledgeCatalog() {
     }
   }
 
+  // A folder at the deepest level can hold documents but no more folders.
+  const atDepthLimit = exceedsFolderDepth(folders, null, activeId);
+
   const newDocumentHref = (type?: "pdf") => {
     const params = new URLSearchParams();
     if (activeId) params.set("folder", activeId);
@@ -428,7 +438,8 @@ export function KnowledgeCatalog() {
         (candidate) =>
           !exclude ||
           (candidate.id !== exclude.id &&
-            !wouldCreateFolderCycle(folders, exclude.id, candidate.id)),
+            !wouldCreateFolderCycle(folders, exclude.id, candidate.id) &&
+            !exceedsFolderDepth(folders, exclude.id, candidate.id)),
       )
       .map((candidate) => ({
         id: candidate.id,
@@ -676,7 +687,8 @@ export function KnowledgeCatalog() {
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
-              disabled={busy}
+              disabled={busy || atDepthLimit}
+              title={atDepthLimit ? DEPTH_LIMIT_MESSAGE : undefined}
               onClick={() =>
                 startDialog({ kind: "create", parentId: activeId })
               }
@@ -928,14 +940,18 @@ export function KnowledgeCatalog() {
                       : "Your knowledge library is empty"}
                   </p>
                   <p className="text-muted-foreground mt-1 text-sm">
-                    {mayCreate
-                      ? "Add a folder to organize content, or create the first document here."
-                      : "Nothing has been published here yet."}
+                    {!mayCreate
+                      ? "Nothing has been published here yet."
+                      : atDepthLimit
+                        ? "This is the deepest folder level. Create the first document here."
+                        : "Add a folder to organize content, or create the first document here."}
                   </p>
                   {mayCreate && (
                     <div className="mt-5 flex flex-wrap justify-center gap-2">
                       <Button
                         variant="outline"
+                        disabled={atDepthLimit}
+                        title={atDepthLimit ? DEPTH_LIMIT_MESSAGE : undefined}
                         onClick={() =>
                           startDialog({ kind: "create", parentId: activeId })
                         }

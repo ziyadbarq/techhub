@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { editKnowledgeFolderSchema } from "@/lib/knowledge-base/schema";
-import { wouldCreateFolderCycle } from "@/lib/knowledge-base/folders-tree";
+import { exceedsFolderDepth, wouldCreateFolderCycle } from "@/lib/knowledge-base/folders-tree";
 import { KnowledgeError, knowledgeErrorResponse, requireKnowledgeAccess } from "@/lib/knowledge-base/access";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +27,9 @@ export async function PATCH(request: NextRequest, context: Context) {
         }
         if (wouldCreateFolderCycle(tree, id, data.parentId)) {
           throw new KnowledgeError(409, "FOLDER_CYCLE_NOT_ALLOWED");
+        }
+        if (data.parentId !== current.parentId && exceedsFolderDepth(tree, id, data.parentId)) {
+          throw new KnowledgeError(409, "FOLDER_DEPTH_LIMIT");
         }
       }
       const newParentId = data.parentId === undefined ? current.parentId : data.parentId;

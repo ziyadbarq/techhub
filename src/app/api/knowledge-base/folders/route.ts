@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { createKnowledgeFolderSchema } from "@/lib/knowledge-base/schema";
+import { exceedsFolderDepth } from "@/lib/knowledge-base/folders-tree";
 import { KnowledgeError, knowledgeErrorResponse, requireKnowledgeAccess } from "@/lib/knowledge-base/access";
 
 export const dynamic = "force-dynamic";
@@ -28,8 +29,14 @@ export async function POST(request: NextRequest) {
     const data = createKnowledgeFolderSchema.parse(await request.json());
     const created = await prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT 1 AS locked FROM pg_advisory_xact_lock(88776111)`;
-      if (data.parentId && !(await tx.knowledgeFolder.findUnique({ where: { id: data.parentId } }))) {
-        throw new KnowledgeError(404, "PARENT_FOLDER_NOT_FOUND");
+      if (data.parentId) {
+        const tree = await tx.knowledgeFolder.findMany({ select: { id: true, parentId: true } });
+        if (!tree.some((node) => node.id === data.parentId)) {
+          throw new KnowledgeError(404, "PARENT_FOLDER_NOT_FOUND");
+        }
+        if (exceedsFolderDepth(tree, null, data.parentId)) {
+          throw new KnowledgeError(409, "FOLDER_DEPTH_LIMIT");
+        }
       }
       const existing = await tx.knowledgeFolder.findFirst({
         where: { parentId: data.parentId, name: data.name }, select: { id: true },

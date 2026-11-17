@@ -6,6 +6,7 @@ Knowledge Base is an internal, permission-controlled library for Barq policies, 
 The first version supports:
 - Two formats: **PDF upload** and **structured block editor** (plain text, headings, lists and quotes; no arbitrary HTML).
 - Taxonomy/category and classification: INTERNAL or RESTRICTED.
+- Folders nest at most three levels deep (top folder, subfolder, sub-subfolder). Creating or moving a folder past that is refused (`FOLDER_DEPTH_LIMIT`); the deepest level holds documents only.
 - Draft revisions, controlled publication, and a published snapshot that remains unchanged while edits are in progress.
 - Audit records for create, edit, publish and archive; revision metadata.
 - Per-version policy agreement, when the author marks a policy as requiring it: the reader ticks "I have read and agree" and confirms; a newly published version asks again and tells the reader which version they last agreed to.
