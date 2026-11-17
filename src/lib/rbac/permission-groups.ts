@@ -19,7 +19,8 @@
  * 12. Intune & MDM (6 permissions)
  * 13. Attachments & Documents (10 permissions)
  * 14. Exchange Rates (6 permissions)
- * 15. Development & Testing (6 permissions)
+ * 15. Knowledge Base (6 permissions)
+ * 16. Development & Testing (6 permissions)
  */
 
 import {
@@ -445,6 +446,16 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     ),
   },
   {
+    id: "knowledge-base",
+    label: "Knowledge Base",
+    description:
+      "Policies and articles: read, write, publish, archive, and restricted content",
+    icon: "BookOpen",
+    permissions: Object.values(PERMISSIONS).filter((permission) =>
+      permission.startsWith("knowledge-base:"),
+    ),
+  },
+  {
     id: "development",
     label: "Development & Testing",
     description: "Task management and development-related permissions",
@@ -473,7 +484,8 @@ if (uncategorizedPermissions.length > 0) {
   PERMISSION_GROUPS.push({
     id: "other-permissions",
     label: "Other Permissions",
-    description: "Available permissions not yet assigned to a dedicated category",
+    description:
+      "Available permissions not yet assigned to a dedicated category",
     icon: "List",
     permissions: uncategorizedPermissions,
   });

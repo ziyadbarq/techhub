@@ -75,6 +75,7 @@ const mockPermissionRepository = {
 const mockRoleRepository = {
   findById: vi.fn(),
   findByName: vi.fn(),
+  getRolePermissions: vi.fn().mockResolvedValue([]),
 };
 
 // Mock requirePermission
@@ -532,6 +533,25 @@ describe("Role Controller", () => {
 
       // Assert
       expect(mockRoleRepository.findByName).toHaveBeenCalledWith("role-1");
+    });
+
+    it("includes the permissions granted to the role", async () => {
+      const mockRole = createMockRole({ name: "role-1" });
+      mockRoleRepository.findByName.mockResolvedValue(mockRole);
+      mockRoleRepository.getRolePermissions.mockResolvedValueOnce([
+        "knowledge-base:view",
+        "knowledge-base:publish",
+      ]);
+
+      const result = await getRoleAction("role-1");
+
+      expect(mockRoleRepository.getRolePermissions).toHaveBeenCalledWith(
+        "role-1",
+      );
+      expect(result.success && result.data.permissions).toEqual([
+        "knowledge-base:view",
+        "knowledge-base:publish",
+      ]);
     });
 
     it("should return error when role not found", async () => {

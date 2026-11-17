@@ -45,6 +45,7 @@ import type {
 } from "@/core/use-cases/rbac";
 import type { ListPermissionsUseCase } from "@/core/use-cases/rbac/list-permissions.use-case";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
+import type { Role } from "@/core/domain/entities/role.entity";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getCurrentUserId } from "@/lib/auth/session";
@@ -237,6 +238,21 @@ export async function deleteRoleAction(
 }
 
 /**
+ * A role with the permissions granted to it. The role lookups return the
+ * role row only, so without this the permissions screen showed every role
+ * with nothing selected and "clone role" copied no permissions.
+ */
+async function presentRoleWithPermissions(
+  role: Role,
+  roleRepository: IRoleRepository,
+): Promise<RoleDTO> {
+  return {
+    ...presentRole(role),
+    permissions: await roleRepository.getRolePermissions(role.id),
+  };
+}
+
+/**
  * Get a single role by name
  */
 export async function getRoleAction(
@@ -262,10 +278,9 @@ export async function getRoleAction(
       };
     }
 
-    // Transform to DTO
     return {
       success: true,
-      data: presentRole(role),
+      data: await presentRoleWithPermissions(role, roleRepository),
     };
   } catch (error) {
     return handleControllerError(
@@ -302,10 +317,9 @@ export async function getRoleByIdAction(
       };
     }
 
-    // Transform to DTO
     return {
       success: true,
-      data: presentRole(role),
+      data: await presentRoleWithPermissions(role, roleRepository),
     };
   } catch (error) {
     return handleControllerError(
