@@ -56,6 +56,12 @@ function setup(existing: Partial<AccessServiceData>[] = []) {
       async (slug: string) =>
         (existing.find((s) => s.slug === slug) as AccessServiceData) ?? null,
     ),
+    findByName: vi.fn(
+      async (name: string) =>
+        (existing.find(
+          (s) => s.name?.toLowerCase() === name.toLowerCase(),
+        ) as AccessServiceData) ?? null,
+    ),
     listActivePeopleNames: vi.fn(async () => PEOPLE),
     isActiveUserEmail: vi.fn(async (email: string) => email === "a@barq.com"),
     findActiveUserIdByEmail: vi.fn(async (email: string) =>
@@ -279,5 +285,22 @@ describe("ImportAccessServicesUseCase — people who haven't signed in", () => {
       { userId: "u-tahani", role: "CYBERSECURITY" },
       { userId: "new-p-sara", role: "IMPLEMENTER" },
     ]);
+  });
+});
+
+describe("ImportAccessServicesUseCase — matching existing services", () => {
+  it("finds a service by its title even when its slug was set by hand", async () => {
+    const { useCase, repo } = setup([
+      { id: "svc-gcp", name: "Google Cloud (GCP)", slug: "gcp" },
+    ]);
+    const file = csv(
+      ROSTER_HEADER,
+      '"Google Cloud (GCP)",Njoud Fahad Algifari,Tahani Abdulaziz Almuwayziri,Hoor Fareed Aldouaiji',
+    );
+    const dry = await useCase.execute({ csvBytes: file, dryRun: true });
+    expect(dry).toMatchObject({ created: 0, updated: 1 });
+    await useCase.execute({ csvBytes: file, confirmedHash: dry.contentHash });
+    expect(repo.create).not.toHaveBeenCalled();
+    expect(vi.mocked(repo.update).mock.calls[0]![0]).toBe("svc-gcp");
   });
 });

@@ -203,7 +203,11 @@ export class ImportAccessServicesUseCase {
 
     const existing = new Map<number, string>();
     for (const row of rows) {
-      const found = await this.repo.findBySlug(row.slug);
+      // Same title first: a service made by hand may have a custom slug
+      // ("Google Cloud (GCP)" → gcp) that the title wouldn't produce.
+      const found =
+        (await this.repo.findByName(row.name)) ??
+        (await this.repo.findBySlug(row.slug));
       if (found) existing.set(row.lineNumber, found.id);
     }
     const updated = existing.size;

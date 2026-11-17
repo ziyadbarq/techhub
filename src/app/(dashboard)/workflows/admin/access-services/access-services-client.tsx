@@ -443,20 +443,6 @@ export function AccessServicesClient({ initialServices }: Props) {
           </p>
         </div>
         <div className="flex gap-2">
-          <a
-            href="/api/workflow/admin/access-services/template"
-            download
-            className="inline-flex items-center rounded-md border px-3 py-2 text-sm"
-          >
-            Download Template
-          </a>
-          <a
-            href="/api/workflow/admin/access-services/export"
-            download
-            className="inline-flex items-center rounded-md border px-3 py-2 text-sm"
-          >
-            Export CSV
-          </a>
           <button
             onClick={openCreate}
             className="bg-primary text-primary-foreground inline-flex items-center rounded-md px-3 py-2 text-sm"
@@ -471,12 +457,20 @@ export function AccessServicesClient({ initialServices }: Props) {
         <div>
           <h2 className="text-sm font-medium">Bulk Import (Excel or CSV)</h2>
           <p className="text-muted-foreground mt-1 text-xs">
-            Excel with columns <b>Title</b>, <b>Service Owner</b>,{" "}
-            <b>Cybersecurity Owner</b>, <b>Service Implementer</b> (people by
-            name, several separated by commas; optional <b>Manager Approval</b>{" "}
-            yes/no), or the CSV template with emails. Services are matched by
-            title: existing ones are updated and their people replaced, new ones
-            are created with manager approval on.
+            One row per service: <b>Title</b>, <b>Service Owner</b>,{" "}
+            <b>Cybersecurity Owner</b>, <b>Service Implementer</b>, and
+            optionally <b>Manager Approval</b> (Yes/No). People by full name as
+            in Persons, several separated by commas. Existing services (same
+            title) are updated and their people replaced; new ones start with
+            manager approval on.{" "}
+            <a
+              href="/api/workflow/admin/access-services/template"
+              download
+              className="text-foreground font-medium underline underline-offset-2"
+            >
+              Download the Excel template
+            </a>
+            .
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -539,6 +533,15 @@ export function AccessServicesClient({ initialServices }: Props) {
             </ul>
           </details>
         )}
+        <p className="text-muted-foreground text-right text-xs">
+          <a
+            href="/api/workflow/admin/access-services/export"
+            download
+            className="hover:text-foreground underline-offset-2 hover:underline"
+          >
+            Export current services (Excel)
+          </a>
+        </p>
       </div>
 
       {/* Service Table */}

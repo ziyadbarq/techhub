@@ -72,4 +72,57 @@ export class ExportAccessServicesUseCase {
 
     return Buffer.from(rows.join("\r\n"), "utf-8");
   }
+
+  /**
+   * The services as the business sheet keeps them (same columns the roster
+   * import reads), people by name, so an export can be edited and imported
+   * back as it is.
+   */
+  /** Empty sheet in the same layout, with two example rows. */
+  template(): string[][] {
+    return [
+      [...ROSTER_EXPORT_HEADERS],
+      [
+        "Example Portal",
+        "Full Name Of Owner",
+        "First Cyber Approver, Second Cyber Approver",
+        "First Implementer, Second Implementer",
+        "Yes",
+      ],
+      [
+        "Another Service",
+        "Full Name Of Owner",
+        "First Cyber Approver",
+        "First Implementer",
+        "No",
+      ],
+    ];
+  }
+
+  async roster(): Promise<string[][]> {
+    const services = await this.repo.findAll();
+    const names = (svc: AccessServiceData, role: AccessServiceRole) =>
+      (svc.assignees ?? [])
+        .filter((a) => a.role === role)
+        .map((a) => a.userName || a.userEmail)
+        .join(", ");
+    return [
+      [...ROSTER_EXPORT_HEADERS],
+      ...services.map((svc) => [
+        svc.name,
+        names(svc, "OWNER"),
+        names(svc, "CYBERSECURITY"),
+        names(svc, "IMPLEMENTER"),
+        svc.requireManagerApproval ? "Yes" : "No",
+      ]),
+    ];
+  }
 }
+
+export const ROSTER_EXPORT_HEADERS = [
+  "Title",
+  "Service Owner",
+  "Cybersecurity Owner",
+  "Service Implementer",
+  "Manager Approval",
+] as const;
