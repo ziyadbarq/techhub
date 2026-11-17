@@ -327,6 +327,26 @@ export type AssetKitCheckout = Prisma.AssetKitCheckoutModel
  */
 export type AssetKitCheckoutItem = Prisma.AssetKitCheckoutItemModel
 /**
+ * Model KnowledgeArticle
+ * 
+ */
+export type KnowledgeArticle = Prisma.KnowledgeArticleModel
+/**
+ * Model KnowledgeRevision
+ * 
+ */
+export type KnowledgeRevision = Prisma.KnowledgeRevisionModel
+/**
+ * Model KnowledgeAcknowledgement
+ * 
+ */
+export type KnowledgeAcknowledgement = Prisma.KnowledgeAcknowledgementModel
+/**
+ * Model KnowledgeFolder
+ * 
+ */
+export type KnowledgeFolder = Prisma.KnowledgeFolderModel
+/**
  * Model LicenseProduct
  * 
  */
