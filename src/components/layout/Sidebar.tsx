@@ -418,7 +418,9 @@ const NestedNavItem = React.memo(function NestedNavItem({
 
       {/* Title (expanded only) */}
       {!isCollapsed && (
-        <span title={item.title} className="flex-1 truncate whitespace-nowrap">{item.title}</span>
+        <span title={item.title} className="flex-1 truncate whitespace-nowrap">
+          {item.title}
+        </span>
       )}
 
       {/* Expand/Collapse Icon for items with children */}

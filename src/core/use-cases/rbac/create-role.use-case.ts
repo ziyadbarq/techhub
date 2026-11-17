@@ -45,7 +45,9 @@ export class CreateRoleUseCase {
     // The sole protected role is created by bootstrap/seeding, never via a
     // user-controlled role creation request.
     if (normalizedName === SYSTEM_ADMIN_ROLE_NAME) {
-      throw new ValidationError("The system administrator role is reserved and cannot be created manually");
+      throw new ValidationError(
+        "The system administrator role is reserved and cannot be created manually",
+      );
     }
 
     const exists = await this.roleRepository.existsByName(normalizedName);

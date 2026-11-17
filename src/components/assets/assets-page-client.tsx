@@ -466,7 +466,6 @@ export function AssetsPageClient({
         onSuccess={handleSuccess}
         asset={editingAsset}
       />
-
     </div>
   );
 }

@@ -6,16 +6,24 @@ import { requireFeatureAndPermission } from "@/lib/features/feature-permission-g
 export const dynamic = "force-dynamic";
 
 export default async function AssetsDataImportPage() {
-  await requireFeatureAndPermission("ASSETS", PERMISSIONS.ASSETS_CREATE, "/data-import");
+  await requireFeatureAndPermission(
+    "ASSETS",
+    PERMISSIONS.ASSETS_CREATE,
+    "/data-import",
+  );
   return (
     <div className="mx-auto max-w-6xl space-y-6 pb-12">
       <header className="space-y-2 border-b pb-5">
-        <Link href="/assets" className="text-sm text-muted-foreground hover:text-foreground">
+        <Link
+          href="/assets"
+          className="text-muted-foreground hover:text-foreground text-sm"
+        >
           Assets / Back to assets
         </Link>
         <h1 className="text-2xl font-semibold">Bulk Import Assets</h1>
-        <p className="text-sm text-muted-foreground">
-          Import assets from Excel or CSV, review validation and confirm results.
+        <p className="text-muted-foreground text-sm">
+          Import assets from Excel or CSV, review validation and confirm
+          results.
         </p>
       </header>
       <DataImportWizard initialEntityKey="UNIVERSAL_ASSETS" />

@@ -10,7 +10,10 @@ type State = { forms: RequestFormNav[]; status: RequestMenuStatus };
  * Refresh on navigation, returning to the tab, and every 60 seconds while
  * visible so newly published and archived forms update without a reload.
  */
-export function useRequestFormNav(enabled: boolean, pathname: string | null): State {
+export function useRequestFormNav(
+  enabled: boolean,
+  pathname: string | null,
+): State {
   const [state, setState] = useState<State>({ forms: [], status: "loading" });
 
   useEffect(() => {

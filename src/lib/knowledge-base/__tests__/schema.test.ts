@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
-  blocksToText, createKnowledgeFolderSchema, editKnowledgeFolderSchema, moveKnowledgeArticleSchema, createKnowledgeSchema, editKnowledgeSchema,
-  knowledgeBlocksSchema, pdfMetadataSchema,
+  blocksToText,
+  createKnowledgeFolderSchema,
+  editKnowledgeFolderSchema,
+  moveKnowledgeArticleSchema,
+  createKnowledgeSchema,
+  editKnowledgeSchema,
+  knowledgeBlocksSchema,
+  pdfMetadataSchema,
 } from "../schema";
 
 const good = {
@@ -19,7 +25,9 @@ describe("Knowledge Base document validation", () => {
       { id: "p1", type: "paragraph", text: "<script>alert('x')</script>" },
     ];
     const parsed = createKnowledgeSchema.parse({
-      ...good, sourceType: "EDITOR", blocks,
+      ...good,
+      sourceType: "EDITOR",
+      blocks,
     });
     expect(parsed.blocks[1].text).toContain("<script>");
     // Text is persisted in typed blocks; consumers render as escaped React text.
@@ -27,28 +35,51 @@ describe("Knowledge Base document validation", () => {
   });
 
   it("rejects unsupported block types and excessive content", () => {
-    expect(() => knowledgeBlocksSchema.parse([{ id: "p", type: "html", text: "X" }])).toThrow();
-    expect(() => knowledgeBlocksSchema.parse([{ id: "p", type: "paragraph", text: "x".repeat(12001) }])).toThrow();
+    expect(() =>
+      knowledgeBlocksSchema.parse([{ id: "p", type: "html", text: "X" }]),
+    ).toThrow();
+    expect(() =>
+      knowledgeBlocksSchema.parse([
+        { id: "p", type: "paragraph", text: "x".repeat(12001) },
+      ]),
+    ).toThrow();
     expect(() => knowledgeBlocksSchema.parse([])).toThrow();
   });
 
   it("rejects unknown classifications", () => {
-    expect(() => pdfMetadataSchema.parse({ ...good, classification: "PUBLIC" })).toThrow();
+    expect(() =>
+      pdfMetadataSchema.parse({ ...good, classification: "PUBLIC" }),
+    ).toThrow();
   });
 
   it("validates folder names and document moves", () => {
-    expect(createKnowledgeFolderSchema.parse({ name: "  Security  " })).toEqual({ name: "Security", parentId: null });
+    expect(createKnowledgeFolderSchema.parse({ name: "  Security  " })).toEqual(
+      { name: "Security", parentId: null },
+    );
     expect(() => createKnowledgeFolderSchema.parse({ name: " " })).toThrow();
     expect(() => editKnowledgeFolderSchema.parse({})).toThrow();
-    expect(editKnowledgeFolderSchema.parse({ parentId: null }).parentId).toBe(null);
-    expect(moveKnowledgeArticleSchema.parse({ folderId: null, expectedVersion: 2 }).folderId).toBe(null);
-    expect(() => moveKnowledgeArticleSchema.parse({ folderId: "x", expectedVersion: 0 })).toThrow();
+    expect(editKnowledgeFolderSchema.parse({ parentId: null }).parentId).toBe(
+      null,
+    );
+    expect(
+      moveKnowledgeArticleSchema.parse({ folderId: null, expectedVersion: 2 })
+        .folderId,
+    ).toBe(null);
+    expect(() =>
+      moveKnowledgeArticleSchema.parse({ folderId: "x", expectedVersion: 0 }),
+    ).toThrow();
   });
 
   it("uses optimistic version checks for editing", () => {
-    expect(() => editKnowledgeSchema.parse({ ...good, expectedVersion: 0, blocks: [] })).toThrow();
-    expect(editKnowledgeSchema.parse({
-      ...good, expectedVersion: 4, blocks: [{ id: "p", type: "paragraph", text: "Current policy" }],
-    }).expectedVersion).toBe(4);
+    expect(() =>
+      editKnowledgeSchema.parse({ ...good, expectedVersion: 0, blocks: [] }),
+    ).toThrow();
+    expect(
+      editKnowledgeSchema.parse({
+        ...good,
+        expectedVersion: 4,
+        blocks: [{ id: "p", type: "paragraph", text: "Current policy" }],
+      }).expectedVersion,
+    ).toBe(4);
   });
 });

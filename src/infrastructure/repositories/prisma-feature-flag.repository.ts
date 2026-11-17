@@ -168,16 +168,29 @@ export class PrismaFeatureFlagRepository implements IFeatureFlagRepository {
         data: { isEnabled: enabled },
       });
       if (changed.count !== 1) {
-        const current = await this.prisma.featureFlag.findUnique({ where: { id } });
+        const current = await this.prisma.featureFlag.findUnique({
+          where: { id },
+        });
         if (!current) throw new NotFoundError("Feature flag not found");
-        throw new ValidationError("Feature flag changed in another request. Refresh and retry.");
+        throw new ValidationError(
+          "Feature flag changed in another request. Refresh and retry.",
+        );
       }
-      const record = await this.prisma.featureFlag.findUnique({ where: { id } });
+      const record = await this.prisma.featureFlag.findUnique({
+        where: { id },
+      });
       if (!record) throw new NotFoundError("Feature flag not found");
-      this.logger.timed("setEnabled", "Feature state changed", timer(), { id, isEnabled: record.isEnabled });
+      this.logger.timed("setEnabled", "Feature state changed", timer(), {
+        id,
+        isEnabled: record.isEnabled,
+      });
       return this.toDomain(record);
     } catch (error) {
-      this.logger.error("setEnabled", "Failed to update only the feature flag enabled state", error);
+      this.logger.error(
+        "setEnabled",
+        "Failed to update only the feature flag enabled state",
+        error,
+      );
       throw error;
     }
   }

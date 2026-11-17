@@ -91,7 +91,9 @@ async function seedRBAC(prismaClient?: PrismaClient) {
       // New roles receive their preset permissions exactly once. The protected
       // administrator is always resynced to ALL available permissions.
       if (existingRole && !isSystemAdministrator) {
-        logSuccess(`Editable role "${role.name}" preserved with its current permissions`);
+        logSuccess(
+          `Editable role "${role.name}" preserved with its current permissions`,
+        );
         continue;
       }
 

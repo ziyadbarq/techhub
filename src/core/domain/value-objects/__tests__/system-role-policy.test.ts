@@ -11,14 +11,24 @@ describe("only the system administrator is protected", () => {
   it("recognizes exactly the system administrator", () => {
     expect(isProtectedSystemRoleName(SYSTEM_ADMIN_ROLE_NAME)).toBe(true);
     expect(isProtectedSystemRoleName("  SYSTEM-ADMINISTRATOR ")).toBe(true);
-    for (const name of ["admin", "viewer", "auditor", "finance-manager", "custom-role"]) {
+    for (const name of [
+      "admin",
+      "viewer",
+      "auditor",
+      "finance-manager",
+      "custom-role",
+    ]) {
       expect(isProtectedSystemRoleName(name)).toBe(false);
     }
   });
 
   it("protects the administrator even when a legacy persisted flag is false", () => {
     const admin = Role.create(
-      { name: SYSTEM_ADMIN_ROLE_NAME, displayName: "System Administrator", isSystem: false },
+      {
+        name: SYSTEM_ADMIN_ROLE_NAME,
+        displayName: "System Administrator",
+        isSystem: false,
+      },
       idGenerator,
     );
     expect(admin.isSystem).toBe(true);

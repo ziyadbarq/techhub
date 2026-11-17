@@ -11,12 +11,12 @@
  */
 
 import {
+  BookOpen,
   CheckSquare,
   ClipboardList,
   FileCode,
   FileKey,
   FileText,
-  BookOpen,
   FolderTree,
   ShoppingCart,
   Users,

@@ -73,7 +73,10 @@ import { rbacNavGroup } from "./navigation-groups/rbac";
 // Only published, active form names appear as Requests children.
 // The list is hydrated from the authenticated API inside useSidebarNavigation;
 // generated navigation groups and route manifests remain untouched.
-const excludedWorkflowLinks = new Set(["/workflows/forms", "/workflows/requests"]);
+const excludedWorkflowLinks = new Set([
+  "/workflows/forms",
+  "/workflows/requests",
+]);
 
 export type RequestMenuStatus = "loading" | "ready" | "error";
 export type RequestFormNav = {
@@ -99,15 +102,17 @@ export function buildRequestMenuChildren(
 
   return [
     {
-      title: status === "loading"
-        ? "Loading forms…"
-        : status === "error"
-          ? "Forms unavailable"
-          : "No published forms",
+      title:
+        status === "loading"
+          ? "Loading forms…"
+          : status === "error"
+            ? "Forms unavailable"
+            : "No published forms",
       href: "/workflows/forms",
-      description: status === "error"
-        ? "Open the forms page to retry"
-        : "Only active published forms can be submitted",
+      description:
+        status === "error"
+          ? "Open the forms page to retry"
+          : "Only active published forms can be submitted",
       icon: FileText,
       permission: PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT,
       featureFlag: "WORKFLOW_ENGINE",
@@ -120,7 +125,9 @@ const workflowsWithRequestMenu: NavGroup = {
   // Different workflow pages have different permissions: let items decide.
   permission: undefined,
   items: [
-    ...workflowsNavGroup.items.filter((item) => item.href === "/workflows/inbox"),
+    ...workflowsNavGroup.items.filter(
+      (item) => item.href === "/workflows/inbox",
+    ),
     {
       title: "Requests",
       href: "/workflows/forms",
@@ -130,8 +137,10 @@ const workflowsWithRequestMenu: NavGroup = {
       featureFlag: "WORKFLOW_ENGINE",
       children: buildRequestMenuChildren([], "loading"),
     },
-    ...workflowsNavGroup.items.filter((item) =>
-      item.href !== "/workflows/inbox" && !excludedWorkflowLinks.has(item.href)
+    ...workflowsNavGroup.items.filter(
+      (item) =>
+        item.href !== "/workflows/inbox" &&
+        !excludedWorkflowLinks.has(item.href),
     ),
   ],
 };

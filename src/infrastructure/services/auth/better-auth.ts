@@ -1107,9 +1107,12 @@ const createAuth = () =>
         if (isOAuthCallback) {
           const sessionToken = ctx.context.newSession?.session?.token;
           if (!sessionToken) {
-            getLogger().warn("Microsoft OAuth callback did not expose a new session token", {
-              userId: user.id,
-            });
+            getLogger().warn(
+              "Microsoft OAuth callback did not expose a new session token",
+              {
+                userId: user.id,
+              },
+            );
             return;
           }
 
@@ -1119,9 +1122,12 @@ const createAuth = () =>
               data: { authProvider: "microsoft" },
             });
             if (marked.count !== 1) {
-              getLogger().warn("Microsoft OAuth session marker could not be stored", {
-                userId: user.id,
-              });
+              getLogger().warn(
+                "Microsoft OAuth session marker could not be stored",
+                {
+                  userId: user.id,
+                },
+              );
             }
           } catch (error) {
             getLogger().error(

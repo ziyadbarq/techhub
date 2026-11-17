@@ -28,59 +28,88 @@ beforeEach(() => {
   vi.resetAllMocks();
   user.mockResolvedValue("u1");
   enabled.mockResolvedValue(true);
-  permission.mockImplementation(async (name) => name === PERMISSIONS.KNOWLEDGE_BASE_VIEW);
+  permission.mockImplementation(
+    async (name) => name === PERMISSIONS.KNOWLEDGE_BASE_VIEW,
+  );
 });
 
 describe("Knowledge Base authorization", () => {
   it("is disabled unless the feature flag is explicitly enabled", async () => {
     enabled.mockResolvedValue(false);
-    await expect(requireKnowledgeAccess(PERMISSIONS.KNOWLEDGE_BASE_VIEW))
-      .rejects.toMatchObject({ status: 404 });
+    await expect(
+      requireKnowledgeAccess(PERMISSIONS.KNOWLEDGE_BASE_VIEW),
+    ).rejects.toMatchObject({ status: 404 });
   });
 
   it("rejects anonymous requests", async () => {
     user.mockResolvedValue(null);
-    await expect(requireKnowledgeAccess(PERMISSIONS.KNOWLEDGE_BASE_VIEW))
-      .rejects.toMatchObject({ status: 401 });
+    await expect(
+      requireKnowledgeAccess(PERMISSIONS.KNOWLEDGE_BASE_VIEW),
+    ).rejects.toMatchObject({ status: 401 });
   });
 
   it("does not reveal unpublished documents to other viewers", async () => {
     article.mockResolvedValue({
-      id: "doc", createdById: "other", classification: "INTERNAL",
-      publishedVersion: null, version: 1, isArchived: false,
+      id: "doc",
+      createdById: "other",
+      classification: "INTERNAL",
+      publishedVersion: null,
+      version: 1,
+      isArchived: false,
     } as never);
-    await expect(requireKnowledgeArticle("doc")).rejects.toMatchObject({ status: 404 });
+    await expect(requireKnowledgeArticle("doc")).rejects.toMatchObject({
+      status: 404,
+    });
     expect(revision).not.toHaveBeenCalled();
   });
 
   it("enforces restricted access against the actual published revision", async () => {
     article.mockResolvedValue({
-      id: "doc", createdById: "other", classification: "INTERNAL",
-      publishedVersion: 1, version: 2, isArchived: false,
+      id: "doc",
+      createdById: "other",
+      classification: "INTERNAL",
+      publishedVersion: 1,
+      version: 2,
+      isArchived: false,
     } as never);
     revision.mockResolvedValue({
-      articleId: "doc", version: 1, classification: "RESTRICTED",
+      articleId: "doc",
+      version: 1,
+      classification: "RESTRICTED",
     } as never);
-    await expect(requireKnowledgeArticle("doc")).rejects.toMatchObject({ status: 403 });
+    await expect(requireKnowledgeArticle("doc")).rejects.toMatchObject({
+      status: 403,
+    });
   });
 
   it("never serves arbitrary historical versions to a normal viewer", async () => {
     article.mockResolvedValue({
-      id: "doc", createdById: "other", classification: "INTERNAL",
-      publishedVersion: 2, version: 3, isArchived: false,
+      id: "doc",
+      createdById: "other",
+      classification: "INTERNAL",
+      publishedVersion: 2,
+      version: 3,
+      isArchived: false,
     } as never);
-    await expect(requireKnowledgeArticle("doc", { version: 1 }))
-      .rejects.toMatchObject({ status: 403 });
+    await expect(
+      requireKnowledgeArticle("doc", { version: 1 }),
+    ).rejects.toMatchObject({ status: 403 });
     expect(revision).not.toHaveBeenCalled();
   });
 
   it("allows a properly authorized published revision", async () => {
     article.mockResolvedValue({
-      id: "doc", createdById: "other", classification: "INTERNAL",
-      publishedVersion: 2, version: 3, isArchived: false,
+      id: "doc",
+      createdById: "other",
+      classification: "INTERNAL",
+      publishedVersion: 2,
+      version: 3,
+      isArchived: false,
     } as never);
     revision.mockResolvedValue({
-      articleId: "doc", version: 2, classification: "INTERNAL",
+      articleId: "doc",
+      version: 2,
+      classification: "INTERNAL",
     } as never);
     const result = await requireKnowledgeArticle("doc");
     expect(result.revision.version).toBe(2);

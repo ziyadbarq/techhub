@@ -10,8 +10,12 @@ describe("Assets import entry points", () => {
       { enabledFeatures: new Set(["ASSETS"]) },
     );
     const entries = groups.flatMap((group) => group.items);
-    expect(entries.filter((item) => item.href === "/data-import")).toHaveLength(1);
-    expect(entries.find((item) => item.href === "/data-import")?.title).toBe("Data Import");
+    expect(entries.filter((item) => item.href === "/data-import")).toHaveLength(
+      1,
+    );
+    expect(entries.find((item) => item.href === "/data-import")?.title).toBe(
+      "Data Import",
+    );
     expect(entries.some((item) => item.href === "/assets")).toBe(true);
   });
 
@@ -19,14 +23,22 @@ describe("Assets import entry points", () => {
     const groups = getVisibleNavGroups([PERMISSIONS.ASSETS_VIEW], {
       enabledFeatures: new Set(["ASSETS"]),
     });
-    expect(groups.flatMap((group) => group.items).some((item) => item.href === "/data-import")).toBe(false);
+    expect(
+      groups
+        .flatMap((group) => group.items)
+        .some((item) => item.href === "/data-import"),
+    ).toBe(false);
   });
 
   it("does not show Data Import when Assets feature is disabled", () => {
     const groups = getVisibleNavGroups([PERMISSIONS.ASSETS_CREATE], {
       enabledFeatures: new Set(),
     });
-    expect(groups.flatMap((group) => group.items).some((item) => item.href === "/data-import")).toBe(false);
+    expect(
+      groups
+        .flatMap((group) => group.items)
+        .some((item) => item.href === "/data-import"),
+    ).toBe(false);
   });
 
   it("keeps the import page protected by Assets create permission", () => {

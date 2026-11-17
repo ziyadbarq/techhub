@@ -236,6 +236,10 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW],
     description: "Data verification and validation campaigns",
   },
+  "/knowledge-base": {
+    requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_VIEW],
+    description: "Internal policies, procedures and curated knowledge",
+  },
 
   // ============================================================================
   // DOCS ROUTES
@@ -284,10 +288,10 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     description: "View specific Intune device details",
   },
 
-  "/knowledge-base": {
-    requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_VIEW],
-    description: "Internal policies, procedures and curated knowledge",
-  },
+  // ============================================================================
+  // KNOWLEDGE-BASE ROUTES
+  // ============================================================================
+
   "/knowledge-base/new": {
     requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_CREATE],
   },
@@ -297,6 +301,7 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   "/knowledge-base/[id]/edit": {
     requiredPermissions: [PERMISSIONS.KNOWLEDGE_BASE_UPDATE],
   },
+
   // ============================================================================
   // MAIN ROUTES
   // ============================================================================
@@ -315,7 +320,7 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   },
   "/data-import": {
     requiredPermissions: [PERMISSIONS.ASSETS_CREATE],
-    description: "Dedicated Assets import workspace",
+    description: "Import assets from Excel or CSV",
   },
   "/analytics": {
     requiredPermissions: [PERMISSIONS.ASSETS_VIEW],
@@ -332,6 +337,10 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   "/profile": {
     requiredPermissions: [PERMISSIONS.DASHBOARD_VIEW],
     description: "User profile and account information",
+  },
+  "/notifications": {
+    requiredPermissions: [PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW],
+    description: "Unified TechHub notifications center",
   },
   "/settings": {
     requiredPermissions: [PERMISSIONS.SETTINGS_VIEW],
@@ -572,11 +581,8 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   },
   "/workflows/notifications": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW],
-    description: "Legacy workflow notifications link (redirects to TechHub notifications)",
-  },
-  "/notifications": {
-    requiredPermissions: [PERMISSIONS.WORKFLOWS_NOTIFICATIONS_VIEW],
-    description: "Unified TechHub notifications center",
+    description:
+      "Legacy workflow notifications link (redirects to TechHub notifications)",
   },
   "/workflows/analytics": {
     requiredPermissions: [PERMISSIONS.WORKFLOWS_ANALYTICS_VIEW],

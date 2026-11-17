@@ -90,7 +90,10 @@ export class ToggleFeatureFlagUseCase {
 
     // 4. Toggle the flag
     const toggled = featureFlag.toggle();
-    const updated = await this.featureFlagRepository.setEnabled(featureFlag.id, toggled.isEnabled);
+    const updated = await this.featureFlagRepository.setEnabled(
+      featureFlag.id,
+      toggled.isEnabled,
+    );
 
     // 5. Log the action
     this.logger.info(`Feature flag ${action.toLowerCase()}`, {

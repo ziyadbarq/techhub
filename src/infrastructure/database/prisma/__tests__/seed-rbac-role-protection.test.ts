@@ -29,7 +29,9 @@ describe("RBAC seeding of editable roles", () => {
     };
 
     await seedRBAC(prisma as unknown as PrismaClient);
-    expect(prisma.role.upsert).toHaveBeenCalledTimes(Object.keys(SYSTEM_ROLES).length);
+    expect(prisma.role.upsert).toHaveBeenCalledTimes(
+      Object.keys(SYSTEM_ROLES).length,
+    );
 
     for (const call of prisma.role.upsert.mock.calls) {
       const args = call[0] as unknown as {
@@ -52,7 +54,8 @@ describe("RBAC seeding of editable roles", () => {
     const prisma = {
       permission: {
         upsert: vi.fn(async ({ where }: { where: { name: string } }) => ({
-          id: where.name, name: where.name,
+          id: where.name,
+          name: where.name,
         })),
       },
       role: {
@@ -60,7 +63,9 @@ describe("RBAC seeding of editable roles", () => {
           where.name === "viewer" ? null : { id: where.name },
         ),
         upsert: vi.fn(async ({ where }: { where: { name: string } }) => ({
-          id: where.name, name: where.name, displayName: where.name,
+          id: where.name,
+          name: where.name,
+          displayName: where.name,
         })),
       },
       rolePermission: {

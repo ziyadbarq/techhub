@@ -38,7 +38,9 @@ describe("published sidebar form catalog", () => {
       ],
     });
     expect(feature).toHaveBeenCalledWith(FEATURE_FLAGS.WORKFLOW_ENGINE);
-    expect(permission).toHaveBeenCalledWith(PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT);
+    expect(permission).toHaveBeenCalledWith(
+      PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT,
+    );
     expect(findMany).toHaveBeenCalledWith({
       where: { isActive: true, publishedVersionId: { not: null } },
       select: { id: true, name: true, description: true },

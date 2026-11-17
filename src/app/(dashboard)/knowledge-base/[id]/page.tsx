@@ -23,5 +23,11 @@ export default async function KnowledgeArticlePage({
     handlePermissionRedirect(error, "/knowledge-base/" + id);
     throw error;
   }
-  return <KnowledgeReader articleId={id} draft={draft === "1"} historicalVersion={version ? Number(version) : undefined} />;
+  return (
+    <KnowledgeReader
+      articleId={id}
+      draft={draft === "1"}
+      historicalVersion={version ? Number(version) : undefined}
+    />
+  );
 }

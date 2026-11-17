@@ -19,8 +19,12 @@ const existing = {
 describe("Feature flag state-only changes", () => {
   it("updates isEnabled without writing name or any other metadata", async () => {
     const updateMany = vi.fn().mockResolvedValue({ count: 1 });
-    const findUnique = vi.fn().mockResolvedValue({ ...existing, isEnabled: true });
-    const prisma = { featureFlag: { updateMany, findUnique } } as unknown as PrismaClient;
+    const findUnique = vi
+      .fn()
+      .mockResolvedValue({ ...existing, isEnabled: true });
+    const prisma = {
+      featureFlag: { updateMany, findUnique },
+    } as unknown as PrismaClient;
     const repository = new PrismaFeatureFlagRepository(prisma);
 
     const flag = await repository.setEnabled("feature-1", true);
@@ -36,7 +40,9 @@ describe("Feature flag state-only changes", () => {
   it("rejects stale concurrent toggles rather than silently overwriting", async () => {
     const updateMany = vi.fn().mockResolvedValue({ count: 0 });
     const findUnique = vi.fn().mockResolvedValue(existing);
-    const prisma = { featureFlag: { updateMany, findUnique } } as unknown as PrismaClient;
+    const prisma = {
+      featureFlag: { updateMany, findUnique },
+    } as unknown as PrismaClient;
     const repository = new PrismaFeatureFlagRepository(prisma);
 
     await expect(repository.setEnabled("feature-1", true)).rejects.toThrow(

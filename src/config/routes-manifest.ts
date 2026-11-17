@@ -1445,7 +1445,8 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     path: "/workflows/notifications",
     label: "Notifications",
     icon: Bell,
-    description: "Legacy workflow notifications link (redirects to TechHub notifications)",
+    description:
+      "Legacy workflow notifications link (redirects to TechHub notifications)",
     requiredPermissions: ["WORKFLOWS_NOTIFICATIONS_VIEW"],
     featureFlag: "WORKFLOW_ENGINE",
     visibleInNav: false,

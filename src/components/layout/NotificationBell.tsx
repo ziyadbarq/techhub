@@ -94,13 +94,21 @@ export function NotificationBell() {
         // A failed read update must not prevent navigation.
       }
     }
-    router.push(item.requestId ? "/workflows/requests/" + item.requestId : "/notifications");
+    router.push(
+      item.requestId
+        ? "/workflows/requests/" + item.requestId
+        : "/notifications",
+    );
   }
 
   if (!enabled) return null;
 
   return (
-    <DropdownMenu onOpenChange={(open) => { if (open) void reload(); }}>
+    <DropdownMenu
+      onOpenChange={(open) => {
+        if (open) void reload();
+      }}
+    >
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
@@ -114,13 +122,16 @@ export function NotificationBell() {
         >
           <Bell className="h-5 w-5" aria-hidden="true" />
           {unreadCount > 0 ? (
-            <span className="bg-destructive text-destructive-foreground absolute -right-0.5 -top-0.5 flex min-h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold">
+            <span className="bg-destructive text-destructive-foreground absolute -top-0.5 -right-0.5 flex min-h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold">
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           ) : null}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[min(22rem,calc(100vw-2rem))] p-0">
+      <DropdownMenuContent
+        align="end"
+        className="w-[min(22rem,calc(100vw-2rem))] p-0"
+      >
         <DropdownMenuLabel className="flex items-center justify-between px-4 py-3">
           <span>TechHub Notifications</span>
           <span className="text-muted-foreground text-xs font-normal">
@@ -134,21 +145,35 @@ export function NotificationBell() {
               <button
                 key={item.id}
                 type="button"
-                onClick={() => { void openNotice(item); }}
+                onClick={() => {
+                  void openNotice(item);
+                }}
                 className="hover:bg-muted flex w-full items-start gap-3 border-b px-4 py-3 text-left transition last:border-0"
               >
-                <span className={
-                  "mt-2 h-2 w-2 shrink-0 rounded-full " +
-                  (item.readAt ? "bg-transparent" : "bg-blue-500")
-                } aria-hidden="true" />
+                <span
+                  className={
+                    "mt-2 h-2 w-2 shrink-0 rounded-full " +
+                    (item.readAt ? "bg-transparent" : "bg-blue-500")
+                  }
+                  aria-hidden="true"
+                />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold">{item.subject}</span>
-                  <span className="text-muted-foreground mt-1 block line-clamp-2 text-xs">{item.body}</span>
+                  <span className="block truncate text-sm font-semibold">
+                    {item.subject}
+                  </span>
+                  <span className="text-muted-foreground mt-1 line-clamp-2 block text-xs">
+                    {item.body}
+                  </span>
                   <span className="text-muted-foreground mt-2 block text-[11px]">
                     {new Date(item.createdAt).toLocaleString()}
                   </span>
                 </span>
-                {item.readAt ? <Check className="text-muted-foreground mt-0.5 h-4 w-4 shrink-0" aria-label="Read" /> : null}
+                {item.readAt ? (
+                  <Check
+                    className="text-muted-foreground mt-0.5 h-4 w-4 shrink-0"
+                    aria-label="Read"
+                  />
+                ) : null}
               </button>
             ))}
           </div>
@@ -163,7 +188,8 @@ export function NotificationBell() {
           onClick={() => router.push("/notifications")}
           className="hover:bg-muted flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-semibold"
         >
-          View all notifications <ExternalLink className="h-4 w-4" aria-hidden="true" />
+          View all notifications{" "}
+          <ExternalLink className="h-4 w-4" aria-hidden="true" />
         </button>
       </DropdownMenuContent>
     </DropdownMenu>

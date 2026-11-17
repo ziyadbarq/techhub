@@ -35,7 +35,11 @@ export default function LoginPage() {
       .getSession()
       .then((session) => {
         if (session?.data?.user) {
-          router.replace(safeReturnPath(new URLSearchParams(window.location.search).get("from")));
+          router.replace(
+            safeReturnPath(
+              new URLSearchParams(window.location.search).get("from"),
+            ),
+          );
         } else {
           // User not logged in, show the login page
           setIsCheckingAuth(false);
@@ -211,7 +215,13 @@ export default function LoginPage() {
 
             {/* Shared Microsoft SSO button - same flow as request portal. */}
             <MicrosoftSignInButton
-              callbackURL={typeof window === "undefined" ? "/dashboard" : safeReturnPath(new URLSearchParams(window.location.search).get("from"))}
+              callbackURL={
+                typeof window === "undefined"
+                  ? "/dashboard"
+                  : safeReturnPath(
+                      new URLSearchParams(window.location.search).get("from"),
+                    )
+              }
             />
 
             {/* Footer */}

@@ -76,12 +76,19 @@ interface WizardState {
 /**
  * Main wizard component
  */
-export function DataImportWizard({ initialEntityKey }: { initialEntityKey?: string } = {}) {
+export function DataImportWizard({
+  initialEntityKey,
+}: { initialEntityKey?: string } = {}) {
   const router = useRouter();
   const wizardRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<WizardState>({
-    currentStep: initialEntityKey && getEntityConfig(initialEntityKey) ? "settings" : "entity-select",
-    selectedEntity: initialEntityKey ? (getEntityConfig(initialEntityKey) ?? null) : null,
+    currentStep:
+      initialEntityKey && getEntityConfig(initialEntityKey)
+        ? "settings"
+        : "entity-select",
+    selectedEntity: initialEntityKey
+      ? (getEntityConfig(initialEntityKey) ?? null)
+      : null,
     settings: null,
     parsedFile: null,
     columnMappings: [],
@@ -175,8 +182,13 @@ export function DataImportWizard({ initialEntityKey }: { initialEntityKey?: stri
    */
   const handleReset = useCallback(() => {
     setState({
-      currentStep: initialEntityKey && getEntityConfig(initialEntityKey) ? "settings" : "entity-select",
-      selectedEntity: initialEntityKey ? (getEntityConfig(initialEntityKey) ?? null) : null,
+      currentStep:
+        initialEntityKey && getEntityConfig(initialEntityKey)
+          ? "settings"
+          : "entity-select",
+      selectedEntity: initialEntityKey
+        ? (getEntityConfig(initialEntityKey) ?? null)
+        : null,
       settings: null,
       parsedFile: null,
       columnMappings: [],

@@ -116,8 +116,10 @@ export function useSidebarNavigation() {
     !permissionsError &&
     permissions.includes(PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT) &&
     enabledFeatures.has("WORKFLOW_ENGINE");
-  const { forms: requestForms, status: requestFormsStatus } =
-    useRequestFormNav(canLoadForms, pathname);
+  const { forms: requestForms, status: requestFormsStatus } = useRequestFormNav(
+    canLoadForms,
+    pathname,
+  );
 
   // Track if user is manually toggling (to disable auto-scroll)
   const [isManualToggling, setIsManualToggling] = React.useState(false);
@@ -200,7 +202,10 @@ export function useSidebarNavigation() {
     if (!pathname || navGroups.length === 0) return;
     for (const group of navGroups) {
       for (const item of group.items) {
-        if (!item.children?.some((child) => isNavItemActive(child.href, pathname))) continue;
+        if (
+          !item.children?.some((child) => isNavItemActive(child.href, pathname))
+        )
+          continue;
         setExpandedItems((previous) =>
           previous[item.href] ? previous : { ...previous, [item.href]: true },
         );
