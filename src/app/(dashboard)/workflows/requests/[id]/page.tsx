@@ -326,6 +326,8 @@ export default async function RequestDetailPage({
                         accessServiceName
                       ) : userPickerDisplay !== null ? (
                         userPickerDisplay || "—"
+                      ) : f.type === "FILE" ? (
+                        <FileList value={value} />
                       ) : linkInfo ? (
                         <span className="inline-flex flex-wrap items-center gap-2">
                           <span className="text-charcoal font-mono">
@@ -405,6 +407,31 @@ export default async function RequestDetailPage({
         </Card>
       ) : null}
     </div>
+  );
+}
+
+/** A FILE field's attachments as download links (the route checks access). */
+function FileList({ value }: { value: unknown }) {
+  const files = (Array.isArray(value) ? value : []).filter(
+    (item): item is { id: string; name?: string } =>
+      !!item && typeof item === "object" && typeof item.id === "string",
+  );
+  if (files.length === 0) return <>—</>;
+  return (
+    <ul className="space-y-1">
+      {files.map((file) => (
+        <li key={file.id}>
+          <a
+            href={`/api/workflow/attachments/${file.id}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[var(--color-brand-blue)] hover:underline"
+          >
+            {file.name || "Attachment"}
+          </a>
+        </li>
+      ))}
+    </ul>
   );
 }
 

@@ -1,56 +1,66 @@
 import { NextResponse, type NextRequest } from "next/server";
-
 import { prisma } from "@/infrastructure/database/prisma/client";
-import { getContainer } from "@/di/container";
-import { DI_TOKENS } from "@/di/types";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requireFeature } from "@/lib/features/server";
-import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { requirePermission } from "@/lib/permissions/server";
-import type { IFileStorageService } from "@/core/services/file-storage.service.interface";
+import { getCurrentUserId } from "@/lib/auth/session";
+import { logger } from "@/lib/logger";
+import {
+  attachmentHeaders,
+  canSeeRequest,
+  workflowFileStorage,
+} from "@/lib/workflows/attachments/server";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Serve attachment bytes. Auth: anyone with read access to the request that
- * owns this attachment. Inherits view scope per PRD §16.
+ * Serve an attachment to someone who may see its request (requester, a step
+ * assignee, or a global viewer). A file not yet on a request is visible only
+ * to its uploader.
  */
 export async function GET(
   _request: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
   await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
-  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW);
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+  }
 
   const { id } = await context.params;
-
   const attachment = await prisma.requestAttachment.findUnique({
     where: { id },
     select: {
+      requestId: true,
+      uploadedById: true,
       filename: true,
       contentType: true,
+      byteSize: true,
       storageRef: true,
     },
   });
-  if (!attachment) {
+  const allowed =
+    !!attachment &&
+    (attachment.requestId
+      ? await canSeeRequest(userId, attachment.requestId)
+      : attachment.uploadedById === userId);
+  if (!attachment || !allowed) {
+    // Same answer either way: don't reveal that the file exists.
     return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
   }
 
-  const storage = getContainer().get<IFileStorageService>(
-    DI_TOKENS.IFileStorageService,
-  );
-  const bytes = await storage.readFile(attachment.storageRef, "binary");
-
-  return new NextResponse(bytes as unknown as BodyInit, {
-    status: 200,
-    headers: {
-      "content-type": attachment.contentType,
-      "content-disposition": `inline; filename="${escapeFilename(attachment.filename)}"`,
-      "content-length": String(bytes.byteLength),
-    },
+  let bytes: Buffer;
+  try {
+    bytes = await workflowFileStorage().read(attachment.storageRef);
+  } catch (error) {
+    logger.warn(
+      { module: "Workflow", function: "attachment" },
+      "Attachment file unavailable",
+      { id, error: String(error) },
+    );
+    return NextResponse.json({ error: "FILE_UNAVAILABLE" }, { status: 404 });
+  }
+  return new NextResponse(new Uint8Array(bytes), {
+    headers: attachmentHeaders({ ...attachment, byteSize: bytes.byteLength }),
   });
-}
-
-function escapeFilename(s: string): string {
-  return s.replace(/"/g, "");
 }

@@ -44,6 +44,15 @@ Every `Request` is uniquely described at any instant by three orthogonal columns
 
 Module-defined `OutcomeCode` rows give finer-grained domain semantics (e.g., `ROLLED_BACK` → `UNSUCCESSFUL`) while keeping cross-module reporting consistent.
 
+## File attachments
+
+A **File** field uses the same uploader as asset attachments (`components/ui/file-upload.tsx`). Each file uploads as soon as it is added (`POST /api/workflow/uploads`) and waits, visible only to its uploader, with no request (`request_attachments.requestId` null). Submitting the request, resubmitting it, or a step action that edits the field links the files to the request; the engine only accepts files the actor uploaded for that field (or already on the request) and stores `{ id, name, size }` from the attachment rows.
+
+- Allowed: PDF, Word, Excel, PowerPoint (new and legacy), PNG/JPEG/GIF/WebP, Outlook `.msg`, TXT, CSV; up to 10 MB each, 10 per field. The content (magic number) must match the extension; HTML, SVG, scripts and archives are refused (`lib/workflows/attachments/upload-check.ts`).
+- Storage is private: GCS when configured, `.workflow-uploads-dev/` under `next dev`, otherwise uploads are refused (`lib/storage/private-file-storage.ts`).
+- Download (`GET /api/workflow/attachments/[id]`) and the request's file list are for the requester, anyone assigned to one of its steps, or holders of `workflows-requests:view`; others get 404. Files are served with `nosniff` and a sandbox CSP; only PDF, images and plain text open inline.
+- Pending uploads that are never submitted stay in storage; cleaning them up is not automated yet.
+
 ## Append-only audit
 
 - `AuditEntry` — every action / state transition / admin override (immutable)

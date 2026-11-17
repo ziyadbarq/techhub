@@ -1,5 +1,6 @@
 "use client";
 
+import { FileFieldInput } from "./file-field-input";
 import { useState, useEffect, useRef } from "react";
 import { Check, ChevronsUpDown, LoaderCircle, Search, X } from "lucide-react";
 import { evaluate, evaluateBoolean } from "@/lib/workflow/expression-client";
@@ -499,13 +500,11 @@ function FieldInput({
       );
     case "FILE":
       return (
-        <input
-          type="text"
-          className={inputBase + ro}
-          placeholder="Attachment URL or reference"
-          value={(value as string | undefined) ?? ""}
-          onChange={(e) => onChange(e.target.value)}
-          disabled={readOnly}
+        <FileFieldInput
+          fieldKey={field.key}
+          value={value}
+          onChange={onChange}
+          readOnly={readOnly}
         />
       );
     case "COMPUTED":

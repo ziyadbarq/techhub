@@ -52,6 +52,8 @@ next-env.d.ts
 /public/uploads
 # Knowledge Base PDFs saved by `next dev` without GCS (private, never served)
 /.knowledge-base-dev
+# Workflow request attachments saved by `next dev` without GCS (private, never served)
+/.workflow-uploads-dev
 
 # prisma - ignore SQLite database files (development only)
 src/infrastructure/database/prisma/*.db

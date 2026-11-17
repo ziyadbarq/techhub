@@ -4,3 +4,4 @@ export * from "./expression";
 export * from "./lookup-provider.interface";
 export * from "./types";
 export * from "./service-condition";
+export * from "./file-field";

@@ -227,7 +227,9 @@ model RequestComment {
 ///   - retention is forever (never deleted), even on close/cancel
 model RequestAttachment {
   id           String  @id @default(cuid())
-  requestId    String
+  /// Null while a form-field upload is waiting for its request to be
+  /// submitted (only its uploader can see it); set when the request links it.
+  requestId    String?
   /// Source: form field key, OR comment id, OR null when standalone.
   fieldKey     String?
   commentId    String?
@@ -241,7 +243,7 @@ model RequestAttachment {
   supersedesId String?
   createdAt    DateTime @default(now())
 
-  request      Request             @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  request      Request?            @relation(fields: [requestId], references: [id], onDelete: Cascade)
   uploadedBy   User                @relation("RequestAttachmentUploader", fields: [uploadedById], references: [id], onDelete: Restrict)
   comment      RequestComment?     @relation(fields: [commentId], references: [id], onDelete: SetNull)
   supersedes   RequestAttachment?  @relation("AttachmentVersion", fields: [supersedesId], references: [id], onDelete: SetNull)
@@ -249,6 +251,7 @@ model RequestAttachment {
 
   @@index([requestId, createdAt])
   @@index([commentId])
+  @@index([uploadedById, requestId])
   @@map("request_attachments")
 }
 

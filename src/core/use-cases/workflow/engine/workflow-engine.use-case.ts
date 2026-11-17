@@ -60,6 +60,10 @@ import type {
 } from "@/core/repositories/workflow";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { LogExecution } from "@/lib/decorators/log-execution.decorator";
+import {
+  fileFieldIds,
+  MAX_FILES_PER_FIELD,
+} from "@/core/domain/workflow/file-field";
 import type { IDelegationResolver } from "@/infrastructure/services/workflow/delegation-resolver.service";
 import type { IExpressionEvaluator } from "@/infrastructure/services/workflow/expression-evaluator.service";
 import type { INotificationService } from "@/infrastructure/services/workflow/notification.service";
@@ -263,6 +267,14 @@ export class WorkflowEngine implements IWorkflowEngine {
         request.id,
         schema.fields ?? [],
         sanitizedFieldValues,
+      );
+
+      await this.bindFileFields(
+        tx,
+        request.id,
+        schema.fields ?? [],
+        sanitizedFieldValues,
+        ctx.userId ?? "",
       );
 
       await this.requests.setFieldValues(
@@ -487,6 +499,13 @@ export class WorkflowEngine implements IWorkflowEngine {
       // any COMPUTED fields whose inputs may have changed.
       let computedAfterAction: Record<string, unknown> = {};
       if (input.fieldUpdates && Object.keys(input.fieldUpdates).length > 0) {
+        await this.bindFileFields(
+          tx,
+          request.id,
+          await this.formFields(tx, request.formVersionId),
+          input.fieldUpdates,
+          ctx.userId ?? "",
+        );
         await this.requests.setFieldValues(
           tx,
           request.id,
@@ -578,6 +597,13 @@ export class WorkflowEngine implements IWorkflowEngine {
 
       let resubmitComputed: Record<string, unknown> = {};
       if (Object.keys(fieldUpdates).length > 0) {
+        await this.bindFileFields(
+          tx,
+          req.id,
+          await this.formFields(tx, req.formVersionId),
+          fieldUpdates,
+          ctx.userId ?? "",
+        );
         await this.requests.setFieldValues(
           tx,
           req.id,
@@ -995,6 +1021,82 @@ export class WorkflowEngine implements IWorkflowEngine {
   }
 
   /** Field values plus `<key>#slug` for every chosen access service. */
+  private async formFields(
+    tx: Tx,
+    formVersionId: string,
+  ): Promise<Array<{ key: string; type: string }>> {
+    const version = await tx.formVersion.findUnique({
+      where: { id: formVersionId },
+      select: { schemaJson: true },
+    });
+    return (
+      (version?.schemaJson as { fields?: Array<{ key: string; type: string }> })
+        ?.fields ?? []
+    );
+  }
+
+  /**
+   * FILE fields hold attachment references. Each one must be a file this
+   * actor uploaded for this field and that isn't on a request yet, or one
+   * already on this request. New uploads are linked to the request, and the
+   * stored value is rebuilt from the attachment rows ({ id, name, size }),
+   * never taken from the client. Mutates `values`.
+   */
+  private async bindFileFields(
+    tx: Tx,
+    requestId: string,
+    fields: ReadonlyArray<{ key: string; type: string }>,
+    values: Record<string, unknown>,
+    actorId: string,
+  ): Promise<void> {
+    for (const field of fields) {
+      if (field.type !== "FILE" || !(field.key in values)) continue;
+      const ids = [...new Set(fileFieldIds(values[field.key]))];
+      if (ids.length > MAX_FILES_PER_FIELD) {
+        throw new InvalidStateError(
+          `Too many files in "${field.key}" (at most ${MAX_FILES_PER_FIELD}).`,
+        );
+      }
+      if (ids.length === 0) {
+        values[field.key] = [];
+        continue;
+      }
+      const rows = await tx.requestAttachment.findMany({
+        where: {
+          id: { in: ids },
+          fieldKey: field.key,
+          OR: [
+            { requestId: null, uploadedById: actorId },
+            { requestId },
+          ],
+        },
+        select: {
+          id: true,
+          requestId: true,
+          filename: true,
+          byteSize: true,
+        },
+      });
+      if (rows.length !== ids.length) {
+        throw new InvalidStateError(
+          "An attached file is missing or can't be used here. Upload it again.",
+        );
+      }
+      const staged = rows.filter((row) => row.requestId === null);
+      if (staged.length > 0) {
+        await tx.requestAttachment.updateMany({
+          where: { id: { in: staged.map((row) => row.id) }, requestId: null },
+          data: { requestId },
+        });
+      }
+      const byId = new Map(rows.map((row) => [row.id, row]));
+      values[field.key] = ids.map((id) => {
+        const row = byId.get(id)!;
+        return { id: row.id, name: row.filename, size: row.byteSize };
+      });
+    }
+  }
+
   private async withServiceSlugs(
     tx: Tx,
     fields: ReadonlyArray<{
