@@ -80,7 +80,6 @@ type KnowledgeItem = {
   folderId: string | null;
   title: string;
   summary: string | null;
-  category: string;
   classification: string;
   sourceType: string;
   version: number;
@@ -232,7 +231,7 @@ export function KnowledgeCatalog() {
           const needle = trimmed.toLowerCase();
           setResults(
             items.filter((item) =>
-              [item.title, item.summary ?? "", item.category]
+              [item.title, item.summary ?? ""]
                 .join(" ")
                 .toLowerCase()
                 .includes(needle),
@@ -538,8 +537,6 @@ export function KnowledgeCatalog() {
             )}
             {showLocation && <span aria-hidden="true">·</span>}
             <span>{isPdf ? "PDF" : "Article"}</span>
-            <span aria-hidden="true">·</span>
-            <span>{humanize(item.category)}</span>
             <span aria-hidden="true">·</span>
             <span>Updated {formatDate(item.updatedAt)}</span>
             <span aria-hidden="true">·</span>

@@ -10,6 +10,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import {
   ArrowDown,
@@ -115,11 +116,18 @@ export function KnowledgeBlockEditor({
   blocks,
   onChange,
   toolbarEnd,
+  toolbarTarget,
   disabled = false,
 }: {
   blocks: KnowledgeBlock[];
   onChange: (next: KnowledgeBlock[]) => void;
   toolbarEnd?: ReactNode;
+  /**
+   * Render the text-style buttons into this element (a floating dock)
+   * instead of above the writing surface. Pass `null` while the element
+   * isn't mounted yet; leave undefined for the built-in toolbar.
+   */
+  toolbarTarget?: HTMLElement | null;
   disabled?: boolean;
 }) {
   const refs = useRef(new Map<string, HTMLTextAreaElement>());
@@ -399,53 +407,74 @@ export function KnowledgeBlockEditor({
 
   const styleTarget = active ?? blocks.at(-1) ?? null;
   const words = countWords(blocks);
+  const docked = toolbarTarget !== undefined;
+
+  const styleButtons = (
+    <>
+      {BLOCK_STYLES.map((style) => {
+        const Icon = style.icon;
+        const pressed = styleTarget?.type === style.type;
+        return (
+          <Tooltip key={style.type}>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                disabled={disabled || !styleTarget}
+                aria-pressed={pressed}
+                aria-label={style.label}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() =>
+                  styleTarget && setType(styleTarget.id, style.type)
+                }
+                className={cn(pressed && "bg-accent text-foreground")}
+              >
+                <Icon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side={docked ? "top" : undefined}>
+              {style.label}
+              {style.hint && (
+                <span className="ml-1.5 opacity-70">{style.hint}</span>
+              )}
+            </TooltipContent>
+          </Tooltip>
+        );
+      })}
+    </>
+  );
 
   return (
     <TooltipProvider delayDuration={300}>
       <div className="bg-card rounded-xl border shadow-sm">
+        {docked &&
+          toolbarTarget &&
+          createPortal(
+            <div
+              className="flex items-center gap-0.5"
+              role="toolbar"
+              aria-label="Text style"
+            >
+              {styleButtons}
+            </div>,
+            toolbarTarget,
+          )}
         {/* Toolbar */}
-        <div
-          className="bg-card/95 supports-[backdrop-filter]:bg-card/80 sticky top-16 z-20 flex flex-wrap items-center gap-1 rounded-t-xl border-b px-2 py-1.5 backdrop-blur"
-          role="toolbar"
-          aria-label="Text style"
-        >
-          {BLOCK_STYLES.map((style) => {
-            const Icon = style.icon;
-            const pressed = styleTarget?.type === style.type;
-            return (
-              <Tooltip key={style.type}>
-                <TooltipTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    disabled={disabled || !styleTarget}
-                    aria-pressed={pressed}
-                    aria-label={style.label}
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() =>
-                      styleTarget && setType(styleTarget.id, style.type)
-                    }
-                    className={cn(pressed && "bg-accent text-foreground")}
-                  >
-                    <Icon />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {style.label}
-                  {style.hint && (
-                    <span className="ml-1.5 opacity-70">{style.hint}</span>
-                  )}
-                </TooltipContent>
-              </Tooltip>
-            );
-          })}
-          <span className="bg-border mx-1 h-5 w-px" aria-hidden="true" />
-          <span className="text-muted-foreground hidden text-xs md:inline">
-            Enter: new line · Shift+Enter: line break · Alt+Shift+↑↓: move
-          </span>
-          <div className="ml-auto flex items-center gap-1">{toolbarEnd}</div>
-        </div>
+        {!docked && (
+          <div
+            className="bg-card/95 supports-[backdrop-filter]:bg-card/80 sticky top-16 z-20 flex flex-wrap items-center gap-1 rounded-t-xl border-b px-2 py-1.5 backdrop-blur"
+            role="toolbar"
+            aria-label="Text style"
+          >
+            {styleButtons}
+            <span className="bg-border mx-1 h-5 w-px" aria-hidden="true" />
+            <span className="text-muted-foreground hidden text-xs md:inline">
+              Enter: new line · Shift+Enter: line break · Alt+Shift+↑↓: move
+            </span>
+            <div className="ml-auto flex items-center gap-1">{toolbarEnd}</div>
+          </div>
+        )}
 
         {/* Writing surface */}
         <div className="px-4 pt-5 pb-4 sm:pr-8 sm:pl-12">

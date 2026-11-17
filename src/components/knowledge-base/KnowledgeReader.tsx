@@ -32,7 +32,6 @@ type KnowledgeDocument = {
   id: string;
   title: string;
   summary: string | null;
-  category: string;
   classification: string;
   sourceType: string;
   blocks: unknown;
@@ -301,8 +300,6 @@ export function KnowledgeReader({
         <article className="bg-card min-w-0 overflow-hidden rounded-xl border shadow-sm">
           <div className="bg-muted/30 border-b px-7 py-8 sm:px-11 sm:py-10">
             <div className="text-muted-foreground flex flex-wrap items-center gap-3 text-xs font-semibold tracking-[.14em] uppercase">
-              <span>{document.category.replace(/_/g, " ")}</span>
-              <span className="opacity-50">/</span>
               <span className="inline-flex items-center gap-1.5">
                 {document.classification === "RESTRICTED" ? (
                   <LockKeyhole className="h-3.5 w-3.5" />

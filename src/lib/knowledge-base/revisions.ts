@@ -25,7 +25,7 @@ function revisionSnapshot(article: KnowledgeArticle, editedById: string) {
 
 export async function createArticle(
   data: {
-    title: string; summary: string; category: string; classification: string;
+    title: string; summary: string; category?: string; classification: string;
     requiresAcknowledgement: boolean; sourceType: "EDITOR" | "PDF";
     blocks?: Prisma.InputJsonValue; plainText?: string;
     filePath?: string; fileName?: string; fileSize?: number;
@@ -59,7 +59,7 @@ export async function editArticle(
   id: string,
   expectedVersion: number,
   data: {
-    title: string; summary: string; category: string; classification: string;
+    title: string; summary: string; category?: string; classification: string;
     requiresAcknowledgement: boolean; blocks?: Prisma.InputJsonValue; plainText?: string;
     filePath?: string; fileName?: string; fileSize?: number;
     folderId?: string | null;

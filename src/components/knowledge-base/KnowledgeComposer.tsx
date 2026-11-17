@@ -52,10 +52,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import {
-  KNOWLEDGE_CATEGORIES,
-  type KnowledgeBlock,
-} from "@/lib/knowledge-base/schema";
+import type { KnowledgeBlock } from "@/lib/knowledge-base/schema";
 import { hasContent } from "@/lib/knowledge-base/editor";
 import { cn } from "@/lib/utils";
 import { KnowledgeBlockEditor, newBlockId } from "./KnowledgeBlockEditor";
@@ -65,7 +62,6 @@ type SourceType = "EDITOR" | "PDF";
 type Metadata = {
   title: string;
   summary: string;
-  category: (typeof KNOWLEDGE_CATEGORIES)[number];
   classification: "INTERNAL" | "RESTRICTED";
   requiresAcknowledgement: boolean;
   folderId: string | null;
@@ -87,14 +83,12 @@ const STARTERS: Array<{
   id: string;
   name: string;
   description: string;
-  category: Metadata["category"];
   sections: Array<{ type: KnowledgeBlock["type"]; text: string }>;
 }> = [
   {
     id: "policy",
     name: "Policy",
     description: "Purpose, scope, roles, requirements",
-    category: "POLICIES",
     sections: [
       { type: "heading", text: "1. Purpose" },
       {
@@ -130,7 +124,6 @@ const STARTERS: Array<{
     id: "procedure",
     name: "Procedure",
     description: "Objective, prerequisites, numbered steps",
-    category: "PROCEDURES",
     sections: [
       { type: "heading", text: "Objective" },
       { type: "paragraph", text: "[Explain the operational outcome.]" },
@@ -150,7 +143,6 @@ const STARTERS: Array<{
     id: "guide",
     name: "How-to guide",
     description: "Overview, steps and troubleshooting",
-    category: "GUIDES",
     sections: [
       { type: "heading", text: "Overview" },
       { type: "paragraph", text: "[What will the reader learn?]" },
@@ -168,7 +160,6 @@ const STARTERS: Array<{
 const initialMetadata: Metadata = {
   title: "",
   summary: "",
-  category: "POLICIES",
   classification: "INTERNAL",
   requiresAcknowledgement: false,
   folderId: null,
@@ -188,10 +179,6 @@ function folderLabel(folder: FolderOption, all: FolderOption[]): string {
     next = parent.parentId;
   }
   return names.join(" / ");
-}
-
-function humanize(value: string): string {
-  return value.charAt(0) + value.slice(1).toLowerCase().replace(/_/g, " ");
 }
 
 function formatBytes(bytes: number): string {
@@ -240,6 +227,12 @@ export function KnowledgeComposer({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [preview, setPreview] = useState(false);
+  // Where the editor puts its text-style buttons: the floating dock.
+  const [dockTools, setDockTools] = useState<HTMLDivElement | null>(null);
+  // The dock is fixed to the window, centred over this page's column (not
+  // the whole window, which includes the sidebar).
+  const pageRef = useRef<HTMLDivElement>(null);
+  const [dockCenter, setDockCenter] = useState<number | null>(null);
   const [dirty, setDirty] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [pendingStarter, setPendingStarter] = useState<string | null>(null);
@@ -278,7 +271,6 @@ export function KnowledgeComposer({
         setMetadata({
           title: data.title,
           summary: data.summary || "",
-          category: data.category,
           classification: data.classification,
           requiresAcknowledgement: data.requiresAcknowledgement,
           folderId: data.folderId ?? null,
@@ -346,7 +338,6 @@ export function KnowledgeComposer({
     setBlocks(
       starter.sections.map((section) => ({ ...section, id: newBlockId() })),
     );
-    setMetadata((previous) => ({ ...previous, category: starter.category }));
     setDirty(true);
     setPreview(false);
     setPendingStarter(null);
@@ -486,6 +477,26 @@ export function KnowledgeComposer({
   }
   submitRef.current = submit;
 
+  useEffect(() => {
+    const element = pageRef.current;
+    if (!element) return;
+    const measure = () => {
+      const rect = element.getBoundingClientRect();
+      // Only the part of the column that is on screen counts.
+      const left = Math.max(rect.left, 0);
+      const right = Math.min(rect.right, window.innerWidth);
+      setDockCenter((left + right) / 2);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [loading]);
+
   if (loading) {
     return (
       <div aria-busy="true" className="space-y-6">
@@ -510,7 +521,7 @@ export function KnowledgeComposer({
         : "Draft v" + version + " · Published v" + publishedVersion;
 
   return (
-    <div className="space-y-6 pb-16">
+    <div ref={pageRef} className="space-y-6 pb-28">
       {/* Header */}
       <div className="space-y-3">
         <Link
@@ -613,8 +624,8 @@ export function KnowledgeComposer({
               <div>
                 <h3 className="font-semibold">PDF document</h3>
                 <p className="text-muted-foreground text-sm">
-                  Upload the approved original. Files are stored privately and
-                  every download is permission-checked.
+                  Upload the approved original. It is stored privately, and
+                  readers can only view it here: no download, copy or print.
                 </p>
               </div>
               {file || existingPdf ? (
@@ -742,43 +753,7 @@ export function KnowledgeComposer({
                 blocks={blocks}
                 onChange={updateBlocks}
                 disabled={busy}
-                toolbarEnd={
-                  <>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button type="button" variant="ghost" size="sm">
-                          <LayoutTemplate />{" "}
-                          <span className="hidden sm:inline">Templates</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-64">
-                        <DropdownMenuLabel className="text-muted-foreground text-xs">
-                          Replace content with a template
-                        </DropdownMenuLabel>
-                        {STARTERS.map((starter) => (
-                          <DropdownMenuItem
-                            key={starter.id}
-                            onSelect={() => requestStarter(starter.id)}
-                            className="flex-col items-start gap-0"
-                          >
-                            <span className="font-medium">{starter.name}</span>
-                            <span className="text-muted-foreground text-xs">
-                              {starter.description}
-                            </span>
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setPreview(true)}
-                    >
-                      <Eye /> <span className="hidden sm:inline">Preview</span>
-                    </Button>
-                  </>
-                }
+                toolbarTarget={dockTools}
               />
             </>
           )}
@@ -812,26 +787,6 @@ export function KnowledgeComposer({
                         {folder.label}
                       </SelectItem>
                     ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="knowledge-category">Category</Label>
-              <Select
-                value={metadata.category}
-                onValueChange={(value) =>
-                  updateMeta("category", value as Metadata["category"])
-                }
-              >
-                <SelectTrigger id="knowledge-category" className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {KNOWLEDGE_CATEGORIES.map((name) => (
-                    <SelectItem key={name} value={name}>
-                      {humanize(name)}
-                    </SelectItem>
-                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -889,53 +844,19 @@ export function KnowledgeComposer({
             </div>
           </div>
 
-          <div className="bg-card space-y-3 rounded-xl border p-5 shadow-sm">
-            {error && (
-              <p
-                role="alert"
-                className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-xs leading-5"
-              >
-                <AlertCircle className="size-4 shrink-0" /> {error}
-              </p>
-            )}
-            {canPublish && (
-              <Button
-                type="button"
-                disabled={busy}
-                onClick={() => {
-                  void submit(true);
-                }}
-                className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 w-full"
-              >
-                {busy ? <Loader2 className="animate-spin" /> : <Send />} Save &
-                publish
-              </Button>
-            )}
-            <Button
-              type="button"
-              variant="outline"
-              disabled={busy}
-              onClick={() => {
-                void submit(false);
-              }}
-              className="w-full"
+          {error && (
+            <p
+              role="alert"
+              className="bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg p-3 text-xs leading-5"
             >
-              {busy && !canPublish ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <Save />
-              )}{" "}
-              Save draft
-              <kbd className="bg-muted text-muted-foreground ml-auto hidden rounded border px-1.5 font-mono text-[10px] sm:inline">
-                Ctrl S
-              </kbd>
-            </Button>
-            <p className="text-muted-foreground flex items-start gap-2 text-xs">
-              <ShieldCheck className="mt-px size-3.5 shrink-0" />
-              Every save keeps a revision, so earlier versions stay available
-              for audit.
+              <AlertCircle className="size-4 shrink-0" /> {error}
             </p>
-          </div>
+          )}
+          <p className="text-muted-foreground flex items-start gap-2 px-1 text-xs">
+            <ShieldCheck className="mt-px size-3.5 shrink-0" />
+            Every save keeps a revision, so earlier versions stay available for
+            audit.
+          </p>
 
           {sourceType === "EDITOR" && (
             <p className="text-muted-foreground flex items-start gap-2 px-1 text-xs">
@@ -945,11 +866,112 @@ export function KnowledgeComposer({
                 for a heading,{" "}
                 <kbd className="rounded border px-1 font-mono">-</kbd> for a
                 list or <kbd className="rounded border px-1 font-mono">1.</kbd>{" "}
-                for steps.
+                for steps. Alt+Shift+↑↓ moves a line.
               </span>
             </p>
           )}
         </aside>
+      </div>
+
+      {/* Floating dock: writing tools and save/publish, always in reach. */}
+      <div
+        className="pointer-events-none fixed bottom-5 z-30 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 justify-center print:hidden"
+        style={{ left: dockCenter ?? "50%" }}
+      >
+        <div
+          role="toolbar"
+          aria-label="Document actions"
+          className="bg-background/90 supports-[backdrop-filter]:bg-background/75 pointer-events-auto flex max-w-full items-center gap-1 overflow-x-auto rounded-2xl border p-1.5 shadow-lg ring-1 ring-black/5 backdrop-blur dark:ring-white/5"
+        >
+          {sourceType === "EDITOR" && (
+            <>
+              {!preview && (
+                // Phones get Markdown shortcuts instead, so save/publish fit.
+                <div
+                  ref={setDockTools}
+                  className="hidden items-center sm:flex"
+                />
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button type="button" variant="ghost" size="sm">
+                    <LayoutTemplate />
+                    <span className="hidden sm:inline">Templates</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="top" align="center" className="w-64">
+                  <DropdownMenuLabel className="text-muted-foreground text-xs">
+                    Replace content with a template
+                  </DropdownMenuLabel>
+                  {STARTERS.map((starter) => (
+                    <DropdownMenuItem
+                      key={starter.id}
+                      onSelect={() => requestStarter(starter.id)}
+                      className="flex-col items-start gap-0"
+                    >
+                      <span className="font-medium">{starter.name}</span>
+                      <span className="text-muted-foreground text-xs">
+                        {starter.description}
+                      </span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-pressed={preview}
+                onClick={() => setPreview((value) => !value)}
+                className={cn(preview && "bg-accent text-foreground")}
+              >
+                {preview ? <PenLine /> : <Eye />}
+                <span className="hidden sm:inline">
+                  {preview ? "Edit" : "Preview"}
+                </span>
+              </Button>
+              <span
+                className="bg-border mx-1 h-6 w-px shrink-0"
+                aria-hidden="true"
+              />
+            </>
+          )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={busy}
+            onClick={() => {
+              void submit(false);
+            }}
+          >
+            {busy && !canPublish ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <Save />
+            )}
+            <span className="hidden sm:inline">Save draft</span>
+            <span className="sm:hidden">Save</span>
+            <kbd className="bg-muted text-muted-foreground hidden rounded border px-1.5 font-mono text-[10px] md:inline">
+              Ctrl S
+            </kbd>
+          </Button>
+          {canPublish && (
+            <Button
+              type="button"
+              size="sm"
+              disabled={busy}
+              onClick={() => {
+                void submit(true);
+              }}
+              className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 rounded-xl"
+            >
+              {busy ? <Loader2 className="animate-spin" /> : <Send />}
+              <span className="hidden sm:inline">Save &amp; publish</span>
+              <span className="sm:hidden">Publish</span>
+            </Button>
+          )}
+        </div>
       </div>
 
       <AlertDialog

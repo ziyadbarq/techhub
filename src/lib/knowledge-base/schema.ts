@@ -34,7 +34,9 @@ export const moveKnowledgeArticleSchema = z.object({
 const metadata = z.object({
   title: z.string().trim().min(4).max(200),
   summary: z.string().trim().max(1500).default(""),
-  category: z.enum(KNOWLEDGE_CATEGORIES),
+  // Not shown in the UI any more (folders organize documents). Kept so
+  // older clients still validate; omitted means "keep" on edit, GENERAL on create.
+  category: z.enum(KNOWLEDGE_CATEGORIES).optional(),
   classification: z.enum(["INTERNAL", "RESTRICTED"]),
   requiresAcknowledgement: z.boolean().default(false),
   folderId: knowledgeFolderIdSchema.optional(),
