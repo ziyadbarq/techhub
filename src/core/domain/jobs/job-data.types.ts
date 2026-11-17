@@ -297,8 +297,9 @@ export interface GenerateAndSendReportJobData extends BaseJobData {
 }
 
 /**
- * Workflow engine tick jobs (SLA escalation, schedule advancement, entry automation).
- * All three carry the same shape — just an optional origin tag.
+ * Workflow engine cron jobs (SLA escalation, schedule advancement, entry
+ * automation, pending-attachment cleanup). All carry the same shape — just an
+ * optional origin tag.
  */
 export interface WorkflowTickJobData extends BaseJobData {
   /** Origin of the tick: "cron" (default) or "manual" (HTTP cron endpoint trigger) */

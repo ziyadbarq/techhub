@@ -60,17 +60,19 @@ export const REPORT_JOBS = {
 /**
  * Workflow engine cron tick job names
  *
- * Three cron-driven jobs power the engine's time-based behavior:
+ * Cron-driven jobs that power the engine's time-based behavior:
  *   - SLA_TICK: scans active steps + fires escalation rules
  *   - SCHEDULE_TICK: advances SCHEDULE steps when their window opens
  *   - ENTRY_AUTOMATION_TICK: runs entry-automation handlers on matching requests
+ *   - PENDING_ATTACHMENT_CLEANUP: deletes FILE-field uploads never submitted
  *
- * All three are gated at scheduling time by the WORKFLOW_ENGINE feature flag.
+ * All are gated at scheduling time by the WORKFLOW_ENGINE feature flag.
  */
 export const WORKFLOW_JOBS = {
   SLA_TICK: "workflow-sla-tick",
   SCHEDULE_TICK: "workflow-schedule-tick",
   ENTRY_AUTOMATION_TICK: "workflow-entry-automation-tick",
+  PENDING_ATTACHMENT_CLEANUP: "workflow-pending-attachment-cleanup",
 } as const;
 
 /**

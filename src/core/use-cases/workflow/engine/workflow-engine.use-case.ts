@@ -63,6 +63,7 @@ import { LogExecution } from "@/lib/decorators/log-execution.decorator";
 import {
   fileFieldIds,
   MAX_FILES_PER_FIELD,
+  PENDING_ATTACHMENT_LINK_WINDOW_MS,
 } from "@/core/domain/workflow/file-field";
 import type { IDelegationResolver } from "@/infrastructure/services/workflow/delegation-resolver.service";
 import type { IExpressionEvaluator } from "@/infrastructure/services/workflow/expression-evaluator.service";
@@ -1037,9 +1038,11 @@ export class WorkflowEngine implements IWorkflowEngine {
 
   /**
    * FILE fields hold attachment references. Each one must be a file this
-   * actor uploaded for this field and that isn't on a request yet, or one
-   * already on this request. New uploads are linked to the request, and the
-   * stored value is rebuilt from the attachment rows ({ id, name, size }),
+   * actor uploaded for this field that isn't on a request yet (and is still
+   * inside the link window, so the pending-upload cleanup can't be deleting
+   * it), or one already on this request. New uploads are linked to the
+   * request, and the stored value is rebuilt from the attachment rows
+   * ({ id, name, size }),
    * never taken from the client. Mutates `values`.
    */
   private async bindFileFields(
@@ -1061,12 +1064,19 @@ export class WorkflowEngine implements IWorkflowEngine {
         values[field.key] = [];
         continue;
       }
+      const linkableSince = new Date(
+        Date.now() - PENDING_ATTACHMENT_LINK_WINDOW_MS,
+      );
       const rows = await tx.requestAttachment.findMany({
         where: {
           id: { in: ids },
           fieldKey: field.key,
           OR: [
-            { requestId: null, uploadedById: actorId },
+            {
+              requestId: null,
+              uploadedById: actorId,
+              createdAt: { gte: linkableSince },
+            },
             { requestId },
           ],
         },

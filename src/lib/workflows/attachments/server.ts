@@ -2,18 +2,8 @@ import "server-only";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { hasPermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import {
-  createPrivateFileStorage,
-  type PrivateFileStorage,
-} from "@/lib/storage/private-file-storage";
 
-/** Private storage for request attachments (GCS, or a dev-only private folder). */
-export function workflowFileStorage(): PrivateFileStorage {
-  return createPrivateFileStorage({
-    devDir: ".workflow-uploads-dev",
-    devPrefix: "wf-dev",
-  });
-}
+export { workflowFileStorage } from "./storage";
 
 /**
  * Same rule as the request page: the requester, anyone assigned to one of

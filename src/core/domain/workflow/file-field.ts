@@ -20,3 +20,18 @@ export function fileFieldIds(value: unknown): string[] {
     )
     .filter(Boolean);
 }
+
+/**
+ * A FILE-field upload waits with no request until the request (or a step
+ * action) that references it is submitted. Pending uploads older than this
+ * are deleted, file and row, by the `workflow-pending-attachment-cleanup` job.
+ */
+export const PENDING_ATTACHMENT_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Submitting may link a pending upload only while it is younger than this.
+ * The hour of margin below the cleanup age means the cleanup job never
+ * removes a file that a submission in progress is about to link.
+ */
+export const PENDING_ATTACHMENT_LINK_WINDOW_MS =
+  PENDING_ATTACHMENT_MAX_AGE_MS - 60 * 60 * 1000;

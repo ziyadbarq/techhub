@@ -1154,6 +1154,9 @@ export const DI_TOKENS = {
     "IWorkflowEntryAutomationService",
   ),
   IWorkflowScheduleTickService: Symbol.for("IWorkflowScheduleTickService"),
+  IWorkflowPendingAttachmentCleanup: Symbol.for(
+    "IWorkflowPendingAttachmentCleanup",
+  ),
   IWorkflowTemplateRenderer: Symbol.for("IWorkflowTemplateRenderer"),
   IWorkflowExpressionEvaluator: Symbol.for("IWorkflowExpressionEvaluator"),
   IWorkflowReferenceNumberService: Symbol.for(

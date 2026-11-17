@@ -46,12 +46,12 @@ Module-defined `OutcomeCode` rows give finer-grained domain semantics (e.g., `RO
 
 ## File attachments
 
-A **File** field uses the same uploader as asset attachments (`components/ui/file-upload.tsx`). Each file uploads as soon as it is added (`POST /api/workflow/uploads`) and waits, visible only to its uploader, with no request (`request_attachments.requestId` null). Submitting the request, resubmitting it, or a step action that edits the field links the files to the request; the engine only accepts files the actor uploaded for that field (or already on the request) and stores `{ id, name, size }` from the attachment rows.
+A **File** field uses the same uploader as asset attachments (`components/ui/file-upload.tsx`). Each file uploads as soon as it is added (`POST /api/workflow/uploads`) and waits, visible only to its uploader, with no request (`request_attachments.requestId` null). Submitting the request, resubmitting it, or a step action that edits the field links the files to the request; the engine only accepts files the actor uploaded for that field in the last 23 hours (or already on the request) and stores `{ id, name, size }` from the attachment rows.
 
 - Allowed: PDF, Word, Excel, PowerPoint (new and legacy), PNG/JPEG/GIF/WebP, Outlook `.msg`, TXT, CSV; up to 10 MB each, 10 per field. The content (magic number) must match the extension; HTML, SVG, scripts and archives are refused (`lib/workflows/attachments/upload-check.ts`).
 - Storage is private: GCS when configured, `.workflow-uploads-dev/` under `next dev`, otherwise uploads are refused (`lib/storage/private-file-storage.ts`).
 - Download (`GET /api/workflow/attachments/[id]`) and the request's file list are for the requester, anyone assigned to one of its steps, or holders of `workflows-requests:view`; others get 404. Files are served with `nosniff` and a sandbox CSP; only PDF, images and plain text open inline.
-- Pending uploads that are never submitted stay in storage; cleaning them up is not automated yet.
+- Pending uploads that are never submitted are deleted after 24 hours by the hourly `workflow-pending-attachment-cleanup` job (see [Background jobs](#background-jobs-bullmq)): stored file first, then the row, and only while the row still has no request. If the file can't be removed the row is kept and retried on the next run. Submissions stop accepting a pending upload an hour before that (`PENDING_ATTACHMENT_LINK_WINDOW_MS` in `core/domain/workflow/file-field.ts`), so the job never removes a file a submission is linking; the user uploads it again. Where no private storage is reachable (a worker without GCS and not started with `NODE_ENV=development`), the job logs a warning and leaves everything in place.
 
 ## Append-only audit
 
@@ -121,19 +121,20 @@ User-facing nav items: Inbox, My Requests, Browse Forms, Notifications, Analytic
 
 ## Background jobs (BullMQ)
 
-Three cron-driven ticks under `QUEUE_NAMES.WORKFLOW`:
+Four cron-driven jobs under `QUEUE_NAMES.WORKFLOW`:
 
 | Job | Pattern | Purpose |
 |-----|---------|---------|
 | `workflow-sla-tick` | `*/2 * * * *` | Fire SLA escalations whose thresholds have crossed |
 | `workflow-schedule-tick` | `* * * * *` | Advance `SCHEDULE` steps when their window opens |
 | `workflow-entry-automation-tick` | `*/5 * * * *` | Run automation rules on matching requests |
+| `workflow-pending-attachment-cleanup` | `20 * * * *` | Delete File-field uploads never linked to a request, once older than 24h (`pending-attachment-cleanup.service.ts`) |
 
-Handlers: `src/infrastructure/services/queue/handlers/workflow-*-tick.handler.ts`.
+Handlers: `src/infrastructure/services/queue/handlers/workflow-*.handler.ts`.
 Worker registration: `src/infrastructure/services/queue/worker.ts`.
 Scheduling: `src/infrastructure/services/queue/scheduled-jobs.ts` (gated by `WORKFLOW_ENGINE`).
 
-HTTP cron endpoints (`/api/workflow/cron/*`) remain as manual triggers protected by the `CRON_SECRET` env header.
+HTTP cron endpoints (`/api/workflow/cron/*`) remain as manual triggers for the three ticks, protected by the `CRON_SECRET` env header. The attachment cleanup has no HTTP trigger.
 
 ## What's deferred / not yet done
 

@@ -328,10 +328,20 @@ export async function setupScheduledJobs(
       { pattern: "*/5 * * * *", tz: "UTC" },
     );
 
+    // Pending FILE-field uploads never submitted: hourly, deletes those
+    // older than 24h (file, then row)
+    await jobQueueService.scheduleJob(
+      QUEUE_NAMES.WORKFLOW,
+      WORKFLOW_JOBS.PENDING_ATTACHMENT_CLEANUP,
+      workflowTickData,
+      { pattern: "20 * * * *", tz: "UTC" },
+    );
+
     logger.info("Workflow engine cron ticks scheduled", {
       slaPattern: "*/2 * * * *",
       schedulePattern: "* * * * *",
       entryAutomationPattern: "*/5 * * * *",
+      pendingAttachmentCleanupPattern: "20 * * * *",
       timezone: "UTC",
     });
   } else {

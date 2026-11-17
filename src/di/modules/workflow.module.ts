@@ -100,6 +100,10 @@ import {
   type ISLAEscalator,
 } from "@/infrastructure/services/workflow/sla-escalator.service";
 import {
+  PendingAttachmentCleanupService,
+  type IPendingAttachmentCleanup,
+} from "@/infrastructure/services/workflow/pending-attachment-cleanup.service";
+import {
   TemplateRendererService,
   type ITemplateRenderer,
 } from "@/infrastructure/services/workflow/template-renderer.service";
@@ -248,6 +252,12 @@ export function bindWorkflowDependencies(container: Container): void {
   container
     .bind<ISLAEscalator>(DI_TOKENS.IWorkflowSLAEscalator)
     .to(SLAEscalatorService)
+    .inSingletonScope();
+  container
+    .bind<IPendingAttachmentCleanup>(
+      DI_TOKENS.IWorkflowPendingAttachmentCleanup,
+    )
+    .to(PendingAttachmentCleanupService)
     .inSingletonScope();
   container
     .bind<ITemplateRenderer>(DI_TOKENS.IWorkflowTemplateRenderer)

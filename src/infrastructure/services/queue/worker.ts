@@ -52,6 +52,7 @@ import { handleGenerateAndSendReport } from "./handlers/generate-and-send-report
 import { handleWorkflowSLATick } from "./handlers/workflow-sla-tick.handler";
 import { handleWorkflowScheduleTick } from "./handlers/workflow-schedule-tick.handler";
 import { handleWorkflowEntryAutomationTick } from "./handlers/workflow-entry-automation-tick.handler";
+import { handleWorkflowPendingAttachmentCleanup } from "./handlers/workflow-pending-attachment-cleanup.handler";
 
 /**
  * Worker instances
@@ -249,9 +250,9 @@ function createMaintenanceWorker(): BaseWorker {
 /**
  * Create and configure workflow queue worker
  *
- * Handles the three workflow engine cron ticks: SLA escalation, schedule
- * advancement, and entry automation. All three are gated at scheduling time
- * by the WORKFLOW_ENGINE feature flag.
+ * Handles the workflow engine cron jobs: SLA escalation, schedule
+ * advancement, entry automation, and pending-attachment cleanup. All are
+ * gated at scheduling time by the WORKFLOW_ENGINE feature flag.
  */
 function createWorkflowWorker(): BaseWorker {
   const worker = new BaseWorker({
@@ -267,6 +268,10 @@ function createWorkflowWorker(): BaseWorker {
   worker.registerHandler(
     WORKFLOW_JOBS.ENTRY_AUTOMATION_TICK,
     handleWorkflowEntryAutomationTick,
+  );
+  worker.registerHandler(
+    WORKFLOW_JOBS.PENDING_ATTACHMENT_CLEANUP,
+    handleWorkflowPendingAttachmentCleanup,
   );
 
   return worker;
