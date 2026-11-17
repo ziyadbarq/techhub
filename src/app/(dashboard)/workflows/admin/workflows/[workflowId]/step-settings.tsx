@@ -37,6 +37,8 @@ import {
 import {
   APPROVAL_RULES,
   ASSIGNEE_OPTIONS,
+  CHOICE_FIELD_TYPES,
+  choiceOptions,
   describeAssignee,
   roleLabel,
   SERVICE_ROLE_LABEL,
@@ -106,6 +108,14 @@ function newAssignee(kind: AssigneeKind, directory: Directory): Assignee {
       };
     case "ACCESS_SERVICE_ROLE":
       return { kind, serviceSnapshotKey: "", role: "OWNER" };
+    case "OPTION_USERS":
+      return {
+        kind,
+        fieldKey:
+          directory.fields.find((f) => CHOICE_FIELD_TYPES.has(f.type))?.key ??
+          "",
+        options: {},
+      };
     case "FALLBACK":
       return {
         kind,
@@ -115,6 +125,96 @@ function newAssignee(kind: AssigneeKind, directory: Directory): Assignee {
     default:
       return { kind };
   }
+}
+
+/** Who handles the step for each option of a choice field. */
+function OptionUsersEditor({
+  assignee,
+  directory,
+  onChange,
+}: {
+  assignee: Assignee;
+  directory: Directory;
+  onChange: (next: Assignee) => void;
+}) {
+  const field = directory.fields.find((f) => f.key === assignee.fieldKey);
+  const options = choiceOptions(field);
+  const mapping = (assignee.options ?? {}) as Record<string, string[]>;
+  const nameOf = (id: string) => {
+    const user = directory.users.find((u) => u.id === id);
+    return user ? user.name || user.email : "Unknown person";
+  };
+  const setPeople = (option: string, people: string[]) =>
+    onChange({ ...assignee, options: { ...mapping, [option]: people } });
+
+  if (!field) return null;
+  if (options.length === 0) {
+    return (
+      <p className="text-xs text-amber-700 dark:text-amber-300">
+        “{field.label}” has no options yet. Add them in the form builder.
+      </p>
+    );
+  }
+  return (
+    <ul className="divide-hairline-soft divide-y">
+      {options.map((option) => {
+        const people = Array.isArray(mapping[option]) ? mapping[option] : [];
+        const available = directory.users.filter((u) => !people.includes(u.id));
+        return (
+          <li key={option} className="space-y-1.5 py-2 first:pt-0 last:pb-0">
+            <p className="text-ink text-xs font-medium">{option}</p>
+            {people.length > 0 ? (
+              <div className="flex flex-wrap gap-1">
+                {people.map((id) => (
+                  <span
+                    key={id}
+                    className="bg-surface text-ink border-hairline inline-flex items-center gap-1 rounded-full border py-0.5 pr-1 pl-2 text-[11px]"
+                  >
+                    {nameOf(id)}
+                    <button
+                      type="button"
+                      aria-label={`Remove ${nameOf(id)} from ${option}`}
+                      onClick={() =>
+                        setPeople(
+                          option,
+                          people.filter((p) => p !== id),
+                        )
+                      }
+                      className="text-stone hover:text-coral-dark rounded-full p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-stone text-[11px]">
+                Nobody: choosing it adds no one.
+              </p>
+            )}
+            <Select
+              value=""
+              onValueChange={(id) => setPeople(option, [...people, id])}
+            >
+              <SelectTrigger
+                className="h-7 text-xs"
+                aria-label={`Add a person for ${option}`}
+              >
+                <SelectValue placeholder="Add a person" />
+              </SelectTrigger>
+              <SelectContent>
+                {available.map((user) => (
+                  <SelectItem key={user.id} value={user.id}>
+                    {user.name || user.email}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
 function AssigneeRow({
@@ -129,6 +229,9 @@ function AssigneeRow({
   onRemove: () => void;
 }) {
   const userPickers = directory.fields.filter((f) => f.type === "USER_PICKER");
+  const choiceFields = directory.fields.filter((f) =>
+    CHOICE_FIELD_TYPES.has(f.type),
+  );
   const serviceFields = directory.fields.filter(
     (f) => f.type === "LOOKUP" && f.config?.dataSource === "ACCESS_SERVICES",
   );
@@ -254,6 +357,22 @@ function AssigneeRow({
               ))}
             </SelectContent>
           </Select>
+        </div>
+      ) : null}
+
+      {assignee.kind === "OPTION_USERS" ? (
+        <div className="space-y-2">
+          {fieldSelect(
+            assignee.fieldKey,
+            choiceFields,
+            (fieldKey) => onChange({ ...assignee, fieldKey, options: {} }),
+            "Choose the question",
+          )}
+          <OptionUsersEditor
+            assignee={assignee}
+            directory={directory}
+            onChange={onChange}
+          />
         </div>
       ) : null}
 

@@ -167,6 +167,45 @@ describe("checkGraph", () => {
     expect(messages).toMatch(/never reached/);
   });
 
+  it("asks to finish an answer-based assignee", () => {
+    const withOptions = (assignee: Record<string, unknown>): Graph => ({
+      start: "a",
+      steps: [
+        {
+          ...approval("a"),
+          config: { type: "APPROVAL", assignees: [assignee] },
+        },
+      ],
+    });
+    const incomplete = /isn't fully chosen/;
+    const messages = (g: Graph) =>
+      checkGraph(g)
+        .map((i) => i.message)
+        .join("\n");
+
+    expect(
+      messages(withOptions({ kind: "OPTION_USERS", options: { A: ["u1"] } })),
+    ).toMatch(incomplete);
+    expect(
+      messages(
+        withOptions({
+          kind: "OPTION_USERS",
+          fieldKey: "p",
+          options: { A: [] },
+        }),
+      ),
+    ).toMatch(incomplete);
+    expect(
+      messages(
+        withOptions({
+          kind: "OPTION_USERS",
+          fieldKey: "p",
+          options: { A: ["u1"], B: [] },
+        }),
+      ),
+    ).not.toMatch(incomplete);
+  });
+
   it("asks for a first step and at least one step", () => {
     expect(checkGraph({ start: "", steps: [] })[0]!.message).toMatch(
       /at least one step/,
@@ -199,6 +238,9 @@ describe("assignee descriptions", () => {
     expect(
       describeAssignee({ kind: "FIELD_USER", fieldKey: "owner" }, directory),
     ).toBe("The person in “System owner”");
+    expect(
+      describeAssignee({ kind: "OPTION_USERS", fieldKey: "owner" }, directory),
+    ).toBe("Depends on the answer to “System owner”");
     expect(describeAssignee({ kind: "ROLE" }, directory)).toBe(
       "A role (not chosen yet)",
     );

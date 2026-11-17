@@ -141,6 +141,17 @@ export type AssigneeSpec =
       role: "OWNER" | "CYBERSECURITY" | "IMPLEMENTER";
     }
   | {
+      /**
+       * The people assigned to the option(s) chosen in a choice field
+       * (DROPDOWN, RADIO, MULTI_SELECT): e.g. the data owner of each
+       * selected product. Options with nobody mapped add no one.
+       */
+      kind: "OPTION_USERS";
+      fieldKey: string;
+      /** Option value → user ids. */
+      options: Record<string, string[]>;
+    }
+  | {
       kind: "FALLBACK";
       primary: AssigneeSpec;
       /** Form field key (USER_PICKER) to use when primary resolves empty */

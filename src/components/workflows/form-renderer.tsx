@@ -251,6 +251,12 @@ export function FormRenderer({
                 </span>
               ) : null}
             </label>
+            {typeof field.config?.helpText === "string" &&
+            field.config.helpText.trim() ? (
+              <p className="text-caption -mt-1 whitespace-pre-line text-[var(--color-stone)]">
+                {field.config.helpText.trim()}
+              </p>
+            ) : null}
             <div
               className={
                 isInvalid

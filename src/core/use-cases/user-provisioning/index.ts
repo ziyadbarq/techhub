@@ -7,3 +7,4 @@ export * from "./create-user-for-person.use-case";
 export * from "./reset-user-password.use-case";
 export * from "./link-user-to-person.use-case";
 export * from "./ensure-user-accounts-for-people.use-case";
+export * from "./resolve-people-by-name.use-case";

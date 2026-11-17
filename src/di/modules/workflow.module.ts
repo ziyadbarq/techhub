@@ -138,6 +138,7 @@ import { FieldUserAssigneeResolver } from "@/core/use-cases/workflow/resolvers/f
 import { RequesterManagerAssigneeResolver } from "@/core/use-cases/workflow/resolvers/requester-manager.resolver";
 import { AccessServiceRoleAssigneeResolver } from "@/core/use-cases/workflow/resolvers/access-service-role.resolver";
 import { FallbackAssigneeResolver } from "@/core/use-cases/workflow/resolvers/fallback.resolver";
+import { OptionUsersAssigneeResolver } from "@/core/use-cases/workflow/resolvers/option-users.resolver";
 
 // ============================================================================
 // Access Service use cases
@@ -359,6 +360,9 @@ export function bindWorkflowDependencies(container: Container): void {
   container
     .bind<IAssigneeResolver>(DI_TOKENS.IWorkflowAssigneeResolver)
     .to(FallbackAssigneeResolver);
+  container
+    .bind<IAssigneeResolver>(DI_TOKENS.IWorkflowAssigneeResolver)
+    .to(OptionUsersAssigneeResolver);
   container
     .bind<IAssigneeResolverRegistry>(
       DI_TOKENS.IWorkflowAssigneeResolverRegistry,

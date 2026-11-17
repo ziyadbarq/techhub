@@ -13,6 +13,7 @@ import { CreateUserForPersonUseCase } from "@/core/use-cases/user-provisioning/c
 import { ResetUserPasswordUseCase } from "@/core/use-cases/user-provisioning/reset-user-password.use-case";
 import { LinkUserToPersonUseCase } from "@/core/use-cases/user-provisioning/link-user-to-person.use-case";
 import { EnsureUserAccountsForPeopleUseCase } from "@/core/use-cases/user-provisioning/ensure-user-accounts-for-people.use-case";
+import { ResolvePeopleByNameUseCase } from "@/core/use-cases/user-provisioning/resolve-people-by-name.use-case";
 import type { IPasswordService } from "@/core/services/password.service.interface";
 import { PasswordService } from "@/infrastructure/services/security/password.service";
 
@@ -38,6 +39,10 @@ export function bindUserProvisioningDependencies(container: Container): void {
   container
     .bind(DI_TOKENS.EnsureUserAccountsForPeopleUseCase)
     .to(EnsureUserAccountsForPeopleUseCase);
+
+  container
+    .bind(DI_TOKENS.ResolvePeopleByNameUseCase)
+    .to(ResolvePeopleByNameUseCase);
 
   // Services
   container

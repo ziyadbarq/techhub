@@ -13,6 +13,7 @@ export type AssigneeKind =
   | "REQUESTER"
   | "FIELD_USER"
   | "ACCESS_SERVICE_ROLE"
+  | "OPTION_USERS"
   | "FALLBACK";
 
 export interface DirectoryUser {
@@ -68,6 +69,11 @@ export const ASSIGNEE_OPTIONS: ReadonlyArray<{
     hint: "From a service field",
   },
   {
+    kind: "OPTION_USERS",
+    label: "Depends on the answer",
+    hint: "People per option of a choice field",
+  },
+  {
     kind: "FALLBACK",
     label: "Line manager, or a backup",
     hint: "Backup from a person field",
@@ -79,6 +85,29 @@ export const SERVICE_ROLE_LABEL: Record<string, string> = {
   CYBERSECURITY: "Cybersecurity contact",
   IMPLEMENTER: "Implementer",
 };
+
+/** Fields whose answer can pick the assignee: one or more fixed options. */
+export const CHOICE_FIELD_TYPES = new Set([
+  "DROPDOWN",
+  "RADIO",
+  "MULTI_SELECT",
+]);
+
+export function choiceOptions(field: FormFieldRef | undefined): string[] {
+  const options = field?.config?.options;
+  return Array.isArray(options)
+    ? options.filter((o): o is string => typeof o === "string" && !!o)
+    : [];
+}
+
+/** True when at least one option of an OPTION_USERS assignee has someone. */
+export function hasOptionUsers(raw: unknown): boolean {
+  const options = (raw as { options?: unknown } | null)?.options;
+  if (!options || typeof options !== "object") return false;
+  return Object.values(options as Record<string, unknown>).some(
+    (users) => Array.isArray(users) && users.length > 0,
+  );
+}
 
 export function roleLabel(role: DirectoryRole): string {
   const display = role.displayName?.trim();
@@ -121,6 +150,8 @@ export function describeAssignee(raw: unknown, directory: Directory): string {
         "Service owner";
       return `${role} of the service in ${fieldLabel(directory, spec.serviceSnapshotKey)}`;
     }
+    case "OPTION_USERS":
+      return `Depends on the answer to ${fieldLabel(directory, spec.fieldKey)}`;
     case "FALLBACK":
       return `Line manager, or the person in ${fieldLabel(directory, spec.fallbackFieldKey)}`;
     default:

@@ -15,6 +15,8 @@
  *   other     → `next.default`; none closes the request as completed.
  */
 
+import { hasOptionUsers } from "./assignees";
+
 export type StepType =
   | "APPROVAL"
   | "EXECUTION"
@@ -395,7 +397,8 @@ export function checkGraph(graph: Graph): GraphIssue[] {
           (a.kind === "ROLE" && !a.roleId) ||
           (a.kind === "FIELD_USER" && !a.fieldKey) ||
           (a.kind === "ACCESS_SERVICE_ROLE" && !a.serviceSnapshotKey) ||
-          (a.kind === "FALLBACK" && !a.fallbackFieldKey);
+          (a.kind === "FALLBACK" && !a.fallbackFieldKey) ||
+          (a.kind === "OPTION_USERS" && (!a.fieldKey || !hasOptionUsers(a)));
         if (incomplete) {
           issues.push({
             stepKey: step.key,

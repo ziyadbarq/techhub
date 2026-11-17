@@ -75,9 +75,27 @@ Each is an `@injectable()` class in `src/core/use-cases/workflow/executors/`. Wi
 
 ## Assignee resolvers
 
-Implemented: `USER`, `ROLE`, `REQUESTER`, `FIELD_USER`.
+- `USER`, `ROLE`, `REQUESTER`, `FIELD_USER` (a person field of the form).
+- `REQUESTER_MANAGER`: from the organisation chart (org unit manager, then `Person.managerId`).
+- `ACCESS_SERVICE_ROLE`: owner, cybersecurity or implementer of the service chosen in an Access Services field.
+- `FALLBACK`: the line manager, or a person field when there is none (or when `forceFallbackWhen` holds).
+- `OPTION_USERS` ("Depends on the answer" in the builder): people per option of a choice field (`DROPDOWN`, `RADIO`, `MULTI_SELECT`), e.g. the data owner of each selected product. Every chosen option adds its people; an option with nobody adds no one, so pair it with another assignee if a step must never be empty.
 
-Stub (throws `NotImplementedError`): `REQUESTER_MANAGER` — requires HR manager-chain integration.
+A step's assignees are the union of its specs. A step that resolves nobody stays active until an admin reassigns it.
+
+## Fields at each step
+
+A form's `perStepFieldState` sets, per step key, whether a field is `EDITABLE`, `READ_ONLY` or `HIDDEN` ("Field visibility" in the workflow builder). A field a step doesn't mention is editable. The submission is the step `SUBMIT`: a field `HIDDEN` there is filled later in the workflow, not by the requester (e.g. an assignee picked by an approver).
+
+- **Submit / resubmit**: values for fields not editable at `SUBMIT` are dropped, and they aren't required.
+- **Actions on a step**: the assignee can change only the fields editable at that step (the request page shows them under "Fields you can change at this step"). The engine refuses any other change. Approving or completing needs the step's required, editable, shown fields filled; rejecting doesn't.
+- System fields (`SYSTEM_FIELD`, `COMPUTED`, `SECTION_HEADER`) are never editable.
+
+Rules: `src/core/domain/workflow/step-field-state.ts`. A field's `config.helpText` is shown under its label.
+
+## Creating forms from the browser console
+
+`scripts/browser-console/create-request-forms.js` creates and publishes the Access Management and Data Request forms with their approval paths, through the same admin APIs as "New request type". Paste it into DevTools while signed in as an admin. Published forms with the same name are skipped. People named in the steps are matched to Persons by name (`POST /api/workflow/admin/people/resolve`, which creates an account for a matched person who has none); if any name is unknown or shared by two people, nothing is created and the names are listed.
 
 ## SLA system
 
