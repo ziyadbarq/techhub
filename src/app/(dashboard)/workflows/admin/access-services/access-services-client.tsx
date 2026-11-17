@@ -203,10 +203,14 @@ export function AccessServicesClient({ initialServices }: Props) {
   // Import state
   const [importFile, setImportFile] = useState<File | null>(null);
   const [dryRunResult, setDryRunResult] = useState<{
-    errors: Array<{ row: number; message: string }>;
+    errors: Array<{ row: number; column?: string; message: string }>;
+    warnings?: Array<{ row: number; column?: string; message: string }>;
     importedCount: number;
+    created?: number;
+    updated?: number;
     contentHash?: string;
   } | null>(null);
+  const [importReading, setImportReading] = useState(false);
   const [importPending, startImportTransition] = useTransition();
 
   // Load users once when sheet opens
@@ -332,6 +336,34 @@ export function AccessServicesClient({ initialServices }: Props) {
     });
   }
 
+  /** Excel sheets are turned into CSV here; the server only ever parses CSV. */
+  async function pickImportFile(file: File | null) {
+    setDryRunResult(null);
+    if (!file || !/\.xlsx?$/i.test(file.name)) {
+      setImportFile(file);
+      return;
+    }
+    setImportReading(true);
+    try {
+      const XLSX = await import("xlsx");
+      const workbook = XLSX.read(await file.arrayBuffer(), { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = sheetName ? workbook.Sheets[sheetName] : undefined;
+      if (!sheet) throw new Error("empty workbook");
+      const csv = XLSX.utils.sheet_to_csv(sheet, { blankrows: false });
+      setImportFile(
+        new File([csv], file.name.replace(/\.xlsx?$/i, ".csv"), {
+          type: "text/csv",
+        }),
+      );
+    } catch {
+      setImportFile(null);
+      toast.error("Couldn't read that Excel file.");
+    } finally {
+      setImportReading(false);
+    }
+  }
+
   function handleDryRun() {
     if (!importFile) return;
     startImportTransition(async () => {
@@ -342,7 +374,10 @@ export function AccessServicesClient({ initialServices }: Props) {
         setDryRunResult(result.data);
         if (result.data.errors.length === 0) {
           toast.success(
-            `Dry run passed — ${result.data.importedCount} rows ready to import`,
+            `Ready: ${result.data.created ?? 0} new, ${result.data.updated ?? 0} updated` +
+              (result.data.warnings?.length
+                ? ` · ${result.data.warnings.length} to check`
+                : ""),
           );
         } else {
           toast.error(`Dry run found ${result.data.errors.length} error(s)`);
@@ -363,7 +398,9 @@ export function AccessServicesClient({ initialServices }: Props) {
         confirmedHash: dryRunResult.contentHash,
       });
       if (result.success && result.data) {
-        toast.success(`Imported ${result.data.importedCount} services`);
+        toast.success(
+          `Imported ${result.data.importedCount} services (${result.data.created ?? 0} new, ${result.data.updated ?? 0} updated)`,
+        );
         setDryRunResult(null);
         setImportFile(null);
         window.location.reload();
@@ -406,25 +443,32 @@ export function AccessServicesClient({ initialServices }: Props) {
         </div>
       </div>
 
-      {/* CSV Import */}
+      {/* Bulk import: the template CSV, or the business sheet in Excel */}
       <div className="space-y-3 rounded-lg border p-4">
-        <h2 className="text-sm font-medium">Bulk Import (CSV)</h2>
-        <div className="flex items-center gap-3">
+        <div>
+          <h2 className="text-sm font-medium">Bulk Import (Excel or CSV)</h2>
+          <p className="text-muted-foreground mt-1 text-xs">
+            Excel with columns <b>Title</b>, <b>Service Owner</b>,{" "}
+            <b>Cybersecurity Owner</b>, <b>Service Implementer</b> (people by
+            name, several separated by commas; optional <b>Manager Approval</b>{" "}
+            yes/no), or the CSV template with emails. Services are matched by
+            title: existing ones are updated and their people replaced, new ones
+            are created with manager approval on.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
           <input
             type="file"
-            accept=".csv,text/csv"
-            onChange={(e) => {
-              setImportFile(e.target.files?.[0] ?? null);
-              setDryRunResult(null);
-            }}
+            accept=".xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            onChange={(e) => void pickImportFile(e.target.files?.[0] ?? null)}
             className="text-sm"
           />
           <button
             onClick={handleDryRun}
-            disabled={!importFile || importPending}
+            disabled={!importFile || importPending || importReading}
             className="rounded-md border px-3 py-1.5 text-sm disabled:opacity-50"
           >
-            Validate
+            {importReading ? "Reading…" : "Validate"}
           </button>
           {dryRunResult && dryRunResult.errors.length === 0 && (
             <button
@@ -432,7 +476,8 @@ export function AccessServicesClient({ initialServices }: Props) {
               disabled={importPending}
               className="bg-primary text-primary-foreground rounded-md px-3 py-1.5 text-sm disabled:opacity-50"
             >
-              Confirm Import ({dryRunResult.importedCount} rows)
+              Confirm import ({dryRunResult.created ?? 0} new,{" "}
+              {dryRunResult.updated ?? 0} updated)
             </button>
           )}
         </div>
@@ -440,10 +485,29 @@ export function AccessServicesClient({ initialServices }: Props) {
           <ul className="text-destructive space-y-1 text-sm">
             {dryRunResult.errors.map((e, i) => (
               <li key={i}>
-                Row {e.row}: {e.message}
+                Row {e.row}
+                {e.column ? ` · ${e.column}` : ""}: {e.message}
               </li>
             ))}
           </ul>
+        )}
+        {dryRunResult && (dryRunResult.warnings?.length ?? 0) > 0 && (
+          <details
+            open={dryRunResult.errors.length === 0}
+            className="rounded-md border border-amber-300/60 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
+          >
+            <summary className="cursor-pointer font-medium">
+              {`${dryRunResult.warnings!.length} to check — the import can go ahead, but these people won't be assigned`}
+            </summary>
+            <ul className="mt-2 max-h-72 space-y-1 overflow-y-auto">
+              {dryRunResult.warnings!.map((w, i) => (
+                <li key={i}>
+                  Row {w.row}
+                  {w.column ? ` · ${w.column}` : ""}: {w.message}
+                </li>
+              ))}
+            </ul>
+          </details>
         )}
       </div>
 

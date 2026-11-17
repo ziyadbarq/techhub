@@ -226,4 +226,29 @@ export class PrismaAccessServiceRepository implements IAccessServiceRepository {
     });
     return person?.userId ?? null;
   }
+
+  async listActivePeopleNames(
+    tx?: Tx,
+  ): Promise<Array<{ userId: string; names: string[] }>> {
+    const people = await this.db(tx).person.findMany({
+      where: { isActive: true, userId: { not: null } },
+      select: {
+        userId: true,
+        firstName: true,
+        middleName: true,
+        lastName: true,
+        user: { select: { name: true } },
+      },
+    });
+    return people.map((person) => ({
+      userId: person.userId!,
+      names: [
+        person.user?.name ?? "",
+        [person.firstName, person.middleName, person.lastName]
+          .filter(Boolean)
+          .join(" "),
+        [person.firstName, person.lastName].filter(Boolean).join(" "),
+      ].filter((name) => name.trim().length > 0),
+    }));
+  }
 }

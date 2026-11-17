@@ -8,12 +8,22 @@ import type {
 import type { IIdGenerator } from "@/core/services/id-generator.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { AccessServiceRole } from "@/generated/prisma";
+import {
+  isRosterHeader,
+  normalizeHeader,
+  parseYesNo,
+  PersonNameIndex,
+  ROSTER_COLUMNS,
+  slugifyServiceName,
+  splitNames,
+} from "./roster";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const MAX_FILE_BYTES = 2 * 1024 * 1024; // 2MB
 const MAX_ROWS = 500;
 
+/** Template format: people by email. Compared case-insensitively. */
 const REQUIRED_COLUMNS = [
   "name",
   "slug",
@@ -24,6 +34,12 @@ const REQUIRED_COLUMNS = [
   "cybersecurityEmails",
   "implementerEmails",
 ] as const;
+
+const ROLES: ReadonlyArray<{ role: AccessServiceRole; label: string }> = [
+  { role: "OWNER", label: "Service owner" },
+  { role: "CYBERSECURITY", label: "Cybersecurity owner" },
+  { role: "IMPLEMENTER", label: "Service implementer" },
+];
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -36,6 +52,11 @@ export interface ImportRowError {
 export interface ImportAccessServicesResult {
   importedCount: number;
   errors: ImportRowError[];
+  /** Things to look at that don't block the import (e.g. a name not found). */
+  warnings?: ImportRowError[];
+  /** Of importedCount: services that will be / were created vs updated. */
+  created?: number;
+  updated?: number;
   /** Opaque token from dry-run; pass back to confirm a real import of identical content */
   contentHash?: string;
 }
@@ -51,17 +72,32 @@ export interface ImportAccessServicesRequest {
 
 // ─── Internal types ───────────────────────────────────────────────────────────
 
+type People = Record<AccessServiceRole, string[]>;
+
 interface ParsedRow {
   lineNumber: number;
   name: string;
   slug: string;
-  description: string | null;
-  requireManagerApproval: boolean;
-  instructions: string | null;
-  ownerEmails: string[];
-  cybersecurityEmails: string[];
-  implementerEmails: string[];
+  /** undefined = not in the file: keep the stored value (default on create). */
+  description?: string | null;
+  requireManagerApproval?: boolean;
+  instructions?: string | null;
+  emails: People;
+  names: People;
 }
+
+interface ParseResult {
+  rows: ParsedRow[];
+  errors: ImportRowError[];
+  warnings: ImportRowError[];
+  roster: boolean;
+}
+
+const emptyPeople = (): People => ({
+  OWNER: [],
+  CYBERSECURITY: [],
+  IMPLEMENTER: [],
+});
 
 // ─── Use Case ─────────────────────────────────────────────────────────────────
 
@@ -106,55 +142,99 @@ export class ImportAccessServicesUseCase {
       };
     }
 
-    const text = bytes.toString("utf-8");
-    const { rows: parsedRows, errors: parseErrors } = parseCsv(text);
+    const parsed = parseCsv(bytes.toString("utf-8"));
+    const warnings = [...parsed.warnings];
 
-    if (parseErrors.length > 0) {
-      return { importedCount: 0, errors: parseErrors, contentHash };
+    if (parsed.errors.length > 0) {
+      return { importedCount: 0, errors: parsed.errors, warnings, contentHash };
     }
 
-    if (parsedRows.length > MAX_ROWS) {
+    if (parsed.rows.length > MAX_ROWS) {
       return {
         importedCount: 0,
         errors: [
           {
             row: 0,
-            message: `Import exceeds the ${MAX_ROWS}-row limit (got ${parsedRows.length}).`,
+            message: `Import exceeds the ${MAX_ROWS}-row limit (got ${parsed.rows.length}).`,
           },
         ],
         contentHash,
       };
     }
 
-    const validationErrors = await this.validate(parsedRows);
-    if (validationErrors.length > 0) {
-      return { importedCount: 0, errors: validationErrors, contentHash };
+    const { rows, errors } = parsed.roster
+      ? this.dropRosterDuplicates(parsed.rows, warnings)
+      : { rows: parsed.rows, errors: this.findDuplicates(parsed.rows) };
+    if (errors.length > 0) {
+      return { importedCount: 0, errors, warnings, contentHash };
     }
+
+    const emailErrors = await this.checkEmails(rows);
+    if (emailErrors.length > 0) {
+      return { importedCount: 0, errors: emailErrors, warnings, contentHash };
+    }
+
+    const index = parsed.roster
+      ? new PersonNameIndex(await this.repo.listActivePeopleNames())
+      : null;
+    const resolved = new Map<number, AccessServiceAssigneeInput[]>();
+    for (const row of rows) {
+      resolved.set(
+        row.lineNumber,
+        await this.resolveAssignees(row, index, warnings),
+      );
+    }
+
+    const existing = new Map<number, string>();
+    for (const row of rows) {
+      const found = await this.repo.findBySlug(row.slug);
+      if (found) existing.set(row.lineNumber, found.id);
+    }
+    const updated = existing.size;
+    const created = rows.length - updated;
+    warnings.sort((x, y) => x.row - y.row);
 
     if (request.dryRun) {
-      return { importedCount: parsedRows.length, errors: [], contentHash };
+      return {
+        importedCount: rows.length,
+        errors: [],
+        warnings,
+        created,
+        updated,
+        contentHash,
+      };
     }
 
-    // All-or-nothing upsert
-    let count = 0;
-    for (const row of parsedRows) {
-      await this.upsertRow(row, request.importedById ?? null);
-      count++;
+    for (const row of rows) {
+      await this.upsertRow(
+        row,
+        existing.get(row.lineNumber) ?? null,
+        resolved.get(row.lineNumber) ?? [],
+        request.importedById ?? null,
+      );
     }
 
     this.logger.info("access-service.import", {
-      count,
+      count: rows.length,
+      created,
+      updated,
+      warnings: warnings.length,
+      format: parsed.roster ? "roster" : "template",
       importedById: request.importedById,
     });
-    return { importedCount: count, errors: [] };
+    return {
+      importedCount: rows.length,
+      errors: [],
+      warnings,
+      created,
+      updated,
+    };
   }
 
   // ─── Validation ───────────────────────────────────────────────────────────
 
-  private async validate(rows: ParsedRow[]): Promise<ImportRowError[]> {
+  private findDuplicates(rows: ParsedRow[]): ImportRowError[] {
     const errors: ImportRowError[] = [];
-
-    // Intra-file duplicate checks
     const slugsSeen = new Map<string, number>();
     const namesSeen = new Map<string, number>();
 
@@ -181,138 +261,244 @@ export class ImportAccessServicesUseCase {
         namesSeen.set(nm, row.lineNumber);
       }
     }
+    return errors;
+  }
 
-    if (errors.length > 0) return errors;
-
-    // DB-level checks: unknown emails
+  /**
+   * Business sheets repeat services now and then. An identical repeat is
+   * skipped with a warning; two different rows for one service are an error.
+   */
+  private dropRosterDuplicates(
+    rows: ParsedRow[],
+    warnings: ImportRowError[],
+  ): { rows: ParsedRow[]; errors: ImportRowError[] } {
+    const first = new Map<string, ParsedRow>();
+    const kept: ParsedRow[] = [];
+    const errors: ImportRowError[] = [];
     for (const row of rows) {
-      const allEmails = [
-        ...row.ownerEmails,
-        ...row.cybersecurityEmails,
-        ...row.implementerEmails,
-      ];
-      for (const email of allEmails) {
-        if (!email) continue;
-        // We validate emails exist & are active via the repository's user lookup
-        // (The Prisma repository will expose findActiveUserByEmail internally)
-        // We delegate per-email validation to the repository upsert path;
-        // unknown/inactive emails will surface there. For dry-run accuracy we
-        // call a lightweight check here via the repo interface.
-        const isValid = await this.repo.isActiveUserEmail(email);
-        if (!isValid) {
-          errors.push({
-            row: row.lineNumber,
-            message: `Unknown or inactive user email "${email}".`,
-          });
+      const earlier = first.get(row.slug);
+      if (!earlier) {
+        first.set(row.slug, row);
+        kept.push(row);
+        continue;
+      }
+      if (samePeople(earlier, row)) {
+        warnings.push({
+          row: row.lineNumber,
+          column: "Title",
+          message: `"${row.name}" repeats row ${earlier.lineNumber}; skipped.`,
+        });
+      } else {
+        errors.push({
+          row: row.lineNumber,
+          column: "Title",
+          message: `"${row.name}" is also on row ${earlier.lineNumber} with different people. Keep one row per service.`,
+        });
+      }
+    }
+    return { rows: kept, errors };
+  }
+
+  private async checkEmails(rows: ParsedRow[]): Promise<ImportRowError[]> {
+    const errors: ImportRowError[] = [];
+    for (const row of rows) {
+      for (const { role } of ROLES) {
+        for (const email of row.emails[role]) {
+          if (!(await this.repo.isActiveUserEmail(email))) {
+            errors.push({
+              row: row.lineNumber,
+              message: `Unknown or inactive user email "${email}".`,
+            });
+          }
         }
       }
     }
-
     return errors;
+  }
+
+  private async resolveAssignees(
+    row: ParsedRow,
+    index: PersonNameIndex | null,
+    warnings: ImportRowError[],
+  ): Promise<AccessServiceAssigneeInput[]> {
+    const result: AccessServiceAssigneeInput[] = [];
+    for (const { role, label } of ROLES) {
+      const userIds = new Set<string>();
+      for (const email of row.emails[role]) {
+        const userId = await this.repo.findActiveUserIdByEmail(email);
+        if (userId) userIds.add(userId);
+      }
+      for (const name of row.names[role]) {
+        const match = index?.resolve(name) ?? { status: "unknown" as const };
+        if (match.status === "found") {
+          userIds.add(match.userId);
+        } else if (match.status === "ambiguous") {
+          warnings.push({
+            row: row.lineNumber,
+            column: label,
+            message: `"${name}" matches ${match.count} active people; not assigned. Set them on the service by hand.`,
+          });
+        } else {
+          warnings.push({
+            row: row.lineNumber,
+            column: label,
+            message: `"${name}" isn't an active TechHub user; not assigned.`,
+          });
+        }
+      }
+      if (index && userIds.size === 0) {
+        warnings.push({
+          row: row.lineNumber,
+          column: label,
+          message: `"${row.name}" has no ${label.toLowerCase()}. Requests for it will stop at that step until someone is assigned.`,
+        });
+      }
+      for (const userId of userIds) result.push({ userId, role });
+    }
+    return result;
   }
 
   // ─── Upsert ───────────────────────────────────────────────────────────────
 
   private async upsertRow(
     row: ParsedRow,
+    existingId: string | null,
+    assignees: AccessServiceAssigneeInput[],
     importedById: string | null,
   ): Promise<void> {
-    const existing = await this.repo.findBySlug(row.slug);
-
-    const assignees = await this.buildAssignees(row);
-
-    if (existing) {
+    if (existingId) {
       await this.repo.update(
-        existing.id,
+        existingId,
         {
           name: row.name,
-          description: row.description,
-          requireManagerApproval: row.requireManagerApproval,
-          instructions: row.instructions,
+          ...(row.description !== undefined
+            ? { description: row.description }
+            : {}),
+          ...(row.requireManagerApproval !== undefined
+            ? { requireManagerApproval: row.requireManagerApproval }
+            : {}),
+          ...(row.instructions !== undefined
+            ? { instructions: row.instructions }
+            : {}),
           updatedById: importedById,
         },
         assignees,
       );
-    } else {
-      const id = this.idGenerator.generateId();
-      await this.repo.create(
-        {
-          id,
-          name: row.name,
-          slug: row.slug,
-          description: row.description,
-          isActive: true,
-          requireManagerApproval: row.requireManagerApproval,
-          instructions: row.instructions,
-          createdById: importedById,
-          updatedById: importedById,
-        },
-        assignees,
-      );
+      return;
     }
+    await this.repo.create(
+      {
+        id: this.idGenerator.generateId(),
+        name: row.name,
+        slug: row.slug,
+        description: row.description ?? null,
+        isActive: true,
+        // A new service asks the line manager unless the file says otherwise.
+        requireManagerApproval: row.requireManagerApproval ?? true,
+        instructions: row.instructions ?? null,
+        createdById: importedById,
+        updatedById: importedById,
+      },
+      assignees,
+    );
   }
+}
 
-  private async buildAssignees(
-    row: ParsedRow,
-  ): Promise<AccessServiceAssigneeInput[]> {
-    const result: AccessServiceAssigneeInput[] = [];
-    const roleMap: Array<{ emails: string[]; role: AccessServiceRole }> = [
-      { emails: row.ownerEmails, role: "OWNER" },
-      { emails: row.cybersecurityEmails, role: "CYBERSECURITY" },
-      { emails: row.implementerEmails, role: "IMPLEMENTER" },
-    ];
-
-    for (const { emails, role } of roleMap) {
-      const seen = new Set<string>();
-      for (const email of emails) {
-        const lower = email.toLowerCase();
-        if (seen.has(lower)) continue;
-        seen.add(lower);
-        const userId = await this.repo.findActiveUserIdByEmail(lower);
-        if (userId) {
-          result.push({ userId, role });
-        }
-      }
-    }
-
-    return result;
-  }
+function samePeople(a: ParsedRow, b: ParsedRow): boolean {
+  const key = (row: ParsedRow) =>
+    ROLES.map(({ role }) =>
+      [...row.names[role], ...row.emails[role]]
+        .map((v) => v.toLowerCase())
+        .sort()
+        .join("|"),
+    ).join("#");
+  return key(a) === key(b);
 }
 
 // ─── CSV parser ───────────────────────────────────────────────────────────────
 
-function parseCsv(text: string): {
-  rows: ParsedRow[];
-  errors: ImportRowError[];
-} {
+/** Parses either the email template or the business roster (detected by header). */
+export function parseCsv(text: string): ParseResult {
   const errors: ImportRowError[] = [];
+  const warnings: ImportRowError[] = [];
   const rows: ParsedRow[] = [];
 
   const lines = splitCsvLines(text);
   if (lines.length < 2) {
-    errors.push({ row: 0, message: "CSV has no data rows." });
-    return { rows, errors };
+    errors.push({ row: 0, message: "The file has no data rows." });
+    return { rows, errors, warnings, roster: false };
   }
 
-  const headers = parseCsvLine(lines[0]).map((h) => h.trim().toLowerCase());
-  const missingCols = REQUIRED_COLUMNS.filter((c) => !headers.includes(c));
-  if (missingCols.length > 0) {
-    errors.push({
-      row: 1,
-      message: `Missing required columns: ${missingCols.join(", ")}.`,
-    });
-    return { rows, errors };
+  const headers = parseCsvLine(lines[0]!).map(normalizeHeader);
+  const roster = isRosterHeader(headers);
+  if (!roster) {
+    const missing = REQUIRED_COLUMNS.filter(
+      (c) => !headers.includes(c.toLowerCase()),
+    );
+    if (missing.length > 0) {
+      errors.push({
+        row: 1,
+        message: `Missing required columns: ${missing.join(", ")}. Use the template, or a sheet with Title, Service Owner, Cybersecurity Owner and Service Implementer.`,
+      });
+      return { rows, errors, warnings, roster };
+    }
   }
 
-  const colIdx = (name: string) => headers.indexOf(name);
+  const colIdx = (name: string) => headers.indexOf(name.toLowerCase());
 
   for (let i = 1; i < lines.length; i++) {
     const lineNumber = i + 1;
-    const raw = lines[i].trim();
-    if (!raw) continue;
+    const cells = parseCsvLine(lines[i]!);
+    if (cells.every((cell) => !cell.trim())) continue;
+    const get = (col: string) => {
+      const at = colIdx(col);
+      return at < 0 ? "" : (cells[at] ?? "").trim();
+    };
 
-    const cells = parseCsvLine(lines[i]);
-    const get = (col: string) => (cells[colIdx(col)] ?? "").trim();
+    if (roster) {
+      const name = get(ROSTER_COLUMNS.title).replace(/\s+/g, " ");
+      if (!name) {
+        errors.push({
+          row: lineNumber,
+          column: "Title",
+          message: "Title is required.",
+        });
+        continue;
+      }
+      const slug = slugifyServiceName(name);
+      if (!slug) {
+        errors.push({
+          row: lineNumber,
+          column: "Title",
+          message: `"${name}" needs at least one English letter or digit.`,
+        });
+        continue;
+      }
+      const approvalCell = get(ROSTER_COLUMNS.managerApproval);
+      const requireManagerApproval = approvalCell
+        ? parseYesNo(approvalCell)
+        : undefined;
+      if (approvalCell && requireManagerApproval === undefined) {
+        warnings.push({
+          row: lineNumber,
+          column: "Manager Approval",
+          message: `"${approvalCell}" isn't yes or no; left as it is.`,
+        });
+      }
+      rows.push({
+        lineNumber,
+        name,
+        slug,
+        requireManagerApproval,
+        emails: emptyPeople(),
+        names: {
+          OWNER: splitNames(get(ROSTER_COLUMNS.owner)),
+          CYBERSECURITY: splitNames(get(ROSTER_COLUMNS.cybersecurity)),
+          IMPLEMENTER: splitNames(get(ROSTER_COLUMNS.implementer)),
+        },
+      });
+      continue;
+    }
 
     const name = get("name");
     const slug = get("slug").toLowerCase();
@@ -352,13 +538,16 @@ function parseCsv(text: string): {
       description,
       requireManagerApproval: rawBool === "true",
       instructions,
-      ownerEmails: splitEmails(get("ownerEmails")),
-      cybersecurityEmails: splitEmails(get("cybersecurityEmails")),
-      implementerEmails: splitEmails(get("implementerEmails")),
+      emails: {
+        OWNER: splitEmails(get("ownerEmails")),
+        CYBERSECURITY: splitEmails(get("cybersecurityEmails")),
+        IMPLEMENTER: splitEmails(get("implementerEmails")),
+      },
+      names: emptyPeople(),
     });
   }
 
-  return { rows, errors };
+  return { rows, errors, warnings, roster };
 }
 
 /** Split CSV into logical lines, respecting quoted fields that span lines */
@@ -410,8 +599,9 @@ function parseCsvLine(line: string): string[] {
 
 function splitEmails(raw: string): string[] {
   if (!raw) return [];
+  const seen = new Set<string>();
   return raw
     .split(";")
     .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
+    .filter((e) => e && !seen.has(e) && seen.add(e));
 }
