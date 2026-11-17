@@ -12,7 +12,7 @@ The first version supports:
 - Agreement report for document owners (Knowledge Base update or publish): agreed / pending people for the current published version, with CSV export. The audience is every user holding Knowledge Base view (plus restricted view for RESTRICTED documents) through an active, unexpired role, excluding inactive or excluded people.
 - Catalog search across published article content and metadata. PDF search covers metadata, not embedded PDF text.
 - Historical revision access for authorized editors/publishers.
-- Private PDF download endpoint; every request is authenticated, feature-gated and permission-checked.
+- View-only PDF reader: pages are drawn on canvases in the page (pdf.js, no text layer), so nobody can select, copy, download or print the policy. There is no download endpoint.
 
 ## Paths
 - `/knowledge-base` — catalog
@@ -22,7 +22,7 @@ The first version supports:
 - `/api/knowledge-base` — catalog and article creation
 - `/api/knowledge-base/upload` — private PDF upload or new PDF version
 - `/api/knowledge-base/[id]` — read, edit, publish, archive
-- `/api/knowledge-base/[id]/download` — protected download
+- `/api/knowledge-base/[id]/file` — PDF bytes for the in-page viewer only (requires the `x-knowledge-viewer: 1` header, so opening the URL directly is refused)
 - `/api/knowledge-base/[id]/acknowledge` — agreement to the published version (body `{ "agree": true }` required)
 - `/api/knowledge-base/[id]/agreements` — agreement report for owners (`?format=csv` to export)
 
@@ -53,7 +53,7 @@ No non-admin role receives the new permissions automatically. Grant appropriate 
 
 ### Known limitations of v1
 - PDF text indexing/OCR, Word documents, automatic review-and-approval workflow, targeted role-by-role document visibility, and an enterprise-wide (cross-document) agreement dashboard are **not implemented**. Per-document agreement reports are available.
-- The PDF is offered as a protected download rather than embedded in a browser preview.
+- PDF protection deters copying; it can't prevent screenshots or a technically skilled reader extracting the file the browser received.
 - Catalog API returns at most 250 recent records; add cursor pagination before large-scale rollout.
 - Archived articles are hidden; recovery requires a managed administrative procedure.
 - Publishing is permission-gated but has no second-person approval step yet.

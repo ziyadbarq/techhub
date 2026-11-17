@@ -874,7 +874,9 @@ export function KnowledgeComposer({
                   Require employee agreement
                 </Label>
                 <p className="text-muted-foreground text-xs">
-                  Readers agree to each published version; you see who has.
+                  Turn on only for policies employees must formally accept. They
+                  agree to each published version and you see who has. Off:
+                  employees just read it.
                 </p>
               </div>
               <Switch

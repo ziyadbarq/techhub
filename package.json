@@ -164,6 +164,7 @@
     "ora": "^9.0.0",
     "papaparse": "^5.5.3",
     "partysocket": "^1.1.6",
+    "pdfjs-dist": "6.4.299",
     "pg": "8.16.3",
     "pino": "^10.1.0",
     "pino-pretty": "^13.1.2",

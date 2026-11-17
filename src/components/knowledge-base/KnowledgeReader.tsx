@@ -6,8 +6,6 @@ import { formatDate } from "@/lib/utils/date-format";
 import {
   ArrowLeft,
   BookOpen,
-  Download,
-  FileText,
   ShieldCheck,
   LockKeyhole,
   History,
@@ -23,6 +21,7 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { parseBlocks } from "@/lib/knowledge-base/schema";
 import { KnowledgeBlocksView } from "./KnowledgeBlocksView";
+import { ProtectedPdfViewer } from "./ProtectedPdfViewer";
 import {
   AgreementReportPanel,
   PolicyAgreementCard,
@@ -207,6 +206,11 @@ export function KnowledgeReader({
   const blocks =
     document.sourceType === "EDITOR" ? parseBlocks(document.blocks) : [];
   const isPending = document.publishedVersion !== document.latestVersion;
+  const revisionQuery = historicalVersion
+    ? "?version=" + historicalVersion
+    : draft
+      ? "?draft=1"
+      : "";
 
   return (
     <div className="mx-auto max-w-7xl space-y-7 pb-14">
@@ -334,31 +338,10 @@ export function KnowledgeReader({
           </div>
           <div className="px-7 py-9 sm:px-11 sm:py-12">
             {document.sourceType === "PDF" ? (
-              <div className="bg-muted/30 flex flex-col items-center rounded-3xl border border-dashed p-10 text-center">
-                <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-300">
-                  <FileText className="h-10 w-10" />
-                </span>
-                <h2 className="mt-6 text-xl font-semibold">
-                  Official PDF document
-                </h2>
-                <p className="text-muted-foreground mt-3 max-w-md text-sm break-words">
-                  {document.fileName}
-                </p>
-                <p className="text-muted-foreground mt-2 text-xs">
-                  {document.fileSize
-                    ? (document.fileSize / 1024 / 1024).toFixed(2) + " MB"
-                    : ""}
-                </p>
-                <a
-                  href={`/api/knowledge-base/${articleId}/download${historicalVersion ? "?version=" + historicalVersion : draft ? "?draft=1" : ""}`}
-                  className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 mt-7 inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold"
-                >
-                  <Download className="h-4 w-4" /> Download protected PDF
-                </a>
-                <p className="text-muted-foreground mt-4 text-xs">
-                  File access is checked for every download. Private GCS storage
-                  is required.
-                </p>
+              <div className="space-y-4">
+                <ProtectedPdfViewer
+                  src={`/api/knowledge-base/${articleId}/file${revisionQuery}`}
+                />
               </div>
             ) : (
               <KnowledgeBlocksView blocks={blocks} />
@@ -390,7 +373,7 @@ export function KnowledgeReader({
                 <dt className="text-muted-foreground text-xs">Format</dt>
                 <dd className="mt-1 font-medium">
                   {document.sourceType === "PDF"
-                    ? "Protected PDF"
+                    ? "View-only PDF"
                     : "Knowledge article"}
                 </dd>
               </div>
