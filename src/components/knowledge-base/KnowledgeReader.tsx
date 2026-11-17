@@ -23,7 +23,8 @@ import {
 } from "lucide-react";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { parseBlocks, type KnowledgeBlock } from "@/lib/knowledge-base/schema";
+import { parseBlocks } from "@/lib/knowledge-base/schema";
+import { KnowledgeBlocksView } from "./KnowledgeBlocksView";
 
 type RevisionInfo = { version: number; createdAt: string; editedById: string };
 type KnowledgeDocument = {
@@ -45,73 +46,6 @@ type KnowledgeDocument = {
   canEdit: boolean;
   revisions: RevisionInfo[];
 };
-
-function KnowledgeBody({ blocks }: { blocks: KnowledgeBlock[] }) {
-  return (
-    <div className="space-y-5 break-words text-slate-700 dark:text-slate-200">
-      {blocks.map((block) => {
-        const text = block.text || " ";
-        switch (block.type) {
-          case "heading":
-            return (
-              <h2
-                key={block.id}
-                className="text-foreground pt-5 text-2xl font-semibold tracking-tight"
-              >
-                {text}
-              </h2>
-            );
-          case "subheading":
-            return (
-              <h3
-                key={block.id}
-                className="text-foreground pt-3 text-lg font-semibold"
-              >
-                {text}
-              </h3>
-            );
-          case "quote":
-            return (
-              <blockquote
-                key={block.id}
-                className="border-l-4 border-blue-500 bg-blue-500/5 px-5 py-4 text-base leading-7 italic"
-              >
-                {text}
-              </blockquote>
-            );
-          case "bullet":
-            return (
-              <p key={block.id} className="flex gap-3 text-[15px] leading-8">
-                <span
-                  aria-hidden="true"
-                  className="mt-3 h-2 w-2 shrink-0 rounded-full bg-blue-500"
-                />
-                {text}
-              </p>
-            );
-          case "numbered":
-            return (
-              <p
-                key={block.id}
-                className="border-l-2 border-slate-300 pl-4 text-[15px] leading-8 dark:border-white/20"
-              >
-                {text}
-              </p>
-            );
-          default:
-            return (
-              <p
-                key={block.id}
-                className="text-[15px] leading-8 whitespace-pre-wrap"
-              >
-                {text}
-              </p>
-            );
-        }
-      })}
-    </div>
-  );
-}
 
 export function KnowledgeReader({
   articleId,
@@ -252,7 +186,7 @@ export function KnowledgeReader({
         <p className="mt-4 font-semibold">{error || "Article unavailable"}</p>
         <Link
           href="/knowledge-base"
-          className="mt-4 inline-block text-sm text-blue-600 underline"
+          className="mt-4 inline-block text-sm underline"
         >
           Back to library
         </Link>
@@ -311,7 +245,7 @@ export function KnowledgeReader({
                 onClick={() => {
                   void action("publish");
                 }}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#163b62] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                className="bg-barq-yellow text-barq-black inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-50"
               >
                 <Send className="h-4 w-4" /> Publish v{document.latestVersion}
               </button>
@@ -349,9 +283,9 @@ export function KnowledgeReader({
       )}
 
       <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <article className="bg-card min-w-0 overflow-hidden rounded-[30px] border shadow-[0_18px_60px_-45px_rgba(10,29,55,.35)]">
-          <div className="border-b bg-[#12253f] px-7 py-9 text-white sm:px-11 sm:py-12">
-            <div className="flex flex-wrap items-center gap-3 text-xs font-semibold tracking-[.14em] text-[#c0daee] uppercase">
+        <article className="bg-card min-w-0 overflow-hidden rounded-xl border shadow-sm">
+          <div className="bg-muted/30 border-b px-7 py-8 sm:px-11 sm:py-10">
+            <div className="text-muted-foreground flex flex-wrap items-center gap-3 text-xs font-semibold tracking-[.14em] uppercase">
               <span>{document.category.replace(/_/g, " ")}</span>
               <span className="opacity-50">/</span>
               <span className="inline-flex items-center gap-1.5">
@@ -369,11 +303,11 @@ export function KnowledgeReader({
               {document.title}
             </h1>
             {document.summary && (
-              <p className="mt-5 max-w-2xl text-sm leading-7 text-[#c4d7ea] sm:text-base">
+              <p className="text-muted-foreground mt-5 max-w-2xl text-sm leading-7 sm:text-base">
                 {document.summary}
               </p>
             )}
-            <div className="mt-8 flex flex-wrap gap-4 border-t border-white/15 pt-5 text-xs text-[#b8cfe3]">
+            <div className="border-border text-muted-foreground mt-8 flex flex-wrap gap-4 border-t pt-5 text-xs">
               <span className="inline-flex items-center gap-1.5">
                 <Clock3 className="h-4 w-4" /> Updated{" "}
                 {formatDate(document.updatedAt)}
@@ -390,7 +324,7 @@ export function KnowledgeReader({
           <div className="px-7 py-9 sm:px-11 sm:py-12">
             {document.sourceType === "PDF" ? (
               <div className="bg-muted/30 flex flex-col items-center rounded-3xl border border-dashed p-10 text-center">
-                <span className="flex h-20 w-20 items-center justify-center rounded-[26px] bg-blue-500/10 text-blue-600 dark:text-blue-300">
+                <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-300">
                   <FileText className="h-10 w-10" />
                 </span>
                 <h2 className="mt-6 text-xl font-semibold">
@@ -406,7 +340,7 @@ export function KnowledgeReader({
                 </p>
                 <a
                   href={`/api/knowledge-base/${articleId}/download${historicalVersion ? "?version=" + historicalVersion : draft ? "?draft=1" : ""}`}
-                  className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#163b62] px-6 py-3 text-sm font-semibold text-white hover:bg-[#24517c]"
+                  className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 mt-7 inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold"
                 >
                   <Download className="h-4 w-4" /> Download protected PDF
                 </a>
@@ -416,7 +350,7 @@ export function KnowledgeReader({
                 </p>
               </div>
             ) : (
-              <KnowledgeBody blocks={blocks} />
+              <KnowledgeBlocksView blocks={blocks} />
             )}
           </div>
 
@@ -424,9 +358,9 @@ export function KnowledgeReader({
             document.publishedVersion === document.version &&
             !draft &&
             !historicalVersion && (
-              <section className="border-t bg-blue-500/5 px-7 py-7 sm:px-11">
+              <section className="bg-muted/30 border-t px-7 py-7 sm:px-11">
                 <div className="flex items-start gap-3">
-                  <ClipboardCheck className="mt-1 h-6 w-6 shrink-0 text-blue-600" />
+                  <ClipboardCheck className="mt-1 h-6 w-6 shrink-0 text-amber-500" />
                   <div className="flex-1">
                     <h2 className="font-semibold">Reading acknowledgement</h2>
                     <p className="text-muted-foreground mt-2 text-sm">
@@ -446,7 +380,7 @@ export function KnowledgeReader({
                         onClick={() => {
                           void acknowledge();
                         }}
-                        className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#163b62] px-5 py-3 text-sm font-semibold text-white disabled:opacity-50"
+                        className="bg-barq-yellow text-barq-black mt-5 inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold disabled:opacity-50"
                       >
                         <CheckCircle2 className="h-4 w-4" /> I have read this
                         document
@@ -459,9 +393,9 @@ export function KnowledgeReader({
         </article>
 
         <aside className="space-y-5">
-          <div className="bg-card rounded-2xl border p-6">
+          <div className="bg-card rounded-xl border p-6 shadow-sm">
             <div className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-blue-500" />
+              <BookOpen className="text-muted-foreground h-5 w-5" />
               <h2 className="font-semibold">Document details</h2>
             </div>
             <dl className="mt-5 space-y-4 text-sm">
@@ -502,9 +436,9 @@ export function KnowledgeReader({
             </dl>
           </div>
           {document.revisions.length > 0 && (
-            <div className="bg-card rounded-2xl border p-6">
+            <div className="bg-card rounded-xl border p-6 shadow-sm">
               <div className="flex items-center gap-2">
-                <History className="h-5 w-5 text-blue-500" />
+                <History className="text-muted-foreground h-5 w-5" />
                 <h2 className="font-semibold">Revision history</h2>
               </div>
               <ol className="mt-5 space-y-4">
@@ -515,7 +449,7 @@ export function KnowledgeReader({
                   >
                     <Link
                       href={`/knowledge-base/${articleId}?version=${revision.version}`}
-                      className="font-semibold text-blue-600 hover:underline dark:text-blue-300"
+                      className="font-medium hover:underline"
                     >
                       Version {revision.version}
                     </Link>
@@ -532,7 +466,7 @@ export function KnowledgeReader({
           )}
           <Link
             href="/knowledge-base"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 dark:text-blue-300"
+            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm font-medium"
           >
             <RotateCcw className="h-4 w-4" /> Browse library{" "}
             <ExternalLink className="h-3.5 w-3.5" />

@@ -10,9 +10,9 @@ export const dynamic = "force-dynamic";
 export default async function CreateKnowledgePage({
   searchParams,
 }: {
-  searchParams: Promise<{ folder?: string }>;
+  searchParams: Promise<{ folder?: string; type?: string }>;
 }) {
-  const { folder } = await searchParams;
+  const { folder, type } = await searchParams;
   await requireFeature(FEATURE_FLAGS.KNOWLEDGE_BASE);
   try {
     await requirePermission(PERMISSIONS.KNOWLEDGE_BASE_CREATE);
@@ -20,5 +20,10 @@ export default async function CreateKnowledgePage({
     handlePermissionRedirect(error, "/knowledge-base/new");
     throw error;
   }
-  return <KnowledgeComposer initialFolderId={folder ?? null} />;
+  return (
+    <KnowledgeComposer
+      initialFolderId={folder ?? null}
+      initialSourceType={type === "pdf" ? "PDF" : "EDITOR"}
+    />
+  );
 }
