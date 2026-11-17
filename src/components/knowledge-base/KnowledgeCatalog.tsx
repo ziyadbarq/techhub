@@ -685,16 +685,17 @@ export function KnowledgeCatalog() {
         </div>
         {mayCreate && (
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              disabled={busy || atDepthLimit}
-              title={atDepthLimit ? DEPTH_LIMIT_MESSAGE : undefined}
-              onClick={() =>
-                startDialog({ kind: "create", parentId: activeId })
-              }
-            >
-              <FolderPlus /> New folder
-            </Button>
+            {!atDepthLimit && (
+              <Button
+                variant="outline"
+                disabled={busy}
+                onClick={() =>
+                  startDialog({ kind: "create", parentId: activeId })
+                }
+              >
+                <FolderPlus /> New folder
+              </Button>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2">
@@ -948,16 +949,16 @@ export function KnowledgeCatalog() {
                   </p>
                   {mayCreate && (
                     <div className="mt-5 flex flex-wrap justify-center gap-2">
-                      <Button
-                        variant="outline"
-                        disabled={atDepthLimit}
-                        title={atDepthLimit ? DEPTH_LIMIT_MESSAGE : undefined}
-                        onClick={() =>
-                          startDialog({ kind: "create", parentId: activeId })
-                        }
-                      >
-                        <FolderPlus /> New folder
-                      </Button>
+                      {!atDepthLimit && (
+                        <Button
+                          variant="outline"
+                          onClick={() =>
+                            startDialog({ kind: "create", parentId: activeId })
+                          }
+                        >
+                          <FolderPlus /> New folder
+                        </Button>
+                      )}
                       <Button variant="outline" asChild>
                         <Link href={newDocumentHref()}>
                           <BookOpen /> Write an article
