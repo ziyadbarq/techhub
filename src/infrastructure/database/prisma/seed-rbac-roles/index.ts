@@ -1,38 +1,21 @@
 /**
- * RBAC Roles - Consolidated Exports
+ * RBAC Roles
  *
- * Seeded role presets with their initial permissions; only System Administrator is protected.
- * Split from a single 799-line file into 4 functional categories for better maintainability:
- * - Admin & System Roles
- * - Financial & Procurement Roles
- * - Technical & Operations Roles
- * - Specialized Roles
+ * System Administrator (protected, all permissions), Viewer (every
+ * employee) and the four base roles: Asset Manager, Asset Officer,
+ * CMDB Manager and Workflow Officer. Only System Administrator is protected;
+ * the others can be edited from Roles after seeding.
  */
 
-// Types
 export type { RoleDefinition } from "./types";
-
-// Individual role categories
 export { ADMIN_ROLES } from "./seed-rbac-roles-admin";
-export { FINANCIAL_ROLES } from "./seed-rbac-roles-financial";
-export { TECHNICAL_ROLES } from "./seed-rbac-roles-technical";
-export { SPECIALIZED_ROLES } from "./seed-rbac-roles-specialized";
+export { BASE_ROLES, EMPLOYEE_PERMISSIONS } from "./seed-rbac-roles-base";
 
-// Import for combining
 import { ADMIN_ROLES } from "./seed-rbac-roles-admin";
-import { FINANCIAL_ROLES } from "./seed-rbac-roles-financial";
-import { TECHNICAL_ROLES } from "./seed-rbac-roles-technical";
-import { SPECIALIZED_ROLES } from "./seed-rbac-roles-specialized";
+import { BASE_ROLES } from "./seed-rbac-roles-base";
 import type { RoleDefinition } from "./types";
 
-/**
- * Role presets with their initial permissions
- * Organized by function: admin + financial + technical + specialized
- * Maintains backward compatibility with existing seed scripts
- */
 export const SYSTEM_ROLES: Record<string, RoleDefinition> = {
   ...ADMIN_ROLES,
-  ...FINANCIAL_ROLES,
-  ...TECHNICAL_ROLES,
-  ...SPECIALIZED_ROLES,
+  ...BASE_ROLES,
 } as const;

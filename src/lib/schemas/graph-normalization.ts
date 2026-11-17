@@ -757,13 +757,9 @@ export const OFFICE_NORMALIZATION_MAP: Record<string, string> = {
  * Maps normalized department codes to role names.
  * Used for automatic role assignment during sync.
  *
- * NEW STRUCTURE (aligned with C-level domains):
- * - SEC (CISO) → security-officer
- * - RISK, AUDIT (CRO) → auditor
- * - TECH (CTO) → service-owner (TECH-DATA → data-steward override)
- * - FIN (CFO) → finance-manager
- * - HR (CHRO) → hr-manager
- * - Others → viewer
+ * Every department maps to the employee role (viewer). The functional roles
+ * (asset-manager, asset-officer, cmdb-manager, workflow-officer) are granted
+ * by an administrator, not inferred from the org chart.
  */
 export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
   // ============================================
@@ -776,91 +772,91 @@ export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
   // ============================================
   // CYBERSECURITY (SEC) - Reports to CISO
   // ============================================
-  SEC: "security-officer",
-  "SEC-SOC": "security-officer",
-  "SEC-CDC": "security-officer",
-  "SEC-CGRAC-SGRC": "security-officer",
-  "SEC-CGRAC-SGRC-AUD": "security-officer",
-  "SEC-CGRAC-SGRC-POL": "security-officer",
-  "SEC-CGRAC-AUD": "security-officer",
-  "SEC-CGRAC-POL": "security-officer",
-  "SEC-VM": "security-officer",
-  "SEC-PRIV": "security-officer",
-  "SEC-GRC": "security-officer",
-  "SEC-OPS": "security-officer",
-  "SEC-CGRAC": "security-officer",
-  "SEC-CAD": "security-officer",
-  "SEC-MGMT": "security-officer",
+  SEC: "viewer",
+  "SEC-SOC": "viewer",
+  "SEC-CDC": "viewer",
+  "SEC-CGRAC-SGRC": "viewer",
+  "SEC-CGRAC-SGRC-AUD": "viewer",
+  "SEC-CGRAC-SGRC-POL": "viewer",
+  "SEC-CGRAC-AUD": "viewer",
+  "SEC-CGRAC-POL": "viewer",
+  "SEC-VM": "viewer",
+  "SEC-PRIV": "viewer",
+  "SEC-GRC": "viewer",
+  "SEC-OPS": "viewer",
+  "SEC-CGRAC": "viewer",
+  "SEC-CAD": "viewer",
+  "SEC-MGMT": "viewer",
 
   // ============================================
   // RISK & COMPLIANCE (RISK) - Reports to CRO
   // ============================================
-  RISK: "auditor",
-  "RISK-COMP": "auditor",
-  "RISK-AML": "auditor",
-  "RISK-FRAUD": "auditor",
-  "RISK-SANCT": "auditor",
-  "RISK-MGMT": "auditor",
-  "RISK-SAMA": "auditor",
-  "RISK-SSU": "auditor",
-  RMGT: "auditor",
-  "RMGT-RMR": "auditor",
-  "RMGT-OPER": "auditor",
-  "RMGT-BCM": "auditor",
-  "RMGT-CRED": "auditor",
-  "RMGT-RDM": "auditor",
-  "RMGT-ENTE": "auditor",
+  RISK: "viewer",
+  "RISK-COMP": "viewer",
+  "RISK-AML": "viewer",
+  "RISK-FRAUD": "viewer",
+  "RISK-SANCT": "viewer",
+  "RISK-MGMT": "viewer",
+  "RISK-SAMA": "viewer",
+  "RISK-SSU": "viewer",
+  RMGT: "viewer",
+  "RMGT-RMR": "viewer",
+  "RMGT-OPER": "viewer",
+  "RMGT-BCM": "viewer",
+  "RMGT-CRED": "viewer",
+  "RMGT-RDM": "viewer",
+  "RMGT-ENTE": "viewer",
 
   // ============================================
   // INTERNAL AUDIT (AUDIT) - Reports to CRO/Board
   // ============================================
-  AUDIT: "auditor",
-  "AUDIT-INT": "auditor",
-  "AUDIT-CORP": "auditor",
-  "AUDIT-IT": "auditor",
-  INTA: "auditor",
-  "INTA-INTE": "auditor",
+  AUDIT: "viewer",
+  "AUDIT-INT": "viewer",
+  "AUDIT-CORP": "viewer",
+  "AUDIT-IT": "viewer",
+  INTA: "viewer",
+  "INTA-INTE": "viewer",
 
   // ============================================
   // TECHNOLOGY (TECH) - Reports to CTO
   // ============================================
-  TECH: "service-owner",
-  "TECH-SWE": "service-owner",
-  "TECH-DEVOPS": "service-owner",
-  "TECH-SRE": "service-owner",
-  "TECH-PROD": "service-owner",
-  "TECH-ITSUP": "service-owner",
-  "TECH-ERP": "service-owner",
-  "TECH-BCM": "service-owner",
-  // Data & Analytics → data-steward (override)
-  "TECH-DATA": "data-steward",
-  DATA: "data-steward",
+  TECH: "viewer",
+  "TECH-SWE": "viewer",
+  "TECH-DEVOPS": "viewer",
+  "TECH-SRE": "viewer",
+  "TECH-PROD": "viewer",
+  "TECH-ITSUP": "viewer",
+  "TECH-ERP": "viewer",
+  "TECH-BCM": "viewer",
+  // Data & Analytics
+  "TECH-DATA": "viewer",
+  DATA: "viewer",
 
   // ============================================
   // FINANCE (FIN) - Reports to CFO
   // ============================================
-  FIN: "finance-manager",
-  "FIN-FPA": "finance-manager",
-  "FIN-FCR": "finance-manager",
-  "FIN-TREAS": "finance-manager",
-  "FIN-ACCT": "finance-manager",
+  FIN: "viewer",
+  "FIN-FPA": "viewer",
+  "FIN-FCR": "viewer",
+  "FIN-TREAS": "viewer",
+  "FIN-ACCT": "viewer",
 
   // ============================================
   // PROCUREMENT (PROC) - Reports to CFO/COO
   // ============================================
-  PROC: "finance-manager",
-  "PROC-BUY": "finance-manager",
+  PROC: "viewer",
+  "PROC-BUY": "viewer",
   "PROC-ADMIN": "viewer",
   "PROC-TRAVEL": "viewer",
 
   // ============================================
   // HUMAN CAPITAL (HR) - Reports to CHRO
   // ============================================
-  HR: "hr-manager",
-  "HR-OPS": "hr-manager",
-  "HR-TA": "hr-manager",
-  "HR-OD": "hr-manager",
-  "HR-PAY": "hr-manager",
+  HR: "viewer",
+  "HR-OPS": "viewer",
+  "HR-TA": "viewer",
+  "HR-OD": "viewer",
+  "HR-PAY": "viewer",
 
   // ============================================
   // OPERATIONS (OPS) - Reports to COO
@@ -930,14 +926,14 @@ export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
   // ============================================
   VENDOR: "viewer",
   UNASSIGNED: "viewer",
-  COMPL: "auditor",
-  "COMPL-SANC": "auditor",
-  "COMPL-REGU": "auditor",
-  "COMPL-SACA": "auditor",
-  "COMPL-AFBC": "auditor",
-  "COMPL-AMLC": "auditor",
-  "COMPL-COMP": "auditor",
-  "COMPL-SSU": "auditor",
+  COMPL: "viewer",
+  "COMPL-SANC": "viewer",
+  "COMPL-REGU": "viewer",
+  "COMPL-SACA": "viewer",
+  "COMPL-AFBC": "viewer",
+  "COMPL-AMLC": "viewer",
+  "COMPL-COMP": "viewer",
+  "COMPL-SSU": "viewer",
 } as const;
 
 // ==============================================
@@ -948,34 +944,23 @@ export const TITLE_ROLE_OVERRIDES: ReadonlyArray<{
   pattern: RegExp;
   role: string;
 }> = [
-  // C-level executives
-  { pattern: /\b(ciso|chief.*security.*officer)\b/i, role: "security-officer" },
   {
     pattern: /\b(cto|chief.*technology.*officer)\b/i,
     role: "system-administrator",
   },
-  { pattern: /\b(cfo|chief.*financial.*officer)\b/i, role: "finance-manager" },
-  { pattern: /\b(cro|chief.*risk.*officer)\b/i, role: "auditor" },
-  { pattern: /\b(cco|chief.*compliance.*officer)\b/i, role: "auditor" },
-
-  // Head/Director level
-  { pattern: /\b(head.*audit|director.*audit)\b/i, role: "auditor" },
-  { pattern: /\b(head.*compliance|director.*compliance)\b/i, role: "auditor" },
   {
-    pattern: /\b(head.*security|director.*security)\b/i,
-    role: "security-officer",
+    pattern: /\b(asset.*manager|inventory.*manager)\b/i,
+    role: "asset-manager",
   },
-  { pattern: /\b(head.*data|director.*data)\b/i, role: "data-steward" },
-
-  // Specialist roles
-  { pattern: /\b(data.*steward|data.*governance)\b/i, role: "data-steward" },
-  { pattern: /\b(asset.*manager|asset.*coord)/i, role: "asset-coordinator" },
-  { pattern: /\b(inventory.*manager)\b/i, role: "inventory-manager" },
   {
-    pattern: /\b(maintenance.*tech|repair.*tech)\b/i,
-    role: "maintenance-technician",
+    pattern: /\b(asset.*coord|asset.*officer|maintenance.*tech|repair.*tech)/i,
+    role: "asset-officer",
   },
-  { pattern: /\b(service.*manager|service.*owner)\b/i, role: "service-owner" },
+  {
+    pattern:
+      /\b(cmdb|configuration.*manager|data.*steward|data.*governance)\b/i,
+    role: "cmdb-manager",
+  },
 ] as const;
 
 // ==============================================

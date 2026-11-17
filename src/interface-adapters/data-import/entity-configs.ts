@@ -396,7 +396,7 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         lookupTarget: "Role",
         lookupField: "name",
         lookupDisplayField: "displayName",
-        examples: ["asset-coordinator", "auditor", "data-steward"],
+        examples: ["viewer", "asset-officer", "cmdb-manager"],
         description: "Role code assigned to person",
         autoMap: ["role", "role_code", "primary_role", "primaryRole"],
       }),

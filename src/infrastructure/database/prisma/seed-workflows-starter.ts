@@ -12,8 +12,8 @@
  *
  * All workflows use REQUESTER_MANAGER or ROLE-based assignees so they work
  * out of the box without hard-coding user IDs. Roles referenced must be
- * seeded by seed-rbac (system-administrator, service-owner, security-officer,
- * inventory-manager, finance-manager, it-help-desk).
+ * seeded by seed-rbac (system-administrator, asset-manager, asset-officer,
+ * cmdb-manager, workflow-officer).
  */
 
 import type { PrismaClient } from "@/generated/prisma/server";
@@ -222,7 +222,7 @@ const DEFINITIONS: StarterDefinition[] = [
             },
           },
           config: managerApproval([
-            { kind: "ROLE", roleId: roles["inventory-manager"] },
+            { kind: "ROLE", roleId: roles["asset-manager"] },
           ]),
         },
         {
@@ -231,9 +231,7 @@ const DEFINITIONS: StarterDefinition[] = [
           position: 3,
           name: "Procurement",
           next: { default: "handover" },
-          config: execution([
-            { kind: "ROLE", roleId: roles["inventory-manager"] },
-          ]),
+          config: execution([{ kind: "ROLE", roleId: roles["asset-manager"] }]),
         },
         {
           key: "handover",
@@ -241,7 +239,7 @@ const DEFINITIONS: StarterDefinition[] = [
           position: 4,
           name: "Asset handover",
           next: { default: "requester_notified" },
-          config: execution([{ kind: "ROLE", roleId: roles["it-help-desk"] }]),
+          config: execution([{ kind: "ROLE", roleId: roles["asset-officer"] }]),
         },
         {
           key: "requester_notified",
@@ -311,7 +309,7 @@ const DEFINITIONS: StarterDefinition[] = [
             },
           },
           config: managerApproval([
-            { kind: "ROLE", roleId: roles["security-officer"] },
+            { kind: "ROLE", roleId: roles["workflow-officer"] },
           ]),
         },
         {
@@ -320,7 +318,9 @@ const DEFINITIONS: StarterDefinition[] = [
           position: 3,
           name: "Access provisioning",
           next: { default: "requester_notified" },
-          config: execution([{ kind: "ROLE", roleId: roles["it-help-desk"] }]),
+          config: execution([
+            { kind: "ROLE", roleId: roles["workflow-officer"] },
+          ]),
         },
         {
           key: "requester_notified",
@@ -382,7 +382,7 @@ const DEFINITIONS: StarterDefinition[] = [
             },
           },
           config: managerApproval([
-            { kind: "ROLE", roleId: roles["inventory-manager"] },
+            { kind: "ROLE", roleId: roles["asset-manager"] },
           ]),
         },
         {
@@ -397,7 +397,7 @@ const DEFINITIONS: StarterDefinition[] = [
             },
           },
           config: managerApproval([
-            { kind: "ROLE", roleId: roles["finance-manager"] },
+            { kind: "ROLE", roleId: roles["asset-manager"] },
           ]),
         },
         {
@@ -412,7 +412,7 @@ const DEFINITIONS: StarterDefinition[] = [
             },
           },
           config: managerApproval([
-            { kind: "ROLE", roleId: roles["security-officer"] },
+            { kind: "ROLE", roleId: roles["workflow-officer"] },
           ]),
         },
         {
@@ -421,9 +421,7 @@ const DEFINITIONS: StarterDefinition[] = [
           position: 4,
           name: "Create vendor record",
           next: { default: "requester_notified" },
-          config: execution([
-            { kind: "ROLE", roleId: roles["inventory-manager"] },
-          ]),
+          config: execution([{ kind: "ROLE", roleId: roles["asset-manager"] }]),
         },
         {
           key: "requester_notified",
@@ -483,7 +481,7 @@ const DEFINITIONS: StarterDefinition[] = [
             },
           },
           config: managerApproval([
-            { kind: "ROLE", roleId: roles["service-owner"] },
+            { kind: "ROLE", roleId: roles["cmdb-manager"] },
           ]),
         },
         {
@@ -507,7 +505,7 @@ const DEFINITIONS: StarterDefinition[] = [
           position: 3,
           name: "Implementation",
           next: { default: "post_review" },
-          config: execution([{ kind: "ROLE", roleId: roles["service-owner"] }]),
+          config: execution([{ kind: "ROLE", roleId: roles["cmdb-manager"] }]),
         },
         {
           key: "post_review",
@@ -540,11 +538,10 @@ const DEFINITIONS: StarterDefinition[] = [
 
 const REQUIRED_ROLES = [
   "system-administrator",
-  "service-owner",
-  "security-officer",
-  "inventory-manager",
-  "finance-manager",
-  "it-help-desk",
+  "asset-manager",
+  "asset-officer",
+  "cmdb-manager",
+  "workflow-officer",
 ];
 
 export async function seedWorkflowsStarter(

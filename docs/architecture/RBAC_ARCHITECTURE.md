@@ -49,17 +49,12 @@ The RBAC system provides **fine-grained access control** with multi-layer enforc
 │  ┌────────────────────────────────────────────────────────┐    │
 │  │                   2. ROLE HIERARCHY                     │    │
 │  │                                                          │    │
-│  │  system-administrator → All seeded permissions (~275)  │    │
-│  │  viewer              → Read-only baseline              │    │
-│  │  it-help-desk        → Front-line IT support           │    │
-│  │  auditor             → SAMA compliance & audit         │    │
-│  │  finance-manager     → Financial oversight             │    │
-│  │  security-officer    → InfoSec & governance            │    │
-│  │  service-owner       → IT service catalog              │    │
-│  │  inventory-manager   → Stock & warehouse               │    │
-│  │  maintenance-tech    → Repairs & maintenance           │    │
-│  │  data-steward        → Data quality (SAMA)             │    │
-│  │  asset-coordinator   → Asset lifecycle mgmt            │    │
+│  │  system-administrator → All permissions               │    │
+│  │  viewer              → Every employee (self-service)   │    │
+│  │  asset-manager       → Assets: full control            │    │
+│  │  asset-officer       → Assets: day-to-day work         │    │
+│  │  cmdb-manager        → CMDB and services               │    │
+│  │  workflow-officer    → Everything in Workflows         │    │
 │  └────────────────────────────────────────────────────────┘    │
 │                              ↓                                   │
 │  ┌────────────────────────────────────────────────────────┐    │
@@ -180,429 +175,39 @@ export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
 ### System Roles
 
-The system includes **11 system roles** designed for enterprise IT asset management and SAMA compliance (one full-access role + ten functional/read-only roles):
+Six roles are seeded. **Location**: `src/infrastructure/database/prisma/seed-rbac-roles/` (`seed-rbac-roles-admin.ts`, `seed-rbac-roles-base.ts`).
 
-**Location**: `src/infrastructure/database/prisma/seed-rbac-roles/` (split into 4 category files for better maintainability)
+| Role | Name | Who | What |
+|---|---|---|---|
+| System Administrator | `system-administrator` | Platform admins | Every permission. The only protected role. |
+| Viewer | `viewer` | Every employee | Dashboard, submit and follow their own requests, act on approvals assigned to them (the engine checks the assignee), read the knowledge base. |
+| Asset Manager | `asset-manager` | Asset owners | Full control of assets, inventory, licenses, contracts, vendors and locations, their settings (categories, models, lifecycle, field definitions), approvals (e.g. disposals) and reports. |
+| Asset Officer | `asset-officer` | Day-to-day asset staff | View, add, update, assign, check out/return, stock movements, maintenance and verification. No delete, manage, approve/reject, start/complete or void; settings read-only. |
+| CMDB Manager | `cmdb-manager` | Configuration management | Configuration items, CI classes and relationships, relationship types, services, business processes, data domains and ownership, OCI sync; read-only assets. |
+| Workflow Officer | `workflow-officer` | Workflow administration | Every `workflows-*` permission: inbox and requests (incl. override and reassign), forms and approval paths, access services, calendars, delegations, templates. |
 
-```typescript
-const SYSTEM_ROLES = {
-  "system-administrator": {
-    name: "system-administrator",
-    displayName: "System Administrator",
-    description: "Full system access with all permissions",
-    permissions: ALL_PERMISSION_KEYS, // All current permissions from SYSTEM_PERMISSIONS
-  },
-  viewer: {
-    name: "viewer",
-    displayName: "Viewer",
-    description: "Read-only access across core modules (default baseline role)",
-    // Read-only for Dashboard, Foundation, Assets, Operations, Inventory, Maintenance,
-    // CMDB, Contracts, Licenses, Services, Governance, Attachments, Settings (view)
-  },
-  "it-help-desk": {
-    name: "it-help-desk",
-    displayName: "IT Help Desk",
-    description: "Front-line IT support - user assistance, checkouts, reservations",
-    // Foundation (read), Assets (view+update), Reservations (full), Kits (checkout)
-  },
-  "auditor": {
-    name: "auditor",
-    displayName: "Auditor",
-    description: "SAMA compliance officer - audit, verification, regulatory reporting",
-    // Comprehensive read access + verification workflows + audit logs
-  },
-  "finance-manager": {
-    name: "finance-manager",
-    displayName: "Finance Manager",
-    description: "Financial oversight - contracts, licenses, procurement, exchange rates",
-    // Contracts (full), Licenses (full), FX Rates (full), Vendors (full), Disposal approvals
-  },
-  "security-officer": {
-    name: "security-officer",
-    displayName: "Security Officer",
-    description: "Information security - governance, data domains, security compliance",
-    // Governance (full), Attachments (full), CIs (create/update), Audit logs (read+export)
-  },
-  "service-owner": {
-    name: "service-owner",
-    displayName: "Service Owner",
-    description: "IT service management - service catalog, CMDB, business alignment",
-    // Services (full), Business Processes (full), CIs (full), CI Relationships (full)
-  },
-  "inventory-manager": {
-    name: "inventory-manager",
-    displayName: "Inventory Manager",
-    description: "Stock and warehouse management - inventory tracking, receiving, shipping",
-    // Stock (full), Assets (create/update), Warranties (create)
-  },
-  "maintenance-technician": {
-    name: "maintenance-technician",
-    displayName: "Maintenance Technician",
-    description: "Hands-on technical support - repairs, preventive maintenance, servicing",
-    // Maintenance Records (full+PERFORM), Assets (read/update), Attachments (create)
-  },
-  "data-steward": {
-    name: "data-steward",
-    displayName: "Data Steward",
-    description: "Data quality specialist - data classification, ownership tracking (SAMA)",
-    // Data Domains (full), Data Ownerships (full), Verification Campaigns (create/update)
-  },
-  "asset-coordinator": {
-    name: "asset-coordinator",
-    displayName: "Asset Coordinator",
-    description: "Asset lifecycle specialist - asset management, depreciation, lifecycle tracking",
-    // Assets (full), Categories (full), Models (full), Warranties (full), Kits (full), Lifecycle (full)
-  },
-};
-```
+Every functional role also carries the Viewer permissions (`EMPLOYEE_PERMISSIONS`), so a person needs only one role.
 
-**See full permission lists**: `src/infrastructure/database/prisma/seed-rbac-roles/` directory:
-- `seed-rbac-roles-admin.ts`: system-administrator, viewer, auditor (3 roles)
-- `seed-rbac-roles-financial.ts`: finance-manager, inventory-manager (2 roles)
-- `seed-rbac-roles-technical.ts`: it-help-desk, maintenance-technician, asset-coordinator (3 roles)
-- `seed-rbac-roles-specialized.ts`: security-officer, service-owner, data-steward (3 roles)
+Permissions are derived from the permission catalog by resource and action (see `seed-rbac-roles-base.ts`), so a new action on an asset or CMDB resource lands in the right roles automatically. Seeded roles other than System Administrator can be edited from `/admin/roles`; re-seeding does not overwrite those edits.
 
-### Role Comparison Matrix
-
-| Role                  | Primary Focus                 | Key Permissions                                                    | SAMA Compliance |
-| --------------------- | ----------------------------- | ------------------------------------------------------------------ | --------------- |
-| **System Admin**      | Full system access            | All seeded permissions (~275)                                      | ✓               |
-| **Viewer**            | Read-only baseline            | Read-only across dashboard, foundation, assets, CMDB, services, etc. | -               |
-| **IT Help Desk**      | Front-line support            | Asset checkouts, reservations, kits, user assistance               | -               |
-| **Auditor**           | Compliance & audit            | Read-only all modules + verification workflows + audit logs        | ✓✓✓             |
-| **Finance Manager**   | Financial oversight           | Contracts, licenses, vendors, FX rates, disposal approvals         | ✓               |
-| **Security Officer**  | InfoSec & governance          | Data domains, governance, attachments, CIs (create/update)         | ✓✓              |
-| **Service Owner**     | IT service catalog            | Services, business processes, CIs, CI relationships (all full)     | -               |
-| **Inventory Manager** | Stock & warehouse             | Stock locations, movements, asset receiving, warranty registration | -               |
-| **Maintenance Tech**  | Repairs & maintenance         | Maintenance records (PERFORM), assets (read/update), attachments   | -               |
-| **Data Steward**      | Data quality (SAMA)           | Data domains, ownerships, verification campaigns                   | ✓✓              |
-| **Asset Coordinator** | Asset lifecycle               | Assets, categories, models, warranties, kits, lifecycle (all full) | -               |
+**Replacing the old role set**: migration `20261117122826_replace_roles_with_base_roles` creates these roles in existing databases and removes the ten earlier seeded roles. Members move to the nearest new role (asset-coordinator, it-help-desk, maintenance-technician → Asset Officer; inventory-manager, finance-manager → Asset Manager; data-steward, service-owner → CMDB Manager; security-officer, auditor, hr-manager → Viewer). Workflow step assignees, notification recipients, watcher subscriptions, lifecycle-transition requirements and custom roles' parents that pointed at an old role move to its replacement, never to Viewer (security-officer, auditor and hr-manager references go to Workflow Officer). Custom roles are untouched.
 
 ### Role Conflicts (Segregation of Duties)
 
-SAMA compliance requires conflict detection between roles. **See**: `src/lib/rbac/role-conflicts.ts`
+Conflict detection between roles. **See**: `src/lib/rbac/role-conflicts.ts`
 
-**Critical Conflicts** (blocked by system):
-- System Administrator ⇄ Auditor
-- Auditor ⇄ Finance Manager
-- Auditor ⇄ Asset Coordinator
-
-**High Severity** (requires justification):
-- Finance Manager ⇄ Inventory Manager
-- Asset Coordinator ⇄ Inventory Manager
-
-**Warnings** (allowed with notice):
-- Security Officer ⇄ Service Owner
-- Developer ⇄ Production Admin
+None of the six seeded roles conflict with each other. The rules in that file cover roles an administrator may add as custom roles (for example an `auditor` role is blocked alongside `system-administrator`, and `finance-manager` needs a justification alongside `inventory-manager`); they apply by role name.
 
 ### Custom Roles
 
 System administrators can create custom roles with any combination of permissions:
 
-- Cannot delete system roles (11 total)
-- Cannot modify system role permissions directly
+- Cannot delete or modify the System Administrator role
+- The other seeded roles can be edited like custom roles
 - Can **clone** system roles and modify the clone (one-click at `/admin/roles`)
 - Custom roles can be deleted if not assigned to users
 - **Permission dependencies** automatically validated (client + server)
 - **Role conflicts** detected during assignment with severity levels
-
-### Functional Roles Reference
-
-Detailed breakdown of the 11 system roles and their responsibilities:
-
-#### 1. System Administrator
-**Role**: `system-administrator` | **Permissions**: All seeded (~275)
-
-Full system access for platform administration and configuration.
-
-- Complete CRUD on all entities
-- User and role management (USERS_*, ROLES_*, PERMISSIONS_*)
-- System settings and configuration
-- Audit log access and export
-- **Created via UI**: Register at `/register`, then promote to `system-administrator` via Prisma Studio/SQL
-
-**Use Case**: IT platform administrator, system owner
-
----
-
-#### 2. Viewer
-**Role**: `viewer` | **Permissions**: Read-only (baseline)
-
-Read-only access across core modules; used as the default baseline role.
-
-**Read-Only**:
-- Dashboard and analytics
-- Foundation entities (org units, persons, locations, vendors, lifecycle, fields, FX rates)
-- Assets, categories, models, assignments, warranties
-- Asset operations (kits, reservations, disposals)
-- Inventory (stock locations, movements)
-- Maintenance (schedules, records)
-- CMDB (classes, fields, CIs, relationships, relationship scopes)
-- Contracts, licenses
-- Services and business processes
-- Governance (data domains, ownerships, verification campaigns/items)
-- Attachments and attachment types
-- Settings (view)
-
-**Use Case**: Default baseline role, safe read-only access
-
----
-
-#### 3. IT Help Desk
-**Role**: `it-help-desk` | **Permissions**: ~45 (Front-line support)
-
-Day-to-day user support and asset operations.
-
-**Full Access**:
-- Asset assignments (create, update, delete)
-- Asset reservations (full CRUD + cancel)
-- Asset kit checkouts and returns
-- Maintenance record creation (user-reported issues)
-
-**Read + Update**:
-- Assets (status changes, assignment updates)
-
-**Read-Only**:
-- Organization units, persons, locations, vendors
-- Asset categories, models, stock locations
-- Configuration items, services, lifecycle models
-
-**Use Case**: Help desk technician, IT support staff
-
----
-
-#### 4. Auditor
-**Role**: `auditor` | **Permissions**: ~95 (SAMA compliance)
-
-Independent audit and regulatory compliance verification.
-
-**Full Access**:
-- Verification campaigns (create, start, complete)
-- Verification items (update, verify, flag exceptions)
-- Audit logs (view + export)
-
-**Read-Only** (Comprehensive):
-- All foundation entities (org units, persons, locations, vendors)
-- All assets, categories, models, assignments, warranties
-- All maintenance schedules and records
-- All stock locations and movements
-- All asset operations (disposals, kits, reservations)
-- All CMDB entities (CIs, relationships, classes)
-- All contracts and licenses
-- All services and business processes
-- All attachments
-- Users, roles, permissions (compliance review)
-
-**Conflicts** (Critical):
-- ❌ System Administrator
-- ❌ Finance Manager
-- ❌ Asset Coordinator
-
-**Use Case**: Internal auditor, SAMA compliance officer, regulatory reporting
-
----
-
-#### 5. Finance Manager
-**Role**: `finance-manager` | **Permissions**: ~65 (Financial oversight)
-
-Financial operations, procurement, and contract management.
-
-**Full Access**:
-- Contracts and contract types (all CRUD)
-- Contract linked objects
-- Licenses (products, entitlements, allocations - all CRUD)
-- License product fields
-- Exchange rates (FX_RATES_*)
-- Vendors and vendor contacts
-
-**Approval Powers**:
-- Asset disposal approvals/rejections
-
-**Read-Only**:
-- Assets, categories, models, warranties
-- Configuration items (for license allocation)
-- Persons (for license allocation)
-
-**Conflicts**:
-- ❌ Auditor (critical)
-- ⚠️ Inventory Manager (requires justification)
-
-**Use Case**: Finance manager, procurement specialist, contract administrator
-
----
-
-#### 6. Security Officer
-**Role**: `security-officer` | **Permissions**: ~60 (InfoSec & governance)
-
-Information security, data governance, and compliance.
-
-**Full Access**:
-- Data domains (create, update, delete, manage)
-- Data ownerships (full CRUD)
-- Verification campaigns (create, start, complete, manage)
-- Verification items (update, verify, flag exceptions)
-- Attachments and attachment types (security documentation)
-- Audit logs (view + export)
-
-**Create + Update**:
-- Configuration items (security assets)
-- CI relationships
-
-**Read-Only**:
-- Users, roles, permissions (security review)
-- Services, business processes
-- Assets, licenses
-- Organization units, persons
-
-**Conflicts**:
-- ⚠️ Service Owner (warning)
-
-**Use Case**: CISO, security analyst, data governance lead
-
----
-
-#### 7. Service Owner
-**Role**: `service-owner` | **Permissions**: ~70 (IT service catalog)
-
-IT service management and CMDB ownership.
-
-**Full Access**:
-- Services (create, update, delete, retire, manage)
-- Business processes (full CRUD)
-- Configuration items (full CRUD + manage)
-- CI relationships (full CRUD + manage)
-- Relationship types (create, update)
-- Attachments (service documentation)
-
-**Read-Only**:
-- Assets, categories, models (infrastructure)
-- Contracts (service contracts)
-- Licenses (software for services)
-- Data ownerships (understand data responsibility)
-- Organization units, persons, locations
-
-**Conflicts**:
-- ⚠️ Security Officer (warning)
-
-**Use Case**: Service manager, CMDB owner, IT service catalog lead
-
----
-
-#### 8. Inventory Manager
-**Role**: `inventory-manager` | **Permissions**: ~35 (Stock control)
-
-Warehouse operations, receiving, and inventory tracking.
-
-**Full Access**:
-- Stock locations (all CRUD)
-- Stock movements (create, delete, manage)
-
-**Create + Update**:
-- Assets (receiving stock, status changes)
-- Warranties (register on receipt)
-
-**Create Only**:
-- Attachments (packing slips, receipts)
-
-**Read-Only**:
-- Asset categories, models
-- Vendors, vendor contacts
-- Locations, lifecycle models
-- Asset disposals (coordinate logistics)
-
-**Conflicts**:
-- ⚠️ Finance Manager (requires justification)
-- ⚠️ Asset Coordinator (requires justification)
-
-**Use Case**: Warehouse manager, receiving clerk, stock controller
-
----
-
-#### 9. Maintenance Technician
-**Role**: `maintenance-technician` | **Permissions**: ~30 (Repairs)
-
-Hands-on technical support and preventive maintenance.
-
-**Full Access**:
-- Maintenance records (create, update, delete, **PERFORM**)
-
-**Read + Update**:
-- Maintenance schedules (mark completed)
-- Assets (status changes during maintenance)
-
-**Create**:
-- Attachments (repair docs, photos)
-
-**Read-Only**:
-- Asset categories, models, warranties
-- Vendors, vendor contacts (for repairs)
-- Stock movements, locations (parts usage)
-- Persons (asset assignees)
-- Configuration items (CI maintenance)
-
-**Use Case**: Field technician, maintenance engineer, repair specialist
-
----
-
-#### 10. Data Steward
-**Role**: `data-steward` | **Permissions**: ~30 (Data quality)
-
-Data classification, ownership tracking, and quality assurance (SAMA).
-
-**Full Access**:
-- Data domains (all CRUD)
-- Data ownerships (all CRUD)
-
-**Create + Update**:
-- Verification campaigns
-- Verification items (update + verify)
-
-**Create**:
-- Attachments (governance docs)
-
-**Read-Only**:
-- Organization units, persons
-- CI classes (data classification mapping)
-- Asset categories (data classification mapping)
-- Audit logs
-
-**Use Case**: Data steward, data quality analyst, metadata manager
-
----
-
-#### 11. Asset Coordinator
-**Role**: `asset-coordinator` | **Permissions**: ~90 (Asset lifecycle)
-
-Complete asset lifecycle management from procurement to disposal.
-
-**Full Access**:
-- Assets (all CRUD + checkout)
-- Asset categories and category fields (all CRUD)
-- Asset models (all CRUD)
-- Asset assignments (all CRUD)
-- Warranties (all CRUD)
-- Lifecycle models, states, transitions (all CRUD)
-- Asset kits (all CRUD + checkout + return)
-- Asset disposals (create + update, not approve)
-- Attachments (full CRUD)
-
-**Approval Powers**:
-- Asset reservation confirmations
-
-**Create + Update**:
-- Vendors and vendor contacts
-
-**Read-Only**:
-- Locations, stock movements, stock locations
-- Configuration items (asset-CI linking)
-
-**Conflicts**:
-- ❌ Auditor (critical)
-- ⚠️ Inventory Manager (requires justification)
-
-**Use Case**: Asset manager, IT asset coordinator, depreciation specialist
-
----
 
 ## Database Schema
 
@@ -1143,7 +748,7 @@ if (permission.isSystem) {
 
 System entities (created during seed):
 
-- **10 Roles**: `system-administrator`, `it-help-desk`, `auditor`, `finance-manager`, `security-officer`, `service-owner`, `inventory-manager`, `maintenance-technician`, `data-steward`, `asset-coordinator`
+- **6 Roles**: `system-administrator`, `viewer`, `asset-manager`, `asset-officer`, `cmdb-manager`, `workflow-officer`
 - **269 Permissions** organized into 14 groups (see `PERMISSIONS` constant)
 
 ### Admin Account Creation

@@ -109,13 +109,11 @@ src/infrastructure/database/prisma/
 ├── Seeders (by Domain)
 │   ├── seed-rbac.ts                 # RBAC permissions & roles
 │   ├── seed-rbac-permissions.ts     # Permission definitions
-│   └── seed-rbac-roles/             # Role definitions (split into 4 categories)
+│   └── seed-rbac-roles/             # Role definitions
 │       ├── index.ts                 #   Barrel export
 │       ├── types.ts                 #   RoleDefinition interface
-│       ├── seed-rbac-roles-admin.ts
-│       ├── seed-rbac-roles-financial.ts
-│       ├── seed-rbac-roles-technical.ts
-│       └── seed-rbac-roles-specialized.ts
+│       ├── seed-rbac-roles-admin.ts #   system-administrator, viewer
+│       └── seed-rbac-roles-base.ts  #   asset-manager, asset-officer, cmdb-manager, workflow-officer
 │   ├── seed-foundation.ts           # Foundation layer
 │   ├── seed-assets.ts               # Asset layer
 │   ├── seed-warranties-maintenance.ts # Warranties & maintenance

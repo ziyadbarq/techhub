@@ -2,7 +2,7 @@
  * Plain-language descriptions of who a step is assigned to.
  *
  * The graph stores engine specs (`REQUESTER_MANAGER`, `ROLE` + id, …); the
- * builder shows "Requester's line manager", "Anyone with the Security Officer
+ * builder shows "Requester's line manager", "Anyone with the Workflow Officer
  * role", and so on. Pure, for tests.
  */
 

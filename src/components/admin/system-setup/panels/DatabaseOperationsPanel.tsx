@@ -100,8 +100,8 @@ export function DatabaseOperationsPanel() {
             <ul className="text-muted-foreground space-y-1 text-sm">
               <li>• 269 Permissions (organized into 10 logical groups)</li>
               <li>
-                • 10 System Roles (System Administrator, IT Help Desk, Auditor,
-                etc.)
+                • 6 System Roles (System Administrator, Viewer, Asset Manager,
+                Asset Officer, CMDB Manager, Workflow Officer)
               </li>
               <li>• Role-Permission assignments</li>
             </ul>

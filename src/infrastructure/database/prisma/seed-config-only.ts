@@ -19,11 +19,10 @@ import { SYSTEM_PERMISSIONS } from "./seed-rbac-permissions.js";
 
 const requiredRoles = [
   "system-administrator",
-  "service-owner",
-  "security-officer",
-  "inventory-manager",
-  "finance-manager",
-  "it-help-desk",
+  "asset-manager",
+  "asset-officer",
+  "cmdb-manager",
+  "workflow-officer",
 ] as const;
 
 const starterForms = [

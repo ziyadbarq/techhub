@@ -87,17 +87,13 @@ npm run db:seed
 
 **What Gets Seeded:**
 - 269 Permissions (organized into 14 logical groups)
-- 10 System Roles:
+- 6 System Roles (see [RBAC_ARCHITECTURE.md](../architecture/RBAC_ARCHITECTURE.md#system-roles)):
   - System Administrator (full access)
-  - IT Admin
+  - Viewer (every employee: dashboard, own requests, assigned approvals, knowledge base)
   - Asset Manager
-  - Inventory Manager
-  - Service Desk
-  - Compliance Officer
-  - Contract Manager
-  - CMDB Admin
-  - Read-Only Auditor
-  - Viewer (baseline role for all users)
+  - Asset Officer
+  - CMDB Manager
+  - Workflow Officer
 - Foundation data (organization units, vendors, locations)
 - Asset categories and models
 - Sample test data (if in development mode)
