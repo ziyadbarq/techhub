@@ -49,7 +49,7 @@ No non-admin role receives the new permissions automatically. Grant appropriate 
 2. Generate Prisma Client: `npm run db:generate`.
 3. Run the approved RBAC + feature seed: `npm run db:seed`. Check existing custom role permissions remain intact.
 4. Enable the feature for intended users after creating their access policy.
-5. **PDF requires `GCS_BUCKET_NAME` and `GCS_ATTACHMENTS_PREFIX` with a private GCS bucket, uniform bucket-level access, and correct Workload Identity.** The upload fails closed when those settings are absent; it never stores KB policies in `public/uploads`.
+5. **PDF requires `GCS_BUCKET_NAME` and `GCS_ATTACHMENTS_PREFIX` with a private GCS bucket, uniform bucket-level access, and correct Workload Identity.** The upload fails closed when those settings are absent; it never stores KB policies in `public/uploads`. Exception for developer machines: under `next dev` without GCS, PDFs go to the git-ignored, never-served `.knowledge-base-dev/` folder in the project, so uploads work locally with no setup. Production builds never use it.
 6. Before real employee policy uploads, arrange malware scanning, file retention/legal review, cloud access logging, and a cyber risk assessment. File signature validation is not antivirus scanning.
 7. Run `npm run generate:routes`, `npm run validate`, then test Editor/PDF create and update, publication visibility, restricted authorization, anonymous rejections, stale-version conflicts, archive, and acknowledgement revocation for a new published version.
 

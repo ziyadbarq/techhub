@@ -1,26 +1,21 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { logger } from "@/lib/logger";
-import { getContainer } from "@/di/container";
-import { DI_TOKENS } from "@/di/types";
-import type { IFileStorageService } from "@/core/services/file-storage.service.interface";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import { KnowledgeError, requireKnowledgeAccess, requireClassification, knowledgeErrorResponse } from "@/lib/knowledge-base/access";
 import { pdfMetadataSchema } from "@/lib/knowledge-base/schema";
 import { createArticle, editArticle } from "@/lib/knowledge-base/revisions";
+import { getKnowledgePdfStorage, type KnowledgePdfStorage } from "@/lib/knowledge-base/pdf-storage";
 
 export const dynamic = "force-dynamic";
 const MAX_PDF_BYTES = 10 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
   let orphanPath: string | undefined;
-  let storage: IFileStorageService | undefined;
+  let storage: KnowledgePdfStorage | undefined;
   try {
-    if (!process.env.GCS_BUCKET_NAME || !process.env.GCS_ATTACHMENTS_PREFIX) {
-      // Deliberate fail-closed: local file storage writes to public/uploads.
-      // Confidential policies must NEVER be stored on a public path.
-      throw new KnowledgeError(503, "PRIVATE_GCS_STORAGE_REQUIRED");
-    }
+    // Fails closed (503) when there is no private place for the file.
+    const pdfStorage = getKnowledgePdfStorage();
     const bodyLength = Number(request.headers.get("content-length") ?? 0);
     if (bodyLength > MAX_PDF_BYTES + 40_000) {
       throw new KnowledgeError(413, "PDF_TOO_LARGE");
@@ -60,8 +55,8 @@ export async function POST(request: NextRequest) {
       throw new KnowledgeError(400, "INVALID_PDF_SIGNATURE");
     }
 
-    storage = getContainer().get<IFileStorageService>(DI_TOKENS.IFileStorageService);
-    const storedPath = await storage.uploadFile(buffer, file.name, "application/pdf");
+    storage = pdfStorage;
+    const storedPath = await storage.upload(buffer, file.name);
     orphanPath = storedPath;
     const data = {
       title: metadata.title,
@@ -79,7 +74,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ id: article.id, version: article.version }, { status: existing ? 200 : 201 });
   } catch (error) {
     if (orphanPath && storage) {
-      try { await storage.deleteFile(orphanPath); }
+      try { await storage.remove(orphanPath); }
       catch (cleanupError) { logger.error({ module: "KnowledgeBase", function: "upload" }, "Orphan PDF cleanup failed", cleanupError); }
     }
     return knowledgeErrorResponse(error);
