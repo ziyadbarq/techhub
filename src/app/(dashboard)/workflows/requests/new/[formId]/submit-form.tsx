@@ -123,6 +123,9 @@ export function SubmitRequestForm({
     <div>
       <FormRenderer
         schema={schema}
+        // The submission's own field states (perStepFieldState.SUBMIT), as
+        // the server applies them when it validates the submission.
+        stepKey="SUBMIT"
         values={values}
         onChange={(v) => {
           setValues(v);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Check,
@@ -15,6 +15,11 @@ import {
 
 import { Button, Select, TextArea } from "@/components/design";
 import { FormRenderer } from "@/components/workflows/form-renderer";
+import {
+  fieldStateAt,
+  isEmptyValue,
+  isSystemFilled,
+} from "@/core/domain/workflow/step-field-state";
 
 const CANCEL_OUTCOMES = [
   {
@@ -44,7 +49,14 @@ interface FormSchema {
     position: number;
     config?: Record<string, unknown>;
   }>;
+  perStepFieldState?: Record<
+    string,
+    Record<string, "EDITABLE" | "READ_ONLY" | "HIDDEN">
+  >;
 }
+
+const sameValue = (a: unknown, b: unknown) =>
+  JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 interface User {
   id: string;
   name: string | null;
@@ -100,6 +112,29 @@ export function RequestActions({
   const [cancelCodeId, setCancelCodeId] = useState("");
   const [outcomeCodes, setOutcomeCodes] = useState<OutcomeCode[]>([]);
 
+  // Fields the assignee may change at this step (the workflow's
+  // "What people see at each step"), sent with the action.
+  const stepSchema = useMemo(() => {
+    if (!activeStepKey) return null;
+    const fields = schema.fields.filter(
+      (f) =>
+        !isSystemFilled(f) &&
+        fieldStateAt(schema, activeStepKey, f) === "EDITABLE",
+    );
+    return fields.length > 0 ? { ...schema, fields } : null;
+  }, [schema, activeStepKey]);
+  const [stepEdits, setStepEdits] = useState<Record<string, unknown>>({});
+  const [stepShown, setStepShown] = useState<string[] | null>(null);
+  const stepValues = { ...currentValues, ...stepEdits };
+  const missingStepFields = (stepSchema?.fields ?? []).filter(
+    (f) =>
+      f.required &&
+      (stepShown ?? []).includes(f.key) &&
+      isEmptyValue(stepValues[f.key]),
+  );
+  const [stepFieldsOpen, setStepFieldsOpen] = useState(false);
+  const showStepFields = stepFieldsOpen || missingStepFields.length > 0;
+
   useEffect(() => {
     if (!showCancelDialog) return;
     fetch(`/api/workflow/outcome-codes?formId=${formId}`)
@@ -133,11 +168,30 @@ export function RequestActions({
 
   async function takeAction(action: ActionKind) {
     if (!activeStepInstanceId) return;
+    if (
+      (action === "APPROVE" || action === "COMPLETE") &&
+      missingStepFields.length > 0
+    ) {
+      setError(
+        `Fill ${missingStepFields.map((f) => f.label).join(", ")} first.`,
+      );
+      return;
+    }
+    // Only answers that changed, and only for fields shown right now.
+    const shown = new Set(stepShown ?? []);
+    const fieldUpdates = Object.fromEntries(
+      Object.entries(stepEdits).filter(
+        ([key, value]) =>
+          shown.has(key) && !sameValue(value, currentValues[key]),
+      ),
+    );
     await callApi(
       `/api/workflow/step-instances/${activeStepInstanceId}/actions`,
       {
         action,
         comment: comment || undefined,
+        fieldUpdates:
+          Object.keys(fieldUpdates).length > 0 ? fieldUpdates : undefined,
       },
     );
   }
@@ -208,6 +262,7 @@ export function RequestActions({
             <div className="mt-3 space-y-3">
               <FormRenderer
                 schema={schema}
+                stepKey="SUBMIT"
                 values={resubmitValues}
                 onChange={setResubmitValues}
                 users={orgUsers}
@@ -253,6 +308,54 @@ export function RequestActions({
               {activeStepKey}
             </span>
           </p>
+          {stepSchema ? (
+            <div className="mt-3 rounded-[12px] border border-[var(--color-hairline-soft)] bg-[var(--color-canvas)] p-3">
+              {showStepFields ? (
+                <>
+                  <p className="text-body-sm-medium text-[var(--color-ink)]">
+                    Fields you can change at this step
+                  </p>
+                  {missingStepFields.length > 0 ? (
+                    <p className="text-caption text-stone mt-0.5">
+                      Fill the required ones before you{" "}
+                      {activeStepType === "EXECUTION" ? "complete" : "approve"}.
+                    </p>
+                  ) : null}
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setStepFieldsOpen(true)}
+                  className="text-body-sm-medium text-[var(--color-brand-blue)] hover:underline"
+                >
+                  Change fields at this step ({stepSchema.fields.length})
+                </button>
+              )}
+              {/* Rendered even when collapsed: it reports which fields
+                  are shown, which decides what is required. */}
+              <div className={showStepFields ? "mt-3" : "hidden"}>
+                <FormRenderer
+                  schema={stepSchema}
+                  stepKey={activeStepKey ?? undefined}
+                  values={stepValues}
+                  onChange={(next) =>
+                    setStepEdits(
+                      Object.fromEntries(
+                        stepSchema.fields
+                          .filter(
+                            (f) =>
+                              !sameValue(next[f.key], currentValues[f.key]),
+                          )
+                          .map((f) => [f.key, next[f.key]]),
+                      ),
+                    )
+                  }
+                  users={orgUsers}
+                  onVisibleFieldsChange={setStepShown}
+                />
+              </div>
+            </div>
+          ) : null}
           <TextArea
             value={comment}
             onChange={(e) => setComment(e.target.value)}

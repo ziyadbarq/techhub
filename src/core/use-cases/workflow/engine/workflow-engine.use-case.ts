@@ -28,9 +28,12 @@ import {
 import { DI_TOKENS } from "@/di/types";
 import type { PrismaClient } from "@/generated/prisma/server";
 import {
+  checkStepFieldUpdates,
   ConfigurationError,
+  fieldStateAt,
   InvalidStateError,
   NotFoundError,
+  SUBMIT_STEP_KEY,
 } from "@/core/domain/workflow";
 import type {
   ActorContext,
@@ -156,6 +159,10 @@ export class WorkflowEngine implements IWorkflowEngine {
         "COMPUTED",
         "SECTION_HEADER",
       ]);
+      const schemaWithStates = schema as unknown as Pick<
+        FormSchema,
+        "perStepFieldState"
+      >;
       const schemaFieldTypes = new Map(
         (schema.fields ?? []).map((f) => [f.key, f.type]),
       );
@@ -176,6 +183,16 @@ export class WorkflowEngine implements IWorkflowEngine {
             key,
             type: fieldType,
           });
+          continue;
+        }
+        // A field the submission can't edit (perStepFieldState.SUBMIT) is
+        // filled later in the workflow, not by the requester.
+        if (
+          fieldStateAt(schemaWithStates, SUBMIT_STEP_KEY, {
+            key,
+            type: fieldType,
+          }) !== "EDITABLE"
+        ) {
           continue;
         }
         sanitizedFieldValues[key] = val;
@@ -211,6 +228,8 @@ export class WorkflowEngine implements IWorkflowEngine {
         if (!f.required) continue;
         if (STRIP_TYPES.has(f.type)) continue;
         if (hiddenByCondition.has(f.key)) continue;
+        if (fieldStateAt(schemaWithStates, SUBMIT_STEP_KEY, f) !== "EDITABLE")
+          continue;
         const v = sanitizedFieldValues[f.key];
         if (
           v === null ||
@@ -480,6 +499,14 @@ export class WorkflowEngine implements IWorkflowEngine {
       }
 
       const fieldValues = await this.requests.getFieldValues(tx, request.id);
+      await this.checkFieldUpdates(
+        tx,
+        request.formVersionId,
+        stepInstance.stepKey,
+        input.action,
+        input.fieldUpdates ?? {},
+        fieldValues,
+      );
       const exec: ExecCtx = {
         tx,
         ctx,
@@ -583,7 +610,7 @@ export class WorkflowEngine implements IWorkflowEngine {
   @LogExecution("workflow.resubmit")
   async resubmit(
     requestId: string,
-    fieldUpdates: Record<string, unknown>,
+    requestedUpdates: Record<string, unknown>,
     ctx: ActorContext,
   ): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
@@ -594,6 +621,13 @@ export class WorkflowEngine implements IWorkflowEngine {
           `Cannot resubmit from ${req.status}; must be DRAFT`,
         );
       }
+
+      // The requester changes only what the submission lets them edit.
+      const fieldUpdates = await this.submissionEditable(
+        tx,
+        req.formVersionId,
+        requestedUpdates,
+      );
 
       let resubmitComputed: Record<string, unknown> = {};
       if (Object.keys(fieldUpdates).length > 0) {
@@ -1065,10 +1099,7 @@ export class WorkflowEngine implements IWorkflowEngine {
         where: {
           id: { in: ids },
           fieldKey: field.key,
-          OR: [
-            { requestId: null, uploadedById: actorId },
-            { requestId },
-          ],
+          OR: [{ requestId: null, uploadedById: actorId }, { requestId }],
         },
         select: {
           id: true,
@@ -1094,6 +1125,79 @@ export class WorkflowEngine implements IWorkflowEngine {
         const row = byId.get(id)!;
         return { id: row.id, name: row.filename, size: row.byteSize };
       });
+    }
+  }
+
+  /** Keeps the values of fields the submission may edit; drops the rest. */
+  private async submissionEditable(
+    tx: Tx,
+    formVersionId: string,
+    values: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const version = await tx.formVersion.findUnique({
+      where: { id: formVersionId },
+      select: { schemaJson: true },
+    });
+    const schema = version?.schemaJson as unknown as FormSchema | undefined;
+    const byKey = new Map((schema?.fields ?? []).map((f) => [f.key, f]));
+    const kept: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(values)) {
+      const field = byKey.get(key);
+      if (
+        field &&
+        fieldStateAt(schema!, SUBMIT_STEP_KEY, field) === "EDITABLE"
+      ) {
+        kept[key] = value;
+      }
+    }
+    return kept;
+  }
+
+  /**
+   * The field changes sent with an action: only fields editable at this
+   * step may change, and approving or completing needs the step's required
+   * fields filled. Throws before anything is applied.
+   */
+  private async checkFieldUpdates(
+    tx: Tx,
+    formVersionId: string,
+    stepKey: string,
+    action: string,
+    updates: Record<string, unknown>,
+    current: Record<string, unknown>,
+  ): Promise<void> {
+    const version = await tx.formVersion.findUnique({
+      where: { id: formVersionId },
+      select: { schemaJson: true },
+    });
+    const schema = version?.schemaJson as unknown as FormSchema | undefined;
+    if (!schema?.fields) return;
+    const merged = { ...current, ...updates };
+    const conditionFields = await this.withServiceSlugs(
+      tx,
+      schema.fields,
+      merged,
+    );
+    const problems = checkStepFieldUpdates({
+      schema,
+      stepKey,
+      updates,
+      merged,
+      action,
+      isShown: (field) => {
+        if (!field.visibilityRules) return true;
+        try {
+          return this.expressionEvaluator.evaluateBoolean(
+            field.visibilityRules,
+            { fields: conditionFields },
+          );
+        } catch {
+          return true; // as the form: a rule that can't be evaluated shows it
+        }
+      },
+    });
+    if (problems.length > 0) {
+      throw new InvalidStateError(problems.join(" "));
     }
   }
 
