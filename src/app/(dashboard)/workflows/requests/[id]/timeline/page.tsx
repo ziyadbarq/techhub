@@ -249,6 +249,8 @@ function formatAction(action: string): string {
     "request.override_outcome": "Outcome overridden by admin",
     "request.fields_corrected": "Fields corrected",
     "step.activate": "Step activated",
+    "step.unassigned":
+      "No one assigned — waits for the form's owner or an admin",
     "step.advance": "Step completed",
     "step.reject": "Step rejected",
     "step.reassign": "Step reassigned",
@@ -272,6 +274,8 @@ function toneFor(action: string): {
 } {
   if (action === "request.submit")
     return { dot: "bg-[var(--color-brand-yellow)]", badge: "yellow" };
+  if (action === "step.unassigned")
+    return { dot: "bg-[var(--color-brand-yellow-deep)]", badge: "yellow" };
   if (action === "request.close")
     return { dot: "bg-[var(--color-success-accent)]", badge: "success" };
   if (action === "request.cancel")
@@ -296,7 +300,10 @@ function summarisePayload(
 ): string {
   if (!payload || typeof payload !== "object") return "";
   const p = payload as Record<string, unknown>;
-  if (action === "step.activate" && typeof p.stepKey === "string") {
+  if (
+    (action === "step.activate" || action === "step.unassigned") &&
+    typeof p.stepKey === "string"
+  ) {
     return `${humanizeIdentifier(p.stepKey)}${p.stepType ? ` · ${humanizeIdentifier(String(p.stepType))}` : ""}`;
   }
   if (
@@ -351,6 +358,7 @@ function shouldShowDetails(action: string, payload: unknown): boolean {
   if (
     action === "request.submit" ||
     action === "step.activate" ||
+    action === "step.unassigned" ||
     action === "request.close" ||
     action === "request.cancel" ||
     action === "request.fields_corrected"

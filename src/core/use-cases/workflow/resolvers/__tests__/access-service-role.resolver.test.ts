@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AccessServiceRoleAssigneeResolver } from "../access-service-role.resolver";
-import { ConfigurationError } from "@/core/domain/workflow";
 import type { IAccessServiceSnapshotRepository } from "@/core/repositories/workflow/access-service.repository.interface";
 import type { ExecCtx } from "@/core/repositories/workflow";
 
@@ -103,7 +102,7 @@ describe("AccessServiceRoleAssigneeResolver", () => {
     expect(result).toEqual(["impl-1", "impl-2", "impl-3"]);
   });
 
-  it("throws ConfigurationError when snapshot has 0 users for the role", async () => {
+  it("resolves nobody when the service has no one in the role", async () => {
     vi.mocked(snapshotRepo.findActiveAssigneeIdsByRole).mockResolvedValue([]);
 
     await expect(
@@ -115,22 +114,7 @@ describe("AccessServiceRoleAssigneeResolver", () => {
         },
         makeExec(),
       ),
-    ).rejects.toThrow(ConfigurationError);
-  });
-
-  it("ConfigurationError message names the role and field key", async () => {
-    vi.mocked(snapshotRepo.findActiveAssigneeIdsByRole).mockResolvedValue([]);
-
-    await expect(
-      resolver.resolve(
-        {
-          kind: "ACCESS_SERVICE_ROLE",
-          serviceSnapshotKey: "it_service",
-          role: "CYBERSECURITY",
-        },
-        makeExec(),
-      ),
-    ).rejects.toThrow(/CYBERSECURITY.*it_service/);
+    ).resolves.toEqual([]);
   });
 
   it("resolves against the correct request ID from exec context", async () => {

@@ -90,6 +90,9 @@ const ACTION_TO_AUDIT: Record<TakeActionInput["action"], string> = {
   PROVIDE_INFO: "step.provide_info",
 };
 
+/** Steps that wait for a person to act. */
+const HUMAN_STEP_TYPES = new Set(["APPROVAL", "EXECUTION", "INFO_ACK"]);
+
 @injectable()
 export class WorkflowEngine implements IWorkflowEngine {
   constructor(
@@ -1516,6 +1519,13 @@ export class WorkflowEngine implements IWorkflowEngine {
       }
     }
 
+    // A step that needs people but resolved nobody (e.g. the chosen service
+    // has no one in the role) still activates: it waits for the form's
+    // owner or an admin. Record it and tell the owners.
+    if (userIds.length === 0 && HUMAN_STEP_TYPES.has(def.config.type)) {
+      await this.handleUnassignedStep(tx, ctx, requestId, stepInstance.id, def);
+    }
+
     // SLA START event (if step has SLA config).
     const slaConfig = "sla" in def.config ? def.config.sla : undefined;
     if (slaConfig) {
@@ -1849,6 +1859,56 @@ export class WorkflowEngine implements IWorkflowEngine {
   }
 
   /** Send notifications to all current watchers of a request. */
+  /**
+   * A human step activated with no assignees: audit it, log it, and notify
+   * the form's owners, who can act on it without being assigned.
+   */
+  private async handleUnassignedStep(
+    tx: Tx,
+    ctx: ActorContext,
+    requestId: string,
+    stepInstanceId: string,
+    def: StepDefinition,
+  ): Promise<void> {
+    const req = await tx.request.findUnique({
+      where: { id: requestId },
+      select: { formId: true, referenceNumber: true },
+    });
+    if (!req) return;
+    const owners = await tx.formMember.findMany({
+      where: { formId: req.formId, role: "OWNER" },
+      select: { userId: true },
+    });
+
+    await this.audit.append(tx, {
+      ctx,
+      requestId,
+      stepInstanceId,
+      action: "step.unassigned",
+      payload: {
+        stepKey: def.key,
+        stepType: def.config.type,
+        ownersNotified: owners.length,
+      },
+    });
+    this.logger.warn("workflow.activate: step has no assignees", {
+      requestId,
+      stepKey: def.key,
+      formOwners: owners.length,
+    });
+
+    if (owners.length === 0) return;
+    await this.notifications.sendToUsers(tx, {
+      userIds: owners.map((o) => o.userId),
+      formId: req.formId,
+      requestId,
+      stepInstanceId,
+      subject: `No one is assigned on ${req.referenceNumber}`,
+      body: `Step "${def.key}" has no assignee. As the form's owner you can act on it.`,
+      payload: { stepKey: def.key, stepType: def.config.type },
+    });
+  }
+
   /** What the user may do on this form's requests as one of its people. */
   private async formAccessOf(
     tx: Tx,

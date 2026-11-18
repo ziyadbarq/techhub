@@ -81,7 +81,7 @@ Each is an `@injectable()` class in `src/core/use-cases/workflow/executors/`. Wi
 - `FALLBACK`: the line manager, or a person field when there is none (or when `forceFallbackWhen` holds).
 - `OPTION_USERS` ("Depends on the answer" in the builder): people per option of a choice field (`DROPDOWN`, `RADIO`, `MULTI_SELECT`), e.g. the data owner of each selected product. Every chosen option adds its people; an option with nobody adds no one, so pair it with another assignee if a step must never be empty.
 
-A step's assignees are the union of its specs. A step that resolves nobody stays active until an admin reassigns it.
+A step's assignees are the union of its specs. A step that resolves nobody (for instance, the chosen access service has no one in the role) still activates: it is recorded as `step.unassigned`, the form's owners are notified, and it waits until an owner acts on it or an admin reassigns it.
 
 ## Fields at each step
 

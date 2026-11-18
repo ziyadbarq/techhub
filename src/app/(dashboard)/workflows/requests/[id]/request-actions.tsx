@@ -80,6 +80,7 @@ export function RequestActions({
   isAssignee,
   isRequester,
   isFormOwner = false,
+  activeStepUnassigned = false,
   holdReasons,
   orgUsers,
   schema,
@@ -95,6 +96,8 @@ export function RequestActions({
   isRequester: boolean;
   /** The form's owner may act on any active step without being assigned. */
   isFormOwner?: boolean;
+  /** The active step resolved no assignees: it waits for an owner or admin. */
+  activeStepUnassigned?: boolean;
   holdReasons: Array<{ id: string; label: string }>;
   orgUsers: User[];
   schema: FormSchema;
@@ -315,6 +318,11 @@ export function RequestActions({
               {activeStepKey}
             </span>
           </p>
+          {activeStepUnassigned ? (
+            <p className="text-caption mt-2 rounded-md bg-[var(--color-surface-soft)] px-2.5 py-1.5 text-[var(--color-charcoal)]">
+              No one is assigned to this step, so it waits for you.
+            </p>
+          ) : null}
           {actingAsOwner ? (
             <p className="text-caption mt-2 rounded-md bg-[var(--color-yellow-light)] px-2.5 py-1.5 text-[var(--color-yellow-dark)]">
               You aren&apos;t assigned to this step — you&apos;re acting as the
@@ -578,6 +586,7 @@ export function RequestActions({
               isAssignee,
               isRequester,
               activeStepKey,
+              activeStepUnassigned,
             })}
           </p>
         </div>
@@ -591,6 +600,7 @@ function explainNoActions(args: {
   isAssignee: boolean;
   isRequester: boolean;
   activeStepKey: string | null;
+  activeStepUnassigned?: boolean;
 }): string {
   if (args.status === "CLOSED") {
     return "This request is closed. The audit trail is read-only.";
@@ -600,6 +610,9 @@ function explainNoActions(args: {
   }
   if (args.status === "ON_HOLD") {
     return "This request is on hold. Only the requester or current assignee can resume it.";
+  }
+  if (args.activeStepUnassigned && args.activeStepKey) {
+    return `No one is assigned to step "${args.activeStepKey}". The form's owner or an admin can move it.`;
   }
   if (!args.isRequester && !args.isAssignee) {
     return args.activeStepKey

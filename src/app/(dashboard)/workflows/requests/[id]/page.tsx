@@ -363,6 +363,9 @@ export default async function RequestDetailPage({
               isAssignee={isAssignee}
               isRequester={isRequester}
               isFormOwner={formAccess.canActOnAnyStep}
+              activeStepUnassigned={
+                !!activeStep && activeStep.snapshots.length === 0
+              }
               holdReasons={holdReasons}
               orgUsers={orgUsers}
               schema={schema as never}

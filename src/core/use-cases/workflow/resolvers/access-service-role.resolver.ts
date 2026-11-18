@@ -1,10 +1,14 @@
 import { inject, injectable } from "inversify";
-import { ConfigurationError } from "@/core/domain/workflow";
 import { DI_TOKENS } from "@/di/types";
 import type { AssigneeSpec } from "@/core/domain/workflow";
 import type { ExecCtx, IAssigneeResolver } from "@/core/repositories/workflow";
 import type { IAccessServiceSnapshotRepository } from "@/core/repositories/workflow/access-service.repository.interface";
 
+/**
+ * The people in one role (owner, cybersecurity, implementer…) of the access
+ * service chosen on the request, as snapshotted at submit. Empty when the
+ * service has nobody in that role.
+ */
 @injectable()
 export class AccessServiceRoleAssigneeResolver implements IAssigneeResolver {
   readonly kind = "ACCESS_SERVICE_ROLE" as const;
@@ -27,14 +31,9 @@ export class AccessServiceRoleAssigneeResolver implements IAssigneeResolver {
       exec.tx,
     );
 
-    if (userIds.length === 0) {
-      throw new ConfigurationError(
-        `Step requires ${spec.role} role from access service field "${spec.serviceSnapshotKey}" ` +
-          `but no active users are snapshotted for request "${exec.requestId}". ` +
-          `Ensure the service catalog has at least one active user in this role.`,
-      );
-    }
-
+    // Nobody in that role on the chosen service is not an error: the step
+    // activates without assignees and waits for the form's owner or an
+    // admin (the engine records it and tells the owners).
     return userIds;
   }
 }
