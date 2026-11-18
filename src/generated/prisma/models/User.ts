@@ -289,6 +289,7 @@ export type UserWhereInput = {
   delegationsFrom?: Prisma.DelegationListRelationFilter
   delegationsTo?: Prisma.DelegationListRelationFilter
   workflowWatchers?: Prisma.WatcherListRelationFilter
+  formMemberships?: Prisma.FormMemberListRelationFilter
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceListRelationFilter
   workflowNotifications?: Prisma.NotificationListRelationFilter
   emailActionTokens?: Prisma.EmailActionTokenListRelationFilter
@@ -331,6 +332,7 @@ export type UserOrderByWithRelationInput = {
   delegationsFrom?: Prisma.DelegationOrderByRelationAggregateInput
   delegationsTo?: Prisma.DelegationOrderByRelationAggregateInput
   workflowWatchers?: Prisma.WatcherOrderByRelationAggregateInput
+  formMemberships?: Prisma.FormMemberOrderByRelationAggregateInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceOrderByRelationAggregateInput
   workflowNotifications?: Prisma.NotificationOrderByRelationAggregateInput
   emailActionTokens?: Prisma.EmailActionTokenOrderByRelationAggregateInput
@@ -376,6 +378,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   delegationsFrom?: Prisma.DelegationListRelationFilter
   delegationsTo?: Prisma.DelegationListRelationFilter
   workflowWatchers?: Prisma.WatcherListRelationFilter
+  formMemberships?: Prisma.FormMemberListRelationFilter
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceListRelationFilter
   workflowNotifications?: Prisma.NotificationListRelationFilter
   emailActionTokens?: Prisma.EmailActionTokenListRelationFilter
@@ -456,6 +459,7 @@ export type UserCreateInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -498,6 +502,7 @@ export type UserUncheckedCreateInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -540,6 +545,7 @@ export type UserUpdateInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -582,6 +588,7 @@ export type UserUncheckedUpdateInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -1102,6 +1109,20 @@ export type UserUpdateOneWithoutPublishedWorkflowVersionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPublishedWorkflowVersionsInput, Prisma.UserUpdateWithoutPublishedWorkflowVersionsInput>, Prisma.UserUncheckedUpdateWithoutPublishedWorkflowVersionsInput>
 }
 
+export type UserCreateNestedOneWithoutFormMembershipsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutFormMembershipsInput, Prisma.UserUncheckedCreateWithoutFormMembershipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutFormMembershipsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutFormMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutFormMembershipsInput, Prisma.UserUncheckedCreateWithoutFormMembershipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutFormMembershipsInput
+  upsert?: Prisma.UserUpsertWithoutFormMembershipsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFormMembershipsInput, Prisma.UserUpdateWithoutFormMembershipsInput>, Prisma.UserUncheckedUpdateWithoutFormMembershipsInput>
+}
+
 export type UserCreateWithoutAccessServicesCreatedInput = {
   id?: string
   email: string
@@ -1132,6 +1153,7 @@ export type UserCreateWithoutAccessServicesCreatedInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -1173,6 +1195,7 @@ export type UserUncheckedCreateWithoutAccessServicesCreatedInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -1219,6 +1242,7 @@ export type UserCreateWithoutAccessServicesUpdatedInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -1260,6 +1284,7 @@ export type UserUncheckedCreateWithoutAccessServicesUpdatedInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -1317,6 +1342,7 @@ export type UserUpdateWithoutAccessServicesCreatedInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -1358,6 +1384,7 @@ export type UserUncheckedUpdateWithoutAccessServicesCreatedInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -1410,6 +1437,7 @@ export type UserUpdateWithoutAccessServicesUpdatedInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -1451,6 +1479,7 @@ export type UserUncheckedUpdateWithoutAccessServicesUpdatedInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -1492,6 +1521,7 @@ export type UserCreateWithoutAccessServiceAssigneesInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -1533,6 +1563,7 @@ export type UserUncheckedCreateWithoutAccessServiceAssigneesInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -1590,6 +1621,7 @@ export type UserUpdateWithoutAccessServiceAssigneesInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -1631,6 +1663,7 @@ export type UserUncheckedUpdateWithoutAccessServiceAssigneesInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -1672,6 +1705,7 @@ export type UserCreateWithoutAccessServiceSnapshotAssigneesInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -1713,6 +1747,7 @@ export type UserUncheckedCreateWithoutAccessServiceSnapshotAssigneesInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -1770,6 +1805,7 @@ export type UserUpdateWithoutAccessServiceSnapshotAssigneesInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -1811,6 +1847,7 @@ export type UserUncheckedUpdateWithoutAccessServiceSnapshotAssigneesInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -1851,6 +1888,7 @@ export type UserCreateWithoutAccountsInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -1892,6 +1930,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -1949,6 +1988,7 @@ export type UserUpdateWithoutAccountsInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -1990,6 +2030,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -2031,6 +2072,7 @@ export type UserCreateWithoutSessionsInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -2072,6 +2114,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -2129,6 +2172,7 @@ export type UserUpdateWithoutSessionsInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -2170,6 +2214,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -2211,6 +2256,7 @@ export type UserCreateWithoutTwoFactorInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -2252,6 +2298,7 @@ export type UserUncheckedCreateWithoutTwoFactorInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -2309,6 +2356,7 @@ export type UserUpdateWithoutTwoFactorInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -2350,6 +2398,7 @@ export type UserUncheckedUpdateWithoutTwoFactorInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -2391,6 +2440,7 @@ export type UserCreateWithoutPreferencesInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -2432,6 +2482,7 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -2489,6 +2540,7 @@ export type UserUpdateWithoutPreferencesInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -2530,6 +2582,7 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -2571,6 +2624,7 @@ export type UserCreateWithoutBackupsCreatedInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -2612,6 +2666,7 @@ export type UserUncheckedCreateWithoutBackupsCreatedInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -2658,6 +2713,7 @@ export type UserCreateWithoutBackupsDeletedInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -2699,6 +2755,7 @@ export type UserUncheckedCreateWithoutBackupsDeletedInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -2756,6 +2813,7 @@ export type UserUpdateWithoutBackupsCreatedInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -2797,6 +2855,7 @@ export type UserUncheckedUpdateWithoutBackupsCreatedInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -2849,6 +2908,7 @@ export type UserUpdateWithoutBackupsDeletedInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -2890,6 +2950,7 @@ export type UserUncheckedUpdateWithoutBackupsDeletedInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -2931,6 +2992,7 @@ export type UserCreateWithoutPersonInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -2972,6 +3034,7 @@ export type UserUncheckedCreateWithoutPersonInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -3029,6 +3092,7 @@ export type UserUpdateWithoutPersonInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -3070,6 +3134,7 @@ export type UserUncheckedUpdateWithoutPersonInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -3111,6 +3176,7 @@ export type UserCreateWithoutAuditLogsAsUserInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -3152,6 +3218,7 @@ export type UserUncheckedCreateWithoutAuditLogsAsUserInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -3209,6 +3276,7 @@ export type UserUpdateWithoutAuditLogsAsUserInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -3250,6 +3318,7 @@ export type UserUncheckedUpdateWithoutAuditLogsAsUserInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -3291,6 +3360,7 @@ export type UserCreateWithoutRolesInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -3332,6 +3402,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -3389,6 +3460,7 @@ export type UserUpdateWithoutRolesInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -3430,6 +3502,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -3471,6 +3544,7 @@ export type UserCreateWithoutSubmittedRequestsInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -3512,6 +3586,7 @@ export type UserUncheckedCreateWithoutSubmittedRequestsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -3569,6 +3644,7 @@ export type UserUpdateWithoutSubmittedRequestsInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -3610,6 +3686,7 @@ export type UserUncheckedUpdateWithoutSubmittedRequestsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -3652,6 +3729,7 @@ export type UserCreateWithoutRequestCommentsInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -3693,6 +3771,7 @@ export type UserUncheckedCreateWithoutRequestCommentsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -3750,6 +3829,7 @@ export type UserUpdateWithoutRequestCommentsInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -3791,6 +3871,7 @@ export type UserUncheckedUpdateWithoutRequestCommentsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -3832,6 +3913,7 @@ export type UserCreateWithoutRequestAttachmentsUploadedInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -3873,6 +3955,7 @@ export type UserUncheckedCreateWithoutRequestAttachmentsUploadedInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -3930,6 +4013,7 @@ export type UserUpdateWithoutRequestAttachmentsUploadedInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -3971,6 +4055,7 @@ export type UserUncheckedUpdateWithoutRequestAttachmentsUploadedInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -4012,6 +4097,7 @@ export type UserCreateWithoutWorkflowSavedFiltersInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -4053,6 +4139,7 @@ export type UserUncheckedCreateWithoutWorkflowSavedFiltersInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -4110,6 +4197,7 @@ export type UserUpdateWithoutWorkflowSavedFiltersInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -4151,6 +4239,7 @@ export type UserUncheckedUpdateWithoutWorkflowSavedFiltersInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -4191,6 +4280,7 @@ export type UserCreateWithoutAuditEntriesAsActorInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -4232,6 +4322,7 @@ export type UserUncheckedCreateWithoutAuditEntriesAsActorInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -4289,6 +4380,7 @@ export type UserUpdateWithoutAuditEntriesAsActorInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -4330,6 +4422,7 @@ export type UserUncheckedUpdateWithoutAuditEntriesAsActorInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -4371,6 +4464,7 @@ export type UserCreateWithoutWorkflowAssigneeSnapshotsInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -4412,6 +4506,7 @@ export type UserUncheckedCreateWithoutWorkflowAssigneeSnapshotsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -4469,6 +4564,7 @@ export type UserUpdateWithoutWorkflowAssigneeSnapshotsInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -4510,6 +4606,7 @@ export type UserUncheckedUpdateWithoutWorkflowAssigneeSnapshotsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -4552,6 +4649,7 @@ export type UserCreateWithoutWorkflowNotificationsInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
@@ -4593,6 +4691,7 @@ export type UserUncheckedCreateWithoutWorkflowNotificationsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
@@ -4650,6 +4749,7 @@ export type UserUpdateWithoutWorkflowNotificationsInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
@@ -4691,6 +4791,7 @@ export type UserUncheckedUpdateWithoutWorkflowNotificationsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
@@ -4732,6 +4833,7 @@ export type UserCreateWithoutEmailActionTokensInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
@@ -4773,6 +4875,7 @@ export type UserUncheckedCreateWithoutEmailActionTokensInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
@@ -4830,6 +4933,7 @@ export type UserUpdateWithoutEmailActionTokensInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
@@ -4871,6 +4975,7 @@ export type UserUncheckedUpdateWithoutEmailActionTokensInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
@@ -4911,6 +5016,7 @@ export type UserCreateWithoutDelegationsFromInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotCreateNestedManyWithoutUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -4952,6 +5058,7 @@ export type UserUncheckedCreateWithoutDelegationsFromInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedCreateNestedManyWithoutUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -4998,6 +5105,7 @@ export type UserCreateWithoutDelegationsToInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotCreateNestedManyWithoutUserInput
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -5039,6 +5147,7 @@ export type UserUncheckedCreateWithoutDelegationsToInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedCreateNestedManyWithoutUserInput
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -5096,6 +5205,7 @@ export type UserUpdateWithoutDelegationsFromInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUpdateManyWithoutUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -5137,6 +5247,7 @@ export type UserUncheckedUpdateWithoutDelegationsFromInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedUpdateManyWithoutUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -5189,6 +5300,7 @@ export type UserUpdateWithoutDelegationsToInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUpdateManyWithoutUserNestedInput
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -5230,6 +5342,7 @@ export type UserUncheckedUpdateWithoutDelegationsToInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedUpdateManyWithoutUserNestedInput
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -5271,6 +5384,7 @@ export type UserCreateWithoutWorkflowWatchersInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotCreateNestedManyWithoutUserInput
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -5312,6 +5426,7 @@ export type UserUncheckedCreateWithoutWorkflowWatchersInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedCreateNestedManyWithoutUserInput
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -5369,6 +5484,7 @@ export type UserUpdateWithoutWorkflowWatchersInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUpdateManyWithoutUserNestedInput
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -5410,6 +5526,7 @@ export type UserUncheckedUpdateWithoutWorkflowWatchersInput = {
   workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedUpdateManyWithoutUserNestedInput
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -5452,6 +5569,7 @@ export type UserCreateWithoutWatcherChannelPreferencesInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
   workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
@@ -5493,6 +5611,7 @@ export type UserUncheckedCreateWithoutWatcherChannelPreferencesInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
   workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
@@ -5550,6 +5669,7 @@ export type UserUpdateWithoutWatcherChannelPreferencesInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
   workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
@@ -5591,6 +5711,7 @@ export type UserUncheckedUpdateWithoutWatcherChannelPreferencesInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
   workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
@@ -5631,6 +5752,7 @@ export type UserCreateWithoutPublishedFormVersionsInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -5672,6 +5794,7 @@ export type UserUncheckedCreateWithoutPublishedFormVersionsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -5729,6 +5852,7 @@ export type UserUpdateWithoutPublishedFormVersionsInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -5770,6 +5894,7 @@ export type UserUncheckedUpdateWithoutPublishedFormVersionsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -5811,6 +5936,7 @@ export type UserCreateWithoutPublishedWorkflowVersionsInput = {
   delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
@@ -5852,6 +5978,7 @@ export type UserUncheckedCreateWithoutPublishedWorkflowVersionsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
   delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
   workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  formMemberships?: Prisma.FormMemberUncheckedCreateNestedManyWithoutUserInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
   workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
@@ -5909,6 +6036,7 @@ export type UserUpdateWithoutPublishedWorkflowVersionsInput = {
   delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
@@ -5950,6 +6078,191 @@ export type UserUncheckedUpdateWithoutPublishedWorkflowVersionsInput = {
   delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
   delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
   workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
+  formMemberships?: Prisma.FormMemberUncheckedUpdateManyWithoutUserNestedInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
+  workflowSavedFilters?: Prisma.SavedFilterUncheckedUpdateManyWithoutUserNestedInput
+  requestComments?: Prisma.RequestCommentUncheckedUpdateManyWithoutAuthorNestedInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutFormMembershipsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
+  publishedFormVersions?: Prisma.FormVersionCreateNestedManyWithoutPublishedByInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionCreateNestedManyWithoutPublishedByInput
+  submittedRequests?: Prisma.RequestCreateNestedManyWithoutRequesterInput
+  auditEntriesAsActor?: Prisma.AuditEntryCreateNestedManyWithoutActorInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotCreateNestedManyWithoutUserInput
+  delegationsFrom?: Prisma.DelegationCreateNestedManyWithoutFromUserInput
+  delegationsTo?: Prisma.DelegationCreateNestedManyWithoutToUserInput
+  workflowWatchers?: Prisma.WatcherCreateNestedManyWithoutUserInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutUserInput
+  workflowNotifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  emailActionTokens?: Prisma.EmailActionTokenCreateNestedManyWithoutUserInput
+  workflowSavedFilters?: Prisma.SavedFilterCreateNestedManyWithoutUserInput
+  requestComments?: Prisma.RequestCommentCreateNestedManyWithoutAuthorInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutFormMembershipsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  tokenVersion?: number
+  twoFactorEnabled?: boolean | null
+  twoFactorSecret?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  twoFactor?: Prisma.TwoFactorUncheckedCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
+  publishedFormVersions?: Prisma.FormVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUncheckedCreateNestedManyWithoutPublishedByInput
+  submittedRequests?: Prisma.RequestUncheckedCreateNestedManyWithoutRequesterInput
+  auditEntriesAsActor?: Prisma.AuditEntryUncheckedCreateNestedManyWithoutActorInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedCreateNestedManyWithoutUserInput
+  delegationsFrom?: Prisma.DelegationUncheckedCreateNestedManyWithoutFromUserInput
+  delegationsTo?: Prisma.DelegationUncheckedCreateNestedManyWithoutToUserInput
+  workflowWatchers?: Prisma.WatcherUncheckedCreateNestedManyWithoutUserInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutUserInput
+  workflowNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  emailActionTokens?: Prisma.EmailActionTokenUncheckedCreateNestedManyWithoutUserInput
+  workflowSavedFilters?: Prisma.SavedFilterUncheckedCreateNestedManyWithoutUserInput
+  requestComments?: Prisma.RequestCommentUncheckedCreateNestedManyWithoutAuthorInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  accessServicesCreated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutCreatedByInput
+  accessServicesUpdated?: Prisma.AccessServiceUncheckedCreateNestedManyWithoutUpdatedByInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUncheckedCreateNestedManyWithoutUserInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutFormMembershipsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutFormMembershipsInput, Prisma.UserUncheckedCreateWithoutFormMembershipsInput>
+}
+
+export type UserUpsertWithoutFormMembershipsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutFormMembershipsInput, Prisma.UserUncheckedUpdateWithoutFormMembershipsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutFormMembershipsInput, Prisma.UserUncheckedCreateWithoutFormMembershipsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutFormMembershipsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutFormMembershipsInput, Prisma.UserUncheckedUpdateWithoutFormMembershipsInput>
+}
+
+export type UserUpdateWithoutFormMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
+  publishedFormVersions?: Prisma.FormVersionUpdateManyWithoutPublishedByNestedInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUpdateManyWithoutPublishedByNestedInput
+  submittedRequests?: Prisma.RequestUpdateManyWithoutRequesterNestedInput
+  auditEntriesAsActor?: Prisma.AuditEntryUpdateManyWithoutActorNestedInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUpdateManyWithoutUserNestedInput
+  delegationsFrom?: Prisma.DelegationUpdateManyWithoutFromUserNestedInput
+  delegationsTo?: Prisma.DelegationUpdateManyWithoutToUserNestedInput
+  workflowWatchers?: Prisma.WatcherUpdateManyWithoutUserNestedInput
+  watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutUserNestedInput
+  workflowNotifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  emailActionTokens?: Prisma.EmailActionTokenUpdateManyWithoutUserNestedInput
+  workflowSavedFilters?: Prisma.SavedFilterUpdateManyWithoutUserNestedInput
+  requestComments?: Prisma.RequestCommentUpdateManyWithoutAuthorNestedInput
+  requestAttachmentsUploaded?: Prisma.RequestAttachmentUpdateManyWithoutUploadedByNestedInput
+  accessServicesCreated?: Prisma.AccessServiceUpdateManyWithoutCreatedByNestedInput
+  accessServicesUpdated?: Prisma.AccessServiceUpdateManyWithoutUpdatedByNestedInput
+  accessServiceAssignees?: Prisma.AccessServiceAssigneeUpdateManyWithoutUserNestedInput
+  accessServiceSnapshotAssignees?: Prisma.AccessServiceSnapshotAssigneeUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutFormMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  twoFactor?: Prisma.TwoFactorUncheckedUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
+  publishedFormVersions?: Prisma.FormVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  publishedWorkflowVersions?: Prisma.WorkflowVersionUncheckedUpdateManyWithoutPublishedByNestedInput
+  submittedRequests?: Prisma.RequestUncheckedUpdateManyWithoutRequesterNestedInput
+  auditEntriesAsActor?: Prisma.AuditEntryUncheckedUpdateManyWithoutActorNestedInput
+  workflowAssigneeSnapshots?: Prisma.AssigneeSnapshotUncheckedUpdateManyWithoutUserNestedInput
+  delegationsFrom?: Prisma.DelegationUncheckedUpdateManyWithoutFromUserNestedInput
+  delegationsTo?: Prisma.DelegationUncheckedUpdateManyWithoutToUserNestedInput
+  workflowWatchers?: Prisma.WatcherUncheckedUpdateManyWithoutUserNestedInput
   watcherChannelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutUserNestedInput
   workflowNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   emailActionTokens?: Prisma.EmailActionTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -5982,6 +6295,7 @@ export type UserCountOutputType = {
   delegationsFrom: number
   delegationsTo: number
   workflowWatchers: number
+  formMemberships: number
   watcherChannelPreferences: number
   workflowNotifications: number
   emailActionTokens: number
@@ -6009,6 +6323,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   delegationsFrom?: boolean | UserCountOutputTypeCountDelegationsFromArgs
   delegationsTo?: boolean | UserCountOutputTypeCountDelegationsToArgs
   workflowWatchers?: boolean | UserCountOutputTypeCountWorkflowWatchersArgs
+  formMemberships?: boolean | UserCountOutputTypeCountFormMembershipsArgs
   watcherChannelPreferences?: boolean | UserCountOutputTypeCountWatcherChannelPreferencesArgs
   workflowNotifications?: boolean | UserCountOutputTypeCountWorkflowNotificationsArgs
   emailActionTokens?: boolean | UserCountOutputTypeCountEmailActionTokensArgs
@@ -6132,6 +6447,13 @@ export type UserCountOutputTypeCountWorkflowWatchersArgs<ExtArgs extends runtime
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountFormMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FormMemberWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountWatcherChannelPreferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.WatcherChannelPreferenceWhereInput
 }
@@ -6230,6 +6552,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   delegationsFrom?: boolean | Prisma.User$delegationsFromArgs<ExtArgs>
   delegationsTo?: boolean | Prisma.User$delegationsToArgs<ExtArgs>
   workflowWatchers?: boolean | Prisma.User$workflowWatchersArgs<ExtArgs>
+  formMemberships?: boolean | Prisma.User$formMembershipsArgs<ExtArgs>
   watcherChannelPreferences?: boolean | Prisma.User$watcherChannelPreferencesArgs<ExtArgs>
   workflowNotifications?: boolean | Prisma.User$workflowNotificationsArgs<ExtArgs>
   emailActionTokens?: boolean | Prisma.User$emailActionTokensArgs<ExtArgs>
@@ -6307,6 +6630,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   delegationsFrom?: boolean | Prisma.User$delegationsFromArgs<ExtArgs>
   delegationsTo?: boolean | Prisma.User$delegationsToArgs<ExtArgs>
   workflowWatchers?: boolean | Prisma.User$workflowWatchersArgs<ExtArgs>
+  formMemberships?: boolean | Prisma.User$formMembershipsArgs<ExtArgs>
   watcherChannelPreferences?: boolean | Prisma.User$watcherChannelPreferencesArgs<ExtArgs>
   workflowNotifications?: boolean | Prisma.User$workflowNotificationsArgs<ExtArgs>
   emailActionTokens?: boolean | Prisma.User$emailActionTokensArgs<ExtArgs>
@@ -6342,6 +6666,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     delegationsFrom: Prisma.$DelegationPayload<ExtArgs>[]
     delegationsTo: Prisma.$DelegationPayload<ExtArgs>[]
     workflowWatchers: Prisma.$WatcherPayload<ExtArgs>[]
+    formMemberships: Prisma.$FormMemberPayload<ExtArgs>[]
     watcherChannelPreferences: Prisma.$WatcherChannelPreferencePayload<ExtArgs>[]
     workflowNotifications: Prisma.$NotificationPayload<ExtArgs>[]
     emailActionTokens: Prisma.$EmailActionTokenPayload<ExtArgs>[]
@@ -6777,6 +7102,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   delegationsFrom<T extends Prisma.User$delegationsFromArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$delegationsFromArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DelegationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   delegationsTo<T extends Prisma.User$delegationsToArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$delegationsToArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DelegationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workflowWatchers<T extends Prisma.User$workflowWatchersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workflowWatchersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WatcherPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  formMemberships<T extends Prisma.User$formMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$formMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   watcherChannelPreferences<T extends Prisma.User$watcherChannelPreferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$watcherChannelPreferencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WatcherChannelPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workflowNotifications<T extends Prisma.User$workflowNotificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workflowNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   emailActionTokens<T extends Prisma.User$emailActionTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emailActionTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailActionTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -7611,6 +7937,30 @@ export type User$workflowWatchersArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.WatcherScalarFieldEnum | Prisma.WatcherScalarFieldEnum[]
+}
+
+/**
+ * User.formMemberships
+ */
+export type User$formMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FormMember
+   */
+  select?: Prisma.FormMemberSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FormMember
+   */
+  omit?: Prisma.FormMemberOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormMemberInclude<ExtArgs> | null
+  where?: Prisma.FormMemberWhereInput
+  orderBy?: Prisma.FormMemberOrderByWithRelationInput | Prisma.FormMemberOrderByWithRelationInput[]
+  cursor?: Prisma.FormMemberWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FormMemberScalarFieldEnum | Prisma.FormMemberScalarFieldEnum[]
 }
 
 /**

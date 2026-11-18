@@ -174,7 +174,8 @@ export const ModelName = {
   WorkflowVersion: 'WorkflowVersion',
   WorkflowStep: 'WorkflowStep',
   RejectionPolicy: 'RejectionPolicy',
-  EmailTemplate: 'EmailTemplate'
+  EmailTemplate: 'EmailTemplate',
+  FormMember: 'FormMember'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -2354,6 +2355,18 @@ export const EmailTemplateScalarFieldEnum = {
 } as const
 
 export type EmailTemplateScalarFieldEnum = (typeof EmailTemplateScalarFieldEnum)[keyof typeof EmailTemplateScalarFieldEnum]
+
+
+export const FormMemberScalarFieldEnum = {
+  id: 'id',
+  formId: 'formId',
+  userId: 'userId',
+  role: 'role',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type FormMemberScalarFieldEnum = (typeof FormMemberScalarFieldEnum)[keyof typeof FormMemberScalarFieldEnum]
 
 
 export const SortOrder = {

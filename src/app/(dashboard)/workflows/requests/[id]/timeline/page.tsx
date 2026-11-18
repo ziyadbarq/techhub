@@ -5,8 +5,8 @@ import { prisma } from "@/infrastructure/database/prisma/client";
 import { getCurrentUserId } from "@/lib/auth/session";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requireFeature } from "@/lib/features/server";
+import { canSeeRequest } from "@/lib/workflows/request-access";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { requirePermission } from "@/lib/permissions/server";
 
 export const dynamic = "force-dynamic";
 
@@ -41,9 +41,13 @@ export default async function TimelinePage({
   });
   if (!req) notFound();
 
-  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN, {
-    resourceOwnerId: req.requesterId,
-  });
+  // Same rule as the request page: requester, step assignees (past ones
+  // too), the form's people, or global view.
+  if (!(await canSeeRequest(userId, req.id))) {
+    redirect(
+      `/unauthorized?required=${encodeURIComponent(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN)}&path=${encodeURIComponent(`/workflows/requests/${req.id}/timeline`)}`,
+    );
+  }
 
   const auditEntries = await prisma.auditEntry.findMany({
     where: { requestId: req.id },
@@ -164,7 +168,15 @@ export default async function TimelinePage({
                 <p className="text-caption text-stone mt-0.5">
                   {e.actor
                     ? e.actor.name || e.actor.email
-                    : e.actorSystem || "system"}{" "}
+                    : e.actorSystem || "system"}
+                  {actingAsLabel(e.payloadJson) ? (
+                    <>
+                      {" "}
+                      <Badge tone="yellow">
+                        {actingAsLabel(e.payloadJson)}
+                      </Badge>
+                    </>
+                  ) : null}{" "}
                   · {new Date(e.createdAt).toLocaleString()}
                 </p>
 
@@ -184,6 +196,17 @@ export default async function TimelinePage({
                           <span className="text-ink wrap-break-word">
                             {display}
                           </span>
+                          {previousOf(e.payloadJson, h.fieldKey) ? (
+                            <span className="text-stone wrap-break-word">
+                              (was{" "}
+                              {renderValue(
+                                previousOf(e.payloadJson, h.fieldKey)!.value,
+                                def,
+                                linkRefById,
+                              )}
+                              )
+                            </span>
+                          ) : null}
                         </li>
                       );
                     })}
@@ -224,6 +247,7 @@ function formatAction(action: string): string {
     "request.resume": "Resumed from hold",
     "request.return_to_draft_after_reject": "Returned for correction",
     "request.override_outcome": "Outcome overridden by admin",
+    "request.fields_corrected": "Fields corrected",
     "step.activate": "Step activated",
     "step.advance": "Step completed",
     "step.reject": "Step rejected",
@@ -296,6 +320,30 @@ function humanizeIdentifier(value: string): string {
     .replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
+/** "as form owner" / "as form manager" when the entry was made in that role. */
+function actingAsLabel(payload: unknown): string | null {
+  const actingAs =
+    payload && typeof payload === "object"
+      ? (payload as { actingAs?: unknown }).actingAs
+      : null;
+  if (actingAs === "FORM_OWNER") return "as form owner";
+  if (actingAs === "FORM_MANAGER") return "as form manager";
+  return null;
+}
+
+/** A corrected field's value before the correction, if the entry has one. */
+function previousOf(
+  payload: unknown,
+  fieldKey: string,
+): { value: unknown } | null {
+  const previous =
+    payload && typeof payload === "object"
+      ? (payload as { previous?: Record<string, unknown> }).previous
+      : undefined;
+  if (!previous || !(fieldKey in previous)) return null;
+  return { value: previous[fieldKey] };
+}
+
 function shouldShowDetails(action: string, payload: unknown): boolean {
   if (!payload || typeof payload !== "object") return false;
   const keys = Object.keys(payload as object);
@@ -304,7 +352,8 @@ function shouldShowDetails(action: string, payload: unknown): boolean {
     action === "request.submit" ||
     action === "step.activate" ||
     action === "request.close" ||
-    action === "request.cancel"
+    action === "request.cancel" ||
+    action === "request.fields_corrected"
   ) {
     return false;
   }

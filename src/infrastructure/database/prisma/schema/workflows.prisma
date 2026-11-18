@@ -11,6 +11,14 @@
 // Feature Flag: WORKFLOW_ENGINE
 // ============================================
 
+/// What a person may do on every request of one form (see FormMember).
+/// OWNER includes MANAGER, which includes VIEWER.
+enum FormMemberRole {
+  OWNER // act on any active step without being assigned
+  MANAGER // correct the field values of a submitted request
+  VIEWER // open and follow every request of the form
+}
+
 enum FormNotificationRecipientKind {
   REQUESTER
   STEP_ASSIGNEES
@@ -41,6 +49,7 @@ model Form {
   channelPreferences   WatcherChannelPreference[]
   outcomeCodes         OutcomeCode[]
   notificationBindings FormNotificationBinding[]
+  members              FormMember[]
 
   @@unique([name])
   @@index([isActive])
@@ -57,16 +66,16 @@ model Form {
 ///  - WATCHERS        — every watcher of this request
 ///  - ROLE            — every member of {recipientRoleId}
 model FormNotificationBinding {
-  id               String                       @id @default(cuid())
+  id               String                        @id @default(cuid())
   formId           String
   /// Stable event key (e.g., "request.submitted", "step.activated", "request.closed").
   event            String
   emailTemplateKey String
   recipientKind    FormNotificationRecipientKind
   recipientRoleId  String?
-  isActive         Boolean                      @default(true)
-  createdAt        DateTime                     @default(now())
-  updatedAt        DateTime                     @updatedAt
+  isActive         Boolean                       @default(true)
+  createdAt        DateTime                      @default(now())
+  updatedAt        DateTime                      @updatedAt
 
   form Form  @relation(fields: [formId], references: [id], onDelete: Cascade)
   role Role? @relation("FormNotificationBindingRole", fields: [recipientRoleId], references: [id], onDelete: SetNull)
@@ -195,4 +204,22 @@ model EmailTemplate {
 
   @@unique([key])
   @@map("email_templates")
+}
+
+/// A person given a role on one form, independent of the workflow's step
+/// assignees. Managed from Form → People.
+model FormMember {
+  id          String         @id @default(cuid())
+  formId      String
+  userId      String
+  role        FormMemberRole
+  createdById String?
+  createdAt   DateTime       @default(now())
+
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+  user User @relation("FormMemberUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([formId, userId, role])
+  @@index([userId])
+  @@map("form_members")
 }

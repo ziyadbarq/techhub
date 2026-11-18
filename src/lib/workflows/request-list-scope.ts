@@ -6,19 +6,32 @@
  * - "assigned" — requests with a step the user was assigned to, finished or
  *   not: an approver can find a request again after acting on it. The same
  *   rule that lets them open it (`assigneeSnapshot`).
+ * - "forms"    — every request of the forms the user is one of the people of
+ *   (owner, manager or viewer — Form → People).
  *
  * A user without the global view permission never gets "all", whatever the
  * URL or a saved filter says: they fall back to "mine".
  */
 
-export const REQUEST_LIST_SCOPES = ["all", "mine", "assigned"] as const;
+export const REQUEST_LIST_SCOPES = [
+  "all",
+  "mine",
+  "assigned",
+  "forms",
+] as const;
 export type RequestListScope = (typeof REQUEST_LIST_SCOPES)[number];
 
 export function resolveRequestListScope(
   requested: string | undefined | null,
   canViewAll: boolean,
 ): RequestListScope {
-  if (requested === "mine" || requested === "assigned") return requested;
+  if (
+    requested === "mine" ||
+    requested === "assigned" ||
+    requested === "forms"
+  ) {
+    return requested;
+  }
   if (requested === "all") return canViewAll ? "all" : "mine";
   return canViewAll ? "all" : "mine";
 }
@@ -32,6 +45,8 @@ export function requestListScopeWhere(scope: RequestListScope, userId: string) {
       return {
         stepInstances: { some: { snapshots: { some: { userId } } } },
       };
+    case "forms":
+      return { form: { members: { some: { userId } } } };
     case "all":
       return {};
   }

@@ -79,6 +79,7 @@ export function RequestActions({
   status,
   isAssignee,
   isRequester,
+  isFormOwner = false,
   holdReasons,
   orgUsers,
   schema,
@@ -92,6 +93,8 @@ export function RequestActions({
   status: string;
   isAssignee: boolean;
   isRequester: boolean;
+  /** The form's owner may act on any active step without being assigned. */
+  isFormOwner?: boolean;
   holdReasons: Array<{ id: string; label: string }>;
   orgUsers: User[];
   schema: FormSchema;
@@ -235,7 +238,11 @@ export function RequestActions({
 
   const isTerminal = status === "CLOSED" || status === "CANCELLED";
   const canTakeAction =
-    isAssignee && status !== "ON_HOLD" && !isTerminal && activeStepInstanceId;
+    (isAssignee || isFormOwner) &&
+    status !== "ON_HOLD" &&
+    !isTerminal &&
+    activeStepInstanceId;
+  const actingAsOwner = isFormOwner && !isAssignee;
   const canHold =
     !isTerminal &&
     status !== "ON_HOLD" &&
@@ -308,6 +315,13 @@ export function RequestActions({
               {activeStepKey}
             </span>
           </p>
+          {actingAsOwner ? (
+            <p className="text-caption mt-2 rounded-md bg-[var(--color-yellow-light)] px-2.5 py-1.5 text-[var(--color-yellow-dark)]">
+              You aren&apos;t assigned to this step — you&apos;re acting as the
+              form&apos;s owner. Your decision completes the step and is
+              recorded as made by the owner.
+            </p>
+          ) : null}
           {stepSchema ? (
             <div className="mt-3 rounded-[12px] border border-[var(--color-hairline-soft)] bg-[var(--color-canvas)] p-3">
               {showStepFields ? (

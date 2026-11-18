@@ -28,9 +28,11 @@ import {
 import { DI_TOKENS } from "@/di/types";
 import type { PrismaClient } from "@/generated/prisma/server";
 import {
+  checkFieldCorrections,
   checkStepFieldUpdates,
   ConfigurationError,
   fieldStateAt,
+  formAccessFor,
   InvalidStateError,
   lineManagerPersonId,
   NotFoundError,
@@ -40,6 +42,7 @@ import type {
   ActorContext,
   AssigneeSpec,
   Expression,
+  FormAccess,
   FormSchema,
   StepDefinition,
   SubmitInput,
@@ -486,16 +489,27 @@ export class WorkflowEngine implements IWorkflowEngine {
       const graph = wfVersion.graphJson as unknown as WorkflowGraph;
       const stepDef = findStep(graph, stepInstance.stepKey);
 
-      // Authorization: only snapshot users (or admins via override paths) may act.
+      // Authorization: the step's assignees may act; so may the form's owner
+      // on any active step, without being assigned (admins also have the
+      // override paths).
+      let actingAsFormOwner = false;
       if (ctx.userId) {
         const allowed = await tx.assigneeSnapshot.findFirst({
           where: { stepInstanceId: stepInstance.id, userId: ctx.userId },
           select: { id: true },
         });
         if (!allowed) {
-          throw new InvalidStateError(
-            "Actor is not in this step's assignee snapshot",
+          const access = await this.formAccessOf(
+            tx,
+            request.formId,
+            ctx.userId,
           );
+          if (!access.canActOnAnyStep) {
+            throw new InvalidStateError(
+              "Actor is not in this step's assignee snapshot",
+            );
+          }
+          actingAsFormOwner = true;
         }
       }
 
@@ -517,11 +531,17 @@ export class WorkflowEngine implements IWorkflowEngine {
       };
 
       const executor = this.executors.get(stepDef.config.type);
-      const result = await executor.handleAction(
+      const handled = await executor.handleAction(
         stepDef.config,
         input.action,
         exec,
       );
+      // The owner's approval decides the step: it doesn't wait for the other
+      // votes an ALL / MAJORITY / QUORUM step would otherwise need.
+      const result: typeof handled =
+        actingAsFormOwner && handled.kind === "RECORDED"
+          ? { kind: "ADVANCE" }
+          : handled;
 
       // Apply field updates submitted with the action (if any) and refresh
       // any COMPUTED fields whose inputs may have changed.
@@ -560,6 +580,7 @@ export class WorkflowEngine implements IWorkflowEngine {
           fieldUpdateKeys: input.fieldUpdates
             ? Object.keys(input.fieldUpdates)
             : [],
+          ...(actingAsFormOwner ? { actingAs: "FORM_OWNER" } : {}),
         },
       });
 
@@ -633,6 +654,124 @@ export class WorkflowEngine implements IWorkflowEngine {
           );
           return;
       }
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // correctFields (form manager)
+  // --------------------------------------------------------------------------
+  @LogExecution("workflow.correct-fields")
+  async correctFields(
+    requestId: string,
+    updates: Record<string, unknown>,
+    ctx: ActorContext,
+  ): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      const request = await this.requests.findById(tx, requestId);
+      if (!request) throw new NotFoundError("Request", requestId);
+      if (!ctx.userId) {
+        throw new InvalidStateError("Only a person can correct fields");
+      }
+      const access = await this.formAccessOf(tx, request.formId, ctx.userId);
+      if (!access.canCorrectFields) {
+        throw new InvalidStateError(
+          "Only this form's managers or owners can correct its fields",
+        );
+      }
+      if (
+        request.status === "DRAFT" ||
+        request.status === "CLOSED" ||
+        request.status === "CANCELLED"
+      ) {
+        throw new InvalidStateError(
+          `Request is ${request.status}; fields can't be corrected`,
+        );
+      }
+
+      const version = await tx.formVersion.findUnique({
+        where: { id: request.formVersionId },
+        select: { schemaJson: true },
+      });
+      const schema = version?.schemaJson as unknown as FormSchema | undefined;
+      if (!schema?.fields) {
+        throw new NotFoundError("FormVersion", request.formVersionId);
+      }
+
+      const before = await this.requests.getFieldValues(tx, request.id);
+      // Only what actually changes.
+      const changed = Object.fromEntries(
+        Object.entries(updates).filter(
+          ([key, value]) =>
+            JSON.stringify(value ?? null) !==
+            JSON.stringify(before[key] ?? null),
+        ),
+      );
+      const merged = { ...before, ...changed };
+      const conditionFields = await this.withServiceSlugs(
+        tx,
+        schema.fields,
+        merged,
+      );
+      const problems = checkFieldCorrections({
+        schema,
+        updates: changed,
+        merged,
+        isShown: (field) => {
+          if (!field.visibilityRules) return true;
+          try {
+            return this.expressionEvaluator.evaluateBoolean(
+              field.visibilityRules,
+              { fields: conditionFields },
+            );
+          } catch {
+            return true;
+          }
+        },
+      });
+      if (problems.length > 0) {
+        throw new InvalidStateError(problems.join(" "));
+      }
+
+      await this.requests.setFieldValues(
+        tx,
+        request.id,
+        request.formVersionId,
+        changed,
+      );
+      const computed = await this.recomputeComputedFields(
+        tx,
+        request.id,
+        request.formVersionId,
+        { ...merged },
+      );
+
+      const audit = await this.audit.append(tx, {
+        ctx,
+        requestId: request.id,
+        action: "request.fields_corrected",
+        payload: {
+          fieldKeys: Object.keys(changed),
+          previous: Object.fromEntries(
+            Object.keys(changed).map((key) => [key, before[key] ?? null]),
+          ),
+          actingAs: access.canActOnAnyStep ? "FORM_OWNER" : "FORM_MANAGER",
+        },
+      });
+      await this.audit.appendFieldHistory(tx, {
+        requestId: request.id,
+        formVersionId: request.formVersionId,
+        values: { ...changed, ...computed },
+        computedValues: computed,
+        auditEntryId: audit.id,
+      });
+
+      // They follow the request from now on, like anyone who acts on it.
+      await tx.watcher.createMany({
+        data: [
+          { requestId: request.id, userId: ctx.userId, reason: "participant" },
+        ],
+        skipDuplicates: true,
+      });
     });
   }
 
@@ -1710,6 +1849,19 @@ export class WorkflowEngine implements IWorkflowEngine {
   }
 
   /** Send notifications to all current watchers of a request. */
+  /** What the user may do on this form's requests as one of its people. */
+  private async formAccessOf(
+    tx: Tx,
+    formId: string,
+    userId: string,
+  ): Promise<FormAccess> {
+    const rows = await tx.formMember.findMany({
+      where: { formId, userId },
+      select: { role: true },
+    });
+    return formAccessFor(rows.map((r) => r.role));
+  }
+
   private async notifyWatchers(
     tx: Tx,
     requestId: string,

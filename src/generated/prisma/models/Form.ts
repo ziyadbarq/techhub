@@ -272,6 +272,7 @@ export type FormWhereInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceListRelationFilter
   outcomeCodes?: Prisma.OutcomeCodeListRelationFilter
   notificationBindings?: Prisma.FormNotificationBindingListRelationFilter
+  members?: Prisma.FormMemberListRelationFilter
 }
 
 export type FormOrderByWithRelationInput = {
@@ -294,6 +295,7 @@ export type FormOrderByWithRelationInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceOrderByRelationAggregateInput
   outcomeCodes?: Prisma.OutcomeCodeOrderByRelationAggregateInput
   notificationBindings?: Prisma.FormNotificationBindingOrderByRelationAggregateInput
+  members?: Prisma.FormMemberOrderByRelationAggregateInput
 }
 
 export type FormWhereUniqueInput = Prisma.AtLeast<{
@@ -319,6 +321,7 @@ export type FormWhereUniqueInput = Prisma.AtLeast<{
   channelPreferences?: Prisma.WatcherChannelPreferenceListRelationFilter
   outcomeCodes?: Prisma.OutcomeCodeListRelationFilter
   notificationBindings?: Prisma.FormNotificationBindingListRelationFilter
+  members?: Prisma.FormMemberListRelationFilter
 }, "id" | "publishedVersionId" | "name">
 
 export type FormOrderByWithAggregationInput = {
@@ -375,6 +378,7 @@ export type FormCreateInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateInput = {
@@ -395,6 +399,7 @@ export type FormUncheckedCreateInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormUpdateInput = {
@@ -415,6 +420,7 @@ export type FormUpdateInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateInput = {
@@ -435,6 +441,7 @@ export type FormUncheckedUpdateInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormCreateManyInput = {
@@ -707,6 +714,20 @@ export type FormUncheckedUpdateManyWithoutWorkflowDefinitionNestedInput = {
   deleteMany?: Prisma.FormScalarWhereInput | Prisma.FormScalarWhereInput[]
 }
 
+export type FormCreateNestedOneWithoutMembersInput = {
+  create?: Prisma.XOR<Prisma.FormCreateWithoutMembersInput, Prisma.FormUncheckedCreateWithoutMembersInput>
+  connectOrCreate?: Prisma.FormCreateOrConnectWithoutMembersInput
+  connect?: Prisma.FormWhereUniqueInput
+}
+
+export type FormUpdateOneRequiredWithoutMembersNestedInput = {
+  create?: Prisma.XOR<Prisma.FormCreateWithoutMembersInput, Prisma.FormUncheckedCreateWithoutMembersInput>
+  connectOrCreate?: Prisma.FormCreateOrConnectWithoutMembersInput
+  upsert?: Prisma.FormUpsertWithoutMembersInput
+  connect?: Prisma.FormWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FormUpdateToOneWithWhereWithoutMembersInput, Prisma.FormUpdateWithoutMembersInput>, Prisma.FormUncheckedUpdateWithoutMembersInput>
+}
+
 export type FormCreateWithoutRequestsInput = {
   id?: string
   name: string
@@ -724,6 +745,7 @@ export type FormCreateWithoutRequestsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateWithoutRequestsInput = {
@@ -743,6 +765,7 @@ export type FormUncheckedCreateWithoutRequestsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormCreateOrConnectWithoutRequestsInput = {
@@ -778,6 +801,7 @@ export type FormUpdateWithoutRequestsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateWithoutRequestsInput = {
@@ -797,6 +821,7 @@ export type FormUncheckedUpdateWithoutRequestsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormCreateWithoutOutcomeCodesInput = {
@@ -816,6 +841,7 @@ export type FormCreateWithoutOutcomeCodesInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutFormInput
   channelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateWithoutOutcomeCodesInput = {
@@ -835,6 +861,7 @@ export type FormUncheckedCreateWithoutOutcomeCodesInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutFormInput
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormCreateOrConnectWithoutOutcomeCodesInput = {
@@ -870,6 +897,7 @@ export type FormUpdateWithoutOutcomeCodesInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutFormNestedInput
   channelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateWithoutOutcomeCodesInput = {
@@ -889,6 +917,7 @@ export type FormUncheckedUpdateWithoutOutcomeCodesInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutFormNestedInput
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormCreateWithoutWatcherSubscriptionsInput = {
@@ -908,6 +937,7 @@ export type FormCreateWithoutWatcherSubscriptionsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateWithoutWatcherSubscriptionsInput = {
@@ -927,6 +957,7 @@ export type FormUncheckedCreateWithoutWatcherSubscriptionsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormCreateOrConnectWithoutWatcherSubscriptionsInput = {
@@ -962,6 +993,7 @@ export type FormUpdateWithoutWatcherSubscriptionsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateWithoutWatcherSubscriptionsInput = {
@@ -981,6 +1013,7 @@ export type FormUncheckedUpdateWithoutWatcherSubscriptionsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormCreateWithoutChannelPreferencesInput = {
@@ -1000,6 +1033,7 @@ export type FormCreateWithoutChannelPreferencesInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateWithoutChannelPreferencesInput = {
@@ -1019,6 +1053,7 @@ export type FormUncheckedCreateWithoutChannelPreferencesInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormCreateOrConnectWithoutChannelPreferencesInput = {
@@ -1054,6 +1089,7 @@ export type FormUpdateWithoutChannelPreferencesInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateWithoutChannelPreferencesInput = {
@@ -1073,6 +1109,7 @@ export type FormUncheckedUpdateWithoutChannelPreferencesInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormCreateWithoutNotificationBindingsInput = {
@@ -1092,6 +1129,7 @@ export type FormCreateWithoutNotificationBindingsInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutFormInput
   channelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateWithoutNotificationBindingsInput = {
@@ -1111,6 +1149,7 @@ export type FormUncheckedCreateWithoutNotificationBindingsInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutFormInput
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormCreateOrConnectWithoutNotificationBindingsInput = {
@@ -1146,6 +1185,7 @@ export type FormUpdateWithoutNotificationBindingsInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutFormNestedInput
   channelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateWithoutNotificationBindingsInput = {
@@ -1165,6 +1205,7 @@ export type FormUncheckedUpdateWithoutNotificationBindingsInput = {
   watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutFormNestedInput
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormCreateWithoutVersionsInput = {
@@ -1184,6 +1225,7 @@ export type FormCreateWithoutVersionsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateWithoutVersionsInput = {
@@ -1203,6 +1245,7 @@ export type FormUncheckedCreateWithoutVersionsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormCreateOrConnectWithoutVersionsInput = {
@@ -1227,6 +1270,7 @@ export type FormCreateWithoutPublishedVersionInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateWithoutPublishedVersionInput = {
@@ -1246,6 +1290,7 @@ export type FormUncheckedCreateWithoutPublishedVersionInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormCreateOrConnectWithoutPublishedVersionInput = {
@@ -1281,6 +1326,7 @@ export type FormUpdateWithoutVersionsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateWithoutVersionsInput = {
@@ -1300,6 +1346,7 @@ export type FormUncheckedUpdateWithoutVersionsInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormUpsertWithoutPublishedVersionInput = {
@@ -1330,6 +1377,7 @@ export type FormUpdateWithoutPublishedVersionInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateWithoutPublishedVersionInput = {
@@ -1349,6 +1397,7 @@ export type FormUncheckedUpdateWithoutPublishedVersionInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormCreateWithoutWorkflowDefinitionInput = {
@@ -1368,6 +1417,7 @@ export type FormCreateWithoutWorkflowDefinitionInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberCreateNestedManyWithoutFormInput
 }
 
 export type FormUncheckedCreateWithoutWorkflowDefinitionInput = {
@@ -1387,6 +1437,7 @@ export type FormUncheckedCreateWithoutWorkflowDefinitionInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutFormInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedCreateNestedManyWithoutFormInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutFormInput
+  members?: Prisma.FormMemberUncheckedCreateNestedManyWithoutFormInput
 }
 
 export type FormCreateOrConnectWithoutWorkflowDefinitionInput = {
@@ -1432,6 +1483,102 @@ export type FormScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Form"> | Date | string
 }
 
+export type FormCreateWithoutMembersInput = {
+  id?: string
+  name: string
+  description?: string | null
+  isActive?: boolean
+  isBuiltIn?: boolean
+  referenceNumberFormat?: string
+  nextSequence?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workflowDefinition: Prisma.WorkflowDefinitionCreateNestedOneWithoutFormsInput
+  publishedVersion?: Prisma.FormVersionCreateNestedOneWithoutPublishedForInput
+  versions?: Prisma.FormVersionCreateNestedManyWithoutFormInput
+  requests?: Prisma.RequestCreateNestedManyWithoutFormInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionCreateNestedManyWithoutFormInput
+  channelPreferences?: Prisma.WatcherChannelPreferenceCreateNestedManyWithoutFormInput
+  outcomeCodes?: Prisma.OutcomeCodeCreateNestedManyWithoutFormInput
+  notificationBindings?: Prisma.FormNotificationBindingCreateNestedManyWithoutFormInput
+}
+
+export type FormUncheckedCreateWithoutMembersInput = {
+  id?: string
+  name: string
+  description?: string | null
+  isActive?: boolean
+  isBuiltIn?: boolean
+  referenceNumberFormat?: string
+  workflowDefinitionId: string
+  publishedVersionId?: string | null
+  nextSequence?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  versions?: Prisma.FormVersionUncheckedCreateNestedManyWithoutFormInput
+  requests?: Prisma.RequestUncheckedCreateNestedManyWithoutFormInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedCreateNestedManyWithoutFormInput
+  channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedCreateNestedManyWithoutFormInput
+  outcomeCodes?: Prisma.OutcomeCodeUncheckedCreateNestedManyWithoutFormInput
+  notificationBindings?: Prisma.FormNotificationBindingUncheckedCreateNestedManyWithoutFormInput
+}
+
+export type FormCreateOrConnectWithoutMembersInput = {
+  where: Prisma.FormWhereUniqueInput
+  create: Prisma.XOR<Prisma.FormCreateWithoutMembersInput, Prisma.FormUncheckedCreateWithoutMembersInput>
+}
+
+export type FormUpsertWithoutMembersInput = {
+  update: Prisma.XOR<Prisma.FormUpdateWithoutMembersInput, Prisma.FormUncheckedUpdateWithoutMembersInput>
+  create: Prisma.XOR<Prisma.FormCreateWithoutMembersInput, Prisma.FormUncheckedCreateWithoutMembersInput>
+  where?: Prisma.FormWhereInput
+}
+
+export type FormUpdateToOneWithWhereWithoutMembersInput = {
+  where?: Prisma.FormWhereInput
+  data: Prisma.XOR<Prisma.FormUpdateWithoutMembersInput, Prisma.FormUncheckedUpdateWithoutMembersInput>
+}
+
+export type FormUpdateWithoutMembersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isBuiltIn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  referenceNumberFormat?: Prisma.StringFieldUpdateOperationsInput | string
+  nextSequence?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workflowDefinition?: Prisma.WorkflowDefinitionUpdateOneRequiredWithoutFormsNestedInput
+  publishedVersion?: Prisma.FormVersionUpdateOneWithoutPublishedForNestedInput
+  versions?: Prisma.FormVersionUpdateManyWithoutFormNestedInput
+  requests?: Prisma.RequestUpdateManyWithoutFormNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUpdateManyWithoutFormNestedInput
+  channelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutFormNestedInput
+  outcomeCodes?: Prisma.OutcomeCodeUpdateManyWithoutFormNestedInput
+  notificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutFormNestedInput
+}
+
+export type FormUncheckedUpdateWithoutMembersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isBuiltIn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  referenceNumberFormat?: Prisma.StringFieldUpdateOperationsInput | string
+  workflowDefinitionId?: Prisma.StringFieldUpdateOperationsInput | string
+  publishedVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nextSequence?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  versions?: Prisma.FormVersionUncheckedUpdateManyWithoutFormNestedInput
+  requests?: Prisma.RequestUncheckedUpdateManyWithoutFormNestedInput
+  watcherSubscriptions?: Prisma.WatcherSubscriptionUncheckedUpdateManyWithoutFormNestedInput
+  channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutFormNestedInput
+  outcomeCodes?: Prisma.OutcomeCodeUncheckedUpdateManyWithoutFormNestedInput
+  notificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutFormNestedInput
+}
+
 export type FormCreateManyWorkflowDefinitionInput = {
   id?: string
   name: string
@@ -1462,6 +1609,7 @@ export type FormUpdateWithoutWorkflowDefinitionInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateWithoutWorkflowDefinitionInput = {
@@ -1481,6 +1629,7 @@ export type FormUncheckedUpdateWithoutWorkflowDefinitionInput = {
   channelPreferences?: Prisma.WatcherChannelPreferenceUncheckedUpdateManyWithoutFormNestedInput
   outcomeCodes?: Prisma.OutcomeCodeUncheckedUpdateManyWithoutFormNestedInput
   notificationBindings?: Prisma.FormNotificationBindingUncheckedUpdateManyWithoutFormNestedInput
+  members?: Prisma.FormMemberUncheckedUpdateManyWithoutFormNestedInput
 }
 
 export type FormUncheckedUpdateManyWithoutWorkflowDefinitionInput = {
@@ -1508,6 +1657,7 @@ export type FormCountOutputType = {
   channelPreferences: number
   outcomeCodes: number
   notificationBindings: number
+  members: number
 }
 
 export type FormCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1517,6 +1667,7 @@ export type FormCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   channelPreferences?: boolean | FormCountOutputTypeCountChannelPreferencesArgs
   outcomeCodes?: boolean | FormCountOutputTypeCountOutcomeCodesArgs
   notificationBindings?: boolean | FormCountOutputTypeCountNotificationBindingsArgs
+  members?: boolean | FormCountOutputTypeCountMembersArgs
 }
 
 /**
@@ -1571,6 +1722,13 @@ export type FormCountOutputTypeCountNotificationBindingsArgs<ExtArgs extends run
   where?: Prisma.FormNotificationBindingWhereInput
 }
 
+/**
+ * FormCountOutputType without action
+ */
+export type FormCountOutputTypeCountMembersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FormMemberWhereInput
+}
+
 
 export type FormSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1592,6 +1750,7 @@ export type FormSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   channelPreferences?: boolean | Prisma.Form$channelPreferencesArgs<ExtArgs>
   outcomeCodes?: boolean | Prisma.Form$outcomeCodesArgs<ExtArgs>
   notificationBindings?: boolean | Prisma.Form$notificationBindingsArgs<ExtArgs>
+  members?: boolean | Prisma.Form$membersArgs<ExtArgs>
   _count?: boolean | Prisma.FormCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["form"]>
 
@@ -1651,6 +1810,7 @@ export type FormInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   channelPreferences?: boolean | Prisma.Form$channelPreferencesArgs<ExtArgs>
   outcomeCodes?: boolean | Prisma.Form$outcomeCodesArgs<ExtArgs>
   notificationBindings?: boolean | Prisma.Form$notificationBindingsArgs<ExtArgs>
+  members?: boolean | Prisma.Form$membersArgs<ExtArgs>
   _count?: boolean | Prisma.FormCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FormIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1673,6 +1833,7 @@ export type $FormPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     channelPreferences: Prisma.$WatcherChannelPreferencePayload<ExtArgs>[]
     outcomeCodes: Prisma.$OutcomeCodePayload<ExtArgs>[]
     notificationBindings: Prisma.$FormNotificationBindingPayload<ExtArgs>[]
+    members: Prisma.$FormMemberPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2088,6 +2249,7 @@ export interface Prisma__FormClient<T, Null = never, ExtArgs extends runtime.Typ
   channelPreferences<T extends Prisma.Form$channelPreferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Form$channelPreferencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WatcherChannelPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outcomeCodes<T extends Prisma.Form$outcomeCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Form$outcomeCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutcomeCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificationBindings<T extends Prisma.Form$notificationBindingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Form$notificationBindingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormNotificationBindingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  members<T extends Prisma.Form$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Form$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2689,6 +2851,30 @@ export type Form$notificationBindingsArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.FormNotificationBindingScalarFieldEnum | Prisma.FormNotificationBindingScalarFieldEnum[]
+}
+
+/**
+ * Form.members
+ */
+export type Form$membersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FormMember
+   */
+  select?: Prisma.FormMemberSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FormMember
+   */
+  omit?: Prisma.FormMemberOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormMemberInclude<ExtArgs> | null
+  where?: Prisma.FormMemberWhereInput
+  orderBy?: Prisma.FormMemberOrderByWithRelationInput | Prisma.FormMemberOrderByWithRelationInput[]
+  cursor?: Prisma.FormMemberWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FormMemberScalarFieldEnum | Prisma.FormMemberScalarFieldEnum[]
 }
 
 /**

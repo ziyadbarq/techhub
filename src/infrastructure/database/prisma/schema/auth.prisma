@@ -48,6 +48,7 @@ model User {
   delegationsFrom            Delegation[]               @relation("DelegationFrom")
   delegationsTo              Delegation[]               @relation("DelegationTo")
   workflowWatchers           Watcher[]
+  formMemberships            FormMember[]               @relation("FormMemberUser")
   watcherChannelPreferences  WatcherChannelPreference[]
   workflowNotifications      Notification[]
   emailActionTokens          EmailActionToken[]
@@ -56,9 +57,9 @@ model User {
   requestAttachmentsUploaded RequestAttachment[]        @relation("RequestAttachmentUploader")
 
   // Access Management Service relations (access-services.prisma)
-  accessServicesCreated          AccessService[]               @relation("AccessServiceCreatedBy")
-  accessServicesUpdated          AccessService[]               @relation("AccessServiceUpdatedBy")
-  accessServiceAssignees         AccessServiceAssignee[]       @relation("AccessServiceAssignees")
+  accessServicesCreated          AccessService[]                 @relation("AccessServiceCreatedBy")
+  accessServicesUpdated          AccessService[]                 @relation("AccessServiceUpdatedBy")
+  accessServiceAssignees         AccessServiceAssignee[]         @relation("AccessServiceAssignees")
   accessServiceSnapshotAssignees AccessServiceSnapshotAssignee[] @relation("AccessServiceSnapshotAssignees")
 
   @@index([email])

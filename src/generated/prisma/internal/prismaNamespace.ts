@@ -507,7 +507,8 @@ export const ModelName = {
   WorkflowVersion: 'WorkflowVersion',
   WorkflowStep: 'WorkflowStep',
   RejectionPolicy: 'RejectionPolicy',
-  EmailTemplate: 'EmailTemplate'
+  EmailTemplate: 'EmailTemplate',
+  FormMember: 'FormMember'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -523,7 +524,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "accessService" | "accessServiceAssignee" | "accessServiceRequestSnapshot" | "accessServiceSnapshotAssignee" | "requesterIdentitySnapshot" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "knowledgeArticle" | "knowledgeRevision" | "knowledgeAcknowledgement" | "knowledgeFolder" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "reportSchedule" | "request" | "requestFieldValue" | "stepInstance" | "requestLink" | "requestComment" | "requestAttachment" | "savedFilter" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "featureFlag" | "featureFlagAuditLog" | "systemSetting" | "auditEntry" | "fieldHistoryEntry" | "assigneeSnapshot" | "sLAEvent" | "sLAEscalationLog" | "notification" | "emailActionToken" | "calendar" | "maintenanceWindow" | "blackoutPeriod" | "holdReason" | "outcomeCode" | "delegation" | "watcher" | "watcherSubscription" | "watcherChannelPreference" | "form" | "formNotificationBinding" | "formVersion" | "formField" | "workflowDefinition" | "workflowVersion" | "workflowStep" | "rejectionPolicy" | "emailTemplate"
+    modelProps: "accessService" | "accessServiceAssignee" | "accessServiceRequestSnapshot" | "accessServiceSnapshotAssignee" | "requesterIdentitySnapshot" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "twoFactor" | "userPreferences" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "ociSyncLog" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "knowledgeArticle" | "knowledgeRevision" | "knowledgeAcknowledgement" | "knowledgeFolder" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "reportSchedule" | "request" | "requestFieldValue" | "stepInstance" | "requestLink" | "requestComment" | "requestAttachment" | "savedFilter" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "featureFlag" | "featureFlagAuditLog" | "systemSetting" | "auditEntry" | "fieldHistoryEntry" | "assigneeSnapshot" | "sLAEvent" | "sLAEscalationLog" | "notification" | "emailActionToken" | "calendar" | "maintenanceWindow" | "blackoutPeriod" | "holdReason" | "outcomeCode" | "delegation" | "watcher" | "watcherSubscription" | "watcherChannelPreference" | "form" | "formNotificationBinding" | "formVersion" | "formField" | "workflowDefinition" | "workflowVersion" | "workflowStep" | "rejectionPolicy" | "emailTemplate" | "formMember"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -9703,6 +9704,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FormMember: {
+      payload: Prisma.$FormMemberPayload<ExtArgs>
+      fields: Prisma.FormMemberFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FormMemberFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FormMemberFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload>
+        }
+        findFirst: {
+          args: Prisma.FormMemberFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FormMemberFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload>
+        }
+        findMany: {
+          args: Prisma.FormMemberFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload>[]
+        }
+        create: {
+          args: Prisma.FormMemberCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload>
+        }
+        createMany: {
+          args: Prisma.FormMemberCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FormMemberCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload>[]
+        }
+        delete: {
+          args: Prisma.FormMemberDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload>
+        }
+        update: {
+          args: Prisma.FormMemberUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload>
+        }
+        deleteMany: {
+          args: Prisma.FormMemberDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FormMemberUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FormMemberUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload>[]
+        }
+        upsert: {
+          args: Prisma.FormMemberUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FormMemberPayload>
+        }
+        aggregate: {
+          args: Prisma.FormMemberAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFormMember>
+        }
+        groupBy: {
+          args: Prisma.FormMemberGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FormMemberGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FormMemberCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FormMemberCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -11905,6 +11980,18 @@ export const EmailTemplateScalarFieldEnum = {
 export type EmailTemplateScalarFieldEnum = (typeof EmailTemplateScalarFieldEnum)[keyof typeof EmailTemplateScalarFieldEnum]
 
 
+export const FormMemberScalarFieldEnum = {
+  id: 'id',
+  formId: 'formId',
+  userId: 'userId',
+  role: 'role',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type FormMemberScalarFieldEnum = (typeof FormMemberScalarFieldEnum)[keyof typeof FormMemberScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -13017,6 +13104,20 @@ export type ListEnumRejectionRestartModeFieldRefInput<$PrismaModel> = FieldRefIn
 
 
 /**
+ * Reference to a field of type 'FormMemberRole'
+ */
+export type EnumFormMemberRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FormMemberRole'>
+
+
+
+/**
+ * Reference to a field of type 'FormMemberRole[]'
+ */
+export type ListEnumFormMemberRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FormMemberRole[]'>
+
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -13263,6 +13364,7 @@ export type GlobalOmitConfig = {
   workflowStep?: Prisma.WorkflowStepOmit
   rejectionPolicy?: Prisma.RejectionPolicyOmit
   emailTemplate?: Prisma.EmailTemplateOmit
+  formMember?: Prisma.FormMemberOmit
 }
 
 /* Types for Logging */

@@ -1,7 +1,4 @@
 import "server-only";
-import { prisma } from "@/infrastructure/database/prisma/client";
-import { hasPermission } from "@/lib/permissions/server";
-import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import {
   createPrivateFileStorage,
   type PrivateFileStorage,
@@ -15,34 +12,8 @@ export function workflowFileStorage(): PrivateFileStorage {
   });
 }
 
-/**
- * Same rule as the request page: the requester, anyone assigned to one of
- * its steps (current or past), or someone who may view every request.
- */
-export async function canSeeRequest(
-  userId: string,
-  requestId: string,
-): Promise<boolean> {
-  const request = await prisma.request.findUnique({
-    where: { id: requestId },
-    select: { requesterId: true },
-  });
-  if (!request) return false;
-  if (await hasPermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW)) return true;
-  if (
-    request.requesterId === userId &&
-    (await hasPermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN, {
-      resourceOwnerId: request.requesterId,
-    }))
-  ) {
-    return true;
-  }
-  const assigned = await prisma.assigneeSnapshot.findFirst({
-    where: { userId, stepInstance: { requestId } },
-    select: { id: true },
-  });
-  return !!assigned;
-}
+/** Who may see a request: see `request-access.ts`. */
+export { canSeeRequest } from "@/lib/workflows/request-access";
 
 /** Content types a browser may show in a tab; everything else downloads. */
 const INLINE_TYPES = new Set([

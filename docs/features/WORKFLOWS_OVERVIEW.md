@@ -95,7 +95,7 @@ Rules: `src/core/domain/workflow/step-field-state.ts`. A field's `config.helpTex
 
 ## Who sees a request, and who hears about it
 
-**Opening a request** (`/workflows/requests/[id]`): its requester, anyone assigned to any of its steps — finished steps included — or a holder of `WORKFLOWS_REQUESTS_VIEW`.
+**Opening a request** (`/workflows/requests/[id]`, its timeline, comments and attachments): its requester, anyone assigned to any of its steps — finished steps included — the form's people, or a holder of `WORKFLOWS_REQUESTS_VIEW` (`src/lib/workflows/request-access.ts`).
 
 **The request list** (`/workflows/requests`) has three scopes (`src/lib/workflows/request-list-scope.ts`):
 
@@ -110,6 +110,18 @@ The Inbox lists active steps only; "Assigned to me" is where an approver finds a
 **Watchers** get the request-level notifications (closed, held, resumed, cancelled). They are the requester and members of roles subscribed to the form (at submit), plus **everyone who acts on a step** (reason `participant`, added when they act).
 
 **Form notification rules** (Form → Notifications) fire on `request.submitted`, `step.activated`, `step.approved` (an approval step completed by approval), `step.rejected` (an approval step rejected), `request.held`, `request.resumed`, `request.closed` and `request.cancelled`, to the requester, the step's assignees, the watchers, or a role's members.
+
+## A form's people (Form → People)
+
+Besides its workflow's step assignees, each form can name people with a role on every one of its requests (`form_members`). They are picked from Persons (Active Directory); someone without a TechHub account gets one on save. Rules: `src/core/domain/workflow/form-access.ts`.
+
+| Role    | Can                                                                                                                                                        | Recorded as                                                                                 |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Owner   | act on any active step (approve, reject, complete…) without being assigned; their approval completes the step even when it needs several                   | the action's audit entry, `actingAs: FORM_OWNER` ("as form owner" in the timeline)          |
+| Manager | correct the values of a submitted, open request — not system, file, hidden, admin-only or Access Services lookup fields; a required field can't be emptied | `request.fields_corrected` with the previous values, plus field history ("as form manager") |
+| Viewer  | open every request of the form, its timeline, comments and attachments; listed under Requests → My forms                                                   | —                                                                                           |
+
+An owner can also do what a manager and a viewer can; a manager can also do what a viewer can. Owners and managers become watchers of a request once they act on it. Correcting a field doesn't re-run assignment: steps already assigned keep their assignees.
 
 ## Creating forms from the browser console
 

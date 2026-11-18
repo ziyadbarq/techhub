@@ -25,6 +25,11 @@ const SCOPE_COPY = {
     subtitle: "Everything submitted across your organization.",
   },
   mine: { title: "My Requests", subtitle: "Requests you submitted." },
+  forms: {
+    title: "My forms",
+    subtitle:
+      "Every request of the forms you own, manage or view (Form → People).",
+  },
   assigned: {
     title: "Assigned to me",
     subtitle:
@@ -83,6 +88,11 @@ export default async function RequestsListPage({
 
   const sp = await searchParams;
   const scope = resolveRequestListScope(sp.scope, canViewAll);
+  // The "My forms" tab is offered to the form's people only.
+  const hasForms = !!(await prisma.formMember.findFirst({
+    where: { userId },
+    select: { id: true },
+  }));
   const statusFilter = STATUSES.includes(sp.status as never)
     ? (sp.status as string)
     : null;
@@ -148,6 +158,14 @@ export default async function RequestsListPage({
           >
             Assigned to me
           </PillTab>
+          {hasForms || scope === "forms" ? (
+            <PillTab
+              href="/workflows/requests?scope=forms"
+              active={scope === "forms"}
+            >
+              My forms
+            </PillTab>
+          ) : null}
         </PillTabs>
       </div>
 

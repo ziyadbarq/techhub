@@ -7,6 +7,7 @@ import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { requirePermission } from "@/lib/permissions/server";
 import { getCurrentUserId } from "@/lib/auth/session";
+import { canSeeRequest } from "@/lib/workflows/request-access";
 
 export const dynamic = "force-dynamic";
 
@@ -19,15 +20,18 @@ export async function GET(
   context: { params: Promise<{ id: string }> },
 ) {
   await requireFeature(FEATURE_FLAGS.WORKFLOW_ENGINE);
-  await requirePermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW);
+
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+  }
 
   const { id } = await context.params;
 
-  const req = await prisma.request.findUnique({
-    where: { id },
-    select: { id: true },
-  });
-  if (!req) return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+  // Whoever may see the request may read its comments.
+  if (!(await canSeeRequest(userId, id))) {
+    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+  }
 
   const comments = await prisma.requestComment.findMany({
     where: { requestId: id },
@@ -70,11 +74,10 @@ export async function POST(
     );
   }
 
-  const req = await prisma.request.findUnique({
-    where: { id },
-    select: { id: true },
-  });
-  if (!req) return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+  // Only on a request they may see.
+  if (!(await canSeeRequest(userId, id))) {
+    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+  }
 
   const created = await prisma.requestComment.create({
     data: {

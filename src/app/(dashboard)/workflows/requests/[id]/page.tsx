@@ -9,9 +9,11 @@ import { prisma } from "@/infrastructure/database/prisma/client";
 import { getCurrentUserId } from "@/lib/auth/session";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requireFeature } from "@/lib/features/server";
+import { canSeeRequest, getFormAccess } from "@/lib/workflows/request-access";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { hasPermission } from "@/lib/permissions/server";
 
+import { CorrectFieldsPanel } from "./correct-fields-panel";
 import { RequestActions } from "./request-actions";
 import { AdminOverridePanel } from "./admin-override-panel";
 
@@ -62,27 +64,15 @@ export default async function RequestDetailPage({
   });
   if (!req) notFound();
 
-  // A request is visible to its requester, anyone assigned to any of its
-  // workflow steps (including completed steps), or users with global view.
+  // Visible to its requester, anyone assigned to one of its steps (finished
+  // ones included), the form's people, or users with global view.
   // Redirect explicitly instead of throwing into the dashboard error boundary.
-  const [canViewAll, canViewOwn, hasAssignment] = await Promise.all([
-    hasPermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW),
-    hasPermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN, {
-      resourceOwnerId: req.requesterId,
-    }),
-    prisma.assigneeSnapshot.findFirst({
-      where: {
-        userId,
-        stepInstance: { requestId: req.id },
-      },
-      select: { id: true },
-    }),
-  ]);
-  if (!canViewAll && !canViewOwn && !hasAssignment) {
+  if (!(await canSeeRequest(userId, req.id))) {
     redirect(
       `/unauthorized?required=${encodeURIComponent(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN)}&path=${encodeURIComponent(`/workflows/requests/${req.id}`)}`,
     );
   }
+  const formAccess = await getFormAccess(userId, req.form.id);
 
   const stepInstances = await prisma.stepInstance.findMany({
     where: { requestId: req.id },
@@ -146,7 +136,8 @@ export default async function RequestDetailPage({
   const visibleFields = schema.fields.filter((f) => {
     const v = f.visibility ?? "VISIBLE";
     if (v === "HIDDEN") return false;
-    if (v === "ADMINISTRATIVE") return canOverride;
+    if (v === "ADMINISTRATIVE")
+      return canOverride || formAccess.canCorrectFields;
     // SECTION_HEADER has no value; exclude from data display
     if (f.type === "SECTION_HEADER") return false;
     return true;
@@ -371,6 +362,7 @@ export default async function RequestDetailPage({
               status={req.status}
               isAssignee={isAssignee}
               isRequester={isRequester}
+              isFormOwner={formAccess.canActOnAnyStep}
               holdReasons={holdReasons}
               orgUsers={orgUsers}
               schema={schema as never}
@@ -386,6 +378,16 @@ export default async function RequestDetailPage({
           </Link>
         </Card>
       </div>
+
+      {formAccess.canCorrectFields &&
+      !["DRAFT", "CLOSED", "CANCELLED"].includes(req.status) ? (
+        <CorrectFieldsPanel
+          requestId={req.id}
+          schema={req.formVersion.schemaJson as never}
+          values={fieldValues}
+          orgUsers={orgUsers}
+        />
+      ) : null}
 
       <CommentThread requestId={req.id} />
 

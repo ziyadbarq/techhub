@@ -6,17 +6,11 @@ import type {
 
 /** Cancellable outcomes (set when status → CANCELLED). */
 export type CancelOutcome =
-  | "WITHDRAWN"
-  | "REJECTED"
-  | "SUPERSEDED"
-  | "ABANDONED"
-  | "EXPIRED";
+  "WITHDRAWN" | "REJECTED" | "SUPERSEDED" | "ABANDONED" | "EXPIRED";
 
 /** Closable outcomes (set when status → CLOSED). */
 export type CloseOutcome =
-  | "SUCCESSFUL"
-  | "SUCCESSFUL_WITH_ISSUES"
-  | "UNSUCCESSFUL";
+  "SUCCESSFUL" | "SUCCESSFUL_WITH_ISSUES" | "UNSUCCESSFUL";
 
 /** Any terminal outcome — the union of CancelOutcome and CloseOutcome. */
 export type TerminalOutcome = CancelOutcome | CloseOutcome;
@@ -32,6 +26,15 @@ export interface IWorkflowEngine {
     ctx: ActorContext,
   ): Promise<void>;
   takeAction(input: TakeActionInput, ctx: ActorContext): Promise<void>;
+  /**
+   * A form manager (or owner) corrects field values of a submitted request.
+   * Recorded in the audit log and field history with the previous values.
+   */
+  correctFields(
+    requestId: string,
+    updates: Record<string, unknown>,
+    ctx: ActorContext,
+  ): Promise<void>;
   placeOnHold(
     requestId: string,
     holdReasonId: string,

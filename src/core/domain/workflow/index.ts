@@ -7,3 +7,4 @@ export * from "./service-condition";
 export * from "./file-field";
 export * from "./step-field-state";
 export * from "./line-manager";
+export * from "./form-access";

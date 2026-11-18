@@ -7,6 +7,7 @@ import {
   ArrowDown,
   ArrowUp,
   Bell,
+  Users,
   Eye,
   EyeOff,
   GitBranch,
@@ -636,6 +637,12 @@ export function FormBuilderClient({
             className="border-hairline-strong hover:bg-surface inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium"
           >
             <Bell className="h-4 w-4" /> Notifications
+          </Link>
+          <Link
+            href={`/workflows/admin/forms/${form.id}/people`}
+            className="border-hairline-strong hover:bg-surface inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium"
+          >
+            <Users className="h-4 w-4" /> People
           </Link>
           <button
             type="button"

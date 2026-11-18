@@ -670,3 +670,9 @@ export type RejectionPolicy = Prisma.RejectionPolicyModel
  *
  */
 export type EmailTemplate = Prisma.EmailTemplateModel
+/**
+ * Model FormMember
+ * A person given a role on one form, independent of the workflow's step
+ * assignees. Managed from Form → People.
+ */
+export type FormMember = Prisma.FormMemberModel

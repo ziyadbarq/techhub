@@ -795,6 +795,15 @@ export const WatcherChannel = {
 export type WatcherChannel = (typeof WatcherChannel)[keyof typeof WatcherChannel]
 
 
+export const FormMemberRole = {
+  OWNER: 'OWNER',
+  MANAGER: 'MANAGER',
+  VIEWER: 'VIEWER'
+} as const
+
+export type FormMemberRole = (typeof FormMemberRole)[keyof typeof FormMemberRole]
+
+
 export const FormNotificationRecipientKind = {
   REQUESTER: 'REQUESTER',
   STEP_ASSIGNEES: 'STEP_ASSIGNEES',
