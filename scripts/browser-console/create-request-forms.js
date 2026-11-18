@@ -10,6 +10,10 @@
  * It uses the same admin APIs as "New request type", so the same
  * permissions and checks apply. A published form whose name already
  * exists is skipped, so running it twice creates nothing new.
+ *
+ * Each form's people (owners, managers, viewers) are set from FORM_PEOPLE
+ * below — on new and existing forms alike, so edit the lists and run the
+ * script again to update them.
  */
 (async () => {
   const DAY = 24 * 60;
@@ -22,6 +26,21 @@
       thresholdMinutes: days * DAY,
       action: { kind: "REMINDER" },
     })),
+  };
+
+  // ---------------------------------------------------------------------
+  // Each form's people (Form → People), by name as in Persons:
+  //   owners   — act on any step of a request without being assigned
+  //   managers — correct the fields of a submitted request
+  //   viewers  — open and follow every request of the form
+  // An owner can also do what a manager and a viewer can.
+  //
+  // The lists REPLACE the form's people each time the script runs. A form
+  // whose three lists are empty is left as it is.
+  // ---------------------------------------------------------------------
+  const FORM_PEOPLE = {
+    "Access Management": { owners: [], managers: [], viewers: [] },
+    "Data Request": { owners: [], managers: [], viewers: [] },
   };
 
   // ---------------------------------------------------------------------
@@ -467,6 +486,41 @@
     return [...names];
   }
 
+  /** The form's people lists, or null when the script leaves them alone. */
+  function peopleOf(form) {
+    const lists = FORM_PEOPLE[form.name];
+    if (!lists) return null;
+    const { owners = [], managers = [], viewers = [] } = lists;
+    if (owners.length + managers.length + viewers.length === 0) return null;
+    return { owners, managers, viewers };
+  }
+
+  /** Every person named in FORM_PEOPLE for these forms. */
+  function formPeopleNames(forms) {
+    const names = new Set();
+    for (const form of forms) {
+      const lists = peopleOf(form);
+      if (!lists) continue;
+      for (const list of Object.values(lists)) {
+        for (const name of list) names.add(name);
+      }
+    }
+    return [...names];
+  }
+
+  /** Replaces the form's owners, managers and viewers. */
+  async function setFormPeople(formId, lists, ids) {
+    const members = [
+      ...lists.owners.map((name) => ({ role: "OWNER", name })),
+      ...lists.managers.map((name) => ({ role: "MANAGER", name })),
+      ...lists.viewers.map((name) => ({ role: "VIEWER", name })),
+    ].map(({ role, name }) => ({ role, userId: ids.get(name) }));
+    await api("PUT", `/api/workflow/admin/forms/${formId}/members`, {
+      members,
+    });
+    return `${lists.owners.length} owner(s), ${lists.managers.length} manager(s), ${lists.viewers.length} viewer(s)`;
+  }
+
   /** Names → user ids, or an error listing every name that didn't match. */
   async function resolvePeople(names) {
     if (names.length === 0) return new Map();
@@ -525,7 +579,12 @@
     // interrupted run: finish it instead of skipping it.
     const existing = existingForms.find((f) => f.name === form.name);
     if (existing?.publishedVersion) {
-      return { name: form.name, status: "skipped (already exists)" };
+      return {
+        name: form.name,
+        status: "already exists",
+        formId: existing.id,
+        link: `${location.origin}/workflows/admin/forms/${existing.id}`,
+      };
     }
 
     // The approval path. Reuse the one already linked or left behind.
@@ -571,6 +630,7 @@
     return {
       name: form.name,
       status: existing ? "finished and published" : "created and published",
+      formId,
       link: `${location.origin}/workflows/admin/forms/${formId}`,
     };
   }
@@ -580,14 +640,17 @@
     api("GET", "/api/workflow/admin/workflows"),
   ]);
 
-  // Only forms that still need creating; their people are matched first,
-  // so nothing is created when a name doesn't match.
+  // Everyone named is matched first — the steps of forms that still need
+  // creating, and every form's people — so nothing changes when a name
+  // doesn't match.
   const pending = FORMS.filter(
     (form) => !forms.some((f) => f.name === form.name && f.publishedVersion),
   );
   let ids;
   try {
-    ids = await resolvePeople(namedPeople(pending));
+    ids = await resolvePeople([
+      ...new Set([...namedPeople(pending), ...formPeopleNames(FORMS)]),
+    ]);
   } catch (error) {
     console.error(error.message);
     return;
@@ -595,11 +658,28 @@
 
   const results = [];
   for (const form of FORMS) {
+    let result;
     try {
-      results.push(await createForm(form, forms, definitions, ids));
+      result = await createForm(form, forms, definitions, ids);
     } catch (error) {
       results.push({ name: form.name, status: `FAILED: ${error.message}` });
+      continue;
     }
+    const lists = peopleOf(form);
+    let people = "left as is";
+    if (lists) {
+      try {
+        people = await setFormPeople(result.formId, lists, ids);
+      } catch (error) {
+        people = `FAILED: ${error.message}`;
+      }
+    }
+    results.push({
+      name: result.name,
+      status: result.status,
+      people,
+      link: result.link,
+    });
   }
   console.table(results);
 })();

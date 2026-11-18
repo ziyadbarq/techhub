@@ -125,7 +125,7 @@ An owner can also do what a manager and a viewer can; a manager can also do what
 
 ## Creating forms from the browser console
 
-`scripts/browser-console/create-request-forms.js` creates and publishes the Access Management and Data Request forms with their approval paths, through the same admin APIs as "New request type". Paste it into DevTools while signed in as an admin. Published forms with the same name are skipped. People named in the steps are matched to Persons by name (`POST /api/workflow/admin/people/resolve`, which creates an account for a matched person who has none); if any name is unknown or shared by two people, nothing is created and the names are listed.
+`scripts/browser-console/create-request-forms.js` creates and publishes the Access Management and Data Request forms with their approval paths, through the same admin APIs as "New request type". Paste it into DevTools while signed in as an admin. Published forms with the same name are skipped. Each form's owners, managers and viewers come from `FORM_PEOPLE` at the top of the script and are applied to new and existing forms alike (the lists replace the form's people; a form with all three lists empty is left as it is). People named in the steps are matched to Persons by name (`POST /api/workflow/admin/people/resolve`, which creates an account for a matched person who has none); if any name is unknown or shared by two people, nothing is created and the names are listed.
 
 ## SLA system
 
