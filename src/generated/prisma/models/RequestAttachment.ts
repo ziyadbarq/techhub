@@ -221,7 +221,7 @@ export type RequestAttachmentGroupByArgs<ExtArgs extends runtime.Types.Extension
 
 export type RequestAttachmentGroupByOutputType = {
   id: string
-  requestId: string
+  requestId: string | null
   fieldKey: string | null
   commentId: string | null
   uploadedById: string
@@ -258,7 +258,7 @@ export type RequestAttachmentWhereInput = {
   OR?: Prisma.RequestAttachmentWhereInput[]
   NOT?: Prisma.RequestAttachmentWhereInput | Prisma.RequestAttachmentWhereInput[]
   id?: Prisma.StringFilter<"RequestAttachment"> | string
-  requestId?: Prisma.StringFilter<"RequestAttachment"> | string
+  requestId?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   fieldKey?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   commentId?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   uploadedById?: Prisma.StringFilter<"RequestAttachment"> | string
@@ -268,7 +268,7 @@ export type RequestAttachmentWhereInput = {
   storageRef?: Prisma.StringFilter<"RequestAttachment"> | string
   supersedesId?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"RequestAttachment"> | Date | string
-  request?: Prisma.XOR<Prisma.RequestScalarRelationFilter, Prisma.RequestWhereInput>
+  request?: Prisma.XOR<Prisma.RequestNullableScalarRelationFilter, Prisma.RequestWhereInput> | null
   uploadedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   comment?: Prisma.XOR<Prisma.RequestCommentNullableScalarRelationFilter, Prisma.RequestCommentWhereInput> | null
   supersedes?: Prisma.XOR<Prisma.RequestAttachmentNullableScalarRelationFilter, Prisma.RequestAttachmentWhereInput> | null
@@ -277,7 +277,7 @@ export type RequestAttachmentWhereInput = {
 
 export type RequestAttachmentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
+  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
   fieldKey?: Prisma.SortOrderInput | Prisma.SortOrder
   commentId?: Prisma.SortOrderInput | Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
@@ -299,7 +299,7 @@ export type RequestAttachmentWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.RequestAttachmentWhereInput | Prisma.RequestAttachmentWhereInput[]
   OR?: Prisma.RequestAttachmentWhereInput[]
   NOT?: Prisma.RequestAttachmentWhereInput | Prisma.RequestAttachmentWhereInput[]
-  requestId?: Prisma.StringFilter<"RequestAttachment"> | string
+  requestId?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   fieldKey?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   commentId?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   uploadedById?: Prisma.StringFilter<"RequestAttachment"> | string
@@ -309,7 +309,7 @@ export type RequestAttachmentWhereUniqueInput = Prisma.AtLeast<{
   storageRef?: Prisma.StringFilter<"RequestAttachment"> | string
   supersedesId?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"RequestAttachment"> | Date | string
-  request?: Prisma.XOR<Prisma.RequestScalarRelationFilter, Prisma.RequestWhereInput>
+  request?: Prisma.XOR<Prisma.RequestNullableScalarRelationFilter, Prisma.RequestWhereInput> | null
   uploadedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   comment?: Prisma.XOR<Prisma.RequestCommentNullableScalarRelationFilter, Prisma.RequestCommentWhereInput> | null
   supersedes?: Prisma.XOR<Prisma.RequestAttachmentNullableScalarRelationFilter, Prisma.RequestAttachmentWhereInput> | null
@@ -318,7 +318,7 @@ export type RequestAttachmentWhereUniqueInput = Prisma.AtLeast<{
 
 export type RequestAttachmentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
+  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
   fieldKey?: Prisma.SortOrderInput | Prisma.SortOrder
   commentId?: Prisma.SortOrderInput | Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
@@ -340,7 +340,7 @@ export type RequestAttachmentScalarWhereWithAggregatesInput = {
   OR?: Prisma.RequestAttachmentScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RequestAttachmentScalarWhereWithAggregatesInput | Prisma.RequestAttachmentScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"RequestAttachment"> | string
-  requestId?: Prisma.StringWithAggregatesFilter<"RequestAttachment"> | string
+  requestId?: Prisma.StringNullableWithAggregatesFilter<"RequestAttachment"> | string | null
   fieldKey?: Prisma.StringNullableWithAggregatesFilter<"RequestAttachment"> | string | null
   commentId?: Prisma.StringNullableWithAggregatesFilter<"RequestAttachment"> | string | null
   uploadedById?: Prisma.StringWithAggregatesFilter<"RequestAttachment"> | string
@@ -360,7 +360,7 @@ export type RequestAttachmentCreateInput = {
   byteSize: number
   storageRef: string
   createdAt?: Date | string
-  request: Prisma.RequestCreateNestedOneWithoutAttachmentsInput
+  request?: Prisma.RequestCreateNestedOneWithoutAttachmentsInput
   uploadedBy: Prisma.UserCreateNestedOneWithoutRequestAttachmentsUploadedInput
   comment?: Prisma.RequestCommentCreateNestedOneWithoutAttachmentsInput
   supersedes?: Prisma.RequestAttachmentCreateNestedOneWithoutSupersededByInput
@@ -369,7 +369,7 @@ export type RequestAttachmentCreateInput = {
 
 export type RequestAttachmentUncheckedCreateInput = {
   id?: string
-  requestId: string
+  requestId?: string | null
   fieldKey?: string | null
   commentId?: string | null
   uploadedById: string
@@ -390,7 +390,7 @@ export type RequestAttachmentUpdateInput = {
   byteSize?: Prisma.IntFieldUpdateOperationsInput | number
   storageRef?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  request?: Prisma.RequestUpdateOneRequiredWithoutAttachmentsNestedInput
+  request?: Prisma.RequestUpdateOneWithoutAttachmentsNestedInput
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutRequestAttachmentsUploadedNestedInput
   comment?: Prisma.RequestCommentUpdateOneWithoutAttachmentsNestedInput
   supersedes?: Prisma.RequestAttachmentUpdateOneWithoutSupersededByNestedInput
@@ -399,7 +399,7 @@ export type RequestAttachmentUpdateInput = {
 
 export type RequestAttachmentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.StringFieldUpdateOperationsInput | string
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fieldKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -414,7 +414,7 @@ export type RequestAttachmentUncheckedUpdateInput = {
 
 export type RequestAttachmentCreateManyInput = {
   id?: string
-  requestId: string
+  requestId?: string | null
   fieldKey?: string | null
   commentId?: string | null
   uploadedById: string
@@ -438,7 +438,7 @@ export type RequestAttachmentUpdateManyMutationInput = {
 
 export type RequestAttachmentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.StringFieldUpdateOperationsInput | string
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fieldKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -707,7 +707,7 @@ export type RequestAttachmentCreateWithoutUploadedByInput = {
   byteSize: number
   storageRef: string
   createdAt?: Date | string
-  request: Prisma.RequestCreateNestedOneWithoutAttachmentsInput
+  request?: Prisma.RequestCreateNestedOneWithoutAttachmentsInput
   comment?: Prisma.RequestCommentCreateNestedOneWithoutAttachmentsInput
   supersedes?: Prisma.RequestAttachmentCreateNestedOneWithoutSupersededByInput
   supersededBy?: Prisma.RequestAttachmentCreateNestedManyWithoutSupersedesInput
@@ -715,7 +715,7 @@ export type RequestAttachmentCreateWithoutUploadedByInput = {
 
 export type RequestAttachmentUncheckedCreateWithoutUploadedByInput = {
   id?: string
-  requestId: string
+  requestId?: string | null
   fieldKey?: string | null
   commentId?: string | null
   filename: string
@@ -758,7 +758,7 @@ export type RequestAttachmentScalarWhereInput = {
   OR?: Prisma.RequestAttachmentScalarWhereInput[]
   NOT?: Prisma.RequestAttachmentScalarWhereInput | Prisma.RequestAttachmentScalarWhereInput[]
   id?: Prisma.StringFilter<"RequestAttachment"> | string
-  requestId?: Prisma.StringFilter<"RequestAttachment"> | string
+  requestId?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   fieldKey?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   commentId?: Prisma.StringNullableFilter<"RequestAttachment"> | string | null
   uploadedById?: Prisma.StringFilter<"RequestAttachment"> | string
@@ -832,7 +832,7 @@ export type RequestAttachmentCreateWithoutCommentInput = {
   byteSize: number
   storageRef: string
   createdAt?: Date | string
-  request: Prisma.RequestCreateNestedOneWithoutAttachmentsInput
+  request?: Prisma.RequestCreateNestedOneWithoutAttachmentsInput
   uploadedBy: Prisma.UserCreateNestedOneWithoutRequestAttachmentsUploadedInput
   supersedes?: Prisma.RequestAttachmentCreateNestedOneWithoutSupersededByInput
   supersededBy?: Prisma.RequestAttachmentCreateNestedManyWithoutSupersedesInput
@@ -840,7 +840,7 @@ export type RequestAttachmentCreateWithoutCommentInput = {
 
 export type RequestAttachmentUncheckedCreateWithoutCommentInput = {
   id?: string
-  requestId: string
+  requestId?: string | null
   fieldKey?: string | null
   uploadedById: string
   filename: string
@@ -886,7 +886,7 @@ export type RequestAttachmentCreateWithoutSupersededByInput = {
   byteSize: number
   storageRef: string
   createdAt?: Date | string
-  request: Prisma.RequestCreateNestedOneWithoutAttachmentsInput
+  request?: Prisma.RequestCreateNestedOneWithoutAttachmentsInput
   uploadedBy: Prisma.UserCreateNestedOneWithoutRequestAttachmentsUploadedInput
   comment?: Prisma.RequestCommentCreateNestedOneWithoutAttachmentsInput
   supersedes?: Prisma.RequestAttachmentCreateNestedOneWithoutSupersededByInput
@@ -894,7 +894,7 @@ export type RequestAttachmentCreateWithoutSupersededByInput = {
 
 export type RequestAttachmentUncheckedCreateWithoutSupersededByInput = {
   id?: string
-  requestId: string
+  requestId?: string | null
   fieldKey?: string | null
   commentId?: string | null
   uploadedById: string
@@ -919,7 +919,7 @@ export type RequestAttachmentCreateWithoutSupersedesInput = {
   byteSize: number
   storageRef: string
   createdAt?: Date | string
-  request: Prisma.RequestCreateNestedOneWithoutAttachmentsInput
+  request?: Prisma.RequestCreateNestedOneWithoutAttachmentsInput
   uploadedBy: Prisma.UserCreateNestedOneWithoutRequestAttachmentsUploadedInput
   comment?: Prisma.RequestCommentCreateNestedOneWithoutAttachmentsInput
   supersededBy?: Prisma.RequestAttachmentCreateNestedManyWithoutSupersedesInput
@@ -927,7 +927,7 @@ export type RequestAttachmentCreateWithoutSupersedesInput = {
 
 export type RequestAttachmentUncheckedCreateWithoutSupersedesInput = {
   id?: string
-  requestId: string
+  requestId?: string | null
   fieldKey?: string | null
   commentId?: string | null
   uploadedById: string
@@ -968,7 +968,7 @@ export type RequestAttachmentUpdateWithoutSupersededByInput = {
   byteSize?: Prisma.IntFieldUpdateOperationsInput | number
   storageRef?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  request?: Prisma.RequestUpdateOneRequiredWithoutAttachmentsNestedInput
+  request?: Prisma.RequestUpdateOneWithoutAttachmentsNestedInput
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutRequestAttachmentsUploadedNestedInput
   comment?: Prisma.RequestCommentUpdateOneWithoutAttachmentsNestedInput
   supersedes?: Prisma.RequestAttachmentUpdateOneWithoutSupersededByNestedInput
@@ -976,7 +976,7 @@ export type RequestAttachmentUpdateWithoutSupersededByInput = {
 
 export type RequestAttachmentUncheckedUpdateWithoutSupersededByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.StringFieldUpdateOperationsInput | string
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fieldKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1006,7 +1006,7 @@ export type RequestAttachmentUpdateManyWithWhereWithoutSupersedesInput = {
 
 export type RequestAttachmentCreateManyUploadedByInput = {
   id?: string
-  requestId: string
+  requestId?: string | null
   fieldKey?: string | null
   commentId?: string | null
   filename: string
@@ -1025,7 +1025,7 @@ export type RequestAttachmentUpdateWithoutUploadedByInput = {
   byteSize?: Prisma.IntFieldUpdateOperationsInput | number
   storageRef?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  request?: Prisma.RequestUpdateOneRequiredWithoutAttachmentsNestedInput
+  request?: Prisma.RequestUpdateOneWithoutAttachmentsNestedInput
   comment?: Prisma.RequestCommentUpdateOneWithoutAttachmentsNestedInput
   supersedes?: Prisma.RequestAttachmentUpdateOneWithoutSupersededByNestedInput
   supersededBy?: Prisma.RequestAttachmentUpdateManyWithoutSupersedesNestedInput
@@ -1033,7 +1033,7 @@ export type RequestAttachmentUpdateWithoutUploadedByInput = {
 
 export type RequestAttachmentUncheckedUpdateWithoutUploadedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.StringFieldUpdateOperationsInput | string
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fieldKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1047,7 +1047,7 @@ export type RequestAttachmentUncheckedUpdateWithoutUploadedByInput = {
 
 export type RequestAttachmentUncheckedUpdateManyWithoutUploadedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.StringFieldUpdateOperationsInput | string
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fieldKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   filename?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1114,7 +1114,7 @@ export type RequestAttachmentUncheckedUpdateManyWithoutRequestInput = {
 
 export type RequestAttachmentCreateManyCommentInput = {
   id?: string
-  requestId: string
+  requestId?: string | null
   fieldKey?: string | null
   uploadedById: string
   filename: string
@@ -1133,7 +1133,7 @@ export type RequestAttachmentUpdateWithoutCommentInput = {
   byteSize?: Prisma.IntFieldUpdateOperationsInput | number
   storageRef?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  request?: Prisma.RequestUpdateOneRequiredWithoutAttachmentsNestedInput
+  request?: Prisma.RequestUpdateOneWithoutAttachmentsNestedInput
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutRequestAttachmentsUploadedNestedInput
   supersedes?: Prisma.RequestAttachmentUpdateOneWithoutSupersededByNestedInput
   supersededBy?: Prisma.RequestAttachmentUpdateManyWithoutSupersedesNestedInput
@@ -1141,7 +1141,7 @@ export type RequestAttachmentUpdateWithoutCommentInput = {
 
 export type RequestAttachmentUncheckedUpdateWithoutCommentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.StringFieldUpdateOperationsInput | string
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fieldKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
   filename?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1155,7 +1155,7 @@ export type RequestAttachmentUncheckedUpdateWithoutCommentInput = {
 
 export type RequestAttachmentUncheckedUpdateManyWithoutCommentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.StringFieldUpdateOperationsInput | string
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fieldKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
   filename?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1168,7 +1168,7 @@ export type RequestAttachmentUncheckedUpdateManyWithoutCommentInput = {
 
 export type RequestAttachmentCreateManySupersedesInput = {
   id?: string
-  requestId: string
+  requestId?: string | null
   fieldKey?: string | null
   commentId?: string | null
   uploadedById: string
@@ -1187,7 +1187,7 @@ export type RequestAttachmentUpdateWithoutSupersedesInput = {
   byteSize?: Prisma.IntFieldUpdateOperationsInput | number
   storageRef?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  request?: Prisma.RequestUpdateOneRequiredWithoutAttachmentsNestedInput
+  request?: Prisma.RequestUpdateOneWithoutAttachmentsNestedInput
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutRequestAttachmentsUploadedNestedInput
   comment?: Prisma.RequestCommentUpdateOneWithoutAttachmentsNestedInput
   supersededBy?: Prisma.RequestAttachmentUpdateManyWithoutSupersedesNestedInput
@@ -1195,7 +1195,7 @@ export type RequestAttachmentUpdateWithoutSupersedesInput = {
 
 export type RequestAttachmentUncheckedUpdateWithoutSupersedesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.StringFieldUpdateOperationsInput | string
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fieldKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1209,7 +1209,7 @@ export type RequestAttachmentUncheckedUpdateWithoutSupersedesInput = {
 
 export type RequestAttachmentUncheckedUpdateManyWithoutSupersedesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  requestId?: Prisma.StringFieldUpdateOperationsInput | string
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fieldKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1263,7 +1263,7 @@ export type RequestAttachmentSelect<ExtArgs extends runtime.Types.Extensions.Int
   storageRef?: boolean
   supersedesId?: boolean
   createdAt?: boolean
-  request?: boolean | Prisma.RequestDefaultArgs<ExtArgs>
+  request?: boolean | Prisma.RequestAttachment$requestArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   comment?: boolean | Prisma.RequestAttachment$commentArgs<ExtArgs>
   supersedes?: boolean | Prisma.RequestAttachment$supersedesArgs<ExtArgs>
@@ -1283,7 +1283,7 @@ export type RequestAttachmentSelectCreateManyAndReturn<ExtArgs extends runtime.T
   storageRef?: boolean
   supersedesId?: boolean
   createdAt?: boolean
-  request?: boolean | Prisma.RequestDefaultArgs<ExtArgs>
+  request?: boolean | Prisma.RequestAttachment$requestArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   comment?: boolean | Prisma.RequestAttachment$commentArgs<ExtArgs>
   supersedes?: boolean | Prisma.RequestAttachment$supersedesArgs<ExtArgs>
@@ -1301,7 +1301,7 @@ export type RequestAttachmentSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   storageRef?: boolean
   supersedesId?: boolean
   createdAt?: boolean
-  request?: boolean | Prisma.RequestDefaultArgs<ExtArgs>
+  request?: boolean | Prisma.RequestAttachment$requestArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   comment?: boolean | Prisma.RequestAttachment$commentArgs<ExtArgs>
   supersedes?: boolean | Prisma.RequestAttachment$supersedesArgs<ExtArgs>
@@ -1323,7 +1323,7 @@ export type RequestAttachmentSelectScalar = {
 
 export type RequestAttachmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "requestId" | "fieldKey" | "commentId" | "uploadedById" | "filename" | "contentType" | "byteSize" | "storageRef" | "supersedesId" | "createdAt", ExtArgs["result"]["requestAttachment"]>
 export type RequestAttachmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  request?: boolean | Prisma.RequestDefaultArgs<ExtArgs>
+  request?: boolean | Prisma.RequestAttachment$requestArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   comment?: boolean | Prisma.RequestAttachment$commentArgs<ExtArgs>
   supersedes?: boolean | Prisma.RequestAttachment$supersedesArgs<ExtArgs>
@@ -1331,13 +1331,13 @@ export type RequestAttachmentInclude<ExtArgs extends runtime.Types.Extensions.In
   _count?: boolean | Prisma.RequestAttachmentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RequestAttachmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  request?: boolean | Prisma.RequestDefaultArgs<ExtArgs>
+  request?: boolean | Prisma.RequestAttachment$requestArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   comment?: boolean | Prisma.RequestAttachment$commentArgs<ExtArgs>
   supersedes?: boolean | Prisma.RequestAttachment$supersedesArgs<ExtArgs>
 }
 export type RequestAttachmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  request?: boolean | Prisma.RequestDefaultArgs<ExtArgs>
+  request?: boolean | Prisma.RequestAttachment$requestArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   comment?: boolean | Prisma.RequestAttachment$commentArgs<ExtArgs>
   supersedes?: boolean | Prisma.RequestAttachment$supersedesArgs<ExtArgs>
@@ -1346,7 +1346,7 @@ export type RequestAttachmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.
 export type $RequestAttachmentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RequestAttachment"
   objects: {
-    request: Prisma.$RequestPayload<ExtArgs>
+    request: Prisma.$RequestPayload<ExtArgs> | null
     uploadedBy: Prisma.$UserPayload<ExtArgs>
     comment: Prisma.$RequestCommentPayload<ExtArgs> | null
     supersedes: Prisma.$RequestAttachmentPayload<ExtArgs> | null
@@ -1354,7 +1354,11 @@ export type $RequestAttachmentPayload<ExtArgs extends runtime.Types.Extensions.I
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    requestId: string
+    /**
+     * Null while a form-field upload is waiting for its request to be
+     * submitted (only its uploader can see it); set when the request links it.
+     */
+    requestId: string | null
     /**
      * Source: form field key, OR comment id, OR null when standalone.
      */
@@ -1486,7 +1490,7 @@ export interface RequestAttachmentDelegate<ExtArgs extends runtime.Types.Extensi
    *     // ... provide data here
    *   ]
    * })
-   *
+   *     
    */
   createMany<T extends RequestAttachmentCreateManyArgs>(args?: Prisma.SelectSubset<T, RequestAttachmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -1767,7 +1771,7 @@ readonly fields: RequestAttachmentFieldRefs;
  */
 export interface Prisma__RequestAttachmentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  request<T extends Prisma.RequestDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RequestDefaultArgs<ExtArgs>>): Prisma.Prisma__RequestClient<runtime.Types.Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  request<T extends Prisma.RequestAttachment$requestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RequestAttachment$requestArgs<ExtArgs>>): Prisma.Prisma__RequestClient<runtime.Types.Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   uploadedBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   comment<T extends Prisma.RequestAttachment$commentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RequestAttachment$commentArgs<ExtArgs>>): Prisma.Prisma__RequestCommentClient<runtime.Types.Result.GetResult<Prisma.$RequestCommentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   supersedes<T extends Prisma.RequestAttachment$supersedesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RequestAttachment$supersedesArgs<ExtArgs>>): Prisma.Prisma__RequestAttachmentClient<runtime.Types.Result.GetResult<Prisma.$RequestAttachmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -1813,7 +1817,7 @@ export interface RequestAttachmentFieldRefs {
   readonly supersedesId: Prisma.FieldRef<"RequestAttachment", 'String'>
   readonly createdAt: Prisma.FieldRef<"RequestAttachment", 'DateTime'>
 }
-
+    
 
 // Custom InputTypes
 /**
@@ -2210,6 +2214,25 @@ export type RequestAttachmentDeleteManyArgs<ExtArgs extends runtime.Types.Extens
    * Limit how many RequestAttachments to delete.
    */
   limit?: number
+}
+
+/**
+ * RequestAttachment.request
+ */
+export type RequestAttachment$requestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Request
+   */
+  select?: Prisma.RequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Request
+   */
+  omit?: Prisma.RequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RequestInclude<ExtArgs> | null
+  where?: Prisma.RequestWhereInput
 }
 
 /**

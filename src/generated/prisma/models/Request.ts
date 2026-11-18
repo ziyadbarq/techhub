@@ -823,10 +823,12 @@ export type RequestCreateNestedOneWithoutAttachmentsInput = {
   connect?: Prisma.RequestWhereUniqueInput
 }
 
-export type RequestUpdateOneRequiredWithoutAttachmentsNestedInput = {
+export type RequestUpdateOneWithoutAttachmentsNestedInput = {
   create?: Prisma.XOR<Prisma.RequestCreateWithoutAttachmentsInput, Prisma.RequestUncheckedCreateWithoutAttachmentsInput>
   connectOrCreate?: Prisma.RequestCreateOrConnectWithoutAttachmentsInput
   upsert?: Prisma.RequestUpsertWithoutAttachmentsInput
+  disconnect?: Prisma.RequestWhereInput | boolean
+  delete?: Prisma.RequestWhereInput | boolean
   connect?: Prisma.RequestWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.RequestUpdateToOneWithWhereWithoutAttachmentsInput, Prisma.RequestUpdateWithoutAttachmentsInput>, Prisma.RequestUncheckedUpdateWithoutAttachmentsInput>
 }
@@ -4266,7 +4268,7 @@ export interface RequestDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *     // ... provide data here
    *   ]
    * })
-   *
+   *     
    */
   createMany<T extends RequestCreateManyArgs>(args?: Prisma.SelectSubset<T, RequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -4611,7 +4613,7 @@ export interface RequestFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Request", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Request", 'DateTime'>
 }
-
+    
 
 // Custom InputTypes
 /**
