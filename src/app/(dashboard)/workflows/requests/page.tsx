@@ -7,13 +7,30 @@ import { getCurrentUserId } from "@/lib/auth/session";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { requirePermission } from "@/lib/permissions/server";
+import { hasPermission, requirePermission } from "@/lib/permissions/server";
+import {
+  requestListScopeWhere,
+  resolveRequestListScope,
+} from "@/lib/workflows/request-list-scope";
 
 import { workflowLabel } from "@/components/workflows/status-label";
 
 import { SavedFiltersBar } from "./saved-filters-bar";
 
 export const dynamic = "force-dynamic";
+
+const SCOPE_COPY = {
+  all: {
+    title: "All Requests",
+    subtitle: "Everything submitted across your organization.",
+  },
+  mine: { title: "My Requests", subtitle: "Requests you submitted." },
+  assigned: {
+    title: "Assigned to me",
+    subtitle:
+      "Requests with a step assigned to you — open, finished or closed.",
+  },
+} as const;
 
 const STATUSES = [
   "DRAFT",
@@ -60,8 +77,12 @@ export default async function RequestsListPage({
     resourceOwnerId: userId,
   });
 
+  // "All" is the whole organisation's requests: only with the global view
+  // permission. Everyone else sees what they submitted or were assigned to.
+  const canViewAll = await hasPermission(PERMISSIONS.WORKFLOWS_REQUESTS_VIEW);
+
   const sp = await searchParams;
-  const scope = sp.scope === "mine" ? "mine" : "all";
+  const scope = resolveRequestListScope(sp.scope, canViewAll);
   const statusFilter = STATUSES.includes(sp.status as never)
     ? (sp.status as string)
     : null;
@@ -70,7 +91,7 @@ export default async function RequestsListPage({
   const [requests, savedFilters, formsForFilter] = await Promise.all([
     prisma.request.findMany({
       where: {
-        ...(scope === "mine" ? { requesterId: userId } : {}),
+        ...requestListScopeWhere(scope, userId),
         ...(statusFilter ? { status: statusFilter as never } : {}),
         ...(formIdFilter ? { formId: formIdFilter } : {}),
       },
@@ -101,24 +122,31 @@ export default async function RequestsListPage({
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-h2">
-            {scope === "mine" ? "My Requests" : "All Requests"}
-          </h1>
+          <h1 className="text-h2">{SCOPE_COPY[scope].title}</h1>
           <p className="text-subtitle text-slate">
-            {scope === "mine"
-              ? "Requests you submitted."
-              : "Everything submitted across your organization."}
+            {SCOPE_COPY[scope].subtitle}
           </p>
         </div>
         <PillTabs>
-          <PillTab href="/workflows/requests" active={scope === "all"}>
-            All
-          </PillTab>
+          {canViewAll && (
+            <PillTab
+              href="/workflows/requests?scope=all"
+              active={scope === "all"}
+            >
+              All
+            </PillTab>
+          )}
           <PillTab
             href="/workflows/requests?scope=mine"
             active={scope === "mine"}
           >
             Mine
+          </PillTab>
+          <PillTab
+            href="/workflows/requests?scope=assigned"
+            active={scope === "assigned"}
+          >
+            Assigned to me
           </PillTab>
         </PillTabs>
       </div>

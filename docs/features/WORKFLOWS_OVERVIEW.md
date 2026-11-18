@@ -14,16 +14,16 @@ See [roadmap/workflow-engine/](../../roadmap/workflow-engine/) for the original 
 
 5-layer Clean Architecture, identical to the rest of TechHub:
 
-| Layer | Location |
-|------|---------|
-| Domain (pure types, errors, expression DSL) | `src/core/domain/workflow/` |
-| Repository interfaces + handler ports | `src/core/repositories/workflow/` |
-| Engine + use cases + executors + resolvers | `src/core/use-cases/workflow/` |
-| Prisma repository implementations | `src/infrastructure/repositories/prisma-workflow-*.repository.ts` |
-| Services (SLA, notifications, calendar, templates, …) | `src/infrastructure/services/workflow/` |
-| API routes (61 + 3 cron) | `src/app/api/workflow/` |
-| UI pages (47) | `src/app/(dashboard)/workflows/` |
-| UI components | `src/components/workflows/` |
+| Layer                                                 | Location                                                          |
+| ----------------------------------------------------- | ----------------------------------------------------------------- |
+| Domain (pure types, errors, expression DSL)           | `src/core/domain/workflow/`                                       |
+| Repository interfaces + handler ports                 | `src/core/repositories/workflow/`                                 |
+| Engine + use cases + executors + resolvers            | `src/core/use-cases/workflow/`                                    |
+| Prisma repository implementations                     | `src/infrastructure/repositories/prisma-workflow-*.repository.ts` |
+| Services (SLA, notifications, calendar, templates, …) | `src/infrastructure/services/workflow/`                           |
+| API routes (61 + 3 cron)                              | `src/app/api/workflow/`                                           |
+| UI pages (47)                                         | `src/app/(dashboard)/workflows/`                                  |
+| UI components                                         | `src/components/workflows/`                                       |
 
 DI wiring lives at [src/di/modules/workflow.module.ts](../../src/di/modules/workflow.module.ts) (CORE tier, gated by feature flag).
 
@@ -93,6 +93,24 @@ A form's `perStepFieldState` sets, per step key, whether a field is `EDITABLE`, 
 
 Rules: `src/core/domain/workflow/step-field-state.ts`. A field's `config.helpText` is shown under its label.
 
+## Who sees a request, and who hears about it
+
+**Opening a request** (`/workflows/requests/[id]`): its requester, anyone assigned to any of its steps — finished steps included — or a holder of `WORKFLOWS_REQUESTS_VIEW`.
+
+**The request list** (`/workflows/requests`) has three scopes (`src/lib/workflows/request-list-scope.ts`):
+
+| Scope          | Shows                                                   | Who                                                                  |
+| -------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
+| All            | every request                                           | `WORKFLOWS_REQUESTS_VIEW` only — anyone else asking for it gets Mine |
+| Mine           | requests they submitted                                 | everyone                                                             |
+| Assigned to me | requests with a step assigned to them, open or finished | everyone                                                             |
+
+The Inbox lists active steps only; "Assigned to me" is where an approver finds a request again after acting.
+
+**Watchers** get the request-level notifications (closed, held, resumed, cancelled). They are the requester and members of roles subscribed to the form (at submit), plus **everyone who acts on a step** (reason `participant`, added when they act).
+
+**Form notification rules** (Form → Notifications) fire on `request.submitted`, `step.activated`, `step.approved` (an approval step completed by approval), `step.rejected` (an approval step rejected), `request.held`, `request.resumed`, `request.closed` and `request.cancelled`, to the requester, the step's assignees, the watchers, or a role's members.
+
 ## Creating forms from the browser console
 
 `scripts/browser-console/create-request-forms.js` creates and publishes the Access Management and Data Request forms with their approval paths, through the same admin APIs as "New request type". Paste it into DevTools while signed in as an admin. Published forms with the same name are skipped. People named in the steps are matched to Persons by name (`POST /api/workflow/admin/people/resolve`, which creates an account for a matched person who has none); if any name is unknown or shared by two people, nothing is created and the names are listed.
@@ -126,6 +144,7 @@ Seeded by [seed-rbac-permissions.ts](../../src/infrastructure/database/prisma/se
 `WORKFLOW_ENGINE` — defined in [feature-flag-keys.ts](../../src/lib/features/feature-flag-keys.ts), seeded by [seed-features.ts](../../src/infrastructure/database/prisma/seed-features.ts). **Default OFF.**
 
 When off:
+
 - Every `/workflows/*` page redirects to `/feature-disabled?feature=WORKFLOW_ENGINE`
 - Every `/api/workflow/*` route returns 503 (or redirect, depending on the endpoint shape)
 - BullMQ cron jobs are NOT scheduled (gated at `setupScheduledJobs()` startup check)
@@ -141,11 +160,11 @@ User-facing nav items: Inbox, My Requests, Browse Forms, Notifications, Analytic
 
 Three cron-driven ticks under `QUEUE_NAMES.WORKFLOW`:
 
-| Job | Pattern | Purpose |
-|-----|---------|---------|
-| `workflow-sla-tick` | `*/2 * * * *` | Fire SLA escalations whose thresholds have crossed |
-| `workflow-schedule-tick` | `* * * * *` | Advance `SCHEDULE` steps when their window opens |
-| `workflow-entry-automation-tick` | `*/5 * * * *` | Run automation rules on matching requests |
+| Job                              | Pattern       | Purpose                                            |
+| -------------------------------- | ------------- | -------------------------------------------------- |
+| `workflow-sla-tick`              | `*/2 * * * *` | Fire SLA escalations whose thresholds have crossed |
+| `workflow-schedule-tick`         | `* * * * *`   | Advance `SCHEDULE` steps when their window opens   |
+| `workflow-entry-automation-tick` | `*/5 * * * *` | Run automation rules on matching requests          |
 
 Handlers: `src/infrastructure/services/queue/handlers/workflow-*-tick.handler.ts`.
 Worker registration: `src/infrastructure/services/queue/worker.ts`.

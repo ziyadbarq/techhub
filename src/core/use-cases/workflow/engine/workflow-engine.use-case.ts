@@ -573,11 +573,33 @@ export class WorkflowEngine implements IWorkflowEngine {
         });
       }
 
+      // Whoever acts on a step follows the request from then on: they hear
+      // when it is closed, held, resumed or cancelled, like the requester.
+      if (ctx.userId) {
+        await tx.watcher.createMany({
+          data: [
+            {
+              requestId: request.id,
+              userId: ctx.userId,
+              reason: "participant",
+            },
+          ],
+          skipDuplicates: true,
+        });
+      }
+
       switch (result.kind) {
         case "RECORDED":
           // step still needs more votes; nothing more to do
           return;
         case "REJECT":
+          await this.dispatchEventNotifications(
+            tx,
+            ctx,
+            "step.rejected",
+            request.id,
+            stepInstance.id,
+          );
           await this.rejectInPlace(
             tx,
             ctx,
@@ -591,6 +613,15 @@ export class WorkflowEngine implements IWorkflowEngine {
           return;
         case "ADVANCE":
           await this.completeStep(tx, stepInstance.id, "COMPLETED");
+          if (input.action === "APPROVE") {
+            await this.dispatchEventNotifications(
+              tx,
+              ctx,
+              "step.approved",
+              request.id,
+              stepInstance.id,
+            );
+          }
           await this.advanceFromStep(
             tx,
             ctx,
