@@ -14,8 +14,19 @@ import {
 import type { ActiveUserOption } from "@/interface-adapters/controllers/access-service.controller";
 import { PeoplePicker } from "@/components/workflows/people-picker";
 
+/** What the viewer may change; the server enforces the same permissions. */
+export interface AccessServicePermissions {
+  /** Add a service (workflows-access-services:create). */
+  create: boolean;
+  /** Edit a service and its people (workflows-access-services:update). */
+  update: boolean;
+  /** Activate/deactivate and bulk import (workflows-access-services:manage). */
+  manage: boolean;
+}
+
 interface Props {
   initialServices: AccessServiceData[];
+  can: AccessServicePermissions;
 }
 
 const ROLE_LABELS: Record<AccessServiceRole, string> = {
@@ -59,7 +70,7 @@ function slugify(value: string): string {
     .replace(/^-|-$/g, "");
 }
 
-export function AccessServicesClient({ initialServices }: Props) {
+export function AccessServicesClient({ initialServices, can }: Props) {
   const [services, setServices] =
     useState<AccessServiceData[]>(initialServices);
   const [editingService, setEditingService] =
@@ -305,107 +316,118 @@ export function AccessServicesClient({ initialServices }: Props) {
             Manage the IT access service catalog used in workflow forms.
           </p>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={openCreate}
-            className="bg-primary text-primary-foreground inline-flex items-center rounded-md px-3 py-2 text-sm"
-          >
-            Add Service
-          </button>
-        </div>
+        {can.create && (
+          <div className="flex gap-2">
+            <button
+              onClick={openCreate}
+              className="bg-primary text-primary-foreground inline-flex items-center rounded-md px-3 py-2 text-sm"
+            >
+              Add Service
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Bulk import: the template CSV, or the business sheet in Excel */}
-      <div className="space-y-3 rounded-lg border p-4">
-        <div>
-          <h2 className="text-sm font-medium">Bulk Import (Excel or CSV)</h2>
-          <p className="text-muted-foreground mt-1 text-xs">
-            One row per service: <b>Title</b>, <b>Service Owner</b>,{" "}
-            <b>Cybersecurity Owner</b>, <b>Service Implementer</b>, and
-            optionally <b>Manager Approval</b> (Yes/No). People by full name as
-            in Persons, several separated by commas. Existing services (same
-            title) are updated and their people replaced; new ones start with
-            manager approval on.{" "}
-            <a
-              href="/api/workflow/admin/access-services/template"
-              download
-              className="text-foreground font-medium underline underline-offset-2"
-            >
-              Download the Excel template
-            </a>
-            .
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <input
-            type="file"
-            accept=".xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            onChange={(e) => void pickImportFile(e.target.files?.[0] ?? null)}
-            className="text-sm"
-          />
-          <button
-            onClick={handleDryRun}
-            disabled={!importFile || importPending || importReading}
-            className="rounded-md border px-3 py-1.5 text-sm disabled:opacity-50"
-          >
-            {importReading ? "Reading…" : "Validate"}
-          </button>
-          {dryRunResult && dryRunResult.errors.length === 0 && (
-            <button
-              onClick={handleConfirmImport}
-              disabled={importPending}
-              className="bg-primary text-primary-foreground rounded-md px-3 py-1.5 text-sm disabled:opacity-50"
-            >
-              Confirm import ({dryRunResult.created ?? 0} new,{" "}
-              {dryRunResult.updated ?? 0} updated)
-            </button>
-          )}
-        </div>
-        {dryRunResult &&
-        dryRunResult.errors.length === 0 &&
-        (dryRunResult.newAccounts ?? 0) > 0 ? (
-          <p className="text-muted-foreground text-sm">
-            {`${dryRunResult.newAccounts} people in the sheet haven't signed in to TechHub yet. Confirming creates their accounts (Viewer role) so they can be assigned; their Microsoft sign-in links to it.`}
-          </p>
-        ) : null}
-        {dryRunResult && dryRunResult.errors.length > 0 && (
-          <ul className="text-destructive space-y-1 text-sm">
-            {dryRunResult.errors.map((e, i) => (
-              <li key={i}>
-                Row {e.row}
-                {e.column ? ` · ${e.column}` : ""}: {e.message}
-              </li>
-            ))}
-          </ul>
-        )}
-        {dryRunResult && (dryRunResult.warnings?.length ?? 0) > 0 && (
-          <details
-            open={dryRunResult.errors.length === 0}
-            className="rounded-md border border-amber-300/60 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
-          >
-            <summary className="cursor-pointer font-medium">
-              {`${dryRunResult.warnings!.length} to check — the import can go ahead, but these people won't be assigned`}
-            </summary>
-            <ul className="mt-2 max-h-72 space-y-1 overflow-y-auto">
-              {dryRunResult.warnings!.map((w, i) => (
-                <li key={i}>
-                  Row {w.row}
-                  {w.column ? ` · ${w.column}` : ""}: {w.message}
-                </li>
-              ))}
-            </ul>
-          </details>
-        )}
-        <p className="text-muted-foreground text-right text-xs">
-          <a
-            href="/api/workflow/admin/access-services/export"
-            download
-            className="hover:text-foreground underline-offset-2 hover:underline"
-          >
-            Export current services (Excel)
-          </a>
-        </p>
-      </div>
+      {/* Bulk import: only with the manage permission. */}
+      {can.manage && (
+        <>
+          {/* Bulk import: the template CSV, or the business sheet in Excel */}
+          <div className="space-y-3 rounded-lg border p-4">
+            <div>
+              <h2 className="text-sm font-medium">
+                Bulk Import (Excel or CSV)
+              </h2>
+              <p className="text-muted-foreground mt-1 text-xs">
+                One row per service: <b>Title</b>, <b>Service Owner</b>,{" "}
+                <b>Cybersecurity Owner</b>, <b>Service Implementer</b>, and
+                optionally <b>Manager Approval</b> (Yes/No). People by full name
+                as in Persons, several separated by commas. Existing services
+                (same title) are updated and their people replaced; new ones
+                start with manager approval on.{" "}
+                <a
+                  href="/api/workflow/admin/access-services/template"
+                  download
+                  className="text-foreground font-medium underline underline-offset-2"
+                >
+                  Download the Excel template
+                </a>
+                .
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <input
+                type="file"
+                accept=".xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                onChange={(e) =>
+                  void pickImportFile(e.target.files?.[0] ?? null)
+                }
+                className="text-sm"
+              />
+              <button
+                onClick={handleDryRun}
+                disabled={!importFile || importPending || importReading}
+                className="rounded-md border px-3 py-1.5 text-sm disabled:opacity-50"
+              >
+                {importReading ? "Reading…" : "Validate"}
+              </button>
+              {dryRunResult && dryRunResult.errors.length === 0 && (
+                <button
+                  onClick={handleConfirmImport}
+                  disabled={importPending}
+                  className="bg-primary text-primary-foreground rounded-md px-3 py-1.5 text-sm disabled:opacity-50"
+                >
+                  Confirm import ({dryRunResult.created ?? 0} new,{" "}
+                  {dryRunResult.updated ?? 0} updated)
+                </button>
+              )}
+            </div>
+            {dryRunResult &&
+            dryRunResult.errors.length === 0 &&
+            (dryRunResult.newAccounts ?? 0) > 0 ? (
+              <p className="text-muted-foreground text-sm">
+                {`${dryRunResult.newAccounts} people in the sheet haven't signed in to TechHub yet. Confirming creates their accounts (Viewer role) so they can be assigned; their Microsoft sign-in links to it.`}
+              </p>
+            ) : null}
+            {dryRunResult && dryRunResult.errors.length > 0 && (
+              <ul className="text-destructive space-y-1 text-sm">
+                {dryRunResult.errors.map((e, i) => (
+                  <li key={i}>
+                    Row {e.row}
+                    {e.column ? ` · ${e.column}` : ""}: {e.message}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {dryRunResult && (dryRunResult.warnings?.length ?? 0) > 0 && (
+              <details
+                open={dryRunResult.errors.length === 0}
+                className="rounded-md border border-amber-300/60 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
+              >
+                <summary className="cursor-pointer font-medium">
+                  {`${dryRunResult.warnings!.length} to check — the import can go ahead, but these people won't be assigned`}
+                </summary>
+                <ul className="mt-2 max-h-72 space-y-1 overflow-y-auto">
+                  {dryRunResult.warnings!.map((w, i) => (
+                    <li key={i}>
+                      Row {w.row}
+                      {w.column ? ` · ${w.column}` : ""}: {w.message}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+            <p className="text-muted-foreground text-right text-xs">
+              <a
+                href="/api/workflow/admin/access-services/export"
+                download
+                className="hover:text-foreground underline-offset-2 hover:underline"
+              >
+                Export current services (Excel)
+              </a>
+            </p>
+          </div>
+        </>
+      )}
 
       {/* Service Table */}
       <div className="overflow-hidden rounded-lg border">
@@ -463,19 +485,28 @@ export function AccessServicesClient({ initialServices }: Props) {
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex justify-end gap-2">
-                    <button
-                      onClick={() => openEdit(svc)}
-                      className="rounded border px-2 py-1 text-xs"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleToggleStatus(svc)}
-                      disabled={isPending}
-                      className="rounded border px-2 py-1 text-xs disabled:opacity-50"
-                    >
-                      {svc.isActive ? "Deactivate" : "Activate"}
-                    </button>
+                    {can.update && (
+                      <button
+                        onClick={() => openEdit(svc)}
+                        className="rounded border px-2 py-1 text-xs"
+                      >
+                        Edit
+                      </button>
+                    )}
+                    {can.manage && (
+                      <button
+                        onClick={() => handleToggleStatus(svc)}
+                        disabled={isPending}
+                        className="rounded border px-2 py-1 text-xs disabled:opacity-50"
+                      >
+                        {svc.isActive ? "Deactivate" : "Activate"}
+                      </button>
+                    )}
+                    {!can.update && !can.manage && (
+                      <span className="text-muted-foreground text-xs">
+                        View only
+                      </span>
+                    )}
                   </div>
                 </td>
               </tr>
