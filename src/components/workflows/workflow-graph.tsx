@@ -6,7 +6,14 @@
  * Reads routing the way the engine does (see `@/lib/workflows/builder/graph`):
  * approved → the approve route; rejected → back to the requester.
  */
-import { CheckCircle2, CornerUpLeft, Flag } from "lucide-react";
+import {
+  CheckCircle2,
+  CornerUpLeft,
+  Flag,
+  Hourglass,
+  UserCheck,
+  Users,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import {
@@ -15,6 +22,7 @@ import {
   stepName,
   type StepDef,
 } from "@/lib/workflows/builder/graph";
+import { joinNames, type StepPeople } from "@/lib/workflows/step-people";
 
 import { STEP_STATUS, STEP_TYPE_TONE, TONE } from "./tones";
 
@@ -51,10 +59,13 @@ export function WorkflowGraph({
   graph,
   stepInstances = [],
   activeStepKey,
+  people,
 }: {
   graph: Graph;
   stepInstances?: StepInstanceLite[];
   activeStepKey?: string | null;
+  /** Who each step is for, by step key (see `@/lib/workflows/step-people`). */
+  people?: Record<string, StepPeople>;
 }) {
   if (!graph?.steps?.length) {
     return (
@@ -137,7 +148,12 @@ export function WorkflowGraph({
                 {STEP_TYPE_LABEL[def.type] ?? step.type}
               </p>
 
-              {/* Row 3 — where it goes */}
+              {/* Row 3 — who */}
+              {status !== "SKIPPED" && people?.[step.key] ? (
+                <StepPeopleLine people={people[step.key]} />
+              ) : null}
+
+              {/* Row 4 — where it goes */}
               <div className="text-caption mt-1 space-y-0.5 pl-11 text-[var(--color-stone)]">
                 {status === "SKIPPED" ? (
                   <p>Not needed for this request, so it was skipped.</p>
@@ -180,5 +196,77 @@ export function WorkflowGraph({
         );
       })}
     </ol>
+  );
+}
+
+function StepPeopleLine({ people }: { people: StepPeople }) {
+  if (people.state === "done") {
+    if (people.actors.length === 0) {
+      return people.assigned.length > 0 ? (
+        <p className="text-caption mt-1 flex items-start gap-1.5 pl-11 text-[var(--color-stone)]">
+          <Users className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span>
+            Assigned to{" "}
+            <span className="text-[var(--color-ink)]">
+              {joinNames(people.assigned)}
+            </span>
+          </span>
+        </p>
+      ) : null;
+    }
+    return (
+      <div className="text-caption mt-1 space-y-0.5 pl-11 text-[var(--color-stone)]">
+        {people.actors.map((actor, index) => (
+          <p
+            key={`${actor.name}-${index}`}
+            className="flex flex-wrap items-center gap-1.5"
+          >
+            <UserCheck className="h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            {actor.action} by{" "}
+            <span className="font-medium text-[var(--color-ink)]">
+              {actor.name}
+            </span>
+            {actor.asFormOwner ? (
+              <span className="rounded-full bg-amber-100 px-1.5 py-px text-[10px] font-semibold text-amber-900 dark:bg-amber-400/15 dark:text-amber-200">
+                as form owner
+              </span>
+            ) : null}
+          </p>
+        ))}
+      </div>
+    );
+  }
+
+  if (people.state === "waiting") {
+    return (
+      <p className="text-caption mt-1 flex items-start gap-1.5 pl-11 text-[var(--color-stone)]">
+        <Hourglass className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600 dark:text-blue-400" />
+        {people.assigned.length > 0 ? (
+          <span title={people.assigned.join(", ")}>
+            Waiting for{" "}
+            <span className="font-medium text-[var(--color-ink)]">
+              {joinNames(people.assigned)}
+            </span>
+          </span>
+        ) : (
+          <span>
+            No one assigned — the form&apos;s owner or an admin can move it.
+          </span>
+        )}
+      </p>
+    );
+  }
+
+  if (people.expected.length === 0) return null;
+  return (
+    <p className="text-caption mt-1 flex items-start gap-1.5 pl-11 text-[var(--color-stone)]">
+      <Users className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+      <span title={people.expected.join(", ")}>
+        Goes to{" "}
+        <span className="text-[var(--color-ink)]">
+          {joinNames(people.expected)}
+        </span>
+      </span>
+    </p>
   );
 }

@@ -9,6 +9,14 @@ import { prisma } from "@/infrastructure/database/prisma/client";
 import { getCurrentUserId } from "@/lib/auth/session";
 import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { requireFeature } from "@/lib/features/server";
+import {
+  actionLabel,
+  expectedAssignees,
+  STEP_DECISION_ACTIONS,
+  type StepActor,
+  type StepPeople,
+  type StepPeopleContext,
+} from "@/lib/workflows/step-people";
 import { canSeeRequest, getFormAccess } from "@/lib/workflows/request-access";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { hasPermission } from "@/lib/permissions/server";
@@ -149,6 +157,9 @@ export default async function RequestDetailPage({
   });
   const serviceSnapshots = await prisma.accessServiceRequestSnapshot.findMany({
     where: { requestId: req.id },
+    include: {
+      assigneeRows: { select: { userName: true, userEmail: true, role: true } },
+    },
   });
   // Map from field key to snapshotted service name
   const serviceNameByFieldKey = new Map<string, string>(
@@ -166,6 +177,49 @@ export default async function RequestDetailPage({
         requesterSnapshot.managerName;
     }
   }
+
+  // Who each step is for: who acted, who it waits for, who it goes to next.
+  const [decisions, roles] = await Promise.all([
+    prisma.auditEntry.findMany({
+      where: { requestId: req.id, action: { in: STEP_DECISION_ACTIONS } },
+      orderBy: { createdAt: "asc" },
+      select: {
+        stepInstanceId: true,
+        action: true,
+        payloadJson: true,
+        actor: { select: { name: true, email: true } },
+      },
+    }),
+    prisma.role.findMany({
+      select: { id: true, name: true, displayName: true },
+    }),
+  ]);
+  const stepPeople = buildStepPeople({
+    graph: req.workflowVersion.graphJson as {
+      steps?: Array<{ key: string; type: string; config?: unknown }>;
+    } | null,
+    stepInstances,
+    decisions,
+    context: {
+      nameOfUser: (id) => userNameById.get(id) ?? null,
+      roleLabel: (id) => {
+        const role = roles.find((r) => r.id === id);
+        return role ? role.displayName || role.name : null;
+      },
+      fieldLabel: (key) => {
+        const field = schema.fields.find((f) => f.key === key);
+        return field ? `“${field.label}”` : `“${key}”`;
+      },
+      fieldValues,
+      requesterName: req.requester.name || req.requester.email,
+      managerName: requesterSnapshot?.managerName ?? null,
+      serviceAssignees: (fieldKey, role) =>
+        serviceSnapshots
+          .find((snap) => snap.sourceFieldKey === fieldKey)
+          ?.assigneeRows.filter((row) => row.role === role)
+          .map((row) => row.userName || row.userEmail) ?? [],
+    },
+  });
 
   // For REQUEST_LINK fields, resolve target request ids → reference numbers.
   const linkIds = new Set<string>();
@@ -349,6 +403,7 @@ export default async function RequestDetailPage({
                 status: s.status,
               }))}
               activeStepKey={activeStep?.stepKey ?? null}
+              people={stepPeople}
             />
           </div>
 
@@ -449,4 +504,61 @@ function renderFieldValue(v: unknown, field?: { type: string }): string {
   if (Array.isArray(v)) return v.length === 0 ? "—" : v.join(", ");
   if (typeof v === "object") return JSON.stringify(v);
   return String(v);
+}
+
+/** Steps that wait for a person; only they get a "who" line. */
+const PERSON_STEP_TYPES = new Set(["APPROVAL", "EXECUTION", "INFO_ACK"]);
+
+/** Who each step of this request is for, by step key. */
+function buildStepPeople(input: {
+  graph: {
+    steps?: Array<{ key: string; type: string; config?: unknown }>;
+  } | null;
+  stepInstances: Array<{
+    id: string;
+    stepKey: string;
+    status: string;
+    snapshots: Array<{ user: { name: string | null; email: string } }>;
+  }>;
+  decisions: Array<{
+    stepInstanceId: string | null;
+    action: string;
+    payloadJson: unknown;
+    actor: { name: string | null; email: string } | null;
+  }>;
+  context: StepPeopleContext;
+}): Record<string, StepPeople> {
+  const people: Record<string, StepPeople> = {};
+  // The latest run of each step: a rejected request runs steps again.
+  const latest = new Map(input.stepInstances.map((s) => [s.stepKey, s]));
+
+  for (const step of input.graph?.steps ?? []) {
+    if (!PERSON_STEP_TYPES.has(step.type)) continue;
+    const instance = latest.get(step.key);
+    if (!instance) {
+      const assignees = (step.config as { assignees?: unknown } | undefined)
+        ?.assignees;
+      people[step.key] = {
+        state: "upcoming",
+        expected: expectedAssignees(assignees, input.context),
+      };
+      continue;
+    }
+    const assigned = instance.snapshots.map((s) => s.user.name || s.user.email);
+    if (instance.status === "ACTIVE" || instance.status === "PENDING") {
+      people[step.key] = { state: "waiting", assigned };
+      continue;
+    }
+    const actors: StepActor[] = input.decisions
+      .filter((d) => d.stepInstanceId === instance.id && d.actor)
+      .map((d) => ({
+        name: d.actor!.name || d.actor!.email,
+        action: actionLabel(d.action) ?? "Acted",
+        asFormOwner:
+          (d.payloadJson as { actingAs?: unknown } | null)?.actingAs ===
+          "FORM_OWNER",
+      }));
+    people[step.key] = { state: "done", actors, assigned };
+  }
+  return people;
 }

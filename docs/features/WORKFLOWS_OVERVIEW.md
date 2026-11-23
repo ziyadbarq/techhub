@@ -111,6 +111,14 @@ The Inbox lists active steps only; "Assigned to me" is where an approver finds a
 
 **Form notification rules** (Form → Notifications) fire on `request.submitted`, `step.activated`, `step.approved` (an approval step completed by approval), `step.rejected` (an approval step rejected), `request.held`, `request.resumed`, `request.closed` and `request.cancelled`, to the requester, the step's assignees, the watchers, or a role's members.
 
+## Who each step is for (request timeline)
+
+The request page's timeline shows the people on every person step (approval, task, acknowledgement) — `src/lib/workflows/step-people.ts`:
+
+- **Finished:** who approved, rejected, completed or acknowledged it, marked "as form owner" when an owner decided it.
+- **Active:** who it is waiting for (its assignee snapshot), or that no one is assigned and the form's owner or an admin can move it.
+- **Not reached yet:** who it is expected to go to, named from the request where possible — the requester's line manager, the people in the chosen service's role, the person picked in a field, the people for the chosen option — and described otherwise. A preview: the engine assigns when the step starts.
+
 ## A form's people (Form → People)
 
 Besides its workflow's step assignees, each form can name people with a role on every one of its requests (`form_members`). They are picked from Persons (Active Directory); someone without a TechHub account gets one on save. Rules: `src/core/domain/workflow/form-access.ts`.
