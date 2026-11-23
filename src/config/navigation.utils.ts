@@ -211,6 +211,20 @@ export function isNavItemActive(
 }
 
 /**
+ * Whether a navigation item is the active page: its href matches, and the
+ * path is not one of the sub-routes it excludes.
+ */
+export function isItemActive(
+  item: Pick<NavItem, "href" | "activeExcludes">,
+  currentPath: string,
+): boolean {
+  if (!isNavItemActive(item.href, currentPath)) return false;
+  return !(item.activeExcludes ?? []).some(
+    (prefix) => currentPath === prefix || currentPath.startsWith(prefix + "/"),
+  );
+}
+
+/**
  * Check if a path is in the same section (parent route)
  * Used for section highlighting without exact match
  */

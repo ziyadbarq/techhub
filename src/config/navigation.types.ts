@@ -33,6 +33,11 @@ export interface NavItem {
   children?: NavItem[];
   /** Whether children are expanded by default */
   defaultExpanded?: boolean;
+  /**
+   * Sub-routes that must NOT mark this item active, though they start with
+   * its href (e.g. "/workflows/requests/new" under "/workflows/requests").
+   */
+  activeExcludes?: readonly string[];
 }
 
 /**

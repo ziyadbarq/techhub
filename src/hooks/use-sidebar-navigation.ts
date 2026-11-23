@@ -7,7 +7,9 @@ import {
   getItemDefaultState,
   getVisibleNavGroups,
   buildRequestMenuChildren,
+  NEW_REQUEST_MENU_HREF,
   hasChildren,
+  isItemActive,
   isNavItemActive,
   type NavGroup,
   type NavItem,
@@ -85,7 +87,7 @@ function findGroupWithActiveItem(
   for (const group of groups) {
     const hasActiveItem = (items: NavItem[]): boolean => {
       return items.some((item) => {
-        if (isNavItemActive(item.href, pathname)) return true;
+        if (isItemActive(item, pathname)) return true;
         if (item.children) return hasActiveItem(item.children);
         return false;
       });
@@ -144,7 +146,7 @@ export function useSidebarNavigation() {
         ? {
             ...group,
             items: group.items.map((item) =>
-              item.title === "Requests" && item.href === "/workflows/forms"
+              item.href === NEW_REQUEST_MENU_HREF && item.children
                 ? { ...item, children }
                 : item,
             ),

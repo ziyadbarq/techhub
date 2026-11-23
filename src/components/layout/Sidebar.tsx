@@ -49,6 +49,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
+  isItemActive,
   isNavItemActive,
   isNavItemSection,
   hasChildren,
@@ -328,7 +329,7 @@ const NestedNavItem = React.memo(function NestedNavItem({
     item.children?.some((child) => isNavItemActive(child.href, pathname));
   const isActive = itemHasChildren
     ? pathname === item.href || !!childIsActive
-    : isNavItemActive(item.href, pathname);
+    : isItemActive(item, pathname);
   const isSection = itemHasChildren
     ? !!childIsActive && pathname !== item.href
     : isNavItemSection(item.href, pathname);

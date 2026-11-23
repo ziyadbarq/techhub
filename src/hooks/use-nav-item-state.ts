@@ -15,7 +15,7 @@
 import { useMemo } from "react";
 import type { NavItem } from "@/config/navigation";
 import {
-  isNavItemActive,
+  isItemActive,
   isNavItemSection,
   hasChildren,
 } from "@/config/navigation";
@@ -58,8 +58,8 @@ export function useNavItemState({
   getBadgeValue,
 }: UseNavItemStateProps): UseNavItemStateReturn {
   const isActive = useMemo(
-    () => isNavItemActive(item.href, pathname),
-    [item.href, pathname],
+    () => isItemActive(item, pathname),
+    [item, pathname],
   );
 
   const isSection = useMemo(

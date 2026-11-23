@@ -45,7 +45,7 @@ import { assetcatalogNavGroup } from "./navigation-groups/asset-catalog";
 import { assetsNavGroup } from "./navigation-groups/assets";
 import { servicescmdbNavGroup } from "./navigation-groups/services-cmdb";
 import { workflowsNavGroup } from "./navigation-groups/workflows";
-import { ClipboardList, FileText } from "lucide-react";
+import { ClipboardList, FilePlus2, FileText } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup, NavItem } from "./navigation.types";
 import { complianceNavGroup } from "./navigation-groups/compliance";
@@ -70,13 +70,18 @@ import { rbacNavGroup } from "./navigation-groups/rbac";
  * 7. System & Operations
  * 8. RBAC & Access Control
  */
-// Only published, active form names appear as Requests children.
+// Only published, active form names appear as "New request" children.
 // The list is hydrated from the authenticated API inside useSidebarNavigation;
 // generated navigation groups and route manifests remain untouched.
+// "Browse Forms" is replaced by that menu, and the requests list is added
+// back below under a clearer name.
 const excludedWorkflowLinks = new Set([
   "/workflows/forms",
   "/workflows/requests",
 ]);
+
+/** The "New request" menu: one child per published form. */
+export const NEW_REQUEST_MENU_HREF = "/workflows/forms";
 
 export type RequestMenuStatus = "loading" | "ready" | "error";
 export type RequestFormNav = {
@@ -129,9 +134,20 @@ const workflowsWithRequestMenu: NavGroup = {
       (item) => item.href === "/workflows/inbox",
     ),
     {
+      // The requests list: mine, assigned to me, my forms (and all, with
+      // the global view permission). Not active while filling a new one.
       title: "Requests",
-      href: "/workflows/forms",
+      href: "/workflows/requests",
       icon: ClipboardList,
+      description: "Requests you submitted, are assigned to, or follow",
+      permission: PERMISSIONS.WORKFLOWS_REQUESTS_VIEW_OWN,
+      featureFlag: "WORKFLOW_ENGINE",
+      activeExcludes: ["/workflows/requests/new"],
+    },
+    {
+      title: "New request",
+      href: NEW_REQUEST_MENU_HREF,
+      icon: FilePlus2,
       description: "Open a published request form directly",
       permission: PERMISSIONS.WORKFLOWS_REQUESTS_SUBMIT,
       featureFlag: "WORKFLOW_ENGINE",
@@ -186,6 +202,7 @@ import {
   getAllNavItems as getAllNavItemsUtil,
   getVisibleNavItems as getVisibleNavItemsUtil,
   getNavItemByHref as getNavItemByHrefUtil,
+  isItemActive,
   isNavItemActive,
   isNavItemSection,
   hasChildren,
@@ -200,6 +217,7 @@ export {
   checkItemPermission,
   checkGroupPermission,
   filterItems,
+  isItemActive,
   isNavItemActive,
   isNavItemSection,
   hasChildren,
